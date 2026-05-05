@@ -139,6 +139,8 @@ export const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
+  const [showLeftGradient, setShowLeftGradient] = useState(false);
+  const [showRightGradient, setShowRightGradient] = useState(true);
   
   const { user } = useUser();
   const auth = useAuth();
@@ -146,6 +148,7 @@ export const Navbar = () => {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const categoriesQuery = useMemoFirebase(() => {
     if (!db) return null;
@@ -195,6 +198,14 @@ export const Navbar = () => {
     }
   };
 
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftGradient(scrollLeft > 10);
+      setShowRightGradient(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -205,6 +216,13 @@ export const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Monitor sub-header scroll on resize
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('resize', handleScroll);
+    return () => window.removeEventListener('resize', handleScroll);
+  }, [dynamicCategories, hoveredCategory]);
 
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
@@ -420,10 +438,14 @@ export const Navbar = () => {
       <MarketWeatherBar />
 
       <div 
-        className="border-b border-primary/5 overflow-hidden bg-background/50 backdrop-blur-md relative" 
+        className="border-b border-primary/5 bg-background/50 backdrop-blur-md relative" 
         onMouseLeave={() => setHoveredCategory(null)}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth"
+        >
           <AnimatePresence mode="wait">
             <motion.div 
               key={hoveredCategory ? hoveredCategory.id : "default"}
@@ -448,9 +470,31 @@ export const Navbar = () => {
               ))}
             </motion.div>
           </AnimatePresence>
-          {/* Mobile indicator for scrollable content */}
-          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
         </div>
+
+        {/* Pro Scroll Indicators - Left Gradient */}
+        <AnimatePresence>
+          {showLeftGradient && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10 sm:hidden" 
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Pro Scroll Indicators - Right Gradient */}
+        <AnimatePresence>
+          {showRightGradient && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10 sm:hidden" 
+            />
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );
