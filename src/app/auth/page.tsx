@@ -227,9 +227,15 @@ export default function AuthPage() {
                 </Button>
               </motion.div>
 
-              <MutedText className="text-[10px] text-center block pt-10 opacity-30 font-medium leading-relaxed">
-                Dengan melanjutkan, Anda setuju untuk menerima update berita terbaru kami.
-              </MutedText>
+              <div className="mt-10 space-y-4">
+                <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 pt-6 border-t border-primary/5">
+                  <button className="text-[10px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan penggunaan</button>
+                  <button className="text-[10px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Kebijakan privasi</button>
+                </div>
+                <MutedText className="text-[10px] text-center block opacity-30 font-medium leading-relaxed">
+                  Dengan melanjutkan, Anda setuju dengan ketentuan penggunaan dan kebijakan privasi InfoFlow.
+                </MutedText>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
