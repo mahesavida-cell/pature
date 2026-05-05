@@ -46,7 +46,7 @@ export const Navbar = () => {
     <motion.nav 
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-border/40"
+      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-8">
@@ -120,20 +120,20 @@ export const Navbar = () => {
             </SheetContent>
           </Sheet>
 
-          <div className="hidden md:flex items-center ml-2 border-l pl-4 border-border/40">
+          <div className="hidden md:flex items-center ml-2 border-l pl-4 border-white/10">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9 border border-border/50 shadow-sm">
+                    <Avatar className="h-9 w-9 border border-white/20 shadow-sm">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
-                        {(user.displayName || user.email || "U")[0].toUpperCase()}
+                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
+                        {(user.displayName || user.email || "U")[0]}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48 rounded-lg p-1 bg-white/90 backdrop-blur-xl border-border/40" align="end" forceMount>
+                <DropdownMenuContent className="w-48 rounded-lg p-1 bg-white/90 backdrop-blur-xl border-white/10" align="end" forceMount>
                   <DropdownMenuLabel className="font-headline font-bold px-2 py-1.5 text-xs">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link href="/profile">
@@ -148,7 +148,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-5 h-8 rounded-md bg-white/50 backdrop-blur-sm border-border/40">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-5 h-8 rounded-md bg-white/50 backdrop-blur-sm border-white/20">
                   Masuk
                 </Button>
               </Link>

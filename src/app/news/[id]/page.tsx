@@ -41,22 +41,22 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const formatRelativeTime = (dateInput: any) => {
-  if (!dateInput) return "Baru saja";
+  if (!dateInput) return "baru saja";
   
   const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return "Baru saja";
+  if (diffInSeconds < 60) return "baru saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} Menit yang lalu`;
+  if (minutes < 60) return `${minutes} menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} Jam yang lalu`;
+  if (hours < 24) return `${hours} jam yang lalu`;
   
   const days = Math.floor(hours / 24);
-  return `${days} Hari yang lalu`;
+  return `${days} hari yang lalu`;
 };
 
 const CommentItem = ({ 
@@ -97,16 +97,16 @@ const CommentItem = ({
   const displayTime = mounted ? formatRelativeTime(comment.createdAt) : "---";
 
   return (
-    <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l border-primary/10 pl-4 md:pl-6")}>
+    <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l-2 border-primary/5 pl-4 md:pl-6")}>
       <motion.div 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.4 }}
-        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
+        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-white/20 hover:border-primary/10 transition-all duration-300 shadow-sm"
       >
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
-          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
-            {comment.authorName ? comment.authorName[0].toUpperCase() : "A"}
+          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary uppercase">
+            {comment.authorName ? comment.authorName[0] : "A"}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
@@ -371,10 +371,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
-    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
+    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 jam yang lalu" },
+    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 jam yang lalu" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 hari yang lalu" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 jam yang lalu" }
   ];
 
   return (
@@ -394,13 +394,15 @@ export default function NewsDetailPage() {
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-white shadow-sm">
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
+                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
                         {post.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
-                      <MutedText className="text-[10px] opacity-60 font-medium">{mounted ? (post.date || "Baru saja") : "---"} • {post.readTime || "5 menit baca"}</MutedText>
+                      <MutedText className="text-[10px] opacity-60 font-medium">
+                        {mounted ? (post.date || "baru saja") : "---"} • {post.readTime || "5 menit baca"}
+                      </MutedText>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -408,7 +410,7 @@ export default function NewsDetailPage() {
                       variant="outline" 
                       size="icon" 
                       title="Bagikan berita"
-                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/50 backdrop-blur-sm"
+                      className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
                       onClick={handleShare}
                     >
                       <Share2 className="h-4 w-4" />
@@ -417,7 +419,10 @@ export default function NewsDetailPage() {
                       variant="outline" 
                       size="icon" 
                       title="Simpan berita"
-                      className={cn("rounded-full h-9 w-9 transition-all border-border/40 shadow-sm bg-white/50 backdrop-blur-sm", isSaved && 'bg-primary text-primary-foreground border-primary')} 
+                      className={cn(
+                        "rounded-full h-9 w-9 transition-all border-white/20 shadow-sm bg-white/40 backdrop-blur-md", 
+                        isSaved && 'bg-primary text-primary-foreground border-primary'
+                      )} 
                       onClick={handleToggleBookmark}
                     >
                       <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
@@ -442,9 +447,9 @@ export default function NewsDetailPage() {
                   </Badge>
                 </div>
                 {user ? (
-                  <div className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-primary/5 backdrop-blur-md border border-primary/10">
+                  <div className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-white/40 backdrop-blur-md border border-white/20">
                     <Avatar className="h-10 w-10 shrink-0">
-                      <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0].toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-4">
                       <Textarea 
@@ -461,7 +466,7 @@ export default function NewsDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <Card className="bg-primary/5 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
+                  <Card className="bg-white/40 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
                     <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
                     <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
                   </Card>
@@ -505,7 +510,7 @@ export default function NewsDetailPage() {
                 </div>
               </section>
               
-              <Card className="bg-primary/95 backdrop-blur-md text-primary-foreground p-6 rounded-lg shadow-md border-none">
+              <Card className="bg-primary/95 text-primary-foreground p-6 rounded-lg shadow-md border-none">
                 <div className="text-center">
                   <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
                   <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
