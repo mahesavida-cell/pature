@@ -13,7 +13,7 @@ export const Title = ({ children, className }: TextProps) => (
 );
 
 export const Heading = ({ children, className, level = 2 }: TextProps & { level?: 2 | 3 | 4 }) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as "h2" | "h3" | "h4";
   const sizes = {
     2: "text-2xl md:text-3xl lg:text-4xl tracking-tight",
     3: "text-xl md:text-2xl tracking-tight",

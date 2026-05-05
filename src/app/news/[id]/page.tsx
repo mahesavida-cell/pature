@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -110,7 +109,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const handleNativeShare = async () => {
     try {
-      if (navigator.share) {
+      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
         await navigator.share({
           title: post.title,
           text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
@@ -140,7 +139,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  if (isMobile && typeof navigator !== 'undefined' && navigator.share) {
+  if (isMobile && typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     return (
       <Button 
         variant="outline" 
@@ -647,7 +646,7 @@ export default function NewsDetailPage() {
                     <Heading level={3} className="text-lg">Berita terpopuler</Heading>
                   </div>
                   <div className="space-y-8">
-                    {trendingPosts.length > 0 ? trendingPosts.map((trend) => (
+                    {trendingPosts.length > 0 ? trendingPosts.map((trend: any) => (
                       <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
                         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
                           <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
