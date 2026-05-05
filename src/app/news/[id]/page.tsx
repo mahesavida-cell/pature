@@ -37,6 +37,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function NewsDetailPage() {
   const params = useParams();
@@ -299,17 +305,36 @@ export default function NewsDetailPage() {
                       <MutedText className="text-[10px] tracking-wide font-bold">{post.date} • {post.readTime}</MutedText>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" className="rounded-full h-10 w-10"><Share2 className="h-4 w-4" /></Button>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className={cn("rounded-full h-10 w-10 transition-all", isSaved && 'bg-primary text-primary-foreground border-primary')}
-                      onClick={() => setIsSaved(!isSaved)}
-                    >
-                      <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
-                    </Button>
-                  </div>
+                  <TooltipProvider>
+                    <div className="flex items-center gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="icon" className="rounded-full h-10 w-10">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Bagikan Artikel</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className={cn("rounded-full h-10 w-10 transition-all", isSaved && 'bg-primary text-primary-foreground border-primary')}
+                            onClick={() => setIsSaved(!isSaved)}
+                          >
+                            <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{isSaved ? "Hapus Dari Simpanan" : "Simpan Artikel"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
                 </div>
               </div>
 
