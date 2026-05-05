@@ -40,12 +40,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const CommentItem = ({ 
   comment, 
@@ -230,6 +224,7 @@ export default function NewsDetailPage() {
       authorId: "author-alex-1",
       date: "24 Okt, 2024",
       readTime: "5 Menit Baca",
+      excerpt: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'.",
       content: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'. Kami Melihat Transisi Masif Di Nama Ruang Kosong Bukan Hanya Ruang Hampa—Ini Adalah Alat Untuk Fokus. Sistem Informasi Modern Memprioritaskan Kejelasan Daripada Kompleksitas, Memastikan Bahwa Pengguna Dapat Menemukan Apa Yang Mereka Butuhkan Tanpa Kelebihan Kognitif.\n\nTipografi Juga Menjadi Pusat Perhatian. Huruf Yang Tebal Dan Mudah Didaca Menggantikan Huruf Dekoratif Untuk Meningkatkan Aksesibilitas Dan Kecepatan Konsumsi Informasi. Dalam Artikel Ini, Kami Menjelajahi Mengapa Tren Ini Bukan Sekadar Fase Sesaat Tetapi Perubahan Mendasar Dalam Cara Kita Berinteraksi Dengan Data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
@@ -266,7 +261,17 @@ export default function NewsDetailPage() {
           authorName: "Alex Rivers",
           authorId: "author-alex-1",
           likes: ["user-1"],
-          createdAt: { toDate: () => new Date(Date.now() - 3000000) }
+          createdAt: { toDate: () => new Date(Date.now() - 3000000) },
+          replies: [
+            {
+              id: "mock-3",
+              content: "Ini Menarik. Bagaimana Dengan Aksesibilitas Untuk Pengguna Dengan Gangguan Penglihatan?",
+              authorName: "Rudi Hartono",
+              authorId: "user-2",
+              likes: [],
+              createdAt: { toDate: () => new Date(Date.now() - 1500000) }
+            }
+          ]
         }
       ]
     }
@@ -317,6 +322,28 @@ export default function NewsDetailPage() {
         savedAt: new Date().toISOString()
       }, { merge: true });
       toast({ title: "Berhasil Diarsipkan", description: `"${post.title}" Tersimpan Di Profil.` });
+    }
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: post.title,
+      text: post.excerpt || `Baca Berita Terbaru Di InfoFlow: ${post.title}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Tautan Berhasil Disalin",
+          description: "Tautan Berita Telah Disalin Ke Papan Klip Anda.",
+        });
+      }
+    } catch (err) {
+      // User cancelled or silent error
     }
   };
 
@@ -380,7 +407,12 @@ export default function NewsDetailPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all"
+                      onClick={handleShare}
+                    >
                       <Share2 className="h-4 w-4" />
                     </Button>
                     <Button 
@@ -420,7 +452,7 @@ export default function NewsDetailPage() {
                         placeholder="Tuliskan Pendapat Anda..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20" 
+                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
                       />
                       <div className="flex justify-end">
                         <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
@@ -451,7 +483,7 @@ export default function NewsDetailPage() {
           </div>
           <aside className="lg:col-span-4">
             <div className="sticky top-24 space-y-12">
-              <div>
+              <section>
                 <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
                   <TrendingUp className="h-4 w-4 text-primary" />
                   <Heading level={3} className="text-lg">Berita Terpopuler</Heading>
@@ -472,11 +504,12 @@ export default function NewsDetailPage() {
                 <div className="mt-8 pt-4 border-t border-border/10">
                   <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat Lebih Banyak Berita</Link>
                 </div>
-              </div>
+              </section>
+              
               <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md">
                 <div className="text-center">
                   <Heading level={3} className="text-white text-lg mb-2">Buletin Berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Setiap Hari.</BodyText>
+                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Setiap Hari Langsung Ke Email Anda.</BodyText>
                   <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan Sekarang</Button></Link>
                 </div>
               </Card>
@@ -493,7 +526,7 @@ export default function NewsDetailPage() {
         <AlertDialogContent className="rounded-md p-8">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl">Akses Terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70">Silakan Masuk Terlebih Dahulu Untuk Berpartisipasi.</AlertDialogDescription>
+            <AlertDialogDescription className="text-sm opacity-70">Silakan Masuk Terlebih Dahulu Untuk Berpartisipasi Dalam Diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11">Masuk Sekarang</AlertDialogAction></AlertDialogFooter>
         </AlertDialogContent>
