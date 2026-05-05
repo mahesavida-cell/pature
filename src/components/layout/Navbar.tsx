@@ -30,7 +30,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Mock data for categories and sub-categories
-// This can be replaced with dynamic data from Sanity.io or Firestore
 const CATEGORIES = [
   { 
     id: "tech", 
@@ -77,7 +76,7 @@ export const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -121,11 +120,9 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <motion.nav 
-      initial={{ y: -10, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+    <nav 
       className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-300",
+        "fixed top-0 z-50 w-full transition-colors duration-500",
         isScrolled 
           ? "bg-background/95 backdrop-blur-xl border-b border-primary/5 shadow-sm" 
           : "bg-transparent border-transparent"
@@ -137,7 +134,7 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
-              alt="InfoFlow Logo" 
+              alt="Pature News Logo" 
               width={130} 
               height={36} 
               className="h-7 w-auto object-contain"
@@ -145,20 +142,27 @@ export const Navbar = () => {
             />
           </Link>
           
-          {/* Main Categories Menu */}
+          {/* Main Categories Menu with Animated Underline */}
           <div className="hidden lg:flex items-center gap-7">
             {CATEGORIES.map((cat) => (
               <button 
                 key={cat.id} 
                 onMouseEnter={() => setActiveCategory(cat)}
                 className={cn(
-                  "text-[11px] font-bold transition-all tracking-wide pb-1 border-b-2",
+                  "relative text-[11px] font-bold transition-colors tracking-wide pb-2 group",
                   activeCategory.id === cat.id 
-                    ? "text-primary border-primary" 
-                    : "text-muted-foreground border-transparent hover:text-primary"
+                    ? "text-primary" 
+                    : "text-muted-foreground hover:text-primary"
                 )}
               >
                 {cat.name}
+                {activeCategory.id === cat.id && (
+                  <motion.div
+                    layoutId="activeCategoryUnderline"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
               </button>
             ))}
           </div>
@@ -330,10 +334,16 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Sub-header: Sub-categories bar */}
-      <div className="border-t border-primary/5">
+      {/* Sub-header: Dynamic Sub-categories bar */}
+      <div className="border-t border-primary/5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 h-10 flex items-center overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-6 whitespace-nowrap">
+          <motion.div 
+            key={activeCategory.id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-6 whitespace-nowrap"
+          >
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mr-2 opacity-40">
               Topik {activeCategory.name}:
             </span>
@@ -347,9 +357,9 @@ export const Navbar = () => {
                 <span className="h-1 w-1 rounded-full bg-primary/20 group-hover:bg-primary transition-colors" />
               </Link>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 };
