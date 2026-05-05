@@ -97,7 +97,7 @@ export default function AuthPage() {
   return (
     <div className="bg-background min-h-screen flex flex-col font-body">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-4 py-6">
+      <main className="flex-1 flex items-center justify-center p-4 pt-24 pb-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}

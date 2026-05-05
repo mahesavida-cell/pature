@@ -359,7 +359,7 @@ export default function NewsDetailPage() {
       date: "24 Okt 2024",
       readTime: "5 menit baca",
       excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
-      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
+      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal and mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl,
       imageCaption: "Ruang kosong yang tertata memberikan kejelasan informasi.",
       imageCredit: "Foto oleh Alex Rivers",
@@ -468,7 +468,7 @@ export default function NewsDetailPage() {
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 md:px-6 pt-8 md:pt-14">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 md:pt-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
           <div className="lg:col-span-8">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>

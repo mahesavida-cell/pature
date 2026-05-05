@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -98,7 +97,7 @@ export default function ProfilePage() {
     return (
       <div className="bg-background min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center pt-24">
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
             <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <User className="h-8 w-8 text-accent" />
@@ -115,7 +114,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-background min-h-screen pb-20">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 pt-8 md:pt-16">
+      <main className="max-w-7xl mx-auto px-4 pt-24 md:pt-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <aside className="lg:col-span-4 space-y-8">
             <Card className="rounded-lg border-none shadow-md bg-white/40 backdrop-blur-xl border border-border/20">
