@@ -7,11 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn } from "@/firebase";
+import { useState, useEffect } from "react";
+import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { FirebaseError } from "firebase/app";
 import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react";
 import {
   Dialog,
@@ -24,6 +23,7 @@ import Image from "next/image";
 
 export default function AuthPage() {
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
@@ -34,7 +34,14 @@ export default function AuthPage() {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
-  const handleAuth = async (type: 'login' | 'register') => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !isUserLoading) {
+      router.push("/");
+    }
+  }, [user, isUserLoading, router]);
+
+  const handleAuth = (type: 'login' | 'register') => {
     if (!email || !password) {
       toast({
         variant: "destructive",
@@ -45,47 +52,24 @@ export default function AuthPage() {
     }
 
     setIsLoading(true);
-    try {
-      if (type === 'register') {
-        await initiateEmailSignUp(auth, email, password);
-        toast({
-          title: "Berhasil mendaftar",
-          description: "Akun berhasil dibuat! Selamat datang di PatureNews.",
-        });
-      } else {
-        await initiateEmailSignIn(auth, email, password);
-        toast({
-          title: "Selamat datang kembali",
-          description: "Berhasil masuk ke akun Anda.",
-        });
-      }
-      router.push("/");
-    } catch (error: any) {
-      let message = error.message;
-      if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
-        message = "Metode masuk ini belum diaktifkan. Silakan hubungi administrator.";
-      }
+    if (type === 'register') {
+      initiateEmailSignUp(auth, email, password);
       toast({
-        variant: "destructive",
-        title: "Kesalahan autentikasi",
-        description: message,
+        title: "Sedang memproses",
+        description: "Permintaan pendaftaran Anda sedang dikirim.",
       });
-    } finally {
-      setIsLoading(false);
+    } else {
+      initiateEmailSignIn(auth, email, password);
+      toast({
+        title: "Sedang masuk",
+        description: "Mencoba memverifikasi kredensial Anda.",
+      });
     }
+    // Note: Loading state will be naturally resolved by redirection via useEffect
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      await initiateGoogleSignIn(auth);
-      router.push("/");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Kesalahan masuk Google",
-        description: error.message,
-      });
-    }
+  const handleGoogleSignIn = () => {
+    initiateGoogleSignIn(auth);
   };
 
   return (
@@ -115,7 +99,7 @@ export default function AuthPage() {
                   <Newspaper className="h-5 w-5" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman Anda</h2>
+                  <h2 className="text-xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman anda</h2>
                   <p className="text-white/60 text-[11px] leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif ke jurnalisme berkualitas.</p>
                 </div>
               </div>
@@ -141,15 +125,15 @@ export default function AuthPage() {
 
           {/* Sisi kanan - formulir */}
           <div className="flex flex-col p-6 sm:p-8 justify-center bg-white relative">
-            <div className="mb-4 lg:hidden">
+            <div className="mb-4 lg:hidden text-center">
               <Heading level={2} className="text-lg font-bold tracking-tight mb-1 text-primary">PatureNews</Heading>
               <BodyText className="text-[9px] opacity-60 font-bold tracking-widest">Jurnalisme modern dan terpercaya</BodyText>
             </div>
 
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4 h-9">
-                <TabsTrigger value="login" className="text-[11px] font-bold tracking-tight">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="text-[11px] font-bold tracking-tight">Daftar</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 h-9 bg-primary/5 p-1 rounded-lg">
+                <TabsTrigger value="login" className="text-[11px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Masuk</TabsTrigger>
+                <TabsTrigger value="register" className="text-[11px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Daftar</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-3">
@@ -161,27 +145,27 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs rounded-lg"
+                    className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                   />
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between items-center px-1">
                     <Label htmlFor="password" className="text-[10px] font-bold opacity-50">Kata sandi</Label>
-                    <button className="text-[10px] font-bold text-primary/60 hover:text-primary">Lupa sandi?</button>
+                    <button className="text-[10px] font-bold text-primary/60 hover:text-primary transition-colors">Lupa sandi?</button>
                   </div>
                   <div className="relative">
                     <Input 
                       id="password" 
                       type={showPassword ? "text" : "password"} 
-                      placeholder="Masukkan sandi Anda"
+                      placeholder="Masukkan sandi anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs rounded-lg"
+                      className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     </button>
@@ -205,7 +189,7 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs rounded-lg"
+                    className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                   />
                 </div>
                 <div className="space-y-1">
@@ -217,12 +201,12 @@ export default function AuthPage() {
                       placeholder="Buat sandi yang aman"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs rounded-lg"
+                      className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
                     >
                       {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     </button>
@@ -260,10 +244,10 @@ export default function AuthPage() {
 
             <div className="mt-6 pt-4 flex flex-col items-center gap-1 border-t border-primary/5">
               <div className="flex gap-4">
-                <button onClick={() => setIsTermsOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary">Ketentuan penggunaan</button>
-                <button onClick={() => setIsPrivacyOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary">Kebijakan privasi</button>
+                <button onClick={() => setIsTermsOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan penggunaan</button>
+                <button onClick={() => setIsPrivacyOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Kebijakan privasi</button>
               </div>
-              <p className="text-[8px] text-center opacity-30 font-bold leading-relaxed max-w-[200px] tracking-tight">
+              <p className="text-[8px] text-center opacity-30 font-bold leading-relaxed max-w-[200px] tracking-tight mt-1">
                 PatureNews Media Group © 2024. Seluruh hak cipta dilindungi.
               </p>
             </div>
@@ -281,7 +265,7 @@ export default function AuthPage() {
             <div className="space-y-6 text-sm leading-relaxed text-foreground/70">
               <section>
                 <h4 className="font-bold text-primary mb-2">1. Penerimaan ketentuan</h4>
-                <p>Dengan mengakses PatureNews, Anda setuju untuk terikat oleh ketentuan ini dan semua hukum yang berlaku di wilayah hukum Republik Indonesia.</p>
+                <p>Dengan mengakses PatureNews, anda setuju untuk terikat oleh ketentuan ini dan semua hukum yang berlaku di wilayah hukum Republik Indonesia.</p>
               </section>
               <section>
                 <h4 className="font-bold text-primary mb-2">2. Penggunaan platform</h4>
@@ -289,7 +273,7 @@ export default function AuthPage() {
               </section>
               <section>
                 <h4 className="font-bold text-primary mb-2">3. Akun dan keamanan</h4>
-                <p>Anda bertanggung jawab penuh atas kerahasiaan kredensial akun Anda dan semua aktivitas yang terjadi di bawah akun tersebut.</p>
+                <p>Anda bertanggung jawab penuh atas kerahasiaan kredensial akun anda dan semua aktivitas yang terjadi di bawah akun tersebut.</p>
               </section>
             </div>
           </ScrollArea>
@@ -309,15 +293,15 @@ export default function AuthPage() {
             <div className="space-y-6 text-sm leading-relaxed text-foreground/70">
               <section>
                 <h4 className="font-bold text-primary mb-2">1. Data yang dikumpulkan</h4>
-                <p>Kami mengumpulkan data minimal seperti email dan nama profil untuk personalisasi pengalaman membaca Anda di PatureNews.</p>
+                <p>Kami mengumpulkan data minimal seperti email dan nama profil untuk personalisasi pengalaman membaca anda di PatureNews.</p>
               </section>
               <section>
                 <h4 className="font-bold text-primary mb-2">2. Keamanan data</h4>
-                <p>Data Anda disimpan menggunakan infrastruktur Google Firebase dengan standar keamanan enkripsi industri.</p>
+                <p>Data anda disimpan menggunakan infrastruktur Google Firebase dengan standar keamanan enkripsi industri.</p>
               </section>
               <section>
                 <h4 className="font-bold text-primary mb-2">3. Hak pengguna</h4>
-                <p>Anda berhak meminta penghapusan data pribadi Anda kapan saja melalui pengaturan profil akun.</p>
+                <p>Anda berhak meminta penghapusan data pribadi anda kapan saja melalui pengaturan profil akun.</p>
               </section>
             </div>
           </ScrollArea>
