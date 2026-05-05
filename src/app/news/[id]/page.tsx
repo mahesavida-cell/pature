@@ -1,10 +1,11 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
@@ -13,6 +14,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function NewsDetailPage() {
   const params = useParams();
@@ -36,18 +38,8 @@ export default function NewsDetailPage() {
       author: "Maya Lin",
       date: "Oct 22, 2024",
       readTime: "8 min read",
-      content: "As global temperatures rise, architects are looking at cities as living organisms. The integration of vertical gardens and carbon-sequestering materials into high-rise buildings is no longer a futuristic dream—it's a necessity. Cities like Singapore and Copenhagen are leading the way in creating urban jungles that actually breathe.",
+      content: "As global temperatures rise, architects are looking at cities as living organisms. The integration of vertical gardens and carbon-sequestering materials into high-rise buildings is no longer a futuristic dream—it's a necessity.",
       image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
-    },
-    {
-      id: "3",
-      title: "Future of Decentralized Global Markets",
-      category: "Business",
-      author: "Jordan Lee",
-      date: "Oct 20, 2024",
-      readTime: "6 min read",
-      content: "Blockchain technology is moving beyond the hype cycle of cryptocurrencies into the backbone of international trade. By reducing the reliance on central intermediaries, decentralized markets promise faster transactions and lower fees for emerging economies. This paradigm shift could redefine wealth distribution on a global scale.",
-      image: PlaceHolderImages.find(img => img.id === "business-news")?.imageUrl
     }
   ];
 
@@ -78,11 +70,11 @@ export default function NewsDetailPage() {
   const post = posts.find(p => p.id === params.id) || posts[0];
 
   return (
-    <div className="bg-background min-h-screen pb-20">
+    <div className="bg-background min-h-screen pb-10">
       <Navbar />
       
-      <main className="max-w-7xl mx-auto px-4 pt-8 md:pt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-20">
           {/* Article Main Content */}
           <div className="lg:col-span-8">
             <motion.div
@@ -90,60 +82,58 @@ export default function NewsDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {/* Back Button */}
-              <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-8 group">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all mb-8 md:mb-12 group">
+                <div className="bg-white border rounded-full p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                </div>
                 Back to feed
               </Link>
 
-              {/* Article Header */}
-              <div className="space-y-6 mb-12">
-                <Badge variant="secondary" className="px-3 py-1 rounded-full uppercase text-[10px] tracking-widest font-bold">
+              <div className="space-y-4 md:space-y-6 mb-10 md:mb-14">
+                <Badge variant="secondary" className="px-4 py-1 rounded-full uppercase text-[10px] tracking-[0.2em] font-bold border-none shadow-sm">
                   {post.category}
                 </Badge>
-                <Title className="text-3xl md:text-5xl lg:text-6xl leading-tight font-bold">
+                <Title className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[1.1] font-headline font-bold tracking-tight">
                   {post.title}
                 </Title>
                 
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-4">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border">
-                      <AvatarFallback>{post.author.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                      <AvatarFallback className="bg-primary/5 text-primary font-bold">{post.author.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <BodyText className="font-semibold text-primary leading-none mb-1">
+                      <span className="block font-bold text-sm text-primary leading-none mb-1.5 tracking-wide">
                         {post.author}
-                      </BodyText>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" /> {post.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> {post.readTime}
-                        </span>
+                      </span>
+                      <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" /> {post.date}</span>
+                        <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> {post.readTime}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" className="rounded-full h-9 w-9">
-                      <Share2 className="h-4 w-4" />
+                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 shadow-sm hover:shadow-md transition-all">
+                      <Share2 className="h-5 w-5" />
                     </Button>
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      className={`rounded-full h-9 w-9 transition-colors ${isSaved ? 'bg-primary text-primary-foreground border-primary' : ''}`}
+                      className={cn(
+                        "rounded-full h-11 w-11 transition-all shadow-sm",
+                        isSaved ? 'bg-primary text-primary-foreground border-primary' : 'hover:shadow-md'
+                      )}
                       onClick={() => setIsSaved(!isSaved)}
                     >
-                      <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+                      <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
                     </Button>
                   </div>
                 </div>
               </div>
 
-              {/* Featured Image */}
               <motion.div 
-                className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-12 shadow-md"
+                className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden rounded-[32px] mb-12 shadow-2xl"
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -159,8 +149,7 @@ export default function NewsDetailPage() {
                 )}
               </motion.div>
 
-              {/* Content */}
-              <article className="prose prose-lg max-w-none">
+              <article className="max-w-none">
                 {post.content.split('\n\n').map((paragraph, index) => (
                   <motion.div
                     key={index}
@@ -169,63 +158,63 @@ export default function NewsDetailPage() {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <BodyText className="text-lg md:text-xl mb-6 leading-relaxed">
+                    <p className="text-lg md:text-2xl mb-8 leading-[1.6] text-foreground/80 font-body">
                       {paragraph}
-                    </BodyText>
+                    </p>
                   </motion.div>
                 ))}
               </article>
 
-              <Separator className="my-16" />
+              <Separator className="my-16 md:my-24 opacity-40" />
 
-              {/* Interaction Footer */}
               <motion.div 
-                className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12"
+                className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-16"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
               >
+                <Button variant="outline" className="w-full sm:w-auto gap-3 h-12 px-8 rounded-full font-bold text-xs uppercase tracking-widest shadow-sm">
+                  <MessageSquare className="h-4 w-4" />
+                  View Comments (12)
+                </Button>
                 <div className="flex items-center gap-4">
-                  <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Discussion (12)</span>
-                  </Button>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MutedText>Share this story:</MutedText>
-                  <Button variant="ghost" size="sm" className="h-8">Twitter</Button>
-                  <Button variant="ghost" size="sm" className="h-8">LinkedIn</Button>
+                  <MutedText className="text-[10px] font-bold uppercase tracking-[0.2em]">Share Story</MutedText>
+                  <div className="flex gap-2">
+                    {['X', 'In'].map(s => (
+                      <Button key={s} variant="ghost" size="icon" className="h-9 w-9 rounded-full border border-border/60 hover:bg-white">{s}</Button>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             </motion.div>
           </div>
 
-          {/* Aesthetic Trending Sidebar */}
-          <aside className="lg:col-span-4">
-            <div className="sticky top-24 space-y-10">
+          {/* Sidebar - responsive stacking */}
+          <aside className="lg:col-span-4 mt-12 lg:mt-0">
+            <div className="sticky top-24 space-y-12">
               <motion.div 
-                className="flex items-center gap-2 mb-8"
+                className="flex items-center gap-3 mb-8"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
               >
                 <div className="bg-primary/5 p-2 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
-                <Heading level={3} className="tracking-tight">Trending Stories</Heading>
+                <Heading level={3} className="text-2xl font-headline font-bold">Trending Now</Heading>
               </motion.div>
 
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {trendingStories.map((story, idx) => (
                   <motion.div 
                     key={story.id} 
-                    className="group cursor-pointer"
+                    className="group"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 * idx }}
-                    whileHover={{ y: -2 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <Link href={`/news/${story.id}`} className="flex gap-4">
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm">
+                    <Link href={`/news/${story.id}`} className="flex gap-5">
+                      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-[20px] bg-muted shadow-lg">
                         {story.image && (
                           <Image 
                             src={story.image} 
@@ -235,17 +224,14 @@ export default function NewsDetailPage() {
                           />
                         )}
                       </div>
-                      <div className="flex flex-col justify-center gap-1.5 flex-1">
+                      <div className="flex flex-col justify-center gap-2 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/5 px-2 py-0.5 rounded">
+                          <Badge variant="ghost" className="p-0 text-[8px] font-black uppercase tracking-widest text-accent hover:bg-transparent">
                             {story.category}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground">•</span>
-                          <span className="text-[10px] font-medium text-muted-foreground uppercase">
-                            {story.timeAgo}
-                          </span>
+                          </Badge>
+                          <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">• {story.timeAgo}</span>
                         </div>
-                        <h4 className="font-headline font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2 uppercase-first">
+                        <h4 className="font-headline font-bold text-lg leading-tight group-hover:text-accent transition-colors">
                           {story.title}
                         </h4>
                       </div>
@@ -254,30 +240,32 @@ export default function NewsDetailPage() {
                 ))}
               </div>
 
-              {/* Newsletter Sidebar */}
+              {/* Newsletter Sidebar - optimized for mobile */}
               <motion.div 
-                className="bg-primary p-8 rounded-2xl text-primary-foreground space-y-4 shadow-lg overflow-hidden relative"
+                className="bg-primary p-10 rounded-[32px] text-primary-foreground relative overflow-hidden shadow-2xl"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="relative z-10">
-                  <h4 className="font-headline font-bold text-lg mb-2">Weekly Insights</h4>
-                  <p className="text-primary-foreground/70 text-sm mb-4">
-                    The most important stories, delivered to your inbox every Sunday.
-                  </p>
+                <div className="relative z-10 space-y-6">
+                  <div>
+                    <h4 className="font-headline font-bold text-2xl mb-2">Weekly Insights</h4>
+                    <p className="text-primary-foreground/70 text-sm leading-relaxed">
+                      Deep dives delivered to your inbox every Sunday.
+                    </p>
+                  </div>
                   <div className="space-y-3">
                     <input 
                       type="email" 
                       placeholder="Email address" 
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-white/50"
+                      className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
                     />
-                    <Button variant="secondary" className="w-full h-10 font-bold text-xs uppercase tracking-widest">
+                    <Button variant="secondary" className="w-full h-12 font-bold text-xs uppercase tracking-widest rounded-2xl">
                       Subscribe
                     </Button>
                   </div>
                 </div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
               </motion.div>
             </div>
           </aside>
