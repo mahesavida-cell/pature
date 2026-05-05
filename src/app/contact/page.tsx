@@ -9,76 +9,99 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, MessageSquare } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContactPage() {
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Pesan terkirim",
+      description: "Terima kasih! Tim kami akan segera menghubungi Anda melalui email.",
+    });
+  };
+
+  const contactInfo = [
+    { icon: <Mail className="h-5 w-5" />, title: "Email redaksi", detail: "redaksi@infoflow.com" },
+    { icon: <MapPin className="h-5 w-5" />, title: "Kantor pusat", detail: "Jl. Minimalis No. 45, Jakarta Selatan" },
+    { icon: <Phone className="h-5 w-5" />, title: "Layanan telepon", detail: "+62 (21) 555-0123" },
+  ];
+
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 pt-40 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <main className="max-w-6xl mx-auto px-4 pt-40 pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          {/* Info Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
+            className="lg:col-span-5 space-y-12"
           >
-            <div className="space-y-4">
-              <Title>Kontak redaksi</Title>
-              <BodyText>Kami terbuka untuk saran, kolaborasi, atau pertanyaan seputar jurnalisme kami.</BodyText>
-            </div>
-
             <div className="space-y-6">
-              <div className="flex gap-4 items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0">
-                  <Mail className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <Heading level={4} className="text-base">Email</Heading>
-                  <MutedText>redaksi@infoflow.com</MutedText>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <Heading level={4} className="text-base">Kantor pusat</Heading>
-                  <MutedText>Jl. Minimalis No. 45, Jakarta Selatan, Indonesia</MutedText>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center shrink-0">
-                  <Phone className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <Heading level={4} className="text-base">Telepon</Heading>
-                  <MutedText>+62 (21) 555-0123</MutedText>
-                </div>
-              </div>
+              <Title className="text-4xl">Hubungi kami</Title>
+              <BodyText>
+                Kami terbuka untuk saran, kolaborasi, atau pertanyaan seputar jurnalisme dan platform kami.
+              </BodyText>
             </div>
+
+            <div className="space-y-8">
+              {contactInfo.map((info, idx) => (
+                <div key={idx} className="flex gap-5 items-start">
+                  <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary shrink-0">
+                    {info.icon}
+                  </div>
+                  <div>
+                    <Heading level={4} className="text-base">{info.title}</Heading>
+                    <MutedText className="text-xs">{info.detail}</MutedText>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Card className="bg-primary/5 border-none shadow-none">
+              <CardContent className="p-6 flex items-center gap-4">
+                <MessageSquare className="h-5 w-5 text-primary" />
+                <p className="text-[11px] font-medium leading-relaxed opacity-70">
+                  Waktu respon rata-rata tim dukungan kami adalah kurang dari 24 jam pada hari kerja.
+                </p>
+              </CardContent>
+            </Card>
           </motion.div>
 
+          {/* Form Side */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-7"
           >
-            <Card>
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-[10px] font-bold opacity-50">Nama lengkap</Label>
-                  <Input id="name" placeholder="Masukkan nama Anda" className="bg-transparent border-primary/10" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[10px] font-bold opacity-50">Alamat email</Label>
-                  <Input id="email" type="email" placeholder="email@contoh.com" className="bg-transparent border-primary/10" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-[10px] font-bold opacity-50">Pesan</Label>
-                  <Textarea id="message" placeholder="Tuliskan pesan Anda di sini..." className="min-h-[150px] bg-transparent border-primary/10" />
-                </div>
-                <Button className="w-full h-11 font-bold text-[11px]">Kirim pesan sekarang</Button>
+            <Card className="border-primary/10 bg-white/60 backdrop-blur-xl">
+              <CardContent className="p-10">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Nama lengkap</Label>
+                      <Input id="name" placeholder="Nama Anda" className="bg-white/40 border-primary/5 h-11" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Alamat email</Label>
+                      <Input id="email" type="email" placeholder="email@contoh.com" className="bg-white/40 border-primary/5 h-11" required />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Subjek</Label>
+                    <Input id="subject" placeholder="Bagaimana kami bisa membantu?" className="bg-white/40 border-primary/5 h-11" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Pesan</Label>
+                    <Textarea id="message" placeholder="Tuliskan pesan Anda secara detail..." className="min-h-[160px] bg-white/40 border-primary/5 resize-none" required />
+                  </div>
+                  <Button type="submit" className="w-full h-12 font-bold text-xs tracking-widest shadow-md">
+                    Kirim pesan sekarang
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </motion.div>

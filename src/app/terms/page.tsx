@@ -4,61 +4,87 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Heading, BodyText, Title, TypographyP } from "@/components/wrapped/Typography";
 import { motion } from "framer-motion";
+import { Separator } from "@/components/ui/separator";
 
 export default function TermsPage() {
+  const sections = [
+    {
+      title: "1. Penerimaan ketentuan",
+      content: "Dengan mengakses platform InfoFlow, Anda setuju untuk terikat oleh ketentuan penggunaan ini, semua hukum dan peraturan yang berlaku, dan setuju bahwa Anda bertanggung jawab untuk kepatuhan terhadap hukum setempat yang berlaku. Jika Anda tidak menyetujui salah satu dari ketentuan ini, Anda dilarang menggunakan atau mengakses situs ini.",
+    },
+    {
+      title: "2. Lisensi penggunaan",
+      content: "Izin diberikan untuk mengunduh satu salinan materi secara sementara di situs web InfoFlow hanya untuk tampilan transien pribadi dan non-komersial. Ini adalah pemberian lisensi, bukan transfer hak milik, dan di bawah lisensi ini Anda tidak boleh memodifikasi materi, menggunakan materi untuk tujuan komersial, atau menghapus hak cipta.",
+    },
+    {
+      title: "3. Akun pengguna",
+      content: "Saat Anda membuat akun di platform kami, Anda harus memberikan informasi yang akurat dan lengkap. Kegagalan untuk melakukan hal ini merupakan pelanggaran terhadap ketentuan kami. Anda bertanggung jawab untuk menjaga kerahasiaan kata sandi Anda.",
+    },
+    {
+      title: "4. Hak kekayaan intelektual",
+      content: "Seluruh konten yang disajikan di InfoFlow, termasuk namun tidak terbatas pada teks, grafis, logo, ikon, dan gambar adalah milik InfoFlow Media Group atau pemasok kontennya dan dilindungi oleh hukum hak cipta internasional.",
+    },
+    {
+      title: "5. Pembatasan tanggung jawab",
+      content: "Dalam keadaan apa pun InfoFlow tidak bertanggung jawab atas kerugian (termasuk, tanpa batasan, kerugian karena hilangnya data atau keuntungan, atau karena gangguan bisnis) yang timbul dari penggunaan atau ketidakmampuan untuk menggunakan materi di InfoFlow.",
+    },
+  ];
+
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 pt-40 pb-20">
+      <main className="max-w-4xl mx-auto px-4 pt-40 pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-12"
+          className="space-y-16"
         >
-          <div className="space-y-4">
-            <Title>Ketentuan penggunaan</Title>
-            <BodyText>Patuhi aturan main kami untuk pengalaman membaca yang lebih baik bagi semua.</BodyText>
+          <div className="space-y-6">
+            <Title className="text-4xl">Ketentuan penggunaan</Title>
+            <div className="flex items-center gap-4">
+              <MutedText className="text-[10px] font-bold opacity-40">Terakhir diperbarui: 24 Oktober 2024</MutedText>
+              <Separator orientation="vertical" className="h-3" />
+              <MutedText className="text-[10px] font-bold opacity-40">Versi 2.0</MutedText>
+            </div>
           </div>
 
-          <div className="prose prose-neutral max-w-none space-y-10">
-            <section className="space-y-4">
-              <Heading level={2}>1. Penerimaan ketentuan</Heading>
-              <TypographyP>
-                Dengan mengakses platform InfoFlow, Anda setuju untuk terikat oleh ketentuan penggunaan ini, semua hukum dan peraturan yang berlaku, dan setuju bahwa Anda bertanggung jawab untuk kepatuhan terhadap hukum setempat yang berlaku.
-              </TypographyP>
-            </section>
+          <Card className="border-none shadow-none bg-white/20 backdrop-blur-md">
+            <CardContent className="p-0 space-y-12">
+              <BodyText className="text-sm italic opacity-60">
+                Mohon baca ketentuan penggunaan ini dengan teliti sebelum menggunakan layanan InfoFlow. Penggunaan Anda atas layanan ini menandakan persetujuan Anda untuk terikat oleh ketentuan berikut.
+              </BodyText>
 
-            <section className="space-y-4">
-              <Heading level={2}>2. Penggunaan platform</Heading>
-              <TypographyP>
-                InfoFlow disediakan untuk konsumsi informasi pribadi Anda. Anda dilarang menggunakan platform ini untuk tujuan komersial yang tidak sah atau aktivitas ilegal yang dapat merugikan sistem atau pengguna lain.
-              </TypographyP>
-            </section>
-
-            <section className="space-y-4">
-              <Heading level={2}>3. Akun pengguna</Heading>
-              <TypographyP>
-                Saat membuat akun, Anda wajib memberikan informasi yang akurat. Anda bertanggung jawab penuh atas keamanan kata sandi Anda dan setiap aktivitas yang terjadi di bawah akun Anda.
-              </TypographyP>
-            </section>
-
-            <section className="space-y-4">
-              <Heading level={2}>4. Hak kekayaan intelektual</Heading>
-              <TypographyP>
-                Seluruh konten di InfoFlow, termasuk teks, gambar, dan desain, adalah milik InfoFlow atau pemberi lisensi kami. Anda tidak diperkenankan menyalin atau mendistribusikan konten kami tanpa izin tertulis.
-              </TypographyP>
-            </section>
-
-            <section className="space-y-4">
-              <Heading level={2}>5. Pembatasan tanggung jawab</Heading>
-              <TypographyP>
-                InfoFlow tidak bertanggung jawab atas kerugian tidak langsung, insidental, atau konsekuensial yang timbul dari penggunaan atau ketidakmampuan untuk menggunakan layanan kami.
-              </TypographyP>
-            </section>
-          </div>
+              {sections.map((section, idx) => (
+                <div key={idx} className="space-y-4">
+                  <Heading level={3} className="text-lg">{section.title}</Heading>
+                  <TypographyP className="text-base text-foreground/70 leading-relaxed">
+                    {section.content}
+                  </TypographyP>
+                  {idx !== sections.length - 1 && <Separator className="mt-8 opacity-5" />}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </motion.div>
       </main>
       <Footer />
     </div>
   );
 }
+
+// Helper to keep the file consistent with context
+const MutedText = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <span className={`text-sm text-muted-foreground/60 font-body font-medium tracking-wide ${className}`}>
+    {children}
+  </span>
+);
+
+const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div className={`rounded-lg ${className}`}>
+    {children}
+  </div>
+);
+
+const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div className={className}>{children}</div>
+);
