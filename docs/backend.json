@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "ReaderProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ReaderProfile",
+      "type": "object",
+      "description": "Represents a profile for a user who reads content and can subscribe to news notifications. This entity stores information about individual readers, separate from content creators.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ReaderProfile entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the reader, primarily used for sending notifications and as a unique identifier for login. This email must be unique across all reader profiles.",
+          "format": "email"
+        },
+        "name": {
+          "type": "string",
+          "description": "The display name or full name of the reader."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the reader profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the reader profile was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "name",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Subscription": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subscription",
+      "type": "object",
+      "description": "Manages a reader's subscription status for receiving news notifications via email, typically a general platform-wide news feed.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Subscription entity."
+        },
+        "readerId": {
+          "type": "string",
+          "description": "Reference to the ReaderProfile who owns this subscription. (Relationship: ReaderProfile 1:N Subscription)"
+        },
+        "subscribedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the subscription was initially created or activated.",
+          "format": "date-time"
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "A boolean flag indicating whether the subscription is currently active. If false, the reader should not receive notifications."
+        }
+      },
+      "required": [
+        "id",
+        "readerId",
+        "subscribedAt",
+        "isActive"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/readerProfiles/{readerId}",
+        "definition": {
+          "entityName": "ReaderProfile",
+          "schema": {
+            "$ref": "#/backend/entities/ReaderProfile"
+          },
+          "description": "Stores individual reader profiles. The document ID (`{readerId}`) corresponds to the Firebase Authentication UID of the reader, enabling path-based ownership. The 'id' field within the document should match the document ID for self-validation.",
+          "params": [
+            {
+              "name": "readerId",
+              "description": "The unique identifier (Firebase Auth UID) of the reader. This serves as the document ID for the reader's profile."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/readerProfiles/{readerId}/subscriptions/{subscriptionId}",
+        "definition": {
+          "entityName": "Subscription",
+          "schema": {
+            "$ref": "#/backend/entities/Subscription"
+          },
+          "description": "Stores individual subscription records for a specific reader. The 'readerId' field within each document is denormalized from the parent path for authorization independence, allowing security rules to verify ownership without `get()` calls. The 'id' field within the document should match the document ID for the subscription.",
+          "params": [
+            {
+              "name": "readerId",
+              "description": "The unique identifier (Firebase Auth UID) of the parent reader, owning this subscription."
+            },
+            {
+              "name": "subscriptionId",
+              "description": "The unique identifier for a specific subscription document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to be minimalistic, secure, and highly efficient, focusing exclusively on managing reader profiles and their subscriptions, as content management is delegated to Sanity.io. \n\n**Authorization Independence:** This design achieves authorization independence by using a hierarchical path structure combined with explicit denormalization. For `ReaderProfile` documents, the document ID (`{readerId}`) directly corresponds to the Firebase `request.auth.uid` of the authenticated user. This means a user's profile is found at `/readerProfiles/{request.auth.uid}`, making access checks immediate and atomic without requiring `get()` calls to other documents.\n\nFor `Subscription` documents, they are nested under the `ReaderProfile` at `/readerProfiles/{readerId}/subscriptions/{subscriptionId}`. Critically, each `Subscription` document *also* contains a `readerId` field within its data (`resource.data.readerId`). This denormalization ensures that security rules can verify ownership (i.e., `request.auth.uid == readerId` from the path AND `request.auth.uid == resource.data.readerId` from the document data) without needing to fetch the parent `ReaderProfile` document. This allows for atomic creation, update, and deletion of subscriptions.\n\n**Querying for Authorization and Security Rules (QAPs):** The structure inherently supports secure `list` operations (QAPs) by leveraging path-based ownership. A reader can easily query their own profile at `/readerProfiles/{request.auth.uid}`. Similarly, a reader can query all their subscriptions by listing documents under `/readerProfiles/{request.auth.uid}/subscriptions`. The security rules would enforce that the `readerId` wildcard in the path matches `request.auth.uid`, effectively filtering results to only the current user's data. This prevents unauthorized users from performing wide `list` queries across all profiles or subscriptions, fulfilling the QAP principle by moving authorization filtering to the path and explicit document fields rather than relying on `get()` calls or complex rule logic.\n\n**Structural Segregation and Access Modeling:** Each collection (`/readerProfiles` and `/readerProfiles/{readerId}/subscriptions`) has a homogeneous security posture. All documents within `/readerProfiles` are private to the `readerId` specified in the path. Similarly, all `Subscription` documents are private to their parent `readerId`. This clear segregation simplifies security rules significantly, making them easy to write, understand, and debug."
+  }
+}

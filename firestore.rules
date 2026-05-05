@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CORE PHILOSOPHY:
+     * This ruleset enforces a strict user-ownership model designed for a reader-subscription platform. 
+     * Security is centered around the Firebase Authentication UID, which serves as the primary key 
+     * for user profiles and the root of the data hierarchy.
+     *
+     * DATA STRUCTURE:
+     * All reader data is organized hierarchically under /readerProfiles/{readerId}. 
+     * Subscriptions are nested subcollections of the reader profile to which they belong.
+     *
+     * KEY SECURITY DECISIONS:
+     * 1. Path-Based Authorization: We map the reader's UID directly to the document ID in /readerProfiles.
+     * 2. Denormalization for Performance: The 'readerId' is stored within Subscription documents. 
+     *    This allows rules to verify ownership instantly using document data without performing 
+     *    expensive cross-document lookups (get() calls).
+     * 3. Relational Integrity: On creation, we strictly enforce that the 'id' and 'readerId' 
+     *    fields within the document body match the path wildcards.
+     * 4. Prototyping Flexibility: While authorization is strict, we do not enforce specific 
+     *    data schemas or types for content fields to allow for rapid development iterations.
+     */
+
+    // --- Global Helper Functions ---
+
+    /** 
+     * @description Checks if the request is made by an authenticated user.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** 
+     * @description Checks if the authenticated user's UID matches the provided userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** 
+     * @description Checks if the document exists and the current user is the owner.
+     * Used for state-changing operations like update and delete.
+     */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for managing individual reader profiles.
+     * @path /readerProfiles/{readerId}
+     * @allow (get/list) If the readerId matches the authenticated user's UID.
+     * @allow (create) If the user is authenticated and the internal 'id' matches their UID.
+     * @deny (all) If the UID does not match the path, preventing users from accessing other profiles.
+     * @principle Ownership and Path-to-Data consistency.
+     */
+    match /readerProfiles/{readerId} {
+      allow get, list: if isOwner(readerId);
+      
+      allow create: if isOwner(readerId) && request.resource.data.id == readerId;
+      
+      allow update: if isOwner(readerId) && request.resource.data.id == resource.data.id;
+      
+      allow delete: if isExistingOwner(readerId);
+
+      /**
+       * @description Rules for a reader's news subscriptions.
+       * @path /readerProfiles/{readerId}/subscriptions/{subscriptionId}
+       * @allow (get/list) If the parent readerId matches the authenticated user's UID.
+       * @allow (create) If the user is the owner and the internal 'readerId' matches the path.
+       * @deny (create) If the 'readerId' in the document doesn't match the user's UID.
+       * @principle Relational integrity through denormalization.
+       */
+      match /subscriptions/{subscriptionId} {
+        allow get, list: if isOwner(readerId);
+        
+        allow create: if isOwner(readerId) && request.resource.data.readerId == readerId;
+        
+        allow update: if isOwner(readerId) && request.resource.data.readerId == resource.data.readerId;
+        
+        allow delete: if isExistingOwner(readerId);
+      }
+    }
+
+    // Default deny for any paths not explicitly matched above.
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
