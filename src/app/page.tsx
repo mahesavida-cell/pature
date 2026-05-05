@@ -213,7 +213,6 @@ export default function Home() {
                     fill
                     className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
                     priority
-                    data-ai-hint="abstract news"
                   />
                   <div className="absolute top-6 left-6">
                     <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
@@ -274,18 +273,25 @@ export default function Home() {
                   </motion.div>
                 ))}
               </div>
-              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
-                Lihat berita lainnya <ChevronRight className="h-4 w-4" />
-              </Button>
+              <Link href="/latest" className="block">
+                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
+                  Lihat berita lainnya <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
 
         {/* Pilihan Redaksi Section */}
         <section className="mb-24 lg:mb-32">
-          <div className="flex items-center gap-3 mb-10 border-b border-primary/5 pb-6">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <Heading level={2}>Pilihan redaksi</Heading>
+          <div className="flex items-center justify-between mb-10 border-b border-primary/5 pb-6">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <Heading level={2}>Pilihan redaksi</Heading>
+            </div>
+            <Link href="/editors-choice">
+              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline">Lihat semua</Button>
+            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
             {curatedStories.map((story, idx) => (
@@ -303,7 +309,6 @@ export default function Home() {
                       alt={story.title} 
                       fill 
                       className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                      data-ai-hint="news coverage"
                     />
                   </div>
                   <div className="space-y-2">
@@ -325,7 +330,9 @@ export default function Home() {
         <section className="mb-24 lg:mb-32">
           <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
             <Heading level={2}>Berita terbaru</Heading>
-            <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold tracking-widest px-6 hover:bg-primary/5">Lihat semua</Button>
+            <Link href="/latest">
+              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
+            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             {posts.map((post, idx) => (
@@ -345,7 +352,6 @@ export default function Home() {
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          data-ai-hint="blog post"
                         />
                       )}
                       <div className="absolute top-4 left-4">
@@ -383,11 +389,16 @@ export default function Home() {
 
         {/* Rekomendasi Section */}
         <section className="mb-32">
-          <div className="flex items-center gap-4 mb-12 border-b border-primary/5 pb-6">
-            <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary" />
+          <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <Heading level={2}>Rekomendasi untuk anda</Heading>
             </div>
-            <Heading level={2}>Rekomendasi untuk anda</Heading>
+            <Link href="/recommendations">
+              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             {recommendedPosts.map((post, idx) => (
@@ -405,7 +416,6 @@ export default function Home() {
                       alt={post.title} 
                       fill 
                       className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                      data-ai-hint="lifestyle"
                     />
                   </div>
                   <div className="space-y-3">
