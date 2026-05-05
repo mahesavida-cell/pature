@@ -96,13 +96,38 @@ export default function NewsDetailPage() {
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
   const threadedComments = useMemo(() => {
-    if (!firestoreComments) return [];
+    const mockComments = [
+      {
+        id: "mock-1",
+        authorName: "Budi Santoso",
+        content: "Analisis Yang Sangat Tajam Tentang Minimalisme. Saya Setuju Bahwa Ruang Kosong Adalah Elemen Desain Yang Seringkali Diremehkan Namun Sangat Berpengaruh.",
+        createdAt: { toDate: () => new Date(Date.now() - 3600000) },
+        likes: ["user-x", "user-y", "user-z"],
+        authorId: "user-budi",
+        replies: [
+          {
+            id: "mock-reply-1",
+            authorName: "Alex Rivers",
+            content: "Terima Kasih, Budi! Memang Benar, Ruang Kosong Memberikan Ruang Bernapas Bagi Konten Utama.",
+            createdAt: { toDate: () => new Date(Date.now() - 1800000) },
+            likes: ["user-budi"],
+            authorId: "author-alex-1",
+          }
+        ]
+      }
+    ];
+
+    if (!firestoreComments || firestoreComments.length === 0) return mockComments;
+
     const roots = firestoreComments.filter(c => !c.parentId);
     const replies = firestoreComments.filter(c => !!c.parentId);
-    return roots.map(root => ({
+    
+    const realThreads = roots.map(root => ({
       ...root,
       replies: replies.filter(r => r.parentId === root.id)
     }));
+
+    return [...mockComments, ...realThreads];
   }, [firestoreComments]);
 
   useEffect(() => {
@@ -201,7 +226,7 @@ export default function NewsDetailPage() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="group flex gap-3 md:gap-4 p-4 rounded-md bg-white border border-border/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300"
+          className="group flex gap-3 md:gap-4 p-4 rounded-md bg-white border border-border/50 hover:border-primary/20 transition-all duration-300"
         >
           <Avatar className={cn("h-10 w-10 shadow-sm", isReply && "h-8 w-8")}>
             <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
@@ -214,7 +239,7 @@ export default function NewsDetailPage() {
                 <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
                 {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
                 <span className="text-[9px] text-muted-foreground font-medium shrink-0">
-                  {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
+                  {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
                 </span>
               </div>
             </div>
@@ -350,7 +375,7 @@ export default function NewsDetailPage() {
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
                   <Badge className="rounded-full px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                    {firestoreComments?.length || 0}
+                    {threadedComments.length}
                   </Badge>
                 </div>
                 {user ? (
@@ -393,7 +418,7 @@ export default function NewsDetailPage() {
                   ) : threadedComments.length > 0 ? (
                     threadedComments.map((comment) => <CommentItem key={comment.id} comment={comment} />)
                   ) : (
-                    <div className="py-20 text-center rounded-md border-2 border-dashed border-border/40">
+                    <div className="py-20 text-center rounded-md border border-dashed border-border/40">
                       <MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
                     </div>
                   )}
@@ -460,3 +485,4 @@ export default function NewsDetailPage() {
     </div>
   );
 }
+
