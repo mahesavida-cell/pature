@@ -18,7 +18,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Sparkles } from "lucide-react";
 
-// Helper function for relative time
+// Helper function for relative time with correct capitalization
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "Baru Saja";
   const date = new Date(dateInput);
@@ -27,11 +27,11 @@ const formatRelativeTime = (dateInput: any) => {
 
   if (diffInSeconds < 60) return "Baru Saja";
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} Menit Yang Lalu`;
+  if (minutes < 60) return `${minutes} Menit yang lalu`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} Jam Yang Lalu`;
+  if (hours < 24) return `${hours} Jam yang lalu`;
   const days = Math.floor(hours / 24);
-  return `${days} Hari Yang Lalu`;
+  return `${days} Hari yang lalu`;
 };
 
 export default function ProfilePage() {

@@ -41,7 +41,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// Helper function for relative time in Title Case
+// Helper function for relative time with correct capitalization
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "Baru Saja";
   
@@ -52,13 +52,13 @@ const formatRelativeTime = (dateInput: any) => {
   if (diffInSeconds < 60) return "Baru Saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} Menit Yang Lalu`;
+  if (minutes < 60) return `${minutes} Menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} Jam Yang Lalu`;
+  if (hours < 24) return `${hours} Jam yang lalu`;
   
   const days = Math.floor(hours / 24);
-  return `${days} Hari Yang Lalu`;
+  return `${days} Hari yang lalu`;
 };
 
 const CommentItem = ({ 
@@ -392,10 +392,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam Yang Lalu" },
-    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam Yang Lalu" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari Yang Lalu" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam Yang Lalu" }
+    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
+    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
   ];
 
   return (
