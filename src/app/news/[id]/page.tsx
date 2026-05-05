@@ -141,7 +141,10 @@ const ShareButton = ({ post }: { post: any }) => {
     { name: "X", icon: <XIcon />, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}` },
   ];
 
-  if (isMobile && typeof navigator !== 'undefined' && !!navigator.share) {
+  // Perbaikan TypeScript: Cek navigator.share dengan lebih aman
+  const canShare = typeof navigator !== 'undefined' && !!navigator.share;
+
+  if (isMobile && canShare) {
     return (
       <Button 
         variant="outline" 

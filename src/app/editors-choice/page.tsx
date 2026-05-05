@@ -16,6 +16,7 @@ export default function EditorsChoicePage() {
   const db = useFirestore();
 
   const editorsQuery = useMemoFirebase(() => {
+    // Keamanan ekstra: pastikan db tersedia sebelum memanggil collection()
     if (!db) return null;
     return query(collection(db, "posts"), where("category", "==", "Media"), limit(12));
   }, [db]);

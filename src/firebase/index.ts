@@ -6,13 +6,12 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 /**
- * Inisialisasi Firebase yang robust untuk lingkungan Client dan Server (SSR/Build).
- * Memastikan tidak ada error 'app/no-options' saat proses prerendering.
+ * Robust Firebase initialization for Client and Server (SSR/Build) environments.
+ * Prevents 'app/no-options' errors during prerendering.
  */
 export function initializeFirebase() {
   const isClient = typeof window !== 'undefined';
   
-  // Gunakan variabel lingkungan jika tersedia, atau fallback ke config hardcoded
   const config = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || firebaseConfig.apiKey,
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
@@ -23,15 +22,22 @@ export function initializeFirebase() {
   let app: FirebaseApp;
   
   if (!getApps().length) {
-    app = initializeApp(config as any);
+    // Only attempt to initialize if we have a config, or if we're on the client
+    if (config.apiKey || isClient) {
+      app = initializeApp(config as any);
+    } else {
+      // Fallback for build time if envs are missing
+      app = null as unknown as FirebaseApp;
+    }
   } else {
     app = getApp();
   }
 
+  // Return initialized services or safely typed nulls for SSR
   return {
     firebaseApp: app,
-    auth: isClient ? getAuth(app) : (null as unknown as Auth),
-    firestore: isClient ? getFirestore(app) : (null as unknown as Firestore)
+    auth: (isClient && app) ? getAuth(app) : (null as unknown as Auth),
+    firestore: (isClient && app) ? getFirestore(app) : (null as unknown as Firestore)
   };
 }
 
