@@ -16,8 +16,8 @@ import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react"
 import Image from "next/image";
 
 /**
- * Halaman autentikasi PatureNews yang ringkas dan fungsional.
- * Menggunakan komponen Tabs murni ShadCN UI untuk stabilitas maksimal.
+ * Halaman autentikasi PatureNews yang sangat ringkas dan stabil.
+ * Menggunakan komponen Tabs murni ShadCN UI tanpa wrapper tambahan.
  */
 export default function AuthPage() {
   const auth = useAuth();
@@ -129,7 +129,7 @@ export default function AuthPage() {
                 <TabsTrigger value="register" className="text-[10px] font-bold tracking-tight rounded-md">Daftar</TabsTrigger>
               </TabsList>
               
-              <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none space-y-2">
+              <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -173,7 +173,7 @@ export default function AuthPage() {
                 </Button>
               </TabsContent>
 
-              <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none space-y-2">
+              <TabsContent value="register" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
