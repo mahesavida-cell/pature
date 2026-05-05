@@ -53,7 +53,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PortableText } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
-import { POST_DETAIL_QUERY } from "@/sanity/lib/queries";
+import { POST_DETAIL_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -85,7 +85,7 @@ const formatRelativeTime = (dateInput: any) => {
   if (minutes < 60) return `${minutes} menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} Jam yang lalu`;
+  if (hours < 24) return `${hours} jam yang lalu`;
   
   const days = Math.floor(hours / 24);
   return `${days} hari yang lalu`;
@@ -348,6 +348,7 @@ export default function NewsDetailPage() {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sanityPost, setSanityPost] = useState<any>(null);
+  const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
   const [isLoadingSanity, setIsLoadingSanity] = useState(true);
   
   const { scrollYProgress } = useScroll();
@@ -355,18 +356,22 @@ export default function NewsDetailPage() {
 
   useEffect(() => {
     setMounted(true);
-    const fetchSanityPost = async () => {
+    const fetchData = async () => {
       if (!params.id) return;
       try {
-        const data = await client.fetch(POST_DETAIL_QUERY, { slug: params.id });
-        setSanityPost(data);
+        const [postData, trendingData] = await Promise.all([
+          client.fetch(POST_DETAIL_QUERY, { slug: params.id }),
+          client.fetch(TRENDING_POSTS_QUERY)
+        ]);
+        setSanityPost(postData);
+        setTrendingPosts(trendingData);
       } catch (err) {
-        console.error("Gagal menarik detail berita:", err);
+        console.error("Gagal menarik data:", err);
       } finally {
         setIsLoadingSanity(false);
       }
     };
-    fetchSanityPost();
+    fetchData();
 
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
@@ -465,16 +470,16 @@ export default function NewsDetailPage() {
   }
 
   if (!post) {
-    return <div className="min-h-screen flex flex-col items-center justify-center p-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-4">Kembali ke Beranda</Button></Link></div>;
+    return <div className="min-h-screen flex flex-col items-center justify-center p-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-4">Kembali ke beranda</Button></Link></div>;
   }
 
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 md:pt-32">
+      <main className="max-w-6xl mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 pt-12">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
@@ -514,7 +519,6 @@ export default function NewsDetailPage() {
                 </div>
               </div>
 
-              {/* Main image with details */}
               <div className="mb-12">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
                   <Image src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
@@ -530,12 +534,10 @@ export default function NewsDetailPage() {
                 )}
               </div>
 
-              {/* Typography content area */}
               <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
                 {post.body && <PortableText value={post.body} />}
               </article>
 
-              {/* Image carousel / Gallery mode */}
               {post.gallery && post.gallery.length > 0 && (
                 <section className="mb-20">
                   <div className="space-y-2 mb-8">
@@ -562,7 +564,6 @@ export default function NewsDetailPage() {
 
               <Separator className="my-16 opacity-30" />
 
-              {/* Discussion community */}
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
@@ -618,7 +619,7 @@ export default function NewsDetailPage() {
             </motion.div>
           </div>
           
-          <aside className="lg:col-span-4">
+          <aside className="lg:col-span-4 pt-12">
             <div className="sticky top-24 space-y-12">
               <section>
                 <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
@@ -626,24 +627,26 @@ export default function NewsDetailPage() {
                   <Heading level={3} className="text-lg">Berita terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
-                  {[1, 2, 3, 4].map((id) => (
-                    <Link key={id} href={`/news/${id}`} className="flex gap-4 group">
+                  {trendingPosts.length > 0 ? trendingPosts.map((trend) => (
+                    <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
-                        <Image src={`https://picsum.photos/seed/${id}/200/200`} alt="Pop" fill className="object-cover group-hover:scale-105 transition-transform" />
+                        <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">Berita • {id} jam yang lalu</span>
-                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">Analisis Mendalam Tren Industri Modern</h4>
+                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{trend.categories?.[0] || "Berita"} • {trend.readTime || "5 mnt"} baca</span>
+                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4>
                       </div>
                     </Link>
-                  ))}
+                  )) : (
+                    <MutedText className="text-xs opacity-40 italic">Tidak ada berita populer saat ini.</MutedText>
+                  )}
                 </div>
                 <div className="mt-8 pt-4 border-t border-border/10">
-                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
+                  <Link href="/latest" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
                 </div>
               </section>
               
-              <Card className="bg-primary/95 text-primary-foreground p-6 rounded-lg shadow-md border-none">
+              <Card className="bg-primary/95 text-primary-foreground p-8 rounded-lg shadow-md border-none">
                 <div className="text-center">
                   <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
                   <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>

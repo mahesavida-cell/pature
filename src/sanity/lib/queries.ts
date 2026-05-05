@@ -41,6 +41,19 @@ export const POST_DETAIL_QUERY = defineQuery(`*[_type == "post" && slug.current 
 }`);
 
 /**
+ * Query untuk berita trending (terpopuler) yang ditampilkan di sidebar.
+ */
+export const TRENDING_POSTS_QUERY = defineQuery(`*[_type == "post" && isTrending == true && defined(slug.current)] | order(publishedAt desc) [0...5] {
+  _id,
+  title,
+  "slug": slug.current,
+  mainImage,
+  publishedAt,
+  readTime,
+  "categories": categories[]->title
+}`);
+
+/**
  * Query untuk kategori navigasi di Navbar.
  */
 export const CATEGORIES_QUERY = defineQuery(`*[_type == "category"] | order(title asc) {
