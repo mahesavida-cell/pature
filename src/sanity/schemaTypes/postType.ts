@@ -66,6 +66,7 @@ export const postType = defineType({
       title: 'Tanggal terbit',
       type: 'datetime',
       initialValue: () => new Date().toISOString(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'readTime',
