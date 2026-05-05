@@ -71,7 +71,7 @@ export default function AuthPage() {
         >
           <div className="text-center mb-8 space-y-2">
             <Heading level={2}>InfoFlow Reader</Heading>
-            <BodyText>Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
+            <BodyText>Dapatkan Berita Terbaru Langsung Di Genggaman Anda.</BodyText>
           </div>
 
           <Card>
@@ -142,7 +142,7 @@ export default function AuthPage() {
                       {isLoading ? "Memproses..." : "Daftar Berlangganan"}
                     </Button>
                     <MutedText className="text-[10px] text-center block pt-2">
-                      Dengan mendaftar, Anda setuju untuk menerima update berita terbaru kami.
+                      Dengan Mendaftar, Anda Setuju Untuk Menerima Update Berita Terbaru Kami.
                     </MutedText>
                   </div>
                 </TabsContent>

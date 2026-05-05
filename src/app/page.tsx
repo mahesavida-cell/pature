@@ -25,8 +25,8 @@ export default function Home() {
       title: "The Evolution of Minimalist Digital Design",
       category: "Design",
       author: "Alex Rivers",
-      readTime: "5 min read",
-      excerpt: "Exploring how whitespace and clear typography became the standard for modern information systems.",
+      readTime: "5 Min Read",
+      excerpt: "Exploring How Whitespace And Clear Typography Became The Standard For Modern Information Systems.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     },
     {
@@ -34,8 +34,8 @@ export default function Home() {
       title: "Sustainable Architecture In Urban Environments",
       category: "Culture",
       author: "Maya Lin",
-      readTime: "8 min read",
-      excerpt: "How cities are integrating green spaces into vertical living to combat rising global temperatures.",
+      readTime: "8 Min Read",
+      excerpt: "How Cities Are Integrating Green Spaces Into Vertical Living To Combat Rising Global Temperatures.",
       image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
     },
     {
@@ -43,8 +43,8 @@ export default function Home() {
       title: "Future of Decentralized Global Markets",
       category: "Business",
       author: "Jordan Lee",
-      readTime: "6 min read",
-      excerpt: "An in-depth look at how blockchain is reshaping traditional banking infrastructures in emerging economies.",
+      readTime: "6 Min Read",
+      excerpt: "An In-Depth Look At How Blockchain Is Reshaping Traditional Banking Infrastructures In Emerging Economies.",
       image: PlaceHolderImages.find(img => img.id === "business-news")?.imageUrl
     }
   ];
@@ -96,7 +96,7 @@ export default function Home() {
                 The Silent Revolution of Professional Information
               </Title>
               <BodyText className="text-base md:text-xl text-foreground/70">
-                Discover how InfoFlow is setting a new benchmark for minimalist digital journalism.
+                Discover How InfoFlow Is Setting A New Benchmark For Minimalist Digital Journalism.
               </BodyText>
               <div className="flex items-center gap-3 pt-2">
                 <Link href="/news/1" className="flex-1 sm:flex-none">
@@ -240,7 +240,7 @@ export default function Home() {
                 <div className="relative z-10">
                   <h4 className="font-headline font-bold text-lg mb-2">InfoFlow Premium</h4>
                   <p className="text-[10px] text-primary-foreground/70 mb-6 leading-relaxed">
-                    Exclusive reports and zero ads.
+                    Exclusive Reports And Zero Ads.
                   </p>
                   <motion.div whileTap={{ scale: 0.95 }}>
                     <Button variant="secondary" className="w-full font-bold text-[10px] uppercase tracking-widest h-10 rounded-xl">

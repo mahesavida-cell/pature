@@ -20,7 +20,7 @@ export default function CreatePost() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
           <div>
             <Heading level={2}>Create New Post</Heading>
-            <BodyText>Share your insights with the InfoFlow community.</BodyText>
+            <BodyText>Share Your Insights With The InfoFlow Community.</BodyText>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" className="gap-2">
@@ -43,7 +43,7 @@ export default function CreatePost() {
                 <Label htmlFor="post-title" className="text-lg font-headline">Article Title</Label>
                 <Input 
                   id="post-title" 
-                  placeholder="Enter a compelling title..." 
+                  placeholder="Enter A Compelling Title..." 
                   className="text-xl h-14 font-headline border-none shadow-none bg-accent/5 focus-visible:ring-1"
                 />
               </div>
@@ -65,7 +65,7 @@ export default function CreatePost() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="read-time">Estimated Read Time (minutes)</Label>
+                  <Label htmlFor="read-time">Estimated Read Time (Minutes)</Label>
                   <Input id="read-time" type="number" placeholder="5" />
                 </div>
               </div>
@@ -77,8 +77,8 @@ export default function CreatePost() {
                     <ImageIcon className="h-6 w-6 text-accent" />
                   </div>
                   <div className="space-y-1">
-                    <BodyText className="font-medium">Click to upload or drag and drop</BodyText>
-                    <BodyText className="text-sm">PNG, JPG or WebP (max. 10MB)</BodyText>
+                    <BodyText className="font-medium">Click To Upload Or Drag And Drop</BodyText>
+                    <BodyText className="text-sm">PNG, JPG Or WebP (Max. 10MB)</BodyText>
                   </div>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function CreatePost() {
                 <Label htmlFor="excerpt">Short Excerpt</Label>
                 <Textarea 
                   id="excerpt" 
-                  placeholder="Summarize the core message of your post..." 
+                  placeholder="Summarize The Core Message Of Your Post..." 
                   className="resize-none min-h-[100px] bg-accent/5 border-none shadow-none"
                 />
               </div>
@@ -96,7 +96,7 @@ export default function CreatePost() {
                 <Label htmlFor="content">Main Content</Label>
                 <Textarea 
                   id="content" 
-                  placeholder="Write your story here. Use markdown for formatting..." 
+                  placeholder="Write Your Story Here. Use Markdown For Formatting..." 
                   className="min-h-[400px] bg-accent/5 border-none shadow-none"
                 />
               </div>

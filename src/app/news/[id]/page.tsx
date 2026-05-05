@@ -79,7 +79,7 @@ export default function NewsDetailPage() {
       category: "Design",
       author: "Alex Rivers",
       date: "Oct 24, 2024",
-      readTime: "5 min read",
+      readTime: "5 Min Read",
       content: "The landscape of digital design is shifting towards a 'less is more' approach. We're seeing a massive transition where whitespace isn't just empty space—it's a tool for focus. Modern information systems are prioritizing clarity over complexity, ensuring that users can find what they need without cognitive overload.\n\nTypography has also taken center stage. Bold, readable fonts are replacing decorative ones to improve accessibility and speed of information consumption. In this article, we explore why this trend is not just a passing phase but a fundamental change in how we interact with data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
@@ -108,7 +108,7 @@ export default function NewsDetailPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary mb-8 group">
                 <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-1" />
-                Kembali ke feed
+                Kembali Ke Feed
               </Link>
 
               <div className="space-y-4 mb-10">
@@ -162,7 +162,7 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div className="flex-1 space-y-3">
                       <Input 
-                        placeholder="Tulis pendapat Anda..." 
+                        placeholder="Tulis Pendapat Anda..." 
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
                         className="bg-accent/5 border-none h-12 rounded-xl"
@@ -176,7 +176,7 @@ export default function NewsDetailPage() {
                   </div>
                 ) : (
                   <div className="bg-accent/5 p-6 rounded-2xl text-center mb-10 border border-dashed">
-                    <MutedText className="block mb-4">Silakan masuk untuk ikut berdiskusi.</MutedText>
+                    <MutedText className="block mb-4">Silakan Masuk Untuk Ikut Berdiskusi.</MutedText>
                     <Link href="/auth">
                       <Button variant="outline" className="rounded-xl px-8">Masuk / Daftar</Button>
                     </Link>
@@ -185,7 +185,7 @@ export default function NewsDetailPage() {
 
                 <div className="space-y-6">
                   {isCommentsLoading ? (
-                    <MutedText>Memuat komentar...</MutedText>
+                    <MutedText>Memuat Komentar...</MutedText>
                   ) : (
                     comments?.map((comment) => (
                       <motion.div 
@@ -200,7 +200,7 @@ export default function NewsDetailPage() {
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Baru saja</span>
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Baru Saja</span>
                           </div>
                           <BodyText className="text-sm opacity-80">{comment.content}</BodyText>
                         </div>
@@ -235,7 +235,7 @@ export default function NewsDetailPage() {
 
               <Card className="bg-primary text-primary-foreground p-8 rounded-[24px]">
                 <h4 className="font-headline font-bold text-xl mb-2">Newsletter</h4>
-                <p className="text-xs opacity-70 mb-6">Jangan ketinggalan berita terpenting hari ini.</p>
+                <p className="text-xs opacity-70 mb-6">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
                 <div className="space-y-3">
                   <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-10 rounded-xl" />
                   <Button variant="secondary" className="w-full h-10 rounded-xl font-bold uppercase tracking-widest text-[10px]">Langganan</Button>
