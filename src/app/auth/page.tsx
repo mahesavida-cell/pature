@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -27,7 +26,7 @@ export default function AuthPage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Please fill in all fields.",
+        description: "Please Fill In All Fields.",
       });
       return;
     }
@@ -38,13 +37,13 @@ export default function AuthPage() {
         initiateEmailSignUp(auth, email, password);
         toast({
           title: "Success",
-          description: "Account created! Welcome to InfoFlow.",
+          description: "Account Created! Welcome To InfoFlow.",
         });
       } else {
         initiateEmailSignIn(auth, email, password);
         toast({
-          title: "Welcome back",
-          description: "Signed in successfully.",
+          title: "Welcome Back",
+          description: "Signed In Successfully.",
         });
       }
       router.push("/");

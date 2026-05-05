@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -50,7 +49,7 @@ export default function NewsDetailPage() {
       id: "mock-1",
       authorId: "mock-author-1",
       authorName: "Sarah Jenkins",
-      content: "Artikel Ini Memberikan Wawasan Yang Luar Biasa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
+      content: "Artikel Ini Memberikan Wawasan Yang Luar Bisa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
       createdAt: "2 Jam Yang Lalu",
       parentId: null,
       likes: []
@@ -173,6 +172,7 @@ export default function NewsDetailPage() {
     return (
       <div className={cn("space-y-4", isReply && "ml-12 border-l pl-4 border-border/50")}>
         <motion.div 
+          whileTap={{ scale: 0.99 }}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex gap-4 p-4 rounded-2xl hover:bg-accent/5 transition-colors"
