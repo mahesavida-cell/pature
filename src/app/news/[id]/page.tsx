@@ -41,13 +41,38 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
+  // Mock comments for demonstration
+  const mockComments = [
+    {
+      id: "mock-1",
+      authorName: "Sarah Jenkins",
+      content: "This Article Provides Such A Great Insight Into Modern Design Trends. Minimalism Is Truly The Future Of Digital Information.",
+      createdAt: "2 Hours Ago",
+    },
+    {
+      id: "mock-2",
+      authorName: "David Chen",
+      content: "I Completely Agree With The Point About Whitespace. It's Essential For User Focus And Reducing Cognitive Overload.",
+      createdAt: "5 Hours Ago",
+    },
+    {
+      id: "mock-3",
+      authorName: "Elena Rodriguez",
+      content: "Minimalism Is Not Just About Aesthetic, It's About Functionality. Great Read For Every Modern Designer Out There.",
+      createdAt: "Yesterday",
+    }
+  ];
+
   // Fetch comments from Firestore
   const commentsQuery = useMemoFirebase(() => {
     if (!db || !params.id) return null;
     return collection(db, "posts", params.id as string, "comments");
   }, [db, params.id]);
 
-  const { data: comments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
+  const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
+
+  // Combine firestore comments with mock comments for the prototype
+  const allComments = [...(firestoreComments || []), ...mockComments];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,7 +90,7 @@ export default function NewsDetailPage() {
     addDocumentNonBlocking(colRef, {
       content: commentText,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "Anonymous",
+      authorName: user.displayName || user.email?.split('@')[0] || "Anonymous User",
       createdAt: serverTimestamp(),
       postId: params.id
     });
@@ -75,12 +100,12 @@ export default function NewsDetailPage() {
   const posts = [
     {
       id: "1",
-      title: "The Evolution of Minimalist Digital Design",
+      title: "The Evolution Of Minimalist Digital Design",
       category: "Design",
       author: "Alex Rivers",
       date: "Oct 24, 2024",
       readTime: "5 Min Read",
-      content: "The landscape of digital design is shifting towards a 'less is more' approach. We're seeing a massive transition where whitespace isn't just empty space—it's a tool for focus. Modern information systems are prioritizing clarity over complexity, ensuring that users can find what they need without cognitive overload.\n\nTypography has also taken center stage. Bold, readable fonts are replacing decorative ones to improve accessibility and speed of information consumption. In this article, we explore why this trend is not just a passing phase but a fundamental change in how we interact with data.",
+      content: "The Landscape Of Digital Design Is Shifting Towards A 'Less Is More' Approach. We're Seeing A Massive Transition Where Whitespace Isn't Just Empty Space—It's A Tool For Focus. Modern Information Systems Are Prioritizing Clarity Over Complexity, Ensuring That Users Can Find What They Need Without Cognitive Overload.\n\nTypography Has Also Taken Center Stage. Bold, Readable Fonts Are Replacing Decorative Ones To Improve Accessibility And Speed Of Information Consumption. In This Article, We Explore Why This Trend Is Not Just A Passing Phase But A Fundamental Change In How We Interact With Data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
@@ -92,6 +117,13 @@ export default function NewsDetailPage() {
       category: "Design",
       timeAgo: "2 Hours Ago",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
+    },
+    {
+      id: "2",
+      title: "The Future Of Sustainability In Architecture",
+      category: "Culture",
+      timeAgo: "4 Hours Ago",
+      image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
     }
   ];
 
@@ -153,7 +185,7 @@ export default function NewsDetailPage() {
 
               {/* Comments Section */}
               <section id="comments" className="mb-16">
-                <Heading level={3} className="mb-8">Diskusi ({comments?.length || 0})</Heading>
+                <Heading level={3} className="mb-8">Diskusi ({allComments.length})</Heading>
                 
                 {user ? (
                   <div className="flex gap-4 mb-10 items-start">
@@ -184,10 +216,10 @@ export default function NewsDetailPage() {
                 )}
 
                 <div className="space-y-6">
-                  {isCommentsLoading ? (
+                  {isCommentsLoading && firestoreComments === null ? (
                     <MutedText>Memuat Komentar...</MutedText>
                   ) : (
-                    comments?.map((comment) => (
+                    allComments.map((comment) => (
                       <motion.div 
                         key={comment.id}
                         initial={{ opacity: 0, y: 10 }}
@@ -200,7 +232,9 @@ export default function NewsDetailPage() {
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Baru Saja</span>
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold">
+                              {typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}
+                            </span>
                           </div>
                           <BodyText className="text-sm opacity-80">{comment.content}</BodyText>
                         </div>
@@ -216,7 +250,7 @@ export default function NewsDetailPage() {
             <div className="sticky top-24 space-y-12">
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <Heading level={3} className="text-xl">Trending</Heading>
+                <Heading level={3} className="text-xl">Trending Stories</Heading>
               </div>
 
               <div className="space-y-8">
