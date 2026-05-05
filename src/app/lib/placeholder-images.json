@@ -1,0 +1,29 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-news",
+      "description": "Abstract news background",
+      "imageUrl": "https://picsum.photos/seed/infoflow1/1200/600",
+      "imageHint": "abstract news"
+    },
+    {
+      "id": "tech-news",
+      "description": "Modern technology layout",
+      "imageUrl": "https://picsum.photos/seed/infoflow2/600/400",
+      "imageHint": "technology modern"
+    },
+    {
+      "id": "culture-news",
+      "description": "Art and culture",
+      "imageUrl": "https://picsum.photos/seed/infoflow3/600/400",
+      "imageHint": "art gallery"
+    },
+    {
+      "id": "business-news",
+      "description": "Minimalist business",
+      "imageUrl": "https://picsum.photos/seed/infoflow4/600/400",
+      "imageHint": "business office"
+    }
+  ]
+}
