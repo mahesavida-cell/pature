@@ -14,6 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react";
 import Image from "next/image";
 
+/**
+ * Halaman autentikasi PatureNews.
+ * Menggunakan komponen Tabs murni ShadCN UI untuk stabilitas maksimal.
+ */
 export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -24,7 +28,6 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user && !isUserLoading) {
       router.push("/");
@@ -121,11 +124,11 @@ export default function AuthPage() {
 
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-3 h-8 bg-primary/5 p-1 rounded-lg">
-                <TabsTrigger value="login" className="text-[10px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="text-[10px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Daftar</TabsTrigger>
+                <TabsTrigger value="login" className="text-[10px] font-bold tracking-tight rounded-md">Masuk</TabsTrigger>
+                <TabsTrigger value="register" className="text-[10px] font-bold tracking-tight rounded-md">Daftar</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-2">
+              <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -169,7 +172,7 @@ export default function AuthPage() {
                 </Button>
               </TabsContent>
 
-              <TabsContent value="register" className="mt-0 focus-visible:outline-none space-y-2">
+              <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 

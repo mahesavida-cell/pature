@@ -41,7 +41,6 @@ import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
   useUser, 
-  useAuth,
   useFirestore, 
   useCollection, 
   useDoc,
@@ -110,7 +109,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const handleNativeShare = async () => {
     try {
-      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      if (typeof navigator !== 'undefined' && 'share' in navigator) {
         await navigator.share({
           title: post.title,
           text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
@@ -140,7 +139,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  if (isMobile && typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+  if (isMobile && typeof navigator !== 'undefined' && 'share' in navigator) {
     return (
       <Button 
         variant="outline" 
@@ -369,7 +368,6 @@ export default function NewsDetailPage() {
         setTrendingPosts(trendingData || []);
         setHasError(false);
       } catch (err) {
-        console.error("Gagal menarik data:", err);
         setHasError(true);
       } finally {
         setIsLoadingSanity(false);
