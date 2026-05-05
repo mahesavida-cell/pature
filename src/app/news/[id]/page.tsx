@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -19,7 +18,6 @@ export default function NewsDetailPage() {
   const params = useParams();
   const [isSaved, setIsSaved] = useState(false);
   
-  // Mock data fetching based on ID
   const posts = [
     {
       id: "1",
@@ -90,7 +88,7 @@ export default function NewsDetailPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               {/* Back Button */}
               <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors mb-8 group">
@@ -144,7 +142,12 @@ export default function NewsDetailPage() {
               </div>
 
               {/* Featured Image */}
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-12 shadow-md">
+              <motion.div 
+                className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-12 shadow-md"
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
                 {post.image && (
                   <Image 
                     src={post.image} 
@@ -154,21 +157,34 @@ export default function NewsDetailPage() {
                     priority
                   />
                 )}
-              </div>
+              </motion.div>
 
               {/* Content */}
               <article className="prose prose-lg max-w-none">
                 {post.content.split('\n\n').map((paragraph, index) => (
-                  <BodyText key={index} className="text-lg md:text-xl mb-6 leading-relaxed">
-                    {paragraph}
-                  </BodyText>
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <BodyText className="text-lg md:text-xl mb-6 leading-relaxed">
+                      {paragraph}
+                    </BodyText>
+                  </motion.div>
                 ))}
               </article>
 
               <Separator className="my-16" />
 
               {/* Interaction Footer */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
+              <motion.div 
+                className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+              >
                 <div className="flex items-center gap-4">
                   <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary">
                     <MessageSquare className="h-5 w-5" />
@@ -180,25 +196,32 @@ export default function NewsDetailPage() {
                   <Button variant="ghost" size="sm" className="h-8">Twitter</Button>
                   <Button variant="ghost" size="sm" className="h-8">LinkedIn</Button>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
 
           {/* Aesthetic Trending Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-24 space-y-10">
-              <div className="flex items-center gap-2 mb-8">
+              <motion.div 
+                className="flex items-center gap-2 mb-8"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
                 <div className="bg-primary/5 p-2 rounded-lg">
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
                 <Heading level={3} className="tracking-tight">Trending Stories</Heading>
-              </div>
+              </motion.div>
 
               <div className="space-y-8">
-                {trendingStories.map((story) => (
+                {trendingStories.map((story, idx) => (
                   <motion.div 
                     key={story.id} 
                     className="group cursor-pointer"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * idx }}
                     whileHover={{ y: -2 }}
                   >
                     <Link href={`/news/${story.id}`} className="flex gap-4">
@@ -231,8 +254,13 @@ export default function NewsDetailPage() {
                 ))}
               </div>
 
-              {/* Newsletter Signup in Sidebar */}
-              <div className="bg-primary p-8 rounded-2xl text-primary-foreground space-y-4 shadow-lg overflow-hidden relative">
+              {/* Newsletter Sidebar */}
+              <motion.div 
+                className="bg-primary p-8 rounded-2xl text-primary-foreground space-y-4 shadow-lg overflow-hidden relative"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
                 <div className="relative z-10">
                   <h4 className="font-headline font-bold text-lg mb-2">Weekly Insights</h4>
                   <p className="text-primary-foreground/70 text-sm mb-4">
@@ -250,7 +278,7 @@ export default function NewsDetailPage() {
                   </div>
                 </div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-              </div>
+              </motion.div>
             </div>
           </aside>
         </div>

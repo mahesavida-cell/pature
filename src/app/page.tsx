@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -84,9 +83,9 @@ export default function Home() {
         {/* Hero Section */}
         <section className="mb-20">
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-xl bg-muted group cursor-pointer shadow-xl">
@@ -99,7 +98,12 @@ export default function Home() {
                   />
                 )}
               </div>
-              <div className="space-y-6">
+              <motion.div 
+                className="space-y-6"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+              >
                 <Badge variant="secondary" className="px-3 py-1 rounded-full border-none">
                   Featured Story
                 </Badge>
@@ -126,89 +130,116 @@ export default function Home() {
                     <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
                   </Button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </section>
 
-        {/* Content Grid: Latest Feed & Popular Side by Side on large screens */}
+        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Latest Feed */}
           <section className="lg:col-span-8">
-            <div className="flex items-center justify-between mb-8 border-b pb-4">
+            <motion.div 
+              className="flex items-center justify-between mb-8 border-b pb-4"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
               <Heading level={2}>Latest Updates</Heading>
               <div className="hidden sm:flex gap-2">
                 <Button variant="outline" size="sm" className="rounded-full px-4">All</Button>
                 <Button variant="ghost" size="sm" className="rounded-full px-4">Tech</Button>
                 <Button variant="ghost" size="sm" className="rounded-full px-4">Design</Button>
               </div>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {posts.map((post) => (
-                <Card key={post.id} className="h-full flex flex-col group border border-border/40">
-                  <Link href={`/news/${post.id}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted rounded-t-lg">
-                      {post.image && (
-                        <Image 
-                          src={post.image} 
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
-                  </Link>
-                  <CardContent className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <MutedText className="uppercase text-[10px] tracking-widest font-bold text-accent">
-                          {post.category}
-                        </MutedText>
-                        <div className="flex items-center gap-1 text-muted-foreground">
-                          <Clock className="h-3 w-3" />
-                          <span className="text-[10px]">{post.readTime}</span>
-                        </div>
+              {posts.map((post, idx) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card className="h-full flex flex-col group border border-border/40">
+                    <Link href={`/news/${post.id}`}>
+                      <div className="relative h-56 w-full overflow-hidden bg-muted rounded-t-lg">
+                        {post.image && (
+                          <Image 
+                            src={post.image} 
+                            alt={post.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        )}
                       </div>
-                      <Link href={`/news/${post.id}`}>
-                        <Heading level={4} className="mb-3 hover:text-accent transition-colors leading-snug">
-                          {post.title}
-                        </Heading>
-                      </Link>
-                      <BodyText className="text-sm line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </BodyText>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
-                      <MutedText className="font-medium">{post.author}</MutedText>
-                      <MessageSquare className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors cursor-pointer" />
-                    </div>
-                  </CardContent>
-                </Card>
+                    </Link>
+                    <CardContent className="p-6 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <MutedText className="uppercase text-[10px] tracking-widest font-bold text-accent">
+                            {post.category}
+                          </MutedText>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Clock className="h-3 w-3" />
+                            <span className="text-[10px]">{post.readTime}</span>
+                          </div>
+                        </div>
+                        <Link href={`/news/${post.id}`}>
+                          <Heading level={4} className="mb-3 hover:text-accent transition-colors leading-snug">
+                            {post.title}
+                          </Heading>
+                        </Link>
+                        <BodyText className="text-sm line-clamp-2 mb-4">
+                          {post.excerpt}
+                        </BodyText>
+                      </div>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
+                        <MutedText className="font-medium">{post.author}</MutedText>
+                        <MessageSquare className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors cursor-pointer" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
             </div>
             
-            <div className="mt-12 flex justify-center">
+            <motion.div 
+              className="mt-12 flex justify-center"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
               <Button variant="outline" className="px-8 gap-2 group">
                 Load More Stories
                 <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-            </div>
+            </motion.div>
           </section>
 
           {/* Popular Section Sidebar */}
           <section className="lg:col-span-4">
             <div className="sticky top-24 space-y-8">
-              <div className="flex items-center gap-2 mb-6 border-b pb-4">
+              <motion.div 
+                className="flex items-center gap-2 mb-6 border-b pb-4"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+              >
                 <TrendingUp className="h-5 w-5 text-accent" />
                 <Heading level={3}>Popular Now</Heading>
-              </div>
+              </motion.div>
 
               <div className="space-y-6">
-                {popularPosts.map((post) => (
+                {popularPosts.map((post, idx) => (
                   <motion.div 
                     key={post.id} 
                     className="flex gap-4 group cursor-pointer"
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
                     whileHover={{ x: 5 }}
                   >
                     <span className="text-2xl font-headline font-bold text-accent/20 transition-colors group-hover:text-accent">
@@ -228,24 +259,30 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Promo Card in Sidebar */}
-              <div className="bg-accent/5 p-6 rounded-xl border border-accent/10 mt-12">
+              {/* Promo Card */}
+              <motion.div 
+                className="bg-accent/5 p-6 rounded-xl border border-accent/10 mt-12"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+              >
                 <Heading level={4} className="mb-2">InfoFlow Premium</Heading>
                 <BodyText className="text-sm mb-4">
                   Get exclusive access to deep-dive reports and ad-free experience.
                 </BodyText>
-                <Button variant="primary" size="sm" className="w-full">Upgrade Now</Button>
-              </div>
+                <Button className="w-full">Upgrade Now</Button>
+              </motion.div>
             </div>
           </section>
         </div>
 
-        {/* Newsletter / CTA */}
+        {/* Newsletter */}
         <section className="mt-32 mb-12">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             className="bg-primary p-12 md:p-20 rounded-3xl text-primary-foreground text-center space-y-8 relative overflow-hidden"
           >
             <div className="relative z-10 space-y-4">
@@ -264,7 +301,6 @@ export default function Home() {
                 <Button variant="secondary" className="h-12 whitespace-nowrap px-10 font-bold">Subscribe</Button>
               </div>
             </div>
-            {/* Subtle background pattern */}
             <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
               <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-white rounded-full blur-3xl"></div>
               <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -317,4 +353,3 @@ export default function Home() {
     </div>
   );
 }
-
