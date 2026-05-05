@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, TrendingUp, ChevronRight, Share2, Sparkles } from "lucide-react";
+import { Clock, Bookmark, ChevronRight, Share2, ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -106,6 +113,84 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
   );
 };
 
+const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sectionTitle: string, viewAllLink: string }) => {
+  return (
+    <section className="mb-24 lg:mb-32">
+      <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
+        <Heading level={2}>{sectionTitle}</Heading>
+        <Link href={viewAllLink}>
+          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
+        </Link>
+      </div>
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full relative group"
+      >
+        <CarouselContent className="-ml-4">
+          {posts.map((post, idx) => (
+            <CarouselItem key={post.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="h-full"
+              >
+                <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
+                  <Link href={`/news/${post.id}`}>
+                    <div className="relative h-56 w-full overflow-hidden bg-muted">
+                      {post.image && (
+                        <Image 
+                          src={post.image} 
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                        />
+                      )}
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                          {post.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </Link>
+                  <CardContent className="p-7 flex-1 flex flex-col">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                      </div>
+                      <Link href={`/news/${post.id}`}>
+                        <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
+                          {post.title}
+                        </h3>
+                      </Link>
+                      <BodyText className="text-sm line-clamp-3 opacity-60">
+                        {post.excerpt}
+                      </BodyText>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
+                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                      <BookmarkButton post={post} />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="hidden lg:block">
+          <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-primary/5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
+          <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-primary/5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+      </Carousel>
+    </section>
+  );
+};
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
 
@@ -133,6 +218,7 @@ export default function Home() {
     { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", excerpt: "Penelitian terbaru menunjukkan potensi besar AI dalam mendeteksi penyakit langka dengan akurasi tinggi.", image: PlaceHolderImages[0].imageUrl, author: "Dr. Elena Smith" },
     { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", excerpt: "Sektor teknologi finansial terus menunjukkan pertumbuhan positif di pasar domestik tahun ini.", image: PlaceHolderImages[1].imageUrl, author: "Marcus Thorne" },
     { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", excerpt: "Menggabungkan seni tradisional dengan teknologi VR, pameran ini menarik perhatian audiens global.", image: PlaceHolderImages[2].imageUrl, author: "Lara Chen" },
+    { id: "h4", title: "Evolusi jurnalisme di era digital", category: "Media", readTime: "6 mnt", excerpt: "Analisis mengenai pergeseran konsumsi media dari media cetak ke platform informasi real-time.", image: PlaceHolderImages[3].imageUrl, author: "Alex Rivers" },
   ];
 
   const posts = [
@@ -162,6 +248,15 @@ export default function Home() {
       readTime: "6 menit baca",
       excerpt: "Pandangan mendalam tentang bagaimana blockchain membentuk kembali infrastruktur perbankan tradisional di ekonomi negara berkembang.",
       image: PlaceHolderImages.find(img => img.id === "business-news")?.imageUrl
+    },
+    {
+      id: "4",
+      title: "Tren gaya hidup ramah lingkungan",
+      category: "Budaya",
+      author: "Sarah Chen",
+      readTime: "4 menit baca",
+      excerpt: "Kesan sederhana namun bermakna dari perubahan gaya hidup masyarakat urban menuju keberlanjutan.",
+      image: PlaceHolderImages[1].imageUrl
     }
   ];
 
@@ -192,6 +287,15 @@ export default function Home() {
       readTime: "5 mnt",
       excerpt: "Menjelajahi desa-desa wisata yang mempertahankan tradisi lokal sambil menjaga ekosistem alam.",
       image: "https://picsum.photos/seed/rec3/600/400"
+    },
+    {
+      id: "r4",
+      title: "Digital nomad: Kehidupan tanpa batas geografis",
+      category: "Gaya hidup",
+      author: "Chris Evans",
+      readTime: "7 mnt",
+      excerpt: "Melihat fenomena bekerja dari mana saja dan dampaknya pada produktivitas serta keseimbangan hidup.",
+      image: "https://picsum.photos/seed/rec4/600/400"
     }
   ];
 
@@ -287,184 +391,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pilihan Redaksi Section */}
-        <section className="mb-24 lg:mb-32">
-          <div className="flex items-center justify-between mb-10 border-b border-primary/5 pb-6">
-            <Heading level={2}>Pilihan redaksi</Heading>
-            <Link href="/editors-choice">
-              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline">Lihat semua</Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
-            {curatedStories.map((post, idx) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.15 }}
-              >
-                <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
-                  <Link href={`/news/${post.id}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted">
-                      <Image 
-                        src={post.image} 
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                          {post.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Link>
-                  <CardContent className="p-7 flex-1 flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
-                      </div>
-                      <Link href={`/news/${post.id}`}>
-                        <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <BodyText className="text-sm line-clamp-3 opacity-60">
-                        {post.excerpt}
-                      </BodyText>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
-                      <BookmarkButton post={post} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        {/* Pilihan Redaksi Section (Carousel) */}
+        <NewsCarousel 
+          posts={curatedStories} 
+          sectionTitle="Pilihan redaksi" 
+          viewAllLink="/editors-choice" 
+        />
 
-        {/* Berita Terbaru Section */}
-        <section className="mb-24 lg:mb-32">
-          <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
-            <Heading level={2}>Berita terbaru</Heading>
-            <Link href="/latest">
-              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
-            {posts.map((post, idx) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ delay: idx * 0.15 }}
-              >
-                <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
-                  <Link href={`/news/${post.id}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted">
-                      {post.image && (
-                        <Image 
-                          src={post.image} 
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      )}
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                          {post.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Link>
-                  <CardContent className="p-7 flex-1 flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
-                      </div>
-                      <Link href={`/news/${post.id}`}>
-                        <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <BodyText className="text-sm line-clamp-3 opacity-60">
-                        {post.excerpt}
-                      </BodyText>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
-                      <BookmarkButton post={post} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        {/* Berita Terbaru Section (Carousel) */}
+        <NewsCarousel 
+          posts={posts} 
+          sectionTitle="Berita terbaru" 
+          viewAllLink="/latest" 
+        />
 
-        {/* Rekomendasi Section */}
-        <section className="mb-32">
-          <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
-            <Heading level={2}>Rekomendasi untuk anda</Heading>
-            <Link href="/recommendations">
-              <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
-            {recommendedPosts.map((post, idx) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.15 }}
-              >
-                <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
-                  <Link href={`/news/${post.id}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted">
-                      <Image 
-                        src={post.image} 
-                        alt={post.title} 
-                        fill 
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                          {post.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Link>
-                  <CardContent className="p-7 flex-1 flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
-                      </div>
-                      <Link href={`/news/${post.id}`}>
-                        <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
-                          {post.title}
-                        </h4>
-                      </Link>
-                      <BodyText className="text-sm line-clamp-3 opacity-60">
-                        {post.excerpt}
-                      </BodyText>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
-                      <BookmarkButton post={post} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        {/* Rekomendasi Section (Carousel) */}
+        <NewsCarousel 
+          posts={recommendedPosts} 
+          sectionTitle="Rekomendasi untuk anda" 
+          viewAllLink="/recommendations" 
+        />
       </main>
       <Footer />
     </div>
