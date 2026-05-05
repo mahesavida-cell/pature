@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -13,11 +14,107 @@ import { Clock, Bookmark, TrendingUp, ChevronRight, Share2, Sparkles } from "luc
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { 
+  useUser, 
+  useFirestore, 
+  useDoc, 
+  useMemoFirebase, 
+  setDocumentNonBlocking, 
+  deleteDocumentNonBlocking 
+} from "@/firebase";
+import { doc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
+  const { user } = useUser();
+  const db = useFirestore();
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const bookmarkRef = useMemoFirebase(() => 
+    user && post.id ? doc(db, "users", user.uid, "bookmarks", post.id) : null, 
+    [db, user, post.id]
+  );
+  const { data: bookmarkData } = useDoc(bookmarkRef);
+  const isSaved = !!bookmarkData;
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      setIsDialogOpen(true);
+      return;
+    }
+    if (!bookmarkRef) return;
+
+    if (isSaved) {
+      deleteDocumentNonBlocking(bookmarkRef);
+      toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
+    } else {
+      setDocumentNonBlocking(bookmarkRef, {
+        postId: post.id,
+        title: post.title,
+        category: post.category,
+        savedAt: new Date().toISOString()
+      }, { merge: true });
+      toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
+    }
+  };
+
+  const buttonSize = variant === "hero" ? "h-11 w-11" : "h-9 w-9";
+
+  return (
+    <>
+      <Button 
+        variant="outline" 
+        size="icon" 
+        className={cn(
+          "rounded-full transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
+          buttonSize,
+          isSaved && "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+        )}
+        onClick={handleToggle}
+      >
+        <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
+      </Button>
+      
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-8">
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
 
 export default function Home() {
-  const [isHeroSaved, setIsHeroSaved] = useState(false);
-  const heroImage = PlaceHolderImages.find(img => img.id === "hero-news");
-  
+  const heroPost = {
+    id: "hero-1",
+    title: "Revolusi senyap informasi profesional",
+    category: "Media",
+    readTime: "5 menit baca",
+    author: "Alex Rivers"
+  };
+
   const headlineStories = [
     { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
     { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", image: PlaceHolderImages[1].imageUrl },
@@ -97,16 +194,14 @@ export default function Home() {
             >
               <Link href="/news/1" className="block group">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
-                  {heroImage?.imageUrl && (
-                    <Image 
-                      src={heroImage.imageUrl} 
-                      alt="Berita utama"
-                      fill
-                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                      priority
-                      data-ai-hint="abstract news"
-                    />
-                  )}
+                  <Image 
+                    src={PlaceHolderImages[0].imageUrl} 
+                    alt="Berita utama"
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                    priority
+                    data-ai-hint="abstract news"
+                  />
                   <div className="absolute top-6 left-6">
                     <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
                       Unggulan hari ini
@@ -115,7 +210,7 @@ export default function Home() {
                 </div>
                 <div className="space-y-4">
                   <Title className="group-hover:text-primary/80 transition-colors">
-                    Revolusi senyap informasi profesional
+                    {heroPost.title}
                   </Title>
                   <BodyText className="line-clamp-2 max-w-3xl">
                     Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.
@@ -124,20 +219,10 @@ export default function Home() {
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
                 <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-[0.15em]">
-                  <Clock className="h-3.5 w-3.5" /> 5 menit baca • Alex Rivers
+                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime} • {heroPost.author}
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className={cn(
-                      "rounded-full h-11 w-11 transition-all duration-300 shadow-sm border-primary/10 hover:bg-primary/5", 
-                      isHeroSaved && "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-                    )}
-                    onClick={() => setIsHeroSaved(!isHeroSaved)}
-                  >
-                    <Bookmark className={cn("h-4 w-4", isHeroSaved && "fill-current")} />
-                  </Button>
+                  <BookmarkButton post={heroPost} variant="hero" />
                   <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5">
                     <Share2 className="h-4 w-4" />
                   </Button>
@@ -240,9 +325,7 @@ export default function Home() {
                     </div>
                     <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
                       <span className="text-[10px] font-bold text-primary/60 tracking-wide">{post.author}</span>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/5">
-                        <Bookmark className="h-4 w-4" />
-                      </Button>
+                      <BookmarkButton post={post} />
                     </div>
                   </CardContent>
                 </Card>
@@ -297,3 +380,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
