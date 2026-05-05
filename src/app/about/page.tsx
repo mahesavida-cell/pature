@@ -40,7 +40,7 @@ export default function AboutPage() {
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             <Title>Kejernihan di tengah arus informasi</Title>
             <BodyText className="text-xl">
-              InfoFlow hadir sebagai wadah bagi informasi berkualitas yang disajikan dengan kejernihan maksimal dan desain yang tenang.
+              PatureNews hadir sebagai wadah bagi informasi berkualitas yang disajikan dengan kejernihan maksimal dan desain yang tenang.
             </BodyText>
           </div>
 
@@ -66,13 +66,13 @@ export default function AboutPage() {
             <div className="space-y-6">
               <Heading level={2}>Mengapa minimalisme?</Heading>
               <TypographyP>
-                Di era di mana informasi mengalir tanpa henti, kami percaya bahwa kualitas jauh lebih penting daripada kuantitas. Gangguan visual seringkali menghalangi pemahaman yang mendalam. Oleh karena itu, InfoFlow menghilangkan elemen yang tidak perlu untuk membiarkan berita berbicara sendiri.
+                Di era di mana informasi mengalir tanpa henti, kami percaya bahwa kualitas jauh lebih penting daripada kuantitas. Gangguan visual seringkali menghalangi pemahaman yang mendalam. Oleh karena itu, PatureNews menghilangkan elemen yang tidak perlu untuk membiarkan berita berbicara sendiri.
               </TypographyP>
             </div>
             <div className="space-y-6">
               <Heading level={2}>Standar jurnalisme</Heading>
               <TypographyP>
-                Setiap konten yang Anda baca di InfoFlow telah melalui proses kurasi yang ketat. Kami menggabungkan kecepatan informasi digital dengan ketelitian jurnalisme tradisional untuk memastikan setiap wawasan yang kami tawarkan memiliki nilai nyata.
+                Setiap konten yang Anda baca di PatureNews telah melalui proses kurasi yang ketat. Kami menggabungkan kecepatan informasi digital dengan ketelitian jurnalisme tradisional untuk memastikan setiap wawasan yang kami tawarkan memiliki nilai nyata.
               </TypographyP>
             </div>
           </div>

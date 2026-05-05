@@ -4,7 +4,7 @@
     "UserProfile": {
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile within the InfoFlow application.",
+      "description": "Represents a user's profile within the PatureNews application.",
       "properties": {
         "id": { "type": "string" },
         "authId": { "type": "string" },
@@ -20,6 +20,7 @@
     "Post": {
       "title": "Post",
       "type": "object",
+      "description": "Main news articles metadata stored in Firestore for interaction (Sync with Sanity).",
       "properties": {
         "title": { "type": "string" },
         "content": { "type": "string" },
@@ -93,7 +94,7 @@
     },
     "/posts/{postId}": {
       "schema": { "$ref": "#/backend/entities/Post" },
-      "description": "Main news articles."
+      "description": "Main news articles interaction metadata."
     },
     "/posts/{postId}/comments/{commentId}": {
       "schema": { "$ref": "#/backend/entities/Comment" },

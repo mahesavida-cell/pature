@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -9,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, ChevronRight, Share2, TrendingUp, TrendingDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Clock, Bookmark, ChevronRight, Share2, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
@@ -170,7 +171,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                         </BodyText>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author || "Penulis InfoFlow"}</span>
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author || "Redaksi PatureNews"}</span>
                         <BookmarkButton post={post} />
                       </div>
                     </CardContent>
@@ -203,11 +204,11 @@ export default function Home() {
   const { data: heroData } = useCollection(heroQuery);
   const heroPost = heroData?.[0] || {
     id: "hero-placeholder",
-    title: "Revolusi senyap informasi profesional",
+    title: "Revolusi senyap informasi profesional di PatureNews",
     category: "Media",
     readTime: "5 menit baca",
     author: "Alex Rivers",
-    excerpt: "Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
+    excerpt: "Temukan bagaimana PatureNews menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
     image: PlaceHolderImages[0].imageUrl
   };
 

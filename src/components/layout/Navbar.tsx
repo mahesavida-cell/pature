@@ -230,7 +230,7 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
-              alt="Pature News Logo" 
+              alt="PatureNews Logo" 
               width={140} 
               height={40} 
               className="h-7 w-auto sm:h-8 object-contain"
@@ -422,9 +422,9 @@ export const Navbar = () => {
                   <div className="pt-10 border-t border-primary/5 mt-auto">
                     <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] mb-4">Informasi</p>
                     <div className="flex flex-col gap-3">
-                      <Link href="/about" className="text-xs font-bold text-muted-foreground/60">Tentang InfoFlow</Link>
-                      <Link href="/contact" className="text-xs font-bold text-muted-foreground/60">Kontak Redaksi</Link>
-                      <Link href="/terms" className="text-xs font-bold text-muted-foreground/60">Syarat & Ketentuan</Link>
+                      <Link href="/about" className="text-xs font-bold text-muted-foreground/60">Tentang PatureNews</Link>
+                      <Link href="/contact" className="text-xs font-bold text-muted-foreground/60">Kontak redaksi</Link>
+                      <Link href="/terms" className="text-xs font-bold text-muted-foreground/60">Syarat & ketentuan</Link>
                     </div>
                   </div>
                 </div>

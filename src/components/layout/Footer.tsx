@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { MutedText, Heading, BodyText } from "@/components/wrapped/Typography";
+import { Heading } from "@/components/wrapped/Typography";
 import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -30,14 +31,14 @@ export const Footer = () => {
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
               <Image 
                 src="/pature_news.png" 
-                alt="Pature News Logo" 
+                alt="PatureNews Logo" 
                 width={160} 
                 height={45} 
                 className="h-9 w-auto object-contain"
               />
             </Link>
             <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium mt-2">
-              InfoFlow adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
+              PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
             </p>
             <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
               {[
@@ -89,7 +90,7 @@ export const Footer = () => {
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                   <Mail className="h-4 w-4" />
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground/80">redaksi@infoflow.com</span>
+                <span className="text-[11px] font-bold text-muted-foreground/80">redaksi@paturenews.com</span>
               </div>
               <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic">
                 Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.
@@ -102,7 +103,7 @@ export const Footer = () => {
         
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <span className="text-[10px] font-bold text-muted-foreground/40">
-            © 2024 Infoflow Media Group. Seluruh hak cipta dilindungi.
+            © 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.
           </span>
           <div className="flex items-center gap-10">
             <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>

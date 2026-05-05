@@ -4,7 +4,7 @@ import {defineField, defineType} from 'sanity'
 
 export const postType = defineType({
   name: 'post',
-  title: 'Artikel Berita',
+  title: 'Artikel berita',
   type: 'document',
   icon: DocumentTextIcon,
   fields: [
@@ -25,8 +25,14 @@ export const postType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'author',
+      title: 'Penulis editorial',
+      type: 'string',
+      initialValue: 'Redaksi PatureNews',
+    }),
+    defineField({
       name: 'mainImage',
-      title: 'Gambar Utama',
+      title: 'Gambar utama',
       type: 'image',
       options: {
         hotspot: true,
@@ -35,12 +41,17 @@ export const postType = defineType({
         {
           name: 'alt',
           type: 'string',
-          title: 'Teks Alternatif',
+          title: 'Teks alternatif',
         },
         {
           name: 'caption',
           type: 'string',
-          title: 'Keterangan Gambar',
+          title: 'Keterangan gambar',
+        },
+        {
+          name: 'credit',
+          type: 'string',
+          title: 'Kredit foto',
         },
       ],
     }),
@@ -52,31 +63,52 @@ export const postType = defineType({
     }),
     defineField({
       name: 'publishedAt',
-      title: 'Tanggal Terbit',
+      title: 'Tanggal terbit',
       type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: 'readTime',
+      title: 'Estimasi waktu baca',
+      type: 'string',
+      description: 'Contoh: 5 menit baca',
     }),
     defineField({
       name: 'excerpt',
-      title: 'Ringkasan',
+      title: 'Ringkasan artikel',
       type: 'text',
       rows: 3,
+      description: 'Digunakan untuk kartu berita dan metadata SEO.',
     }),
     defineField({
       name: 'body',
-      title: 'Isi Berita',
+      title: 'Isi berita',
       type: 'blockContent',
     }),
     defineField({
       name: 'isEditorsChoice',
-      title: 'Pilihan Editor',
+      title: 'Pilihan redaksi',
       type: 'boolean',
+      description: 'Tandai jika artikel ini ingin disematkan sebagai pilihan redaksi.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'isTrending',
+      title: 'Berita trending',
+      type: 'boolean',
+      description: 'Tandai jika artikel ini sedang populer.',
       initialValue: false,
     }),
   ],
   preview: {
     select: {
       title: 'title',
+      author: 'author',
       media: 'mainImage',
+    },
+    prepare(selection) {
+      const {author} = selection
+      return {...selection, subtitle: author && `Oleh ${author}`}
     },
   },
 })

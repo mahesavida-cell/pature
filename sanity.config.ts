@@ -2,7 +2,7 @@
 'use client';
 
 /**
- * Konfigurasi utama untuk Sanity Studio yang tertanam dalam rute /studio.
+ * Konfigurasi utama untuk PatureNews Studio yang tertanam dalam rute /studio.
  */
 
 import {visionTool} from '@sanity/vision';
@@ -13,6 +13,8 @@ import {apiVersion, dataset, projectId} from './src/sanity/env';
 import {schema} from './src/sanity/schemaTypes';
 
 export default defineConfig({
+  name: 'default',
+  title: 'PatureNews Studio',
   basePath: '/studio',
   projectId,
   dataset,
