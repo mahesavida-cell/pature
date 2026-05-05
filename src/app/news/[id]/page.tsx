@@ -89,23 +89,23 @@ const CommentItem = ({
     : "";
 
   return (
-    <div className={cn("space-y-4", depth > 0 && "ml-5 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
+    <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l border-primary/10 pl-4 md:pl-6")}>
       <motion.div 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.4 }}
-        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
+        className="group relative flex gap-3 md:gap-4 p-4 rounded-md bg-white border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
       >
-        <Avatar className={cn("h-10 w-10 shadow-sm shrink-0", depth > 0 && "h-8 w-8")}>
+        <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
-            {comment.authorName[0]}
+            {comment.authorName ? comment.authorName[0].toUpperCase() : "A"}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex flex-col mb-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
-              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
+              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none rounded-sm">Penulis</Badge>}
               <span className="text-[9px] text-muted-foreground font-medium shrink-0">
                 {displayTime}
               </span>
@@ -119,7 +119,7 @@ const CommentItem = ({
               </div>
             )}
           </div>
-          <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words">{comment.content}</BodyText>
+          <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words font-medium">{comment.content}</BodyText>
           <div className="flex items-center gap-5">
             <motion.button 
               whileTap={{ scale: 0.9 }} 
@@ -153,9 +153,9 @@ const CommentItem = ({
             initial={{ opacity: 0, height: 0 }} 
             animate={{ opacity: 1, height: "auto" }} 
             exit={{ opacity: 0, height: 0 }} 
-            className="ml-5 md:ml-10 overflow-hidden"
+            className="ml-4 md:ml-8 overflow-hidden"
           >
-            <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3 mb-4">
+            <div className="p-4 bg-primary/5 rounded-md border border-primary/10 space-y-3 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <MessageSquare className="h-3 w-3 text-primary/40" />
                 <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
@@ -164,13 +164,13 @@ const CommentItem = ({
                 placeholder={`Tulis Balasan Anda...`} 
                 value={replyText} 
                 onChange={(e) => setReplyText(e.target.value)} 
-                className="bg-white border-none min-h-[90px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                className="bg-white border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
               />
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-8 px-3 font-bold text-[10px]">
+                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">
                   Batal
                 </Button>
-                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-md h-8 px-4 font-bold text-[10px] shadow-sm">
+                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">
                   <Send className="h-3 w-3 mr-2" /> Kirim Balasan
                 </Button>
               </div>
@@ -256,19 +256,7 @@ export default function NewsDetailPage() {
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
   const threadedComments = useMemo(() => {
-    const mockComments = [
-      {
-        id: "mock-1",
-        authorName: "Budi Santoso",
-        content: "Analisis Yang Sangat Tajam Tentang Minimalisme. Saya Setuju Bahwa Ruang Kosong Adalah Elemen Desain Yang Seringkali Diremehkan Namun Sangat Berpengaruh.",
-        createdAt: { toDate: () => new Date(Date.now() - 3600000) },
-        likes: ["user-x", "user-y"],
-        authorId: "user-budi",
-        replies: []
-      }
-    ];
-
-    if (!firestoreComments || firestoreComments.length === 0) return mockComments;
+    if (!firestoreComments || firestoreComments.length === 0) return [];
 
     const map = new Map();
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
@@ -326,7 +314,7 @@ export default function NewsDetailPage() {
         title: "Berhasil Diarsipkan",
         description: `"${post.title}" Berhasil Ditambahkan Ke Arsip.`,
         action: (
-          <Button onClick={() => router.push('/profile')} size="sm" variant="secondary" className="font-bold text-[10px] tracking-tight">
+          <Button onClick={() => router.push('/profile')} size="sm" variant="secondary" className="font-bold text-[10px] tracking-tight rounded-sm">
             Lihat Arsip
           </Button>
         ),
@@ -405,13 +393,13 @@ export default function NewsDetailPage() {
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali Ke Feed Berita
               </Link>
               <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
+                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
                 <Title className="text-3xl md:text-4xl font-headline font-bold leading-[1.2] tracking-tight">{post.title}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-white shadow-sm">
                       <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
-                        {post.author ? post.author.split(' ').map(n => n[0]).join('') : "A"}
+                        {post.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -427,7 +415,7 @@ export default function NewsDetailPage() {
                             <Share2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-md font-bold text-[10px]"><p>Bagikan Artikel</p></TooltipContent>
+                        <TooltipContent className="rounded-sm font-bold text-[10px]"><p>Bagikan Artikel</p></TooltipContent>
                       </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -443,17 +431,17 @@ export default function NewsDetailPage() {
                             <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-md font-bold text-[10px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
+                        <TooltipContent className="rounded-sm font-bold text-[10px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
                       </Tooltip>
                     </div>
                   </TooltipProvider>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-12 shadow-md border border-border/10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md mb-12 shadow-md border border-border/10">
                 <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
               </div>
               <article className="prose prose-neutral max-w-none mb-20">
-                {post.content ? post.content.split('\n\n').map((p, i) => (
+                {post.content ? post.content.split('\n\n').map((p: string, i: number) => (
                   <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
                 )) : (
                   <BodyText className="text-lg mb-6 leading-relaxed opacity-90 font-medium">Memuat Konten Artikel...</BodyText>
@@ -463,12 +451,12 @@ export default function NewsDetailPage() {
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
-                  <Badge className="rounded-full px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
+                  <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
                     {firestoreComments?.length || 0}
                   </Badge>
                 </div>
                 {user ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-primary/5 border border-primary/10">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-md bg-primary/5 border border-primary/10">
                     <Avatar className="h-10 w-10 shadow-sm border border-white shrink-0">
                       <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
@@ -477,13 +465,13 @@ export default function NewsDetailPage() {
                         placeholder="Tuliskan Pendapat Anda Tentang Artikel Ini..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none min-h-[100px] rounded-md text-sm shadow-sm px-6 py-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm px-6 py-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
                       />
                       <div className="flex justify-end">
                         <Button 
                           onClick={() => handlePostComment(null)} 
                           disabled={!commentText.trim()}
-                          className="rounded-md gap-2 h-10 px-8 font-bold text-[11px] shadow-sm transition-transform active:scale-95"
+                          className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm transition-transform active:scale-95"
                         >
                           <Send className="h-3.5 w-3.5" /> Kirim Komentar
                         </Button>
@@ -491,10 +479,10 @@ export default function NewsDetailPage() {
                     </div>
                   </motion.div>
                 ) : (
-                  <Card className="bg-primary/5 p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
+                  <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
                     <MutedText className="block mb-6 font-medium text-xs opacity-60">Silakan Masuk Terlebih Dahulu Untuk Bergabung Dalam Diskusi Komunitas Kami.</MutedText>
                     <Link href="/auth">
-                      <Button className="rounded-md px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button>
+                      <Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button>
                     </Link>
                   </Card>
                 )}
@@ -520,8 +508,8 @@ export default function NewsDetailPage() {
                       />
                     ))
                   ) : (
-                    <div className="py-20 text-center rounded-lg border border-dashed border-border/40">
-                      <MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
+                    <div className="py-20 text-center rounded-md border border-dashed border-border/40">
+                      <MutedText className="text-xs opacity-50 font-normal">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
                     </div>
                   )}
                 </div>
@@ -538,7 +526,7 @@ export default function NewsDetailPage() {
                 <div className="space-y-8">
                   {popularStories.map((story) => (
                     <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm">
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-muted shadow-sm">
                         <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       </div>
                       <div className="flex flex-col justify-center gap-1.5">
@@ -550,11 +538,11 @@ export default function NewsDetailPage() {
                 </div>
                 <div className="mt-8 pt-4 border-t border-border/10">
                   <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">
-                    Lihat Lebih Banyak
+                    Lihat Lebih Banyak Berita
                   </Link>
                 </div>
               </div>
-              <Card className="bg-primary text-primary-foreground p-6 rounded-lg shadow-md relative overflow-hidden">
+              <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-10">
                   <TrendingUp className="h-24 w-24" />
                 </div>
@@ -562,7 +550,7 @@ export default function NewsDetailPage() {
                   <Heading level={3} className="text-white text-lg mb-2 tracking-tight">Buletin Berita</Heading>
                   <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Langsung Ke Akun Anda Setiap Hari.</BodyText>
                   <Link href="/auth">
-                    <Button variant="secondary" className="w-full h-11 rounded-md font-bold text-[10px] shadow-sm transition-transform active:scale-95">
+                    <Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm transition-transform active:scale-95">
                       Langganan Sekarang
                     </Button>
                   </Link>
@@ -578,14 +566,14 @@ export default function NewsDetailPage() {
         </Button>
       </motion.div>
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-lg p-8 border-none shadow-xl">
+        <AlertDialogContent className="rounded-md p-8 border-none shadow-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl mb-2">Akses Terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm leading-relaxed opacity-70 mb-2">Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi, Memberikan Suka, Atau Menyimpan Artikel Ini Ke Arsip Anda.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-3 mt-8">
-            <AlertDialogCancel className="rounded-md font-bold text-[10px] h-11 px-6 border-border">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-md font-bold text-[10px] bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 shadow-sm">Masuk Sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 px-6 border-border">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 shadow-sm">Masuk Sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
