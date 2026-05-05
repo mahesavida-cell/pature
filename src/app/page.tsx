@@ -45,6 +45,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -108,8 +109,8 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
             <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 tracking-widest">Batal</AlertDialogCancel>
             <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm tracking-widest text-white">Masuk sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 tracking-widest">Batal</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -256,12 +257,15 @@ export default function Home() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-20">
         {hasError && (
-          <div className="mb-12 p-6 bg-red-50 border border-red-100 rounded-xl flex items-center gap-4 text-red-800">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <div className="text-sm font-medium">
-              Koneksi ke Sanity terganggu. Pastikan domain Anda telah terdaftar di CORS Sanity dashboard. Menampilkan data cadangan...
-            </div>
-          </div>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+            <Alert variant="destructive" className="bg-red-50 border-red-200">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Masalah koneksi data</AlertTitle>
+              <AlertDescription className="text-xs">
+                Gagal memuat berita dari Sanity. Mohon tambahkan domain Anda ke daftar <b>CORS Origins</b> di dashboard Sanity Anda untuk mengaktifkan akses data.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
         )}
 
         <section className="mb-24 lg:mb-32">

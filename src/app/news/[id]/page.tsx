@@ -2,6 +2,7 @@
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { 
@@ -473,199 +475,208 @@ export default function NewsDetailPage() {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
   }
 
-  if (!post && !hasError) {
-    return <div className="min-h-screen flex flex-col items-center justify-center p-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-4">Kembali ke beranda</Button></Link></div>;
-  }
-
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 md:px-6">
         {hasError && (
-          <div className="mt-8 p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-4 text-red-800">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <div className="text-xs font-medium">Koneksi Sanity terganggu. Silakan periksa pengaturan CORS di Sanity dashboard.</div>
-          </div>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
+            <Alert variant="destructive" className="bg-red-50 border-red-200">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Masalah koneksi data</AlertTitle>
+              <AlertDescription className="text-xs">
+                Gagal memuat berita dari Sanity. Mohon tambahkan domain Anda ke daftar <b>CORS Origins</b> di dashboard Sanity Anda untuk mengaktifkan akses data.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
         )}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-          <div className="lg:col-span-8 pt-12">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
-              </Link>
-              
-              <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post?.categories?.[0] || "Berita"}</Badge>
-                <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post?.title || "Judul berita"}</Title>
-                <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border border-white shadow-sm">
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
-                        {post?.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <span className="block font-bold text-xs text-primary">{post?.author || "Redaksi PatureNews"}</span>
-                      <MutedText className="text-[10px] opacity-60 font-medium">
-                        {post?.publishedAt ? new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-- October 2024"} • {post?.readTime || "5 mnt baca"}
-                      </MutedText>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ShareButton post={post} />
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      className={cn(
-                        "rounded-full h-9 w-9 transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
-                        isSaved && 'bg-primary text-primary-foreground border-primary'
-                      )} 
-                      onClick={handleToggleBookmark}
-                    >
-                      <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-12">
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
-                  <Image src={post?.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post?.title || "Berita"} fill className="object-cover" priority />
-                </div>
-                {(post?.mainImage?.caption || post?.mainImage?.credit) && (
-                  <div className="flex items-start gap-3 px-1">
-                    <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div className="space-y-1">
-                      {post.mainImage?.caption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.mainImage.caption}</p>}
-                      {post.mainImage?.credit && <p className="text-[10px] text-muted-foreground italic">{post.mainImage.credit}</p>}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
-                {post?.body ? <PortableText value={post.body} /> : <TypographyP>Memuat isi berita atau konten tidak tersedia...</TypographyP>}
-              </article>
-
-              {post?.gallery && post.gallery.length > 0 && (
-                <section className="mb-20">
-                  <div className="space-y-2 mb-8">
-                    <Heading level={3} className="text-lg">Galeri foto</Heading>
-                  </div>
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {post.gallery.map((img: any, idx: number) => (
-                        <CarouselItem key={idx}>
-                          <div className="space-y-3">
-                            <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted border border-primary/10">
-                              <Image src={img.url} alt={`Galeri foto ${idx}`} fill className="object-cover" />
-                            </div>
-                            {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-4" />
-                    <CarouselNext className="right-4" />
-                  </Carousel>
-                </section>
-              )}
-
-              <Separator className="my-16 opacity-30" />
-
-              <section id="comments" className="mb-24">
-                <div className="flex items-center gap-3 mb-10">
-                  <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
-                  <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                    {firestoreComments?.length || 0}
-                  </Badge>
-                </div>
-                {user ? (
-                  <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10">
-                    <div className="flex gap-4 items-start">
-                      <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
+        
+        {!post && !hasError ? (
+          <div className="mt-20 text-center">
+            <Heading level={2}>Berita tidak ditemukan</Heading>
+            <Link href="/"><Button className="mt-6">Kembali ke beranda</Button></Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
+            <div className="lg:col-span-8 pt-12">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
+                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
+                </Link>
+                
+                <div className="space-y-4 mb-10">
+                  <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post?.categories?.[0] || "Berita"}</Badge>
+                  <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post?.title || "Judul berita"}</Title>
+                  <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 border border-white shadow-sm">
+                        <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
+                          {post?.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
+                        </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <Textarea 
-                          placeholder="Tuliskan pendapat Anda..." 
-                          value={commentText} 
-                          onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                          className="bg-transparent border-primary/10 min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
-                        />
-                        <div className="flex justify-between items-center">
-                          <span className={cn(
-                            "text-[10px] font-bold opacity-40",
-                            commentText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
-                          )}>
-                            {commentText.length}/{MAX_COMMENT_CHARS} karakter tersisa
-                          </span>
-                          <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
-                            <Send className="h-3.5 w-3.5" /> Kirim komentar
-                          </Button>
+                      <div>
+                        <span className="block font-bold text-xs text-primary">{post?.author || "Redaksi PatureNews"}</span>
+                        <MutedText className="text-[10px] opacity-60 font-medium">
+                          {post?.publishedAt ? new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-- October 2024"} • {post?.readTime || "5 mnt baca"}
+                        </MutedText>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ShareButton post={post} />
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className={cn(
+                          "rounded-full h-9 w-9 transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
+                          isSaved && 'bg-primary text-primary-foreground border-primary'
+                        )} 
+                        onClick={handleToggleBookmark}
+                      >
+                        <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-12">
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
+                    <Image src={post?.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post?.title || "Berita"} fill className="object-cover" priority />
+                  </div>
+                  {(post?.mainImage?.caption || post?.mainImage?.credit) && (
+                    <div className="flex items-start gap-3 px-1">
+                      <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="space-y-1">
+                        {post.mainImage?.caption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.mainImage.caption}</p>}
+                        {post.mainImage?.credit && <p className="text-[10px] text-muted-foreground italic">{post.mainImage.credit}</p>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
+                  {post?.body ? <PortableText value={post.body} /> : <TypographyP>Memuat isi berita atau konten tidak tersedia...</TypographyP>}
+                </article>
+
+                {post?.gallery && post.gallery.length > 0 && (
+                  <section className="mb-20">
+                    <div className="space-y-2 mb-8">
+                      <Heading level={3} className="text-lg">Galeri foto</Heading>
+                    </div>
+                    <Carousel className="w-full">
+                      <CarouselContent>
+                        {post.gallery.map((img: any, idx: number) => (
+                          <CarouselItem key={idx}>
+                            <div className="space-y-3">
+                              <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted border border-primary/10">
+                                <Image src={img.url} alt={`Galeri foto ${idx}`} fill className="object-cover" />
+                              </div>
+                              {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="left-4" />
+                      <CarouselNext className="right-4" />
+                    </Carousel>
+                  </section>
+                )}
+
+                <Separator className="my-16 opacity-30" />
+
+                <section id="comments" className="mb-24">
+                  <div className="flex items-center gap-3 mb-10">
+                    <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
+                    <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
+                      {firestoreComments?.length || 0}
+                    </Badge>
+                  </div>
+                  {user ? (
+                    <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10">
+                      <div className="flex gap-4 items-start">
+                        <Avatar className="h-10 w-10 shrink-0">
+                          <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 space-y-2">
+                          <Textarea 
+                            placeholder="Tuliskan pendapat Anda..." 
+                            value={commentText} 
+                            onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
+                            className="bg-transparent border-primary/10 min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
+                          />
+                          <div className="flex justify-between items-center">
+                            <span className={cn(
+                              "text-[10px] font-bold opacity-40",
+                              commentText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
+                            )}>
+                              {commentText.length}/{MAX_COMMENT_CHARS} karakter tersisa
+                            </span>
+                            <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
+                              <Send className="h-3.5 w-3.5" /> Kirim komentar
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <Card className="bg-white/40 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
-                    <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
-                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
-                  </Card>
-                )}
-                <div className="space-y-8">
-                  {isCommentsLoading ? (
-                    <div className="flex flex-col items-center py-20 gap-4">
-                      <div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                    </div>
-                  ) : threadedComments.length > 0 ? (
-                    threadedComments.map((comment) => (
-                      <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
-                    ))
-                  ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
-                </div>
-              </section>
-            </motion.div>
-          </div>
-          
-          <aside className="lg:col-span-4 pt-12">
-            <div className="sticky top-24 space-y-12">
-              <section>
-                <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  <Heading level={3} className="text-lg">Berita terpopuler</Heading>
-                </div>
-                <div className="space-y-8">
-                  {trendingPosts.length > 0 ? trendingPosts.map((trend) => (
-                    <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
-                        <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
-                      </div>
-                      <div className="flex flex-col justify-center">
-                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{trend.categories?.[0] || "Berita"} • {trend.readTime || "5 mnt"} baca</span>
-                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4>
-                      </div>
-                    </Link>
-                  )) : (
-                    <MutedText className="text-xs opacity-40 italic">Tidak ada berita populer saat ini.</MutedText>
+                  ) : (
+                    <Card className="bg-white/40 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
+                      <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
+                      <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
+                    </Card>
                   )}
-                </div>
-                <div className="mt-8 pt-4 border-t border-border/10">
-                  <Link href="/latest" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
-                </div>
-              </section>
-              
-              <Card className="bg-primary/95 text-primary-foreground p-8 rounded-lg shadow-md border-none">
-                <div className="text-center">
-                  <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
-                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
-                </div>
-              </Card>
+                  <div className="space-y-8">
+                    {isCommentsLoading ? (
+                      <div className="flex flex-col items-center py-20 gap-4">
+                        <div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                      </div>
+                    ) : threadedComments.length > 0 ? (
+                      threadedComments.map((comment) => (
+                        <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
+                      ))
+                    ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
+                  </div>
+                </section>
+              </motion.div>
             </div>
-          </aside>
-        </div>
+            
+            <aside className="lg:col-span-4 pt-12">
+              <div className="sticky top-24 space-y-12">
+                <section>
+                  <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <Heading level={3} className="text-lg">Berita terpopuler</Heading>
+                  </div>
+                  <div className="space-y-8">
+                    {trendingPosts.length > 0 ? trendingPosts.map((trend) => (
+                      <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
+                          <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{trend.categories?.[0] || "Berita"} • {trend.readTime || "5 mnt"} baca</span>
+                          <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4>
+                        </div>
+                      </Link>
+                    )) : (
+                      <MutedText className="text-xs opacity-40 italic">Tidak ada berita populer saat ini.</MutedText>
+                    )}
+                  </div>
+                  <div className="mt-8 pt-4 border-t border-border/10">
+                    <Link href="/latest" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
+                  </div>
+                </section>
+                
+                <Card className="bg-primary/95 text-primary-foreground p-8 rounded-lg shadow-md border-none">
+                  <div className="text-center">
+                    <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
+                    <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
+                    <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
+                  </div>
+                </Card>
+              </div>
+            </aside>
+          </div>
+        )}
       </main>
       
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
@@ -681,11 +692,12 @@ export default function NewsDetailPage() {
             <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
             <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Footer />
     </div>
   );
 }

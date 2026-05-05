@@ -4,11 +4,11 @@ import { apiVersion, dataset, projectId, useCdn } from '../env'
 
 /**
  * Konfigurasi Sanity Client untuk PatureNews.
- * Menghubungkan frontend Next.js dengan dataset di Sanity.io secara stabil.
+ * Menggunakan useCdn: true untuk performa maksimal dan stabilitas akses publik.
  */
 export const client = createClient({
   projectId: "owl5t2fh",
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: true, // Mengaktifkan CDN untuk performa dan stabilitas akses data publik
+  useCdn: true, 
 })
