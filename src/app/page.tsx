@@ -50,7 +50,7 @@ export default function Home() {
 
   const popularPosts = [
     { id: "1", title: "Mengapa Tipografi Lebih Penting Dari Yang Anda Pikirkan", category: "Desain", rank: "01" },
-    { id: "2", title: "Kebangkitan AI Dalam Jurnalisme Modern", category: "Teknologi", rank: "02" },
+    { id: "2", title: "Kebangkitan Ai Dalam Jurnalisme Modern", category: "Teknologi", rank: "02" },
     { id: "3", title: "10 Prinsip Hidup Berkelanjutan", category: "Budaya", rank: "03" }
   ];
 
@@ -61,10 +61,10 @@ export default function Home() {
         <section className="mb-12 md:mb-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-xl bg-muted group shadow-lg"
+              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-lg bg-muted group shadow-md"
             >
               {heroImage?.imageUrl && (
                 <Image 
@@ -88,16 +88,16 @@ export default function Home() {
                 </Badge>
                 <MutedText className="text-[10px] font-bold">Hari Ini</MutedText>
               </div>
-              <Title className="leading-tight text-3xl sm:text-4xl md:text-6xl font-headline tracking-tighter">
+              <Title className="leading-tight text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tighter">
                 Revolusi Senyap Informasi Profesional
               </Title>
-              <BodyText className="text-base md:text-xl text-foreground/70">
+              <BodyText className="text-base md:text-lg text-foreground/70">
                 Temukan Bagaimana InfoFlow Menjadi Standar Baru Untuk Jurnalisme Digital Minimalis.
               </BodyText>
               <div className="flex items-center gap-3 pt-2">
                 <Link href="/news/1" className="flex-1 sm:flex-none">
-                  <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button className="w-full sm:px-10 h-12 text-xs font-bold rounded-lg shadow-md">
+                  <motion.div whileTap={{ scale: 0.98 }}>
+                    <Button className="w-full sm:px-10 h-11 text-xs font-bold rounded-md shadow-sm">
                       Baca Artikel
                     </Button>
                   </motion.div>
@@ -107,8 +107,8 @@ export default function Home() {
                     variant="outline" 
                     size="icon" 
                     className={cn(
-                      "rounded-full h-12 w-12 transition-all duration-300 shadow-sm", 
-                      isSaved && "bg-primary text-primary-foreground border-primary shadow-md"
+                      "rounded-full h-11 w-11 transition-all duration-300 shadow-sm", 
+                      isSaved && "bg-primary text-primary-foreground border-primary shadow-sm"
                     )}
                     onClick={() => setIsSaved(!isSaved)}
                   >
@@ -123,22 +123,22 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
           <section className="lg:col-span-8">
             <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
-              <Heading level={2} className="text-xl md:text-3xl font-headline font-bold">Cerita Terbaru</Heading>
+              <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Cerita Terbaru</Heading>
               <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat Semua</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {posts.map((post, idx) => (
                 <motion.div
                   key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: idx * 0.1 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.99 }}
                 >
-                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-lg overflow-hidden shadow-sm hover:shadow-md">
+                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-lg overflow-hidden shadow-sm">
                     <Link href={`/news/${post.id}`}>
-                      <div className="relative h-48 w-full overflow-hidden bg-muted">
+                      <div className="relative h-44 w-full overflow-hidden bg-muted">
                         {post.image && (
                           <Image 
                             src={post.image} 
@@ -161,7 +161,7 @@ export default function Home() {
                           <span className="text-[10px] font-bold text-muted-foreground">{post.readTime}</span>
                         </div>
                         <Link href={`/news/${post.id}`}>
-                          <h3 className="text-lg font-headline font-bold mb-2 group-hover:text-accent transition-colors leading-snug">
+                          <h3 className="text-base font-headline font-bold mb-2 group-hover:text-accent transition-colors leading-snug">
                             {post.title}
                           </h3>
                         </Link>
@@ -182,8 +182,8 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-            <motion.div className="mt-12 flex justify-center" whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] rounded-lg shadow-sm">
+            <motion.div className="mt-12 flex justify-center" whileTap={{ scale: 0.98 }}>
+              <Button variant="outline" className="w-full sm:w-auto px-10 h-11 font-bold text-[10px] rounded-md shadow-sm">
                 Lihat Lebih Banyak
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
@@ -204,7 +204,7 @@ export default function Home() {
                     whileTap={{ x: 5 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <span className="text-2xl font-headline font-bold text-primary/10 group-hover:text-primary/40 transition-colors">
+                    <span className="text-xl font-headline font-bold text-primary/10 group-hover:text-primary/40 transition-colors">
                       {post.rank}
                     </span>
                     <div className="space-y-1 flex-1">
@@ -221,17 +221,17 @@ export default function Home() {
                 ))}
               </div>
               <motion.div 
-                className="bg-primary p-8 rounded-xl text-primary-foreground mt-8 relative overflow-hidden shadow-lg"
-                whileHover={{ scale: 1.02 }}
+                className="bg-primary p-6 rounded-lg text-primary-foreground mt-8 relative overflow-hidden shadow-md"
+                whileHover={{ y: -2 }}
                 transition={{ duration: 0.3 }}
               >
                 <div className="relative z-10">
-                  <h4 className="font-headline font-bold text-lg mb-2">InfoFlow Premium</h4>
+                  <h4 className="font-headline font-bold text-base mb-2">InfoFlow Premium</h4>
                   <p className="text-[10px] text-primary-foreground/70 mb-6 leading-relaxed">
                     Laporan Eksklusif Dan Tanpa Iklan.
                   </p>
-                  <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button variant="secondary" className="w-full font-bold text-[10px] h-10 rounded-lg">
+                  <motion.div whileTap={{ scale: 0.98 }}>
+                    <Button variant="secondary" className="w-full font-bold text-[10px] h-9 rounded-md">
                       Tingkatkan Akun
                     </Button>
                   </motion.div>
@@ -241,10 +241,10 @@ export default function Home() {
           </section>
         </div>
       </main>
-      <footer className="border-t py-16 bg-white/50 mt-20">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-8">
-          <Link href="/" className="font-headline text-2xl font-bold text-primary">InfoFlow</Link>
-          <div className="flex gap-6 text-[11px] font-bold text-muted-foreground">
+      <footer className="border-t py-12 bg-white/50 mt-20">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6">
+          <Link href="/" className="font-headline text-xl font-bold text-primary">InfoFlow</Link>
+          <div className="flex gap-6 text-[10px] font-bold text-muted-foreground">
             <Link href="#" className="hover:text-primary">Tentang Kami</Link>
             <Link href="#" className="hover:text-primary">Kontak</Link>
             <Link href="#" className="hover:text-primary">Privasi</Link>

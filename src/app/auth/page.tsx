@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -86,18 +87,18 @@ export default function AuthPage() {
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
           <div className="text-center mb-8 space-y-2">
-            <Heading level={2}>InfoFlow Reader</Heading>
-            <BodyText>Dapatkan Berita Terbaru Langsung Di Genggaman Anda.</BodyText>
+            <Heading level={2} className="text-2xl">InfoFlow Reader</Heading>
+            <BodyText className="text-sm">Dapatkan Berita Terbaru Langsung Di Genggaman Anda.</BodyText>
           </div>
 
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="rounded-lg shadow-md border-none">
+            <CardContent className="pt-8">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8">
                   <TabsTrigger value="login">Masuk Sekarang</TabsTrigger>
@@ -107,26 +108,28 @@ export default function AuthPage() {
                 <TabsContent value="login">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Alamat Email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat Email</Label>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="rounded-md h-11"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Kata Sandi</Label>
+                      <Label htmlFor="password" title="Title case" className="text-[10px] font-bold opacity-60">Kata Sandi</Label>
                       <Input 
                         id="password" 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="rounded-md h-11"
                       />
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-xl font-bold tracking-tight" 
+                      className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -138,26 +141,28 @@ export default function AuthPage() {
                 <TabsContent value="register">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email">Alamat Email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat Email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="rounded-md h-11"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password">Kata Sandi</Label>
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata Sandi</Label>
                       <Input 
                         id="reg-password" 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="rounded-md h-11"
                       />
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-xl font-bold tracking-tight" 
+                      className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
@@ -172,17 +177,17 @@ export default function AuthPage() {
                   <Separator />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white px-2 text-muted-foreground font-bold">Atau Masuk Dengan</span>
+                  <span className="bg-white px-3 text-muted-foreground font-bold">Atau Masuk Dengan</span>
                 </div>
               </div>
 
-              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
                 <Button 
                   variant="outline" 
-                  className="w-full h-12 rounded-xl font-bold tracking-tight flex items-center justify-center gap-3 border-2 border-border/50 hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="w-full h-11 rounded-md font-bold tracking-tight flex items-center justify-center gap-3 border border-border/60 hover:bg-accent/5 hover:border-accent/40 transition-all duration-300 shadow-sm"
                   onClick={handleGoogleSignIn}
                 >
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -204,7 +209,7 @@ export default function AuthPage() {
                 </Button>
               </motion.div>
 
-              <MutedText className="text-[10px] text-center block pt-6">
+              <MutedText className="text-[9px] text-center block pt-8 opacity-50">
                 Dengan Melanjutkan, Anda Setuju Untuk Menerima Update Berita Terbaru Kami.
               </MutedText>
             </CardContent>
