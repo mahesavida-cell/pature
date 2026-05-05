@@ -14,7 +14,7 @@ import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply, Heart } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
@@ -27,9 +27,20 @@ import {
 } from "@/firebase";
 import { collection, serverTimestamp, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function NewsDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const { user } = useUser();
   const db = useFirestore();
   const { toast } = useToast();
@@ -39,6 +50,7 @@ export default function NewsDetailPage() {
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -89,7 +101,10 @@ export default function NewsDetailPage() {
   }, []);
 
   const handlePostComment = (parentId: string | null = null) => {
-    if (!user) return;
+    if (!user) {
+      setIsLoginDialogOpen(true);
+      return;
+    }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
 
@@ -113,7 +128,11 @@ export default function NewsDetailPage() {
   };
 
   const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
-    if (!user || !db || commentId.startsWith('mock-')) return;
+    if (!user) {
+      setIsLoginDialogOpen(true);
+      return;
+    }
+    if (!db || commentId.startsWith('mock-')) return;
     
     const isLiked = currentLikes.includes(user.uid);
     const newLikes = isLiked 
@@ -124,6 +143,14 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, {
       likes: newLikes
     });
+  };
+
+  const handleReplyClick = (commentId: string) => {
+    if (!user) {
+      setIsLoginDialogOpen(true);
+      return;
+    }
+    setReplyToId(replyToId === commentId ? null : commentId);
   };
 
   const handleNewsletterSignup = () => {
@@ -206,10 +233,10 @@ export default function NewsDetailPage() {
                 <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
               </motion.button>
 
-              {!isReply && user && (
+              {!isReply && (
                 <motion.button 
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
+                  onClick={() => handleReplyClick(comment.id)}
                   className={cn(
                     "flex items-center gap-1.5 text-[10px] font-bold tracking-wide transition-colors",
                     replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary"
@@ -421,6 +448,26 @@ export default function NewsDetailPage() {
           <ChevronUp className="h-6 w-6" />
         </Button>
       </motion.div>
+
+      <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
+        <AlertDialogContent className="rounded-[24px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-headline font-bold text-2xl">Akses Terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-base">
+              Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi Dan Berikan Apresiasi Anda Pada Artikel Ini.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="rounded-xl font-bold text-[11px] tracking-wide">Batal</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => router.push('/auth')}
+              className="rounded-xl font-bold text-[11px] tracking-wide bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Masuk Sekarang
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
