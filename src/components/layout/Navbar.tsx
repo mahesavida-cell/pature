@@ -13,13 +13,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -74,7 +67,7 @@ const MarketWeatherBar = () => {
       clearInterval(timeTimer);
       clearInterval(cityTimer);
     };
-  }, [cities.length]);
+  }, []);
 
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
@@ -136,12 +129,9 @@ const MarketWeatherBar = () => {
 };
 
 export const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
-  const [showLeftGradient, setShowLeftGradient] = useState(false);
-  const [showRightGradient, setShowRightGradient] = useState(true);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   
   const { user } = useUser();
@@ -152,7 +142,11 @@ export const Navbar = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    client.fetch(CATEGORIES_QUERY).then(setDynamicCategories).catch(console.error);
+    client.fetch(CATEGORIES_QUERY)
+      .then((data) => {
+        setDynamicCategories(data || []);
+      })
+      .catch(console.error);
   }, []);
 
   const handleSignOut = async () => {
@@ -178,14 +172,6 @@ export const Navbar = () => {
     }
   };
 
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setShowLeftGradient(scrollLeft > 10);
-      setShowRightGradient(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -196,12 +182,6 @@ export const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    handleScroll();
-    window.addEventListener('resize', handleScroll);
-    return () => window.removeEventListener('resize', handleScroll);
-  }, [dynamicCategories, hoveredCategory]);
 
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
@@ -219,9 +199,9 @@ export const Navbar = () => {
           </Link>
           
           <div className="hidden lg:flex items-center gap-10">
-            {dynamicCategories?.map((cat, idx) => (
+            {dynamicCategories?.map((cat) => (
               <button 
-                key={cat._id || `cat-${idx}`} 
+                key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
                   "relative text-[11px] font-bold transition-all pb-2 group",
@@ -320,7 +300,6 @@ export const Navbar = () => {
       >
         <div 
           ref={scrollRef}
-          onScroll={handleScroll}
           className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth"
         >
           <AnimatePresence mode="wait">

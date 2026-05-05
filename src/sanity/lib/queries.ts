@@ -54,11 +54,12 @@ export const TRENDING_POSTS_QUERY = defineQuery(`*[_type == "post" && isTrending
 }`);
 
 /**
- * Query untuk kategori navigasi di Navbar.
+ * Query untuk kategori navigasi di Navbar termasuk sub-kategorinya.
  */
 export const CATEGORIES_QUERY = defineQuery(`*[_type == "category"] | order(title asc) {
   _id,
   title,
   "slug": slug.current,
-  description
+  description,
+  subCategories
 }`);
