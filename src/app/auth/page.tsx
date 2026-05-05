@@ -96,7 +96,7 @@ export default function AuthPage() {
             <BodyText className="text-sm">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
-          <Card className="rounded-lg border-2 border-primary/5 shadow-none bg-background/20 backdrop-blur-sm">
+          <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/30 backdrop-blur-md">
             <CardContent className="pt-8">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 p-1 rounded-md">
@@ -114,7 +114,7 @@ export default function AuthPage() {
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11 bg-white/40 border-white/20"
+                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -124,7 +124,7 @@ export default function AuthPage() {
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11 bg-white/40 border-white/20"
+                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
                       />
                     </div>
                     <Button 
@@ -147,7 +147,7 @@ export default function AuthPage() {
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11 bg-white/40 border-white/20"
+                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -157,7 +157,7 @@ export default function AuthPage() {
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11 bg-white/40 border-white/20"
+                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
                       />
                     </div>
                     <Button 
@@ -176,14 +176,13 @@ export default function AuthPage() {
                   <Separator className="bg-primary/10" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-4 text-muted-foreground/60 font-bold bg-background/50 backdrop-blur-sm rounded-full">Atau masuk dengan</span>
+                  <span className="px-4 text-muted-foreground/60 font-bold bg-transparent">Atau masuk dengan</span>
                 </div>
               </div>
 
               <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.99 }}>
                 <Button 
-                  variant="outline" 
-                  className="w-full h-12 rounded-lg font-bold tracking-tight flex items-center justify-center gap-4 border border-white/30 bg-white/80 hover:bg-white transition-all duration-300 shadow-sm text-primary"
+                  className="w-full h-12 rounded-lg font-bold tracking-tight flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white hover:text-primary transition-all duration-300 shadow-sm text-primary"
                   onClick={handleGoogleSignIn}
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24">

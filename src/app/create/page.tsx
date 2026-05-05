@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -37,14 +36,14 @@ export default function CreatePost() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
-          <Card>
+          <Card className="border-2 border-primary/10">
             <CardContent className="p-8 space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="post-title" className="text-lg font-headline">Judul artikel</Label>
                 <Input 
                   id="post-title" 
                   placeholder="Masukkan judul yang menarik..." 
-                  className="text-xl h-14 font-headline border-none shadow-none bg-accent/5 focus-visible:ring-1"
+                  className="text-xl h-14 font-headline border-primary/10 bg-transparent focus-visible:ring-1"
                 />
               </div>
 
@@ -52,7 +51,7 @@ export default function CreatePost() {
                 <div className="space-y-2">
                   <Label htmlFor="category">Kategori</Label>
                   <Select>
-                    <SelectTrigger id="category">
+                    <SelectTrigger id="category" className="bg-transparent border-primary/10">
                       <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
@@ -66,13 +65,13 @@ export default function CreatePost() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="read-time">Estimasi waktu baca (menit)</Label>
-                  <Input id="read-time" type="number" placeholder="5" />
+                  <Input id="read-time" type="number" placeholder="5" className="bg-transparent border-primary/10" />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Gambar utama</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-12 text-center space-y-4 hover:bg-accent/5 transition-colors cursor-pointer group">
+                <div className="border-2 border-dashed border-primary/10 rounded-lg p-12 text-center space-y-4 hover:bg-accent/5 transition-colors cursor-pointer group">
                   <div className="mx-auto w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <ImageIcon className="h-6 w-6 text-accent" />
                   </div>
@@ -88,7 +87,7 @@ export default function CreatePost() {
                 <Textarea 
                   id="excerpt" 
                   placeholder="Ringkas pesan inti dari postingan Anda..." 
-                  className="resize-none min-h-[100px] bg-accent/5 border-none shadow-none"
+                  className="resize-none min-h-[100px] bg-transparent border-primary/10"
                 />
               </div>
 
@@ -97,7 +96,7 @@ export default function CreatePost() {
                 <Textarea 
                   id="content" 
                   placeholder="Tulis cerita Anda di sini. Gunakan Markdown untuk format..." 
-                  className="min-h-[400px] bg-accent/5 border-none shadow-none"
+                  className="min-h-[400px] bg-transparent border-primary/10"
                 />
               </div>
             </CardContent>

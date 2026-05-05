@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -81,7 +80,7 @@ const formatRelativeTime = (dateInput: any) => {
   if (minutes < 60) return `${minutes} menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam yang lalu`;
+  if (hours < 24) return `${hours} Jam yang lalu`;
   
   const days = Math.floor(hours / 24);
   return `${days} hari yang lalu`;
@@ -138,7 +137,7 @@ const ShareButton = ({ post }: { post: any }) => {
       <Button 
         variant="outline" 
         size="icon" 
-        className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
+        className="rounded-full h-9 w-9 border-primary/10 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
         onClick={handleNativeShare}
       >
         <Share2 className="h-4 w-4" />
@@ -152,12 +151,12 @@ const ShareButton = ({ post }: { post: any }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
+          className="rounded-full h-9 w-9 border-primary/10 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
         >
           <Share2 className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-56 p-2 bg-white/90 backdrop-blur-xl border-white/20 rounded-lg shadow-xl">
+      <PopoverContent align="end" className="w-56 p-2 bg-white/90 backdrop-blur-xl border-primary/10 rounded-lg shadow-xl">
         <div className="grid gap-1">
           <MutedText className="px-2 py-1.5 text-[10px] font-bold opacity-40 uppercase tracking-wider">Bagikan melalui</MutedText>
           {shareLinks.map((link) => (
@@ -220,7 +219,7 @@ const CommentItem = ({
       <motion.div 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
-        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-white/20 hover:border-primary/10 transition-all duration-300 shadow-sm"
+        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300 shadow-sm"
       >
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary uppercase">
@@ -287,7 +286,7 @@ const CommentItem = ({
                   placeholder="Tulis balasan Anda..." 
                   value={replyText} 
                   onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                  className="bg-white/60 border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                  className="bg-transparent border-primary/10 min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
                 />
                 <div className="flex justify-end mt-1">
                   <span className={cn(
@@ -500,7 +499,7 @@ export default function NewsDetailPage() {
                       variant="outline" 
                       size="icon" 
                       className={cn(
-                        "rounded-full h-9 w-9 transition-all border-white/20 shadow-sm bg-white/40 backdrop-blur-md", 
+                        "rounded-full h-9 w-9 transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
                         isSaved && 'bg-primary text-primary-foreground border-primary'
                       )} 
                       onClick={handleToggleBookmark}
@@ -513,7 +512,7 @@ export default function NewsDetailPage() {
 
               {/* Main image with details */}
               <div className="mb-12">
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-border/10 mb-3">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
                   <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
                 </div>
                 {(post.imageCaption || post.imageCredit) && (
@@ -558,7 +557,7 @@ export default function NewsDetailPage() {
                       {post.gallery.map((img: any, idx: number) => (
                         <CarouselItem key={idx}>
                           <div className="space-y-3">
-                            <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted">
+                            <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted border border-primary/10">
                               <Image src={img.url} alt={`Galeri foto ${idx}`} fill className="object-cover" />
                             </div>
                             {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
@@ -583,7 +582,7 @@ export default function NewsDetailPage() {
                   </Badge>
                 </div>
                 {user ? (
-                  <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-white/20">
+                  <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10">
                     <div className="flex gap-4 items-start">
                       <Avatar className="h-10 w-10 shrink-0">
                         <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
@@ -593,7 +592,7 @@ export default function NewsDetailPage() {
                           placeholder="Tuliskan pendapat Anda..." 
                           value={commentText} 
                           onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                          className="bg-white/60 border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
+                          className="bg-transparent border-primary/10 min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
                         />
                         <div className="flex justify-between items-center">
                           <span className={cn(
@@ -640,7 +639,7 @@ export default function NewsDetailPage() {
                 <div className="space-y-8">
                   {[1, 2, 3, 4].map((id) => (
                     <Link key={id} href={`/news/${id}`} className="flex gap-4 group">
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
                         <Image src={`https://picsum.photos/seed/${id}/200/200`} alt="Pop" fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
