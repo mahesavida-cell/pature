@@ -102,16 +102,17 @@ const XIcon = () => (
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
   const [url, setUrl] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setUrl(window.location.href);
-    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    setIsClient(true);
   }, []);
 
   const handleNativeShare = async () => {
+    if (!isClient) return;
     try {
-      if (typeof navigator !== 'undefined' && !!navigator.share) {
+      if (typeof navigator !== 'undefined' && 'share' in navigator) {
         await navigator.share({
           title: post.title,
           text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
@@ -121,12 +122,12 @@ const ShareButton = ({ post }: { post: any }) => {
         copyToClipboard();
       }
     } catch (err) {
-      // User cancelled
+      // Ignored
     }
   };
 
   const copyToClipboard = () => {
-    if (typeof navigator !== 'undefined') {
+    if (typeof navigator !== 'undefined' && 'clipboard' in navigator) {
       navigator.clipboard.writeText(url);
       toast({
         title: "Tautan disalin",
@@ -141,10 +142,9 @@ const ShareButton = ({ post }: { post: any }) => {
     { name: "X", icon: <XIcon />, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}` },
   ];
 
-  // Perbaikan TypeScript: Cek navigator.share dengan lebih aman
-  const canShare = typeof navigator !== 'undefined' && !!navigator.share;
+  const canNativeShare = isClient && typeof navigator !== 'undefined' && 'share' in navigator;
 
-  if (isMobile && canShare) {
+  if (canNativeShare) {
     return (
       <Button 
         variant="outline" 
@@ -228,11 +228,7 @@ const CommentItem = ({
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l-2 border-primary/5 pl-4 md:pl-6")}>
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300 shadow-sm"
-      >
+      <div className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300 shadow-sm">
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
             {comment.authorName ? comment.authorName[0] : "A"}
@@ -258,8 +254,7 @@ const CommentItem = ({
           </div>
           <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words font-medium">{comment.content}</BodyText>
           <div className="flex items-center gap-5">
-            <motion.button 
-              whileTap={{ scale: 0.9 }} 
+            <button 
               onClick={() => onLike(comment.id, likes)} 
               className={cn(
                 "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
@@ -268,9 +263,8 @@ const CommentItem = ({
             >
               <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
               <span>{likes.length > 0 ? `${likes.length} suka` : "Suka"}</span>
-            </motion.button>
-            <motion.button 
-              whileTap={{ scale: 0.9 }} 
+            </button>
+            <button 
               onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} 
               className={cn(
                 "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
@@ -279,44 +273,37 @@ const CommentItem = ({
             >
               <MessageSquare className="h-4 w-4" />
               <span>Balas pesan</span>
-            </motion.button>
+            </button>
           </div>
         </div>
-      </motion.div>
+      </div>
       
-      <AnimatePresence>
-        {replyToId === comment.id && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }} 
-            animate={{ opacity: 1, height: "auto" }} 
-            exit={{ opacity: 0, height: 0 }} 
-            className="ml-4 md:ml-8 overflow-hidden"
-          >
-            <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
-              <div className="relative">
-                <Textarea 
-                  placeholder="Tulis balasan anda..." 
-                  value={replyText} 
-                  onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                  className="bg-transparent border-primary/10 min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
-                />
-                <div className="flex justify-end mt-1">
-                  <span className={cn(
-                    "text-[9px] font-bold opacity-40",
-                    replyText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
-                  )}>
-                    {replyText.length}/{MAX_COMMENT_CHARS} karakter tersisa
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">Batal</Button>
-                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">Kirim balasan</Button>
+      {replyToId === comment.id && (
+        <div className="ml-4 md:ml-8 overflow-hidden">
+          <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
+            <div className="relative">
+              <Textarea 
+                placeholder="Tulis balasan anda..." 
+                value={replyText} 
+                onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
+                className="bg-transparent border-primary/10 min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+              />
+              <div className="flex justify-end mt-1">
+                <span className={cn(
+                  "text-[9px] font-bold opacity-40",
+                  replyText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
+                )}>
+                  {replyText.length}/{MAX_COMMENT_CHARS} karakter tersisa
+                </span>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">Batal</Button>
+              <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">Kirim balasan</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {comment.replies && comment.replies.length > 0 && (
         <div className="space-y-4">
@@ -400,7 +387,7 @@ export default function NewsDetailPage() {
   const post = sanityPost;
 
   const bookmarkRef = useMemoFirebase(() => 
-    user && db && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
+    (user && db && params.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
     [db, user, params.id]
   );
   const { data: bookmarkData } = useDoc(bookmarkRef);
@@ -483,15 +470,15 @@ export default function NewsDetailPage() {
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 md:px-6">
         {hasError && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
+          <div className="mt-8">
             <Alert variant="destructive" className="bg-red-50 border-red-200">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Masalah koneksi data</AlertTitle>
               <AlertDescription className="text-xs">
-                Gagal memuat berita dari Sanity. Mohon tambahkan domain anda ke daftar <b>CORS Origins</b> di dashboard Sanity anda untuk mengaktifkan akses data.
+                Gagal memuat berita dari Sanity. Mohon periksa koneksi data anda.
               </AlertDescription>
             </Alert>
-          </motion.div>
+          </div>
         )}
         
         {!post && !hasError ? (
@@ -545,44 +532,11 @@ export default function NewsDetailPage() {
                   <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
                     <Image src={post?.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post?.title || "Berita"} fill className="object-cover" priority />
                   </div>
-                  {(post?.mainImage?.caption || post?.mainImage?.credit) && (
-                    <div className="flex items-start gap-3 px-1">
-                      <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                      <div className="space-y-1">
-                        {post.mainImage?.caption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.mainImage.caption}</p>}
-                        {post.mainImage?.credit && <p className="text-[10px] text-muted-foreground italic">{post.mainImage.credit}</p>}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
                   {post?.body ? <PortableText value={post.body} /> : <TypographyP>Memuat isi berita atau konten tidak tersedia...</TypographyP>}
                 </article>
-
-                {post?.gallery && post.gallery.length > 0 && (
-                  <section className="mb-20">
-                    <div className="space-y-2 mb-8">
-                      <Heading level={3} className="text-lg">Galeri foto</Heading>
-                    </div>
-                    <Carousel className="w-full">
-                      <CarouselContent>
-                        {post.gallery.map((img: any, idx: number) => (
-                          <CarouselItem key={idx}>
-                            <div className="space-y-3">
-                              <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted border border-primary/10">
-                                <Image src={img.url} alt={`Galeri foto ${idx}`} fill className="object-cover" />
-                              </div>
-                              {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="left-4" />
-                      <CarouselNext className="right-4" />
-                    </Carousel>
-                  </section>
-                )}
 
                 <Separator className="my-16 opacity-30" />
 
@@ -663,18 +617,7 @@ export default function NewsDetailPage() {
                       <MutedText className="text-xs opacity-40 italic">Tidak ada berita populer saat ini.</MutedText>
                     )}
                   </div>
-                  <div className="mt-8 pt-4 border-t border-border/10">
-                    <Link href="/latest" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
-                  </div>
                 </section>
-                
-                <Card className="bg-primary/95 text-primary-foreground p-8 rounded-lg shadow-md border-none">
-                  <div className="text-center">
-                    <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
-                    <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
-                    <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
-                  </div>
-                </Card>
               </div>
             </aside>
           </div>

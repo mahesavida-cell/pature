@@ -13,10 +13,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react";
 import Image from "next/image";
 
-/**
- * Halaman autentikasi PatureNews yang bersih dan stabil.
- * Menggunakan komponen Tabs murni ShadCN UI untuk alur desain yang optimal.
- */
 export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -45,17 +41,16 @@ export default function AuthPage() {
 
     setIsLoading(true);
     if (type === 'register') {
-      initiateEmailSignUp(auth, email, password);
+      initiateEmailSignUp(auth!, email, password);
     } else {
-      initiateEmailSignIn(auth, email, password);
+      initiateEmailSignIn(auth!, email, password);
     }
     
-    // Memberikan jeda visual sebelum mematikan status loading
     setTimeout(() => setIsLoading(false), 800);
   };
 
   const handleGoogleSignIn = () => {
-    initiateGoogleSignIn(auth);
+    if (auth) initiateGoogleSignIn(auth);
   };
 
   return (
@@ -80,7 +75,7 @@ export default function AuthPage() {
                   <Newspaper className="h-5 w-5" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman anda</h2>
+                  <h2 className="text-2xl font-headline font-bold leading-tight text-white">Kejernihan informasi di genggaman anda</h2>
                   <p className="text-white/60 text-xs leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif.</p>
                 </div>
               </div>
@@ -93,31 +88,22 @@ export default function AuthPage() {
                 ].map((item, i) => (
                   <div key={`benefit-${i}`} className="flex items-center gap-3 text-xs font-medium">
                     <span className="text-white/30">{item.icon}</span>
-                    <span>{item.text}</span>
+                    <span className="text-white/90">{item.text}</span>
                   </div>
                 ))}
-              </div>
-
-              <div className="pt-4 border-t border-white/10">
-                <p className="text-[10px] font-bold text-white/30 tracking-[0.2em] uppercase">PatureNews Media Group</p>
               </div>
             </div>
           </div>
 
           {/* Sisi kanan - formulir */}
           <div className="flex flex-col p-8 sm:p-10 justify-center bg-white relative">
-            <div className="mb-6 lg:hidden text-center">
-              <Heading level={2} className="text-xl font-bold tracking-tight mb-1 text-primary">PatureNews</Heading>
-              <BodyText className="text-[10px] opacity-60 font-bold tracking-widest uppercase">Jurnalisme modern dan terpercaya</BodyText>
-            </div>
-
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg">
                 <TabsTrigger value="login" className="text-xs font-bold tracking-tight py-2">Masuk</TabsTrigger>
                 <TabsTrigger value="register" className="text-xs font-bold tracking-tight py-2">Daftar</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login" className="space-y-4 focus-visible:outline-none">
+              <TabsContent value="login" className="space-y-4 outline-none">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-xs font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -126,14 +112,11 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
                   />
                 </div>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center px-1">
-                    <Label htmlFor="password" className="text-xs font-bold opacity-50">Kata sandi</Label>
-                    <button className="text-[10px] font-bold text-primary/60 hover:text-primary transition-colors">Lupa sandi?</button>
-                  </div>
+                  <Label htmlFor="password" className="text-xs font-bold opacity-50 px-1">Kata sandi</Label>
                   <div className="relative">
                     <Input 
                       id="password" 
@@ -141,12 +124,12 @@ export default function AuthPage() {
                       placeholder="Masukkan sandi anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -161,7 +144,7 @@ export default function AuthPage() {
                 </Button>
               </TabsContent>
 
-              <TabsContent value="register" className="space-y-4 focus-visible:outline-none">
+              <TabsContent value="register" className="space-y-4 outline-none">
                 <div className="space-y-2">
                   <Label htmlFor="reg-email" className="text-xs font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -170,7 +153,7 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
                   />
                 </div>
                 <div className="space-y-2">
@@ -182,12 +165,12 @@ export default function AuthPage() {
                       placeholder="Buat sandi yang aman"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>

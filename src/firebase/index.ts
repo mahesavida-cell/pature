@@ -7,7 +7,6 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 
 /**
  * Robust Firebase initialization for Client and Server (SSR/Build) environments.
- * Prevents 'app/no-options' errors during prerendering.
  */
 export function initializeFirebase() {
   const isClient = typeof window !== 'undefined';
@@ -22,22 +21,19 @@ export function initializeFirebase() {
   let app: FirebaseApp;
   
   if (!getApps().length) {
-    // Only attempt to initialize if we have a config, or if we're on the client
-    if (config.apiKey || isClient) {
-      app = initializeApp(config as any);
-    } else {
-      // Fallback for build time if envs are missing
-      app = null as unknown as FirebaseApp;
-    }
+    app = initializeApp(config);
   } else {
     app = getApp();
   }
 
-  // Return initialized services or safely typed nulls for SSR
+  // Safety: Ensure Firestore and Auth are only called in valid environments
+  const firestore = isClient ? getFirestore(app) : (null as unknown as Firestore);
+  const auth = isClient ? getAuth(app) : (null as unknown as Auth);
+
   return {
     firebaseApp: app,
-    auth: (isClient && app) ? getAuth(app) : (null as unknown as Auth),
-    firestore: (isClient && app) ? getFirestore(app) : (null as unknown as Firestore)
+    auth,
+    firestore
   };
 }
 

@@ -51,11 +51,7 @@ function SearchResults() {
       </div>
 
       {!isLoading && filteredResults.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="py-24 px-10 rounded-3xl border-2 border-dashed border-primary/10 flex flex-col items-center text-center space-y-8 bg-white/10 backdrop-blur-sm"
-        >
+        <div className="py-24 px-10 rounded-3xl border-2 border-dashed border-primary/10 flex flex-col items-center text-center space-y-8 bg-white/10 backdrop-blur-sm">
           <div className="h-20 w-20 rounded-full bg-primary/5 flex items-center justify-center text-primary/20">
             <SearchIcon className="h-10 w-10" />
           </div>
@@ -80,7 +76,7 @@ function SearchResults() {
               Lihat berita lainnya
             </Button>
           </div>
-        </motion.div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredResults.map((post, idx) => (

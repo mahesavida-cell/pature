@@ -9,10 +9,6 @@ import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
-/**
- * Komponen Calendar yang diperbarui untuk mendukung react-day-picker v9.
- * Menggunakan Chevron component untuk navigasi.
- */
 function Calendar({
   className,
   classNames,
