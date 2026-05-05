@@ -79,13 +79,13 @@ const formatRelativeTime = (dateInput: any) => {
   if (diffInSeconds < 60) return "Baru saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} Menit yang lalu`;
+  if (minutes < 60) return `${minutes} menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} Jam yang lalu`;
+  if (hours < 24) return `${hours} jam yang lalu`;
   
   const days = Math.floor(hours / 24);
-  return `${days} Hari yang lalu`;
+  return `${days} hari yang lalu`;
 };
 
 const XIcon = () => (
@@ -365,6 +365,8 @@ export default function NewsDetailPage() {
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl,
       imageCaption: "Ruang kosong yang tertata memberikan kejelasan informasi.",
       imageCredit: "Foto oleh Alex Rivers",
+      galleryTitle: "Evolusi Antarmuka Modern",
+      gallerySubtitle: "Melihat lebih dekat bagaimana elemen visual minimalis diterapkan dalam berbagai studi kasus desain.",
       gallery: [
         { url: PlaceHolderImages[0].imageUrl, caption: "Evolusi antarmuka dari masa ke masa." },
         { url: PlaceHolderImages[1].imageUrl, caption: "Contoh tipografi yang efektif." },
@@ -547,9 +549,14 @@ export default function NewsDetailPage() {
               {/* Image Carousel / Gallery Mode */}
               {post.gallery && post.gallery.length > 0 && (
                 <section className="mb-20">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Camera className="h-5 w-5 text-primary" />
-                    <Heading level={3} className="text-lg">Galeri Foto</Heading>
+                  <div className="space-y-2 mb-8">
+                    <div className="flex items-center gap-2">
+                      <Camera className="h-5 w-5 text-primary" />
+                      <Heading level={3} className="text-lg">{post.galleryTitle || "Galeri foto"}</Heading>
+                    </div>
+                    {post.gallerySubtitle && (
+                      <BodyText className="text-sm opacity-70 max-w-2xl">{post.gallerySubtitle}</BodyText>
+                    )}
                   </div>
                   <Carousel className="w-full">
                     <CarouselContent>
@@ -642,7 +649,7 @@ export default function NewsDetailPage() {
                         <Image src={`https://picsum.photos/seed/${id}/200/200`} alt="Pop" fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">Berita • {id} Jam yang lalu</span>
+                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">Berita • {id} jam yang lalu</span>
                         <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">Analisis Mendalam Tren Industri Modern</h4>
                       </div>
                     </Link>

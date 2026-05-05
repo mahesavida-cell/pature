@@ -30,6 +30,8 @@
         "image": { "type": "string" },
         "imageCaption": { "type": "string" },
         "imageCredit": { "type": "string" },
+        "galleryTitle": { "type": "string" },
+        "gallerySubtitle": { "type": "string" },
         "gallery": {
           "type": "array",
           "items": {
