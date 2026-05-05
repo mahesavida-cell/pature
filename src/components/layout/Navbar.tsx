@@ -102,7 +102,7 @@ export const Navbar = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="text-muted-foreground hover:text-primary h-10 w-10 transition-transform active:scale-90"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-10 w-10 rounded-full transition-all active:scale-95"
               onClick={toggleSearch}
             >
               {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
@@ -111,7 +111,7 @@ export const Navbar = () => {
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground md:hidden h-10 w-10">
+              <Button variant="ghost" size="icon" className="text-muted-foreground md:hidden h-10 w-10 hover:bg-primary/5 rounded-full">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
