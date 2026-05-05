@@ -59,13 +59,13 @@ export default function Home() {
           >
             <Card className="p-0 border-none bg-transparent shadow-none" animate={false}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted">
+                <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted group cursor-pointer">
                   {heroImage?.imageUrl ? (
                     <Image 
                       src={heroImage.imageUrl} 
                       alt="Featured News"
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       data-ai-hint="abstract news"
                     />
                   ) : (
@@ -111,13 +111,13 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
               <Card key={post.id} className="h-full flex flex-col">
-                <div className="relative h-48 w-full overflow-hidden bg-muted">
+                <div className="relative h-48 w-full overflow-hidden bg-muted group">
                   {post.image ? (
                     <Image 
                       src={post.image} 
                       alt={post.title}
                       fill
-                      className="object-cover hover:scale-105 transition-transform duration-500"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <div className="w-full h-full bg-accent/5 flex items-center justify-center" />
