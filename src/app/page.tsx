@@ -20,7 +20,7 @@ export default function Home() {
   
   const posts = [
     {
-      id: 1,
+      id: "1",
       title: "The Evolution of Minimalist Digital Design",
       category: "Design",
       author: "Alex Rivers",
@@ -29,7 +29,7 @@ export default function Home() {
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     },
     {
-      id: 2,
+      id: "2",
       title: "Sustainable Architecture In Urban Environments",
       category: "Culture",
       author: "Maya Lin",
@@ -38,7 +38,7 @@ export default function Home() {
       image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
     },
     {
-      id: 3,
+      id: "3",
       title: "Future of Decentralized Global Markets",
       category: "Business",
       author: "Jordan Lee",
@@ -62,18 +62,13 @@ export default function Home() {
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted group cursor-pointer">
-                {heroImage?.imageUrl ? (
+                {heroImage?.imageUrl && (
                   <Image 
                     src={heroImage.imageUrl} 
                     alt="Featured News"
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    data-ai-hint="abstract news"
                   />
-                ) : (
-                  <div className="w-full h-full bg-accent/10 flex items-center justify-center">
-                    <MutedText>No Preview Available</MutedText>
-                  </div>
                 )}
               </div>
               <div className="space-y-6">
@@ -87,7 +82,9 @@ export default function Home() {
                   Discover how InfoFlow is setting a new benchmark for minimalist digital journalism, focusing on clarity, depth, and user experience.
                 </BodyText>
                 <div className="flex items-center gap-4 py-2">
-                  <Button className="px-8 font-medium">Read Full Article</Button>
+                  <Link href="/news/1">
+                    <Button className="px-8 font-medium">Read Full Article</Button>
+                  </Link>
                   <Button 
                     variant="outline" 
                     size="icon" 
@@ -121,18 +118,18 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
               <Card key={post.id} className="h-full flex flex-col">
-                <div className="relative h-48 w-full overflow-hidden bg-muted group">
-                  {post.image ? (
-                    <Image 
-                      src={post.image} 
-                      alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-accent/5 flex items-center justify-center" />
-                  )}
-                </div>
+                <Link href={`/news/${post.id}`}>
+                  <div className="relative h-48 w-full overflow-hidden bg-muted group">
+                    {post.image && (
+                      <Image 
+                        src={post.image} 
+                        alt={post.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    )}
+                  </div>
+                </Link>
                 <CardContent className="p-6 flex-1 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -144,9 +141,11 @@ export default function Home() {
                         <span className="text-[10px]">{post.readTime}</span>
                       </div>
                     </div>
-                    <Heading level={4} className="mb-3 hover:text-accent transition-colors cursor-pointer">
-                      {post.title}
-                    </Heading>
+                    <Link href={`/news/${post.id}`}>
+                      <Heading level={4} className="mb-3 hover:text-accent transition-colors cursor-pointer">
+                        {post.title}
+                      </Heading>
+                    </Link>
                     <BodyText className="text-sm line-clamp-3 mb-4">
                       {post.excerpt}
                     </BodyText>
