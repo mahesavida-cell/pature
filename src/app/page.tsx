@@ -54,7 +54,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const postId = post._id || post.id;
+  const postId = post?._id || post?.id;
   const bookmarkRef = useMemoFirebase(() => 
     user && postId ? doc(db, "users", user.uid, "bookmarks", postId) : null, 
     [db, user, postId]
@@ -151,7 +151,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                     <Link href={`/news/${post.slug}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
-                          src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id || idx}/600/400`} 
+                          src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[idx % PlaceHolderImages.length].imageUrl} 
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
@@ -225,16 +225,7 @@ export default function Home() {
 
   const heroPost = useMemo(() => {
     if (sanityPosts.length > 0) return sanityPosts[0];
-    return {
-      _id: "hero-placeholder",
-      title: "Revolusi senyap informasi profesional di PatureNews",
-      categories: ["Media"],
-      readTime: "5 menit baca",
-      author: "Alex Rivers",
-      excerpt: "Temukan bagaimana PatureNews menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
-      mainImage: null,
-      slug: "#"
-    };
+    return null;
   }, [sanityPosts]);
 
   const latestPosts = useMemo(() => {
@@ -262,98 +253,107 @@ export default function Home() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Masalah koneksi data</AlertTitle>
               <AlertDescription className="text-xs">
-                Gagal memuat berita dari Sanity. Mohon tambahkan domain Anda ke daftar <b>CORS Origins</b> di dashboard Sanity Anda untuk mengaktifkan akses data.
+                Gagal memuat berita dari Sanity. Mohon tambahkan domain anda ke daftar <b>CORS Origins</b> di dashboard Sanity anda untuk mengaktifkan akses data.
               </AlertDescription>
             </Alert>
           </motion.div>
         )}
 
-        <section className="mb-24 lg:mb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            <motion.div 
-              className="lg:col-span-8 space-y-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <Link href={`/news/${heroPost.slug}`} className="block group">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
-                  <Image 
-                    src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} 
-                    alt="Berita utama"
-                    fill
-                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                    priority
-                  />
-                  <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
-                      Unggulan hari ini
-                    </Badge>
+        {isSanityLoading ? (
+          <section className="mb-24 lg:mb-32">
+            <div className="aspect-[16/9] w-full bg-primary/5 animate-pulse rounded-xl" />
+          </section>
+        ) : heroPost ? (
+          <section className="mb-24 lg:mb-32">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              <motion.div 
+                className="lg:col-span-8 space-y-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Link href={`/news/${heroPost.slug}`} className="block group">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
+                    <Image 
+                      src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} 
+                      alt="Berita utama"
+                      fill
+                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                      priority
+                    />
+                    <div className="absolute top-6 left-6">
+                      <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
+                        Unggulan hari ini
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <Title className="group-hover:text-primary/80 transition-colors">
+                      {heroPost.title}
+                    </Title>
+                    <BodyText className="line-clamp-2 max-w-3xl">
+                      {heroPost.excerpt}
+                    </BodyText>
+                  </div>
+                </Link>
+                <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
+                    <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.author || "Redaksi PatureNews"}
+                  </div>
+                  <div className="flex items-center gap-3 ml-auto">
+                    <BookmarkButton post={heroPost} variant="hero" />
+                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <Title className="group-hover:text-primary/80 transition-colors">
-                    {heroPost.title}
-                  </Title>
-                  <BodyText className="line-clamp-2 max-w-3xl">
-                    {heroPost.excerpt}
-                  </BodyText>
-                </div>
-              </Link>
-              <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.author || "Redaksi PatureNews"}
-                </div>
-                <div className="flex items-center gap-3 ml-auto">
-                  <BookmarkButton post={heroPost} variant="hero" />
-                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            <div className="lg:col-span-4 space-y-8">
-              <div className="flex items-center justify-between border-b border-primary/5 pb-5">
-                <Heading level={3} className="text-lg">Trending</Heading>
+              <div className="lg:col-span-4 space-y-8">
+                <div className="flex items-center justify-between border-b border-primary/5 pb-5">
+                  <Heading level={3} className="text-lg">Trending</Heading>
+                </div>
+                <div className="space-y-8">
+                  {trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
+                    <motion.div
+                      key={story._id || `trending-${idx}`}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1, duration: 0.5 }}
+                    >
+                      <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
+                        <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
+                          0{idx + 1}
+                        </span>
+                        <div className="space-y-1.5 flex-1">
+                          <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
+                            {story.categories?.[0] || "Berita"}
+                          </Badge>
+                          <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                            {story.title}
+                          </h4>
+                          <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )) : (
+                    <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>
+                  )}
+                </div>
+                <Link href="/latest" className="block">
+                  <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
+                    Lihat berita lainnya <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
-              <div className="space-y-8">
-                {isSanityLoading ? (
-                  [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
-                ) : trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
-                  <motion.div
-                    key={story._id || `trending-${idx}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.5 }}
-                  >
-                    <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
-                      <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
-                        0{idx + 1}
-                      </span>
-                      <div className="space-y-1.5 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
-                          {story.categories?.[0] || "Berita"}
-                        </Badge>
-                        <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                          {story.title}
-                        </h4>
-                        <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
-                      </div>
-                    </Link>
-                  </motion.div>
-                )) : (
-                  <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>
-                )}
-              </div>
-              <Link href="/latest" className="block">
-                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
-                  Lihat berita lainnya <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
+          </section>
+        ) : (
+          <div className="py-32 text-center">
+            <Heading level={2}>Selamat datang di PatureNews</Heading>
+            <BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini. Silakan kembali lagi nanti.</BodyText>
           </div>
-        </section>
+        )}
 
         <NewsCarousel 
           posts={curatedPosts} 
@@ -366,13 +366,6 @@ export default function Home() {
           posts={latestPosts} 
           sectionTitle="Berita terbaru" 
           viewAllLink="/latest" 
-          isLoading={isSanityLoading}
-        />
-
-        <NewsCarousel 
-          posts={curatedPosts.slice().reverse()} 
-          sectionTitle="Rekomendasi untuk anda" 
-          viewAllLink="/recommendations" 
           isLoading={isSanityLoading}
         />
       </main>
