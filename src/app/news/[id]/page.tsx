@@ -47,6 +47,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// Moved outside to prevent re-renders and animation glitches
 const CommentItem = ({ 
   comment, 
   depth = 0, 
