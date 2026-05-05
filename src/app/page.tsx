@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -56,7 +57,6 @@ export default function Home() {
   return (
     <div className="bg-background min-h-screen pb-10">
       <Navbar />
-      
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-12">
         <section className="mb-12 md:mb-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
@@ -64,7 +64,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-[24px] bg-muted group shadow-xl"
+              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-xl bg-muted group shadow-lg"
             >
               {heroImage?.imageUrl && (
                 <Image 
@@ -76,7 +76,6 @@ export default function Home() {
                 />
               )}
             </motion.div>
-            
             <motion.div 
               className="space-y-4 md:space-y-6"
               initial={{ opacity: 0, x: 20 }}
@@ -98,7 +97,7 @@ export default function Home() {
               <div className="flex items-center gap-3 pt-2">
                 <Link href="/news/1" className="flex-1 sm:flex-none">
                   <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button className="w-full sm:px-10 h-12 text-xs font-bold rounded-xl shadow-lg">
+                    <Button className="w-full sm:px-10 h-12 text-xs font-bold rounded-lg shadow-md">
                       Baca Artikel
                     </Button>
                   </motion.div>
@@ -109,7 +108,7 @@ export default function Home() {
                     size="icon" 
                     className={cn(
                       "rounded-full h-12 w-12 transition-all duration-300 shadow-sm", 
-                      isSaved && "bg-primary text-primary-foreground border-primary shadow-lg"
+                      isSaved && "bg-primary text-primary-foreground border-primary shadow-md"
                     )}
                     onClick={() => setIsSaved(!isSaved)}
                   >
@@ -127,7 +126,6 @@ export default function Home() {
               <Heading level={2} className="text-xl md:text-3xl font-headline font-bold">Cerita Terbaru</Heading>
               <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat Semua</Button>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {posts.map((post, idx) => (
                 <motion.div
@@ -138,7 +136,7 @@ export default function Home() {
                   transition={{ delay: idx * 0.1 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-[20px] overflow-hidden shadow-sm hover:shadow-lg">
+                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-lg overflow-hidden shadow-sm hover:shadow-md">
                     <Link href={`/news/${post.id}`}>
                       <div className="relative h-48 w-full overflow-hidden bg-muted">
                         {post.image && (
@@ -184,12 +182,8 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-            
-            <motion.div 
-              className="mt-12 flex justify-center"
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] rounded-xl shadow-sm">
+            <motion.div className="mt-12 flex justify-center" whileTap={{ scale: 0.95 }}>
+              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] rounded-lg shadow-sm">
                 Lihat Lebih Banyak
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
@@ -202,7 +196,6 @@ export default function Home() {
                 <TrendingUp className="h-4 w-4 text-primary" />
                 <Heading level={3} className="text-lg font-headline font-bold">Sedang Tren</Heading>
               </div>
-
               <div className="space-y-6">
                 {popularPosts.map((post, idx) => (
                   <motion.div 
@@ -227,9 +220,8 @@ export default function Home() {
                   </motion.div>
                 ))}
               </div>
-
               <motion.div 
-                className="bg-primary p-8 rounded-[24px] text-primary-foreground mt-8 relative overflow-hidden shadow-xl"
+                className="bg-primary p-8 rounded-xl text-primary-foreground mt-8 relative overflow-hidden shadow-lg"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
@@ -239,7 +231,7 @@ export default function Home() {
                     Laporan Eksklusif Dan Tanpa Iklan.
                   </p>
                   <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button variant="secondary" className="w-full font-bold text-[10px] h-10 rounded-xl">
+                    <Button variant="secondary" className="w-full font-bold text-[10px] h-10 rounded-lg">
                       Tingkatkan Akun
                     </Button>
                   </motion.div>
@@ -249,7 +241,6 @@ export default function Home() {
           </section>
         </div>
       </main>
-
       <footer className="border-t py-16 bg-white/50 mt-20">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-8">
           <Link href="/" className="font-headline text-2xl font-bold text-primary">InfoFlow</Link>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -58,19 +59,15 @@ export default function ProfilePage() {
 
   const recommendations = useMemo(() => {
     if (!history || history.length === 0) return [];
-    
     const categoryCounts: Record<string, number> = {};
     history.forEach(item => {
       if (item.category) {
         categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
       }
     });
-
     const favoriteCategory = Object.entries(categoryCounts)
       .sort(([, a], [, b]) => b - a)[0]?.[0];
-
     if (!favoriteCategory) return [];
-
     return [
       { id: "rec-1", title: `Kenapa ${favoriteCategory} Adalah Masa Depan`, category: favoriteCategory },
       { id: "rec-2", title: `Tren Terbaru Di Industri ${favoriteCategory}`, category: favoriteCategory },
@@ -90,7 +87,7 @@ export default function ProfilePage() {
             <Heading level={2} className="mb-2">Akses Terbatas</Heading>
             <BodyText className="mb-8">Silakan Masuk Untuk Mengakses Halaman Pusat Akun Anda.</BodyText>
             <Link href="/auth">
-              <Button className="rounded-xl px-12 h-12 font-bold tracking-tight shadow-lg shadow-primary/20">
+              <Button className="rounded-lg px-12 h-12 font-bold tracking-tight shadow-md shadow-primary/20">
                 Masuk Sekarang
               </Button>
             </Link>
@@ -105,12 +102,11 @@ export default function ProfilePage() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 pt-8 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          
           <aside className="lg:col-span-4 space-y-8">
-            <Card className="rounded-[40px] overflow-hidden border-none shadow-2xl bg-white/70 backdrop-blur-xl">
+            <Card className="rounded-2xl overflow-hidden border-none shadow-xl bg-white/70 backdrop-blur-xl">
               <CardContent className="p-10 text-center">
                 <div className="relative inline-block mb-6">
-                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-xl">
                     <AvatarImage src={user.photoURL || ""} />
                     <AvatarFallback className="bg-primary text-white text-4xl font-bold">
                       {(displayName || user.email || "U")[0].toUpperCase()}
@@ -137,7 +133,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[40px] bg-primary text-primary-foreground p-8 shadow-2xl relative overflow-hidden group">
+            <Card className="rounded-2xl bg-primary text-primary-foreground p-8 shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
                 <Sparkles className="h-20 w-20" />
               </div>
@@ -153,14 +149,14 @@ export default function ProfilePage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/5 transition-all cursor-pointer group/item"
+                      className="p-5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/5 transition-all cursor-pointer group/item"
                     >
                       <span className="text-[9px] font-bold text-accent mb-2 block">{rec.category}</span>
                       <h4 className="font-headline font-bold text-sm leading-snug group-hover/item:text-accent transition-colors">{rec.title}</h4>
                     </motion.div>
                   )) : (
-                    <div className="py-6 px-4 bg-white/5 rounded-3xl border border-white/5 text-center">
-                      <MutedText className="text-white/40 text-[10px] font-bold italic block">Silakan Baca Lebih Banyak Artikel Untuk Mendapatkan Rekomendasi Akurat.</MutedText>
+                    <div className="py-6 px-4 bg-white/5 rounded-xl border border-white/5 text-center">
+                      <MutedText className="text-white/40 text-[10px] font-medium italic block">Silakan Baca Lebih Banyak Artikel Untuk Mendapatkan Rekomendasi Akurat.</MutedText>
                     </div>
                   )}
                 </div>
@@ -181,11 +177,10 @@ export default function ProfilePage() {
                   <History className="h-4 w-4 mr-2" /> Riwayat Bacaan
                 </TabsTrigger>
               </TabsList>
-
               <AnimatePresence mode="wait">
                 <TabsContent value="editor">
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-                    <Card className="rounded-[40px] p-12 bg-white shadow-xl border border-border/30">
+                    <Card className="rounded-2xl p-12 bg-white shadow-lg border border-border/30">
                       <div className="space-y-8">
                         <div className="space-y-3">
                           <Label htmlFor="displayName" className="text-[10px] font-bold opacity-50">Nama Lengkap Tampilan</Label>
@@ -193,7 +188,7 @@ export default function ProfilePage() {
                             id="displayName" 
                             value={displayName} 
                             onChange={(e) => setDisplayName(e.target.value)}
-                            className="h-16 rounded-3xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
+                            className="h-16 rounded-xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
                           />
                         </div>
                         <div className="space-y-3">
@@ -203,12 +198,12 @@ export default function ProfilePage() {
                             value={bio} 
                             onChange={(e) => setBio(e.target.value)}
                             placeholder="Tuliskan Sesuatu Tentang Diri Anda..."
-                            className="h-16 rounded-3xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
+                            className="h-16 rounded-xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
                           />
                         </div>
                         <Button 
                           onClick={handleUpdateProfile} 
-                          className="w-full h-16 rounded-3xl font-bold text-[11px] shadow-2xl shadow-primary/20 transition-transform active:scale-95"
+                          className="w-full h-16 rounded-xl font-bold text-[11px] shadow-lg shadow-primary/20 transition-transform active:scale-95"
                         >
                           Simpan Perubahan Profil
                         </Button>
@@ -216,14 +211,13 @@ export default function ProfilePage() {
                     </Card>
                   </motion.div>
                 </TabsContent>
-
                 <TabsContent value="archived">
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {isBookmarksLoading ? (
                       <div className="col-span-full py-20 text-center"><MutedText className="animate-pulse font-bold">Memuat Arsip...</MutedText></div>
                     ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
-                        <Card className="rounded-[32px] border-none shadow-lg hover:shadow-2xl transition-all group h-full bg-white/80">
+                        <Card className="rounded-xl border-none shadow-md hover:shadow-lg transition-all group h-full bg-white/80">
                           <CardContent className="p-8 flex flex-col justify-between h-full">
                             <div>
                               <Badge variant="secondary" className="text-[9px] font-bold mb-4 bg-accent/5 text-accent border-none">
@@ -240,14 +234,13 @@ export default function ProfilePage() {
                         </Card>
                       </motion.div>
                     )) : (
-                      <div className="col-span-full py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
+                      <div className="col-span-full py-24 text-center border-2 border-dashed border-border/40 rounded-2xl">
                         <Bookmark className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                        <MutedText className="font-bold text-xs opacity-40">Belum Ada Berita Yang Diarsipkan.</MutedText>
+                        <MutedText className="text-xs opacity-60">Belum Ada Berita Yang Diarsipkan.</MutedText>
                       </div>
                     )}
                   </motion.div>
                 </TabsContent>
-
                 <TabsContent value="history">
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                     {isHistoryLoading ? (
@@ -255,9 +248,9 @@ export default function ProfilePage() {
                     ) : history && history.length > 0 ? history.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
                         <Link href={`/news/${item.postId}`}>
-                          <div className="flex items-center justify-between p-8 rounded-[32px] hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-border/30 group bg-white/40 backdrop-blur-sm">
+                          <div className="flex items-center justify-between p-8 rounded-xl hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-border/30 group bg-white/40 backdrop-blur-sm">
                             <div className="flex items-center gap-6">
-                              <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary shadow-inner">
+                              <div className="h-14 w-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary shadow-inner">
                                 <LayoutDashboard className="h-6 w-6" />
                               </div>
                               <div>
@@ -274,9 +267,9 @@ export default function ProfilePage() {
                         </Link>
                       </motion.div>
                     )) : (
-                      <div className="py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
+                      <div className="py-24 text-center border-2 border-dashed border-border/40 rounded-2xl">
                         <History className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                        <MutedText className="font-bold text-xs opacity-40">Riwayat Bacaan Anda Masih Kosong.</MutedText>
+                        <MutedText className="text-xs opacity-60">Riwayat Bacaan Anda Masih Kosong.</MutedText>
                       </div>
                     )}
                   </motion.div>

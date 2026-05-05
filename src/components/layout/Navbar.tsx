@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -133,22 +134,22 @@ export const Navbar = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 rounded-2xl p-2" align="end" forceMount>
+                <DropdownMenuContent className="w-56 rounded-lg p-2" align="end" forceMount>
                   <DropdownMenuLabel className="font-headline font-bold px-3 py-2">Pusat Akun</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 gap-3">
+                    <DropdownMenuItem className="rounded-md cursor-pointer py-3 px-3 gap-3">
                       <User className="h-4 w-4" /> <span>Halaman Profil</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-xl cursor-pointer py-3 px-3 gap-3 text-destructive focus:bg-destructive/10">
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-md cursor-pointer py-3 px-3 gap-3 text-destructive focus:bg-destructive/10">
                     <LogOut className="h-4 w-4" /> <span>Keluar Sekarang</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-xs px-6 h-9 rounded-xl">
+                <Button size="sm" variant="outline" className="font-bold text-xs px-6 h-9 rounded-lg">
                   Masuk
                 </Button>
               </Link>

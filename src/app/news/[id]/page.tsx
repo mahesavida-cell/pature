@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply, Heart, MessageSquare } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -22,12 +23,12 @@ import {
   useCollection, 
   useDoc,
   useMemoFirebase,
-  addDocumentNonBlocking,
-  updateDocumentNonBlocking,
   setDocumentNonBlocking,
-  deleteDocumentNonBlocking
+  deleteDocumentNonBlocking,
+  addDocumentNonBlocking,
+  updateDocumentNonBlocking
 } from "@/firebase";
-import { collection, serverTimestamp, doc, query, orderBy, limit } from "firebase/firestore";
+import { collection, serverTimestamp, doc, query, orderBy } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -96,10 +97,8 @@ export default function NewsDetailPage() {
 
   const threadedComments = useMemo(() => {
     if (!firestoreComments) return [];
-    
     const roots = firestoreComments.filter(c => !c.parentId);
     const replies = firestoreComments.filter(c => !!c.parentId);
-
     return roots.map(root => ({
       ...root,
       replies: replies.filter(r => r.parentId === root.id)
@@ -109,7 +108,6 @@ export default function NewsDetailPage() {
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
-    
     if (user && db && params.id) {
       const historyRef = doc(db, "users", user.uid, "history", params.id as string);
       setDocumentNonBlocking(historyRef, {
@@ -119,7 +117,6 @@ export default function NewsDetailPage() {
         viewedAt: new Date().toISOString()
       }, { merge: true });
     }
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, [user, db, params.id, post.title, post.category]);
 
@@ -129,7 +126,6 @@ export default function NewsDetailPage() {
       return;
     }
     if (!bookmarkRef) return;
-
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
       toast({
@@ -162,7 +158,6 @@ export default function NewsDetailPage() {
     }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
-
     const colRef = collection(db, "posts", params.id as string, "comments");
     addDocumentNonBlocking(colRef, {
       content: text,
@@ -173,14 +168,12 @@ export default function NewsDetailPage() {
       parentId: parentId,
       likes: []
     });
-
     if (parentId) {
       setReplyText("");
       setReplyToId(null);
     } else {
       setCommentText("");
     }
-    
     toast({
       title: "Komentar Terkirim",
       description: "Terima Kasih Telah Berkontribusi Dalam Diskusi.",
@@ -192,14 +185,9 @@ export default function NewsDetailPage() {
       setIsLoginDialogOpen(true);
       return;
     }
-    if (!db) return;
-    
     const likes = Array.isArray(currentLikes) ? currentLikes : [];
     const isLiked = likes.includes(user.uid);
-    const newLikes = isLiked 
-      ? likes.filter(id => id !== user.uid)
-      : [...likes, user.uid];
-
+    const newLikes = isLiked ? likes.filter(id => id !== user.uid) : [...likes, user.uid];
     const commentRef = doc(db, "posts", params.id as string, "comments", commentId);
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
   };
@@ -208,13 +196,12 @@ export default function NewsDetailPage() {
     const isPostAuthor = comment.authorId === post.authorId;
     const likes = Array.isArray(comment.likes) ? comment.likes : [];
     const isLiked = user && likes.includes(user.uid);
-
     return (
-      <div className={cn("space-y-3", isReply && "ml-10 md:ml-12 border-l-2 pl-4 border-primary/10")}>
+      <div className={cn("space-y-3", isReply && "ml-8 md:ml-10 border-l-2 pl-4 border-primary/10")}>
         <motion.div 
           initial={{ opacity: 0, y: 10 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="group flex gap-3 md:gap-4 p-4 md:p-5 rounded-[24px] bg-white border border-border/50 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+          className="group flex gap-3 md:gap-4 p-4 md:p-5 rounded-xl bg-white border border-border/50 hover:border-primary/20 hover:shadow-md transition-all duration-300"
         >
           <Avatar className={cn("h-10 w-10 shadow-sm ring-2 ring-white", isReply && "h-8 w-8")}>
             <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
@@ -226,7 +213,7 @@ export default function NewsDetailPage() {
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
                 {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
-                <span className="text-[9px] text-muted-foreground font-bold shrink-0">
+                <span className="text-[9px] text-muted-foreground font-medium shrink-0">
                   {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
                 </span>
               </div>
@@ -244,7 +231,6 @@ export default function NewsDetailPage() {
                 <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current scale-110")} />
                 <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
               </motion.button>
-              
               {!isReply && (
                 <motion.button 
                   whileTap={{ scale: 0.9 }} 
@@ -261,27 +247,26 @@ export default function NewsDetailPage() {
             </div>
           </div>
         </motion.div>
-        
         <AnimatePresence>
           {replyToId === comment.id && (
             <motion.div 
-              initial={{ opacity: 0, height: 0, marginTop: 0 }} 
-              animate={{ opacity: 1, height: "auto", marginTop: 12 }} 
-              exit={{ opacity: 0, height: 0, marginTop: 0 }} 
-              className="ml-10 md:ml-12 overflow-hidden"
+              initial={{ opacity: 0, height: 0 }} 
+              animate={{ opacity: 1, height: "auto" }} 
+              exit={{ opacity: 0, height: 0 }} 
+              className="ml-8 md:ml-10 overflow-hidden mt-3"
             >
-              <div className="p-4 bg-primary/5 rounded-[20px] border border-primary/10 space-y-3">
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3">
                 <Input 
                   placeholder={`Membalas Pesan ${comment.authorName}...`} 
                   value={replyText} 
                   onChange={(e) => setReplyText(e.target.value)} 
-                  className="bg-white border-none h-11 rounded-xl text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20" 
+                  className="bg-white border-none h-11 rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20" 
                 />
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-xl h-9 px-4 font-bold text-[10px]">
+                  <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-9 px-4 font-bold text-[10px]">
                     Batal
                   </Button>
-                  <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-9 px-6 font-bold text-[10px] shadow-lg shadow-primary/10">
+                  <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-md h-9 px-6 font-bold text-[10px] shadow-md shadow-primary/10">
                     <Send className="h-3.5 w-3.5 mr-2" /> Balas
                   </Button>
                 </div>
@@ -289,7 +274,6 @@ export default function NewsDetailPage() {
             </motion.div>
           )}
         </AnimatePresence>
-
         {comment.replies && comment.replies.length > 0 && (
           <div className="space-y-4 pt-2">
             {comment.replies.map((reply: any) => <CommentItem key={reply.id} comment={reply} isReply />)}
@@ -310,20 +294,19 @@ export default function NewsDetailPage() {
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali Ke Feed Berita
               </Link>
-              
               <div className="space-y-4 mb-10">
                 <Badge variant="secondary" className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
                 <Title className="text-3xl md:text-5xl font-headline font-bold leading-[1.15] tracking-tight">{post.title}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border-2 border-white shadow-lg">
+                    <Avatar className="h-10 w-10 border-2 border-white shadow-md">
                       <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                         {post.author.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary tracking-tight">{post.author}</span>
-                      <MutedText className="text-[10px] font-bold opacity-60">{post.date} • {post.readTime}</MutedText>
+                      <MutedText className="text-[10px] font-medium opacity-60">{post.date} • {post.readTime}</MutedText>
                     </div>
                   </div>
                   <TooltipProvider>
@@ -334,7 +317,7 @@ export default function NewsDetailPage() {
                             <Share2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-lg font-bold text-[10px]"><p>Bagikan Artikel</p></TooltipContent>
+                        <TooltipContent className="rounded-md font-bold text-[10px]"><p>Bagikan Artikel</p></TooltipContent>
                       </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -343,30 +326,26 @@ export default function NewsDetailPage() {
                             size="icon" 
                             className={cn(
                               "rounded-full h-10 w-10 transition-all border-border/40", 
-                              isSaved && 'bg-primary text-primary-foreground border-primary shadow-lg'
+                              isSaved && 'bg-primary text-primary-foreground border-primary shadow-md'
                             )} 
                             onClick={handleToggleBookmark}
                           >
                             <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-lg font-bold text-[10px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
+                        <TooltipContent className="rounded-md font-bold text-[10px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
                       </Tooltip>
                     </div>
                   </TooltipProvider>
                 </div>
               </div>
-
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[32px] mb-12 shadow-2xl border border-border/10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-12 shadow-xl border border-border/10">
                 {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority />}
               </div>
-
               <article className="prose prose-neutral max-w-none mb-20">
                 {post.content.split('\n\n').map((p, i) => <BodyText key={i} className="text-lg md:text-xl mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>)}
               </article>
-
               <Separator className="my-16 opacity-30" />
-
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-2xl">Diskusi Komunitas</Heading>
@@ -374,10 +353,9 @@ export default function NewsDetailPage() {
                     {firestoreComments?.length || 0}
                   </Badge>
                 </div>
-
                 {user ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-[32px] bg-primary/5 border border-primary/10">
-                    <Avatar className="h-11 w-11 shadow-lg border-2 border-white shrink-0">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-2xl bg-primary/5 border border-primary/10">
+                    <Avatar className="h-11 w-11 shadow-md border-2 border-white shrink-0">
                       <AvatarFallback className="bg-primary text-white font-bold text-xs">{user.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-4">
@@ -385,13 +363,13 @@ export default function NewsDetailPage() {
                         placeholder="Tuliskan Pendapat Anda Tentang Artikel Ini..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none h-14 rounded-[20px] text-sm shadow-sm px-6 focus-visible:ring-1 focus-visible:ring-primary/20" 
+                        className="bg-white border-none h-14 rounded-xl text-sm shadow-sm px-6 focus-visible:ring-1 focus-visible:ring-primary/20" 
                       />
                       <div className="flex justify-end">
                         <Button 
                           onClick={() => handlePostComment(null)} 
                           disabled={!commentText.trim()}
-                          className="rounded-2xl gap-2 h-11 px-8 font-bold text-[11px] shadow-xl shadow-primary/10 transition-transform active:scale-95"
+                          className="rounded-xl gap-2 h-11 px-8 font-bold text-[11px] shadow-lg shadow-primary/10 transition-transform active:scale-95"
                         >
                           <Send className="h-4 w-4" /> Kirim Komentar
                         </Button>
@@ -399,32 +377,30 @@ export default function NewsDetailPage() {
                     </div>
                   </motion.div>
                 ) : (
-                  <Card className="bg-primary/5 p-12 rounded-[40px] text-center mb-14 border border-dashed border-primary/20">
-                    <MutedText className="block mb-6 font-bold text-xs opacity-60">Silakan Masuk Terlebih Dahulu Untuk Bergabung Dalam Diskusi Komunitas Kami.</MutedText>
+                  <Card className="bg-primary/5 p-12 rounded-2xl text-center mb-14 border border-dashed border-primary/20">
+                    <MutedText className="block mb-6 font-medium text-xs opacity-60">Silakan Masuk Terlebih Dahulu Untuk Bergabung Dalam Diskusi Komunitas Kami.</MutedText>
                     <Link href="/auth">
-                      <Button className="rounded-2xl px-14 font-bold h-12 shadow-2xl shadow-primary/20">Masuk Sekarang</Button>
+                      <Button className="rounded-xl px-14 font-bold h-12 shadow-xl shadow-primary/20">Masuk Sekarang</Button>
                     </Link>
                   </Card>
                 )}
-
                 <div className="space-y-8">
                   {isCommentsLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                      <MutedText className="font-bold text-xs">Memuat Diskusi...</MutedText>
+                      <MutedText className="font-medium text-xs">Memuat Diskusi...</MutedText>
                     </div>
                   ) : threadedComments.length > 0 ? (
                     threadedComments.map((comment) => <CommentItem key={comment.id} comment={comment} />)
                   ) : (
-                    <div className="py-20 text-center rounded-[32px] border-2 border-dashed border-border/50">
-                      <MutedText className="font-bold text-xs opacity-40 italic">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
+                    <div className="py-20 text-center rounded-xl border-2 border-dashed border-border/50">
+                      <MutedText className="text-xs opacity-60">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
                     </div>
                   )}
                 </div>
               </section>
             </motion.div>
           </div>
-
           <aside className="lg:col-span-4">
             <div className="sticky top-24 space-y-12">
               <div>
@@ -435,7 +411,7 @@ export default function NewsDetailPage() {
                 <div className="space-y-8">
                   {[{ id: "1", title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia", category: "Desain", timeAgo: "2 Jam Yang Lalu" }].map((story) => (
                     <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[24px] bg-muted shadow-sm">
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm">
                         <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       </div>
                       <div className="flex flex-col justify-center gap-1.5">
@@ -446,8 +422,7 @@ export default function NewsDetailPage() {
                   ))}
                 </div>
               </div>
-
-              <Card className="bg-primary text-primary-foreground p-8 rounded-[40px] shadow-2xl relative overflow-hidden">
+              <Card className="bg-primary text-primary-foreground p-8 rounded-2xl shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-10">
                   <TrendingUp className="h-28 w-28" />
                 </div>
@@ -455,7 +430,7 @@ export default function NewsDetailPage() {
                   <Heading level={3} className="text-white text-xl mb-2 tracking-tight">Buletin Berita</Heading>
                   <BodyText className="text-xs text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Langsung Ke Akun Anda Setiap Hari.</BodyText>
                   <Link href="/auth">
-                    <Button variant="secondary" className="w-full h-12 rounded-2xl font-bold text-[11px] shadow-xl transition-transform active:scale-95">
+                    <Button variant="secondary" className="w-full h-12 rounded-xl font-bold text-[11px] shadow-lg transition-transform active:scale-95">
                       Langganan Sekarang
                     </Button>
                   </Link>
@@ -465,26 +440,20 @@ export default function NewsDetailPage() {
           </aside>
         </div>
       </main>
-
-      <motion.div 
-        initial={{ opacity: 0, scale: 0 }} 
-        animate={{ opacity: showBackToTop ? 1 : 0, scale: showBackToTop ? 1 : 0 }} 
-        className="fixed bottom-8 right-8 z-50"
-      >
-        <Button size="icon" className="rounded-full h-14 w-14 shadow-2xl bg-primary text-primary-foreground hover:scale-110 transition-transform" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+      <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: showBackToTop ? 1 : 0, scale: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
+        <Button size="icon" className="rounded-full h-14 w-14 shadow-xl bg-primary text-primary-foreground hover:scale-110 transition-transform" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <ChevronUp className="h-7 w-7" />
         </Button>
       </motion.div>
-
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-[40px] p-12 border-none shadow-2xl">
+        <AlertDialogContent className="rounded-2xl p-10 border-none shadow-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-2xl mb-3">Akses Terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-base leading-relaxed opacity-70 mb-2">Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi, Memberikan Suka, Atau Menyimpan Artikel Ini Ke Arsip Anda.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-3 mt-8">
-            <AlertDialogCancel className="rounded-2xl font-bold text-[11px] h-14 px-8 border-border">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-2xl font-bold text-[11px] bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-10 shadow-2xl shadow-primary/20">Masuk Sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-xl font-bold text-[11px] h-14 px-8 border-border">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-xl font-bold text-[11px] bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-10 shadow-xl shadow-primary/20">Masuk Sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

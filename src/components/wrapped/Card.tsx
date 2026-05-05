@@ -13,7 +13,7 @@ interface WrappedCardProps {
 
 export const Card = ({ children, className, animate = true }: WrappedCardProps) => {
   const content = (
-    <BaseCard className={cn("overflow-hidden border-none shadow-sm bg-white/50 backdrop-blur-sm hover:shadow-md transition-shadow duration-300", className)}>
+    <BaseCard className={cn("overflow-hidden border-none shadow-sm bg-white/50 backdrop-blur-sm hover:shadow-md transition-shadow duration-300 rounded-xl", className)}>
       {children}
     </BaseCard>
   );
