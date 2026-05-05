@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply, Heart } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -22,9 +22,10 @@ import {
   useFirestore, 
   useCollection, 
   useMemoFirebase,
-  addDocumentNonBlocking 
+  addDocumentNonBlocking,
+  updateDocumentNonBlocking
 } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
+import { collection, serverTimestamp, doc } from "firebase/firestore";
 
 export default function NewsDetailPage() {
   const params = useParams();
@@ -49,17 +50,19 @@ export default function NewsDetailPage() {
       id: "mock-1",
       authorId: "mock-author-1",
       authorName: "Sarah Jenkins",
-      content: "This Article Provides Such A Great Insight Into Modern Design Trends. Minimalism Is Truly The Future Of Digital Information.",
-      createdAt: "2 Hours Ago",
-      parentId: null
+      content: "Artikel Ini Memberikan Wawasan Yang Luar Biasa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
+      createdAt: "2 Jam Yang Lalu",
+      parentId: null,
+      likes: []
     },
     {
       id: "mock-2",
       authorId: "mock-author-2",
       authorName: "David Chen",
-      content: "I Completely Agree With The Point About Whitespace. It's Essential For User Focus And Reducing Cognitive Overload.",
-      createdAt: "5 Hours Ago",
-      parentId: "mock-1"
+      content: "Saya Sangat Setuju Dengan Poin Tentang Ruang Kosong. Ini Sangat Penting Untuk Fokus Pengguna Dan Mengurangi Beban Kognitif.",
+      createdAt: "5 Jam Yang Lalu",
+      parentId: "mock-1",
+      likes: []
     }
   ];
 
@@ -100,10 +103,11 @@ export default function NewsDetailPage() {
     addDocumentNonBlocking(colRef, {
       content: text,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "Anonymous User",
+      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna Anonim",
       createdAt: serverTimestamp(),
       postId: params.id,
-      parentId: parentId
+      parentId: parentId,
+      likes: []
     });
 
     if (parentId) {
@@ -114,16 +118,30 @@ export default function NewsDetailPage() {
     }
   };
 
+  const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
+    if (!user) return;
+    
+    const isLiked = currentLikes.includes(user.uid);
+    const newLikes = isLiked 
+      ? currentLikes.filter(id => id !== user.uid)
+      : [...currentLikes, user.uid];
+
+    const commentRef = doc(db, "posts", params.id as string, "comments", commentId);
+    updateDocumentNonBlocking(commentRef, {
+      likes: newLikes
+    });
+  };
+
   const posts = [
     {
       id: "1",
-      title: "The Evolution Of Minimalist Digital Design",
-      category: "Design",
+      title: "Evolusi Desain Digital Minimalis",
+      category: "Desain",
       author: "Alex Rivers",
       authorId: "author-alex-1",
-      date: "Oct 24, 2024",
-      readTime: "5 Min Read",
-      content: "The Landscape Of Digital Design Is Shifting Towards A 'Less Is More' Approach. We're Seeing A Massive Transition Where Whitespace Isn't Just Empty Space—It's A Tool For Focus. Modern Information Systems Are Prioritizing Clarity Over Complexity, Ensuring That Users Can Find What They Need Without Cognitive Overload.\n\nTypography Has Also Taken Center Stage. Bold, Readable Fonts Are Replacing Decorative Ones To Improve Accessibility And Speed Of Information Consumption. In This Article, We Explore Why This Trend Is Not Just A Passing Phase But A Fundamental Change In How We Interact With Data.",
+      date: "24 Okt, 2024",
+      readTime: "5 Menit Baca",
+      content: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'. Kami Melihat Transisi Masif Di Mana Ruang Kosong Bukan Hanya Ruang Hampa—Ini Adalah Alat Untuk Fokus. Sistem Informasi Modern Memprioritaskan Kejelasan Daripada Kompleksitas, Memastikan Bahwa Pengguna Dapat Menemukan Apa Yang Mereka Butuhkan Tanpa Kelebihan Kognitif.\n\nTipografi Juga Menjadi Pusat Perhatian. Huruf Yang Tebal Dan Mudah Dibaca Menggantikan Huruf Dekoratif Untuk Meningkatkan Aksesibilitas Dan Kecepatan Konsumsi Informasi. Dalam Artikel Ini, Kami Menjelajahi Mengapa Tren Ini Bukan Sekadar Fase Sesaat Tetapi Perubahan Mendasar Dalam Cara Kita Berinteraksi Dengan Data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
@@ -131,16 +149,16 @@ export default function NewsDetailPage() {
   const trendingStories = [
     {
       id: "1",
-      title: "How Typography Influences Human Psychology",
-      category: "Design",
-      timeAgo: "2 Hours Ago",
+      title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia",
+      category: "Desain",
+      timeAgo: "2 Jam Yang Lalu",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     },
     {
       id: "2",
-      title: "The Future Of Sustainability In Architecture",
-      category: "Culture",
-      timeAgo: "4 Hours Ago",
+      title: "Masa Depan Keberlanjutan Dalam Arsitektur",
+      category: "Budaya",
+      timeAgo: "4 Jam Yang Lalu",
       image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
     }
   ];
@@ -149,6 +167,8 @@ export default function NewsDetailPage() {
 
   const CommentItem = ({ comment, isReply = false }: { comment: any, isReply?: boolean }) => {
     const isPostAuthor = comment.authorId === post.authorId;
+    const likes = comment.likes || [];
+    const isLiked = user && likes.includes(user.uid);
 
     return (
       <div className={cn("space-y-4", isReply && "ml-12 border-l pl-4 border-border/50")}>
@@ -163,23 +183,37 @@ export default function NewsDetailPage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-              {isPostAuthor && <Badge variant="default" className="text-[7px] px-1.5 py-0 uppercase font-bold tracking-tighter">Author</Badge>}
+              {isPostAuthor && <Badge variant="default" className="text-[7px] px-1.5 py-0 uppercase font-bold tracking-tighter">Penulis</Badge>}
               <span className="text-[8px] text-muted-foreground uppercase font-bold">
                 {typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}
               </span>
             </div>
-            <BodyText className="text-sm opacity-80 mb-2">{comment.content}</BodyText>
+            <BodyText className="text-sm opacity-80 mb-3">{comment.content}</BodyText>
             
-            {!isReply && user && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 text-[9px] font-bold uppercase tracking-widest gap-1 p-0 hover:bg-transparent hover:text-primary"
-                onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
+            <div className="flex items-center gap-4">
+              <motion.button 
+                whileTap={{ scale: 0.9 }}
+                onClick={() => handleLikeComment(comment.id, likes)}
+                className={cn(
+                  "flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors",
+                  isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
+                )}
               >
-                <Reply className="h-3 w-3" /> Balas Pesan
-              </Button>
-            )}
+                <Heart className={cn("h-3 w-3", isLiked && "fill-current")} />
+                {likes.length > 0 ? `${likes.length} Suka` : "Suka"}
+              </motion.button>
+
+              {!isReply && user && (
+                <motion.button 
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
+                  className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Reply className="h-3 w-3" />
+                  Balas Pesan
+                </motion.button>
+              )}
+            </div>
           </div>
         </motion.div>
 
