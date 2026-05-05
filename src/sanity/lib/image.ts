@@ -1,0 +1,12 @@
+
+import createImageUrlBuilder from '@sanity/image-url'
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+
+import { dataset, projectId } from '../env'
+
+// Builder untuk memproses URL gambar dari Sanity
+const builder = createImageUrlBuilder({ projectId, dataset })
+
+export const urlFor = (source: SanityImageSource) => {
+  return builder.image(source)
+}
