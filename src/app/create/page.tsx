@@ -19,15 +19,15 @@ export default function CreatePost() {
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
           <div>
-            <Heading level={2}>Create New Post</Heading>
-            <BodyText>Share Your Insights With The InfoFlow Community.</BodyText>
+            <Heading level={2}>Buat postingan baru</Heading>
+            <BodyText>Bagikan wawasan Anda dengan komunitas InfoFlow.</BodyText>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" className="gap-2">
-              <Eye className="h-4 w-4" /> Preview
+              <Eye className="h-4 w-4" /> Pratinjau
             </Button>
             <Button size="sm" className="gap-2">
-              <Globe className="h-4 w-4" /> Publish
+              <Globe className="h-4 w-4" /> Terbitkan
             </Button>
           </div>
         </div>
@@ -40,63 +40,63 @@ export default function CreatePost() {
           <Card>
             <CardContent className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="post-title" className="text-lg font-headline">Article Title</Label>
+                <Label htmlFor="post-title" className="text-lg font-headline">Judul artikel</Label>
                 <Input 
                   id="post-title" 
-                  placeholder="Enter A Compelling Title..." 
+                  placeholder="Masukkan judul yang menarik..." 
                   className="text-xl h-14 font-headline border-none shadow-none bg-accent/5 focus-visible:ring-1"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">Kategori</Label>
                   <Select>
                     <SelectTrigger id="category">
-                      <SelectValue placeholder="Select Category" />
+                      <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="technology">Technology</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="business">Business</SelectItem>
-                      <SelectItem value="culture">Culture</SelectItem>
-                      <SelectItem value="science">Science</SelectItem>
+                      <SelectItem value="technology">Teknologi</SelectItem>
+                      <SelectItem value="design">Desain</SelectItem>
+                      <SelectItem value="business">Bisnis</SelectItem>
+                      <SelectItem value="culture">Budaya</SelectItem>
+                      <SelectItem value="science">Sains</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="read-time">Estimated Read Time (Minutes)</Label>
+                  <Label htmlFor="read-time">Estimasi waktu baca (menit)</Label>
                   <Input id="read-time" type="number" placeholder="5" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Featured Image</Label>
+                <Label>Gambar utama</Label>
                 <div className="border-2 border-dashed border-border rounded-lg p-12 text-center space-y-4 hover:bg-accent/5 transition-colors cursor-pointer group">
                   <div className="mx-auto w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <ImageIcon className="h-6 w-6 text-accent" />
                   </div>
                   <div className="space-y-1">
-                    <BodyText className="font-medium">Click To Upload Or Drag And Drop</BodyText>
-                    <BodyText className="text-sm">PNG, JPG Or WebP (Max. 10MB)</BodyText>
+                    <BodyText className="font-medium">Klik untuk unggah atau seret dan lepas</BodyText>
+                    <BodyText className="text-sm">PNG, JPG atau WebP (Maks. 10MB)</BodyText>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="excerpt">Short Excerpt</Label>
+                <Label htmlFor="excerpt">Ringkasan singkat</Label>
                 <Textarea 
                   id="excerpt" 
-                  placeholder="Summarize The Core Message Of Your Post..." 
+                  placeholder="Ringkas pesan inti dari postingan Anda..." 
                   className="resize-none min-h-[100px] bg-accent/5 border-none shadow-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content">Main Content</Label>
+                <Label htmlFor="content">Konten utama</Label>
                 <Textarea 
                   id="content" 
-                  placeholder="Write Your Story Here. Use Markdown For Formatting..." 
+                  placeholder="Tulis cerita Anda di sini. Gunakan Markdown untuk format..." 
                   className="min-h-[400px] bg-accent/5 border-none shadow-none"
                 />
               </div>
@@ -105,9 +105,9 @@ export default function CreatePost() {
 
           <div className="flex justify-end gap-4">
             <Button variant="ghost" className="gap-2">
-              <Save className="h-4 w-4" /> Save Draft
+              <Save className="h-4 w-4" /> Simpan draf
             </Button>
-            <Button className="px-12">Publish Now</Button>
+            <Button className="px-12">Terbitkan sekarang</Button>
           </div>
         </motion.div>
       </main>

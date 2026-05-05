@@ -104,16 +104,16 @@ export const Navbar = () => {
                 {user ? (
                   <>
                     <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-base font-medium">
-                      <User className="h-4 w-4" /> Profil Saya
+                      <User className="h-4 w-4" /> Profil saya
                     </Link>
                     <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0 text-base font-medium text-destructive">
-                      <LogOut className="h-4 w-4 mr-3" /> Keluar Akun
+                      <LogOut className="h-4 w-4 mr-3" /> Keluar akun
                     </Button>
                   </>
                 ) : (
                   <Link href="/auth" onClick={() => setIsOpen(false)}>
                     <Button className="w-full h-10 text-sm font-bold rounded-md">
-                      Masuk Sekarang
+                      Masuk sekarang
                     </Button>
                   </Link>
                 )}
@@ -135,15 +135,15 @@ export const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48 rounded-md p-1" align="end" forceMount>
-                  <DropdownMenuLabel className="font-headline font-bold px-2 py-1.5 text-xs">Pusat Akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="font-headline font-bold px-2 py-1.5 text-xs">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-sm cursor-pointer py-2 px-2 gap-2 text-xs">
-                      <User className="h-3.5 w-3.5" /> <span>Halaman Profil</span>
+                      <User className="h-3.5 w-3.5" /> <span>Halaman profil</span>
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem onClick={handleSignOut} className="rounded-sm cursor-pointer py-2 px-2 gap-2 text-destructive text-xs focus:bg-destructive/5">
-                    <LogOut className="h-3.5 w-3.5" /> <span>Keluar Sekarang</span>
+                    <LogOut className="h-3.5 w-3.5" /> <span>Keluar sekarang</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

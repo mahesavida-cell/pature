@@ -41,15 +41,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// Helper function for relative time with correct capitalization
+// Helper function for relative time with correct Indonesian grammar
 const formatRelativeTime = (dateInput: any) => {
-  if (!dateInput) return "Baru Saja";
+  if (!dateInput) return "Baru saja";
   
   const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return "Baru Saja";
+  if (diffInSeconds < 60) return "Baru saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
   if (minutes < 60) return `${minutes} Menit yang lalu`;
@@ -151,7 +151,7 @@ const CommentItem = ({
               )}
             >
               <MessageSquare className="h-4 w-4" />
-              <span>Balas Pesan</span>
+              <span>Balas pesan</span>
             </motion.button>
           </div>
         </div>
@@ -171,7 +171,7 @@ const CommentItem = ({
                 <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
               </div>
               <Textarea 
-                placeholder={`Tulis Balasan Anda...`} 
+                placeholder={`Tulis balasan Anda...`} 
                 value={replyText} 
                 onChange={(e) => setReplyText(e.target.value)} 
                 className="bg-white border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
@@ -181,7 +181,7 @@ const CommentItem = ({
                   Batal
                 </Button>
                 <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">
-                  <Send className="h-3.5 w-3.5 mr-2" /> Kirim Balasan
+                  <Send className="h-3.5 w-3.5 mr-2" /> Kirim balasan
                 </Button>
               </div>
             </div>
@@ -235,14 +235,14 @@ export default function NewsDetailPage() {
   const staticPosts = [
     {
       id: "1",
-      title: "Evolusi Desain Digital Minimalis",
+      title: "Evolusi desain digital minimalis",
       category: "Desain",
       author: "Alex Rivers",
       authorId: "author-alex-1",
       date: "24 Okt, 2024",
-      readTime: "5 Menit Baca",
-      excerpt: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'.",
-      content: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'. Kami Melihat Transisi Masif Di Nama Ruang Kosong Bukan Hanya Ruang Hampa—Ini Adalah Alat Untuk Fokus. Sistem Informasi Modern Memprioritaskan Kejelasan Daripada Kompleksitas, Memastikan Bahwa Pengguna Dapat Menemukan Apa Yang Mereka Butuhkan Tanpa Kelebihan Kognitif.\n\nTipografi Juga Menjadi Pusat Perhatian. Huruf Yang Tebal Dan Mudah Didaca Menggantikan Huruf Dekoratif Untuk Meningkatkan Aksesibilitas Dan Kecepatan Konsumsi Informasi. Dalam Artikel Ini, Kami Menjelajahi Mengapa Tren Ini Bukan Sekadar Fase Sesaat Tetapi Perubahan Mendasar Dalam Cara Kita Berinteraksi Dengan Data.",
+      readTime: "5 menit baca",
+      excerpt: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'.",
+      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di nama ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah didaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
@@ -266,7 +266,7 @@ export default function NewsDetailPage() {
   const mockComments = [
     {
       id: "mock-1",
-      content: "Analisis Yang Sangat Menarik. Saya Setuju Bahwa Minimalisme Adalah Kunci Untuk Mengurangi Kelelahan Digital.",
+      content: "Analisis yang sangat menarik. Saya setuju bahwa minimalisme adalah kunci untuk mengurangi kelelahan digital.",
       authorName: "Dian Pratama",
       authorId: "user-1",
       likes: ["user-2", "user-3"],
@@ -274,7 +274,7 @@ export default function NewsDetailPage() {
       replies: [
         {
           id: "mock-2",
-          content: "Tepat Sekali! Terkadang Kita Lupa Bahwa Desain Yang Baik Adalah Desain Yang Tidak Terlihat.",
+          content: "Tepat sekali! Terkadang kita lupa bahwa desain yang baik adalah desain yang tidak terlihat.",
           authorName: "Alex Rivers",
           authorId: "author-alex-1",
           likes: ["user-1"],
@@ -282,7 +282,7 @@ export default function NewsDetailPage() {
           replies: [
             {
               id: "mock-3",
-              content: "Ini Menarik. Bagaimana Dengan Aksesibilitas Untuk Pengguna Dengan Gangguan Penglihatan?",
+              content: "Ini menarik. Bagaimana dengan aksesibilitas untuk pengguna dengan gangguan penglihatan?",
               authorName: "Rudi Hartono",
               authorId: "user-2",
               likes: [],
@@ -331,7 +331,7 @@ export default function NewsDetailPage() {
     if (!bookmarkRef) return;
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
-      toast({ title: "Dihapus Dari Arsip", description: `"${post.title}" Berhasil Dihapus.` });
+      toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
         postId: params.id,
@@ -339,14 +339,14 @@ export default function NewsDetailPage() {
         category: post.category,
         savedAt: new Date().toISOString()
       }, { merge: true });
-      toast({ title: "Berhasil Diarsipkan", description: `"${post.title}" Tersimpan Di Profil.` });
+      toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
     }
   };
 
   const handleShare = async () => {
     const shareData = {
       title: post.title,
-      text: post.excerpt || `Baca Berita Terbaru Di InfoFlow: ${post.title}`,
+      text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
       url: window.location.href,
     };
 
@@ -356,8 +356,8 @@ export default function NewsDetailPage() {
       } else {
         await navigator.clipboard.writeText(window.location.href);
         toast({
-          title: "Tautan Berhasil Disalin",
-          description: "Tautan Berita Telah Disalin Ke Papan Klip Anda.",
+          title: "Tautan berhasil disalin",
+          description: "Tautan berita telah disalin ke papan klip Anda.",
         });
       }
     } catch (err) {
@@ -392,10 +392,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
-    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
+    { id: "1", title: "Psikologi tipografi dalam desain", category: "Desain", timeAgo: "2 jam yang lalu" },
+    { id: "2", title: "Masa depan AI di media", category: "Teknologi", timeAgo: "4 jam yang lalu" },
+    { id: "3", title: "Arsitektur kota hijau", category: "Budaya", timeAgo: "1 hari yang lalu" },
+    { id: "4", title: "Strategi ekonomi digital", category: "Bisnis", timeAgo: "6 jam yang lalu" }
   ];
 
   return (
@@ -407,7 +407,7 @@ export default function NewsDetailPage() {
           <div className="lg:col-span-8">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali Ke Feed Berita
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
               </Link>
               <div className="space-y-4 mb-10">
                 <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
@@ -421,14 +421,14 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
-                      <MutedText className="text-[10px] opacity-60 font-medium">{post.date || "Baru Saja"} • {post.readTime || "5 Menit Baca"}</MutedText>
+                      <MutedText className="text-[10px] opacity-60 font-medium">{post.date || "Baru saja"} • {post.readTime || "5 menit baca"}</MutedText>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      title="Bagikan Berita"
+                      title="Bagikan berita"
                       className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all shadow-sm"
                       onClick={handleShare}
                     >
@@ -437,7 +437,7 @@ export default function NewsDetailPage() {
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      title="Simpan Berita"
+                      title="Simpan berita"
                       className={cn("rounded-full h-9 w-9 transition-all border-border/40 shadow-sm", isSaved && 'bg-primary text-primary-foreground border-primary')} 
                       onClick={handleToggleBookmark}
                     >
@@ -452,12 +452,12 @@ export default function NewsDetailPage() {
               <article className="prose prose-neutral max-w-none mb-20">
                 {post.content ? post.content.split('\n\n').map((p: string, i: number) => (
                   <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
-                )) : <BodyText className="text-lg mb-6 opacity-60">Memuat Konten...</BodyText>}
+                )) : <BodyText className="text-lg mb-6 opacity-60">Memuat konten...</BodyText>}
               </article>
               <Separator className="my-16 opacity-30" />
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
-                  <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
+                  <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
                   <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
                     {firestoreComments?.length || 0}
                   </Badge>
@@ -469,22 +469,22 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div className="flex-1 space-y-4">
                       <Textarea 
-                        placeholder="Tuliskan Pendapat Anda..." 
+                        placeholder="Tuliskan pendapat Anda..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
                         className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
                       />
                       <div className="flex justify-end">
                         <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
-                          <Send className="h-3.5 w-3.5" /> Kirim Komentar
+                          <Send className="h-3.5 w-3.5" /> Kirim komentar
                         </Button>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
-                    <MutedText className="block mb-6 font-medium text-xs">Masuk Untuk Bergabung Dalam Diskusi.</MutedText>
-                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button></Link>
+                    <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
+                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
                   </Card>
                 )}
                 <div className="space-y-8">
@@ -496,7 +496,7 @@ export default function NewsDetailPage() {
                     threadedComments.map((comment) => (
                       <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post.authorId} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
                     ))
-                  ) : <div className="py-20 text-center rounded-md border border-dashed border-border/40"><MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText></div>}
+                  ) : <div className="py-20 text-center rounded-md border border-dashed border-border/40"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
                 </div>
               </section>
             </motion.div>
@@ -506,7 +506,7 @@ export default function NewsDetailPage() {
               <section>
                 <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
                   <TrendingUp className="h-4 w-4 text-primary" />
-                  <Heading level={3} className="text-lg">Berita Terpopuler</Heading>
+                  <Heading level={3} className="text-lg">Berita terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
                   {popularStories.map((story) => (
@@ -522,15 +522,15 @@ export default function NewsDetailPage() {
                   ))}
                 </div>
                 <div className="mt-8 pt-4 border-t border-border/10">
-                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat Lebih Banyak Berita</Link>
+                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
                 </div>
               </section>
               
               <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md">
                 <div className="text-center">
-                  <Heading level={3} className="text-white text-lg mb-2">Buletin Berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Setiap Hari Langsung Ke Email Anda.</BodyText>
-                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan Sekarang</Button></Link>
+                  <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
+                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
+                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
                 </div>
               </Card>
             </div>
@@ -545,10 +545,10 @@ export default function NewsDetailPage() {
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
         <AlertDialogContent className="rounded-md p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl">Akses Terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70">Silakan Masuk Terlebih Dahulu Untuk Berpartisipasi Dalam Diskusi.</AlertDialogDescription>
+            <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk Sekarang</AlertDialogAction></AlertDialogFooter>
+          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>

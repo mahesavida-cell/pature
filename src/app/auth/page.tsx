@@ -28,8 +28,8 @@ export default function AuthPage() {
     if (!email || !password) {
       toast({
         variant: "destructive",
-        title: "Kesalahan Input",
-        description: "Mohon Isi Semua Bidang Yang Tersedia.",
+        title: "Kesalahan input",
+        description: "Mohon isi semua bidang yang tersedia.",
       });
       return;
     }
@@ -39,25 +39,25 @@ export default function AuthPage() {
       if (type === 'register') {
         await initiateEmailSignUp(auth, email, password);
         toast({
-          title: "Berhasil Daftar",
-          description: "Akun Berhasil Dibuat! Selamat Datang Di InfoFlow.",
+          title: "Berhasil daftar",
+          description: "Akun berhasil dibuat! Selamat datang di InfoFlow.",
         });
       } else {
         await initiateEmailSignIn(auth, email, password);
         toast({
-          title: "Selamat Datang Kembali",
-          description: "Berhasil Masuk Ke Akun Anda.",
+          title: "Selamat datang kembali",
+          description: "Berhasil masuk ke akun Anda.",
         });
       }
       router.push("/");
     } catch (error: any) {
       let message = error.message;
       if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
-        message = "Metode Masuk Ini Belum Diaktifkan Di Firebase Console. Silakan Aktifkan 'Email/Password' Di Menu Authentication.";
+        message = "Metode masuk ini belum diaktifkan di Firebase Console. Silakan aktifkan 'Email/Password' di menu Authentication.";
       }
       toast({
         variant: "destructive",
-        title: "Kesalahan Autentikasi",
+        title: "Kesalahan autentikasi",
         description: message,
       });
     } finally {
@@ -72,7 +72,7 @@ export default function AuthPage() {
     } catch (error: any) {
       let message = error.message;
       if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
-        message = "Metode Google Sign-In Belum Diaktifkan Di Firebase Console. Silakan Aktifkan Di Menu Authentication.";
+        message = "Metode Google Sign-In belum diaktifkan di Firebase Console. Silakan aktifkan di menu Authentication.";
       }
       toast({
         variant: "destructive",
@@ -93,22 +93,22 @@ export default function AuthPage() {
           className="w-full max-w-md"
         >
           <div className="text-center mb-8 space-y-2">
-            <Heading level={2} className="text-2xl">InfoFlow Reader</Heading>
-            <BodyText className="text-sm">Dapatkan Berita Terbaru Langsung Di Genggaman Anda.</BodyText>
+            <Heading level={2} className="text-2xl">InfoFlow reader</Heading>
+            <BodyText className="text-sm">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
           <Card className="rounded-lg shadow-md border-none">
             <CardContent className="pt-8">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger value="login">Masuk Sekarang</TabsTrigger>
-                  <TabsTrigger value="register">Daftar Akun</TabsTrigger>
+                  <TabsTrigger value="login">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register">Daftar akun</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat Email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
@@ -119,7 +119,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" title="Title case" className="text-[10px] font-bold opacity-60">Kata Sandi</Label>
+                      <Label htmlFor="password" title="Title case" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
                       <Input 
                         id="password" 
                         type="password" 
@@ -133,7 +133,7 @@ export default function AuthPage() {
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
-                      {isLoading ? "Sedang Memproses..." : "Masuk Ke Akun"}
+                      {isLoading ? "Sedang memproses..." : "Masuk ke akun"}
                     </Button>
                   </div>
                 </TabsContent>
@@ -141,7 +141,7 @@ export default function AuthPage() {
                 <TabsContent value="register">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat Email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
@@ -152,7 +152,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata Sandi</Label>
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
                       <Input 
                         id="reg-password" 
                         type="password" 
@@ -166,7 +166,7 @@ export default function AuthPage() {
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
-                      {isLoading ? "Sedang Memproses..." : "Daftar Berlangganan"}
+                      {isLoading ? "Sedang memproses..." : "Daftar berlangganan"}
                     </Button>
                   </div>
                 </TabsContent>
@@ -177,7 +177,7 @@ export default function AuthPage() {
                   <Separator />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white px-3 text-muted-foreground font-bold">Atau Masuk Dengan</span>
+                  <span className="bg-white px-3 text-muted-foreground font-bold">Atau masuk dengan</span>
                 </div>
               </div>
 
@@ -205,12 +205,12 @@ export default function AuthPage() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Masuk Dengan Akun Google
+                  Masuk dengan akun Google
                 </Button>
               </motion.div>
 
               <MutedText className="text-[9px] text-center block pt-8 opacity-50">
-                Dengan Melanjutkan, Anda Setuju Untuk Menerima Update Berita Terbaru Kami.
+                Dengan melanjutkan, Anda setuju untuk menerima update berita terbaru kami.
               </MutedText>
             </CardContent>
           </Card>

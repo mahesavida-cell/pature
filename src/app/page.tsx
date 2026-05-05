@@ -21,37 +21,37 @@ export default function Home() {
   const posts = [
     {
       id: "1",
-      title: "Evolusi Desain Digital Minimalis",
+      title: "Evolusi desain digital minimalis",
       category: "Desain",
       author: "Alex Rivers",
-      readTime: "5 Menit Baca",
-      excerpt: "Menjelajahi Bagaimana Ruang Kosong Dan Tipografi Yang Jelas Menjadi Standar Untuk Sistem Informasi Modern.",
+      readTime: "5 menit baca",
+      excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     },
     {
       id: "2",
-      title: "Arsitektur Berkelanjutan Di Lingkungan Perkotaan",
+      title: "Arsitektur berkelanjutan di lingkungan perkotaan",
       category: "Budaya",
       author: "Maya Lin",
-      readTime: "8 Menit Baca",
-      excerpt: "Bagaimana Kota Mengintegrasikan Ruang Hijau Ke Dalam Kehidupan Vertikal Untuk Melawan Kenaikan Suhu Global.",
+      readTime: "8 menit baca",
+      excerpt: "Bagaimana kota mengintegrasikan ruang hijau ke dalam kehidupan vertikal untuk melawan kenaikan suhu global.",
       image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
     },
     {
       id: "3",
-      title: "Masa Depan Pasar Global Terdesentralisasi",
+      title: "Masa depan pasar global terdesentralisasi",
       category: "Bisnis",
       author: "Jordan Lee",
-      readTime: "6 Menit Baca",
-      excerpt: "Pandangan Mendalam Tentang Bagaimana Blockchain Membentuk Kembali Infrastruktur Perbankan Tradisional Di Ekonomi Negara Berkembang.",
+      readTime: "6 menit baca",
+      excerpt: "Pandangan mendalam tentang bagaimana blockchain membentuk kembali infrastruktur perbankan tradisional di ekonomi negara berkembang.",
       image: PlaceHolderImages.find(img => img.id === "business-news")?.imageUrl
     }
   ];
 
   const popularPosts = [
-    { id: "1", title: "Mengapa Tipografi Lebih Penting Dari Yang Anda Pikirkan", category: "Desain", rank: "01" },
-    { id: "2", title: "Kebangkitan Ai Dalam Jurnalisme Modern", category: "Teknologi", rank: "02" },
-    { id: "3", title: "10 Prinsip Hidup Berkelanjutan", category: "Budaya", rank: "03" }
+    { id: "1", title: "Mengapa tipografi lebih penting dari yang Anda pikirkan", category: "Desain", rank: "01" },
+    { id: "2", title: "Kebangkitan AI dalam jurnalisme modern", category: "Teknologi", rank: "02" },
+    { id: "3", title: "10 Prinsip hidup berkelanjutan", category: "Budaya", rank: "03" }
   ];
 
   return (
@@ -69,7 +69,7 @@ export default function Home() {
               {heroImage?.imageUrl && (
                 <Image 
                   src={heroImage.imageUrl} 
-                  alt="Berita Utama"
+                  alt="Berita utama"
                   fill
                   className="object-cover transition-transform duration-700 ease-out hover:scale-105"
                   priority
@@ -86,19 +86,19 @@ export default function Home() {
                 <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[10px] shadow-sm">
                   Unggulan
                 </Badge>
-                <MutedText className="text-[10px] font-bold">Hari Ini</MutedText>
+                <MutedText className="text-[10px] font-bold">Hari ini</MutedText>
               </div>
               <Title className="leading-tight text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tighter">
-                Revolusi Senyap Informasi Profesional
+                Revolusi senyap informasi profesional
               </Title>
               <BodyText className="text-base md:text-lg text-foreground/70">
-                Temukan Bagaimana InfoFlow Menjadi Standar Baru Untuk Jurnalisme Digital Minimalis.
+                Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis.
               </BodyText>
               <div className="flex items-center gap-3 pt-2">
                 <Link href="/news/1" className="flex-1 sm:flex-none">
                   <motion.div whileTap={{ scale: 0.98 }}>
                     <Button className="w-full sm:px-10 h-11 text-xs font-bold rounded-md shadow-sm">
-                      Baca Artikel
+                      Baca artikel
                     </Button>
                   </motion.div>
                 </Link>
@@ -123,8 +123,8 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
           <section className="lg:col-span-8">
             <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
-              <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Cerita Terbaru</Heading>
-              <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat Semua</Button>
+              <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Cerita terbaru</Heading>
+              <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat semua</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {posts.map((post, idx) => (
@@ -184,7 +184,7 @@ export default function Home() {
             </div>
             <motion.div className="mt-12 flex justify-center" whileTap={{ scale: 0.98 }}>
               <Button variant="outline" className="w-full sm:w-auto px-10 h-11 font-bold text-[10px] rounded-md shadow-sm">
-                Lihat Lebih Banyak
+                Lihat lebih banyak
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
@@ -194,7 +194,7 @@ export default function Home() {
             <div className="sticky top-24 space-y-10">
               <div className="flex items-center gap-3 mb-6 border-b border-border/60 pb-4">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <Heading level={3} className="text-lg font-headline font-bold">Sedang Tren</Heading>
+                <Heading level={3} className="text-lg font-headline font-bold">Sedang tren</Heading>
               </div>
               <div className="space-y-6">
                 {popularPosts.map((post, idx) => (
@@ -228,11 +228,11 @@ export default function Home() {
                 <div className="relative z-10">
                   <h4 className="font-headline font-bold text-base mb-2">InfoFlow Premium</h4>
                   <p className="text-[10px] text-primary-foreground/70 mb-6 leading-relaxed">
-                    Laporan Eksklusif Dan Tanpa Iklan.
+                    Laporan eksklusif dan tanpa iklan.
                   </p>
                   <motion.div whileTap={{ scale: 0.98 }}>
                     <Button variant="secondary" className="w-full font-bold text-[10px] h-9 rounded-md">
-                      Tingkatkan Akun
+                      Tingkatkan akun
                     </Button>
                   </motion.div>
                 </div>
@@ -245,7 +245,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6">
           <Link href="/" className="font-headline text-xl font-bold text-primary">InfoFlow</Link>
           <div className="flex gap-6 text-[10px] font-bold text-muted-foreground">
-            <Link href="#" className="hover:text-primary">Tentang Kami</Link>
+            <Link href="#" className="hover:text-primary">Tentang kami</Link>
             <Link href="#" className="hover:text-primary">Kontak</Link>
             <Link href="#" className="hover:text-primary">Privasi</Link>
           </div>
