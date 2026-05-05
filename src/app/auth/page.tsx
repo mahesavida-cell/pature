@@ -100,32 +100,32 @@ export default function AuthPage() {
           <Card className="rounded-lg shadow-md border-none">
             <CardContent className="pt-8">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger value="login">Masuk sekarang</TabsTrigger>
-                  <TabsTrigger value="register">Daftar akun</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 p-1 rounded-md">
+                  <TabsTrigger value="login" className="text-xs font-bold py-2 rounded-sm data-[state=active]:shadow-sm">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register" className="text-xs font-bold py-2 rounded-sm data-[state=active]:shadow-sm">Daftar akun</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="login">
+                <TabsContent value="login" className="mt-0">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11"
+                        className="rounded-md h-11 bg-white/40 border-white/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" title="Title case" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <Label htmlFor="password" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Kata sandi</Label>
                       <Input 
                         id="password" 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11"
+                        className="rounded-md h-11 bg-white/40 border-white/20"
                       />
                     </div>
                     <Button 
@@ -138,27 +138,27 @@ export default function AuthPage() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="register">
+                <TabsContent value="register" className="mt-0">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11"
+                        className="rounded-md h-11 bg-white/40 border-white/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Kata sandi</Label>
                       <Input 
                         id="reg-password" 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11"
+                        className="rounded-md h-11 bg-white/40 border-white/20"
                       />
                     </div>
                     <Button 
@@ -174,17 +174,17 @@ export default function AuthPage() {
 
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                  <Separator />
+                  <Separator className="bg-primary/10" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white px-3 text-muted-foreground font-bold">Atau masuk dengan</span>
+                  <span className="px-3 text-muted-foreground font-bold bg-[#fcfcfc] rounded-full">Atau masuk dengan</span>
                 </div>
               </div>
 
               <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
                 <Button 
                   variant="outline" 
-                  className="w-full h-11 rounded-md font-bold tracking-tight flex items-center justify-center gap-3 border border-border/60 hover:bg-accent/5 hover:border-accent/40 transition-all duration-300 shadow-sm"
+                  className="w-full h-11 rounded-md font-bold tracking-tight flex items-center justify-center gap-3 border border-white/20 bg-white/40 hover:bg-accent/5 transition-all duration-300 shadow-sm"
                   onClick={handleGoogleSignIn}
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24">
