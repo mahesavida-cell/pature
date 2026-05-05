@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, Bookmark, X, ChevronRight } from "lucide-react";
+import { Search, Menu, User, LogOut, Bookmark, X, ChevronRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { collection, query, limit } from "firebase/firestore";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Mock data for categories and sub-categories
 const CATEGORIES = [
   { 
     id: "tech", 
@@ -57,12 +56,15 @@ const CATEGORIES = [
   },
 ];
 
+const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
+
 export const Navbar = () => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
+  const [hoveredCategory, setHoveredCategory] = useState<any>(null);
   
   const { user } = useUser();
   const auth = useAuth();
@@ -71,7 +73,6 @@ export const Navbar = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  // Handle scroll effect for transparency to solid
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -80,7 +81,6 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fetch some posts for search preview
   const postsQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(collection(db, "posts"), limit(20));
@@ -128,7 +128,6 @@ export const Navbar = () => {
           : "bg-transparent border-transparent"
       )}
     >
-      {/* Top Bar: Logo, Main Categories, Tools */}
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
@@ -142,21 +141,20 @@ export const Navbar = () => {
             />
           </Link>
           
-          {/* Main Categories Menu with Animated Underline */}
           <div className="hidden lg:flex items-center gap-7">
             {CATEGORIES.map((cat) => (
               <button 
                 key={cat.id} 
-                onMouseEnter={() => setActiveCategory(cat)}
+                onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
                   "relative text-[11px] font-bold transition-colors tracking-wide pb-2 group",
-                  activeCategory.id === cat.id 
+                  hoveredCategory?.id === cat.id 
                     ? "text-primary" 
                     : "text-muted-foreground hover:text-primary"
                 )}
               >
                 {cat.name}
-                {activeCategory.id === cat.id && (
+                {hoveredCategory?.id === cat.id && (
                   <motion.div
                     layoutId="activeCategoryUnderline"
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
@@ -169,7 +167,6 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Search Logic */}
           <div className="relative flex items-center" ref={searchContainerRef}>
             <AnimatePresence>
               {isSearchOpen && (
@@ -254,7 +251,6 @@ export const Navbar = () => {
             </Button>
           </div>
 
-          {/* User Menu */}
           <div className="hidden md:flex items-center border-l pl-4 border-primary/5">
             {user ? (
               <DropdownMenu>
@@ -296,7 +292,6 @@ export const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Trigger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-muted-foreground lg:hidden h-10 w-10 hover:bg-primary/5 rounded-full">
@@ -334,30 +329,32 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Sub-header: Dynamic Sub-categories bar */}
-      <div className="border-t border-primary/5 overflow-hidden">
+      <div className="border-t border-primary/5 overflow-hidden" onMouseLeave={() => setHoveredCategory(null)}>
         <div className="max-w-7xl mx-auto px-4 h-10 flex items-center overflow-x-auto no-scrollbar">
-          <motion.div 
-            key={activeCategory.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-6 whitespace-nowrap"
-          >
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mr-2 opacity-40">
-              Topik {activeCategory.name}:
-            </span>
-            {activeCategory.subs.map((sub, idx) => (
-              <Link 
-                key={idx} 
-                href="#" 
-                className="text-[10px] font-bold text-muted-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group"
-              >
-                {sub}
-                <span className="h-1 w-1 rounded-full bg-primary/20 group-hover:bg-primary transition-colors" />
-              </Link>
-            ))}
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={hoveredCategory ? hoveredCategory.id : "default"}
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 5 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-6 whitespace-nowrap"
+            >
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mr-2 opacity-40">
+                {hoveredCategory ? `Topik ${hoveredCategory.name}:` : "Topik populer:"}
+              </span>
+              {(hoveredCategory ? hoveredCategory.subs : DEFAULT_TOPICS).map((sub: string, idx: number) => (
+                <Link 
+                  key={idx} 
+                  href="#" 
+                  className="text-[10px] font-bold text-muted-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group"
+                >
+                  {sub}
+                  <span className="h-1 w-1 rounded-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                </Link>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </nav>
