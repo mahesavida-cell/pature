@@ -14,6 +14,7 @@ import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function AuthPage() {
   const auth = useAuth();
@@ -22,6 +23,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleAuth = async (type: 'login' | 'register') => {
     if (!email || !password) {
@@ -107,7 +109,7 @@ export default function AuthPage() {
                 <TabsContent value="login" className="mt-0">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Alamat email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
@@ -118,14 +120,25 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Kata sandi</Label>
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
-                      />
+                      <Label htmlFor="password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <div className="relative">
+                        <Input 
+                          id="password" 
+                          type={showPassword ? "text" : "password"} 
+                          placeholder="Masukkan kata sandi"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all pr-10"
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
                     <Button 
                       className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
@@ -140,7 +153,7 @@ export default function AuthPage() {
                 <TabsContent value="register" className="mt-0">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Alamat email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
@@ -151,14 +164,25 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60 uppercase tracking-wider">Kata sandi</Label>
-                      <Input 
-                        id="reg-password" 
-                        type="password" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
-                      />
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <div className="relative">
+                        <Input 
+                          id="reg-password" 
+                          type={showPassword ? "text" : "password"} 
+                          placeholder="Buat kata sandi baru"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all pr-10"
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
                     <Button 
                       className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
