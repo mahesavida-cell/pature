@@ -1,7 +1,7 @@
 
 export const metadata = {
-  title: 'InfoFlow Studio',
-  description: 'Kelola konten berita InfoFlow',
+  title: 'PatureNews Studio',
+  description: 'Kelola konten berita PatureNews secara mandiri.',
 };
 
 export default function StudioLayout({
@@ -11,10 +11,6 @@ export default function StudioLayout({
 }) {
   return (
     <div className="fixed inset-0 z-[9999] bg-white">
-      {/* 
-        PENTING: Kita menggunakan fixed inset-0 untuk memastikan Studio 
-        menutupi seluruh layar dan tidak terpengaruh oleh Navbar/Footer utama.
-      */}
       {children}
     </div>
   );

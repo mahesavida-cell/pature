@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -29,9 +30,9 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sect
       <Carousel opts={{ align: "start", loop: true }} className="w-full">
         <CarouselContent className="-ml-4">
           {posts.map((post, idx) => (
-            <CarouselItem key={post.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={post.id || `rec-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
               <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
-                <Link href={`/news/${post.id}`}>
+                <Link href={`/news/${post.id || post._id}`}>
                   <div className="relative h-56 w-full overflow-hidden bg-muted">
                     <Image 
                       src={post.image || PlaceHolderImages[idx % 4].imageUrl} 
@@ -52,7 +53,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sect
                       <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
                       <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
                     </div>
-                    <Link href={`/news/${post.id}`}>
+                    <Link href={`/news/${post.id || post._id}`}>
                       <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
                         {post.title}
                       </h3>
@@ -62,7 +63,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sect
                     </BodyText>
                   </div>
                   <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                    <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Penulis InfoFlow"}</span>
+                    <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi PatureNews"}</span>
                     <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover/card:opacity-100 transition-all transform translate-x-1" />
                   </div>
                 </CardContent>
@@ -87,7 +88,6 @@ export default function SearchPage() {
   }, [db]);
   const { data: firestorePosts, isLoading } = useCollection(postsQuery);
 
-  // Fallback data if firestore is empty
   const staticFallbackPosts = [
     { id: "1", title: "Evolusi desain digital minimalis", category: "Desain", author: "Alex Rivers", readTime: "5 mnt", excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.", image: PlaceHolderImages[0].imageUrl },
     { id: "2", title: "Arsitektur berkelanjutan di lingkungan perkotaan", category: "Budaya", author: "Maya Lin", readTime: "8 mnt", excerpt: "Bagaimana kota mengintegrasikan ruang hijau ke dalam kehidupan vertikal.", image: PlaceHolderImages[1].imageUrl },
@@ -169,13 +169,13 @@ export default function SearchPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredResults.map((post, idx) => (
                 <motion.div
-                  key={post.id}
+                  key={post.id || `res-${idx}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                 >
                   <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
-                    <Link href={`/news/${post.id}`}>
+                    <Link href={`/news/${post.id || post._id}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
                           src={post.image || PlaceHolderImages[idx % 4].imageUrl} 
@@ -196,7 +196,7 @@ export default function SearchPage() {
                           <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
                           <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
                         </div>
-                        <Link href={`/news/${post.id}`}>
+                        <Link href={`/news/${post.id || post._id}`}>
                           <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
                             {post.title}
                           </h3>
@@ -206,7 +206,7 @@ export default function SearchPage() {
                         </BodyText>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Penulis InfoFlow"}</span>
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi PatureNews"}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -216,7 +216,6 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Branding & More News */}
         <div className="pt-20 space-y-32">
           <NewsCarousel posts={latestNews} sectionTitle="Berita terbaru" viewAllLink="/latest" />
           <NewsCarousel posts={recommendedNews} sectionTitle="Rekomendasi untuk anda" viewAllLink="/recommendations" />

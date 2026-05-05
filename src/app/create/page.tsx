@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Save, Globe, Eye, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,11 @@ export default function CreatePost() {
   const [excerpt, setExcerpt] = useState("");
   const [readTime, setReadTime] = useState("5");
   const [isLoading, setIsLoading] = useState(false);
+  const [randomSeed, setRandomSeed] = useState("");
+
+  useEffect(() => {
+    setRandomSeed(Math.random().toString(36).substring(7));
+  }, []);
 
   const handlePublish = () => {
     if (!user) {
@@ -49,14 +54,14 @@ export default function CreatePost() {
       excerpt: excerpt || content.slice(0, 150) + "...",
       readTime: `${readTime} mnt`,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "Penulis InfoFlow",
+      authorName: user.displayName || user.email?.split('@')[0] || "Penulis PatureNews",
       createdAt: serverTimestamp(),
-      image: `https://picsum.photos/seed/${Math.random()}/1200/600` // Placeholder for now
+      image: `https://picsum.photos/seed/${randomSeed}/1200/600`
     };
 
     addDocumentNonBlocking(collection(db, "posts"), postData)
       .then(() => {
-        toast({ title: "Berhasil diterbitkan", description: "Berita Anda kini dapat dibaca oleh komunitas InfoFlow." });
+        toast({ title: "Berhasil diterbitkan", description: "Berita Anda kini dapat dibaca oleh komunitas PatureNews." });
         router.push("/");
       })
       .finally(() => setIsLoading(false));
@@ -69,7 +74,7 @@ export default function CreatePost() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
           <div>
             <Heading level={2}>Buat postingan baru</Heading>
-            <BodyText>Bagikan wawasan Anda dengan komunitas InfoFlow.</BodyText>
+            <BodyText>Bagikan wawasan Anda dengan komunitas PatureNews.</BodyText>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10">

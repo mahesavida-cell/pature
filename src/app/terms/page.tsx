@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,11 +11,11 @@ export default function TermsPage() {
   const sections = [
     {
       title: "1. Penerimaan ketentuan",
-      content: "Dengan mengakses platform InfoFlow, Anda setuju untuk terikat oleh ketentuan penggunaan ini, semua hukum dan peraturan yang berlaku, dan setuju bahwa Anda bertanggung jawab untuk kepatuhan terhadap hukum setempat yang berlaku. Jika Anda tidak menyetujui salah satu dari ketentuan ini, Anda dilarang menggunakan atau mengakses situs ini.",
+      content: "Dengan mengakses platform PatureNews, Anda setuju untuk terikat oleh ketentuan penggunaan ini, semua hukum dan peraturan yang berlaku, dan setuju bahwa Anda bertanggung jawab untuk kepatuhan terhadap hukum setempat yang berlaku. Jika Anda tidak menyetujui salah satu dari ketentuan ini, Anda dilarang menggunakan atau mengakses situs ini.",
     },
     {
       title: "2. Lisensi penggunaan",
-      content: "Izin diberikan untuk mengunduh satu salinan materi secara sementara di situs web InfoFlow hanya untuk tampilan transien pribadi dan non-komersial. Ini adalah pemberian lisensi, bukan transfer hak milik, dan di bawah lisensi ini Anda tidak boleh memodifikasi materi, menggunakan materi untuk tujuan komersial, atau menghapus hak cipta.",
+      content: "Izin diberikan untuk mengunduh satu salinan materi secara sementara di situs web PatureNews hanya untuk tampilan transien pribadi dan non-komersial. Ini adalah pemberian lisensi, bukan transfer hak milik, dan di bawah lisensi ini Anda tidak boleh memodifikasi materi, menggunakan materi untuk tujuan komersial, atau menghapus hak cipta.",
     },
     {
       title: "3. Akun pengguna",
@@ -22,11 +23,11 @@ export default function TermsPage() {
     },
     {
       title: "4. Hak kekayaan intelektual",
-      content: "Seluruh konten yang disajikan di InfoFlow, termasuk namun tidak terbatas pada teks, grafis, logo, ikon, dan gambar adalah milik InfoFlow Media Group atau pemasok kontennya dan dilindungi oleh hukum hak cipta internasional.",
+      content: "Seluruh konten yang disajikan di PatureNews, termasuk namun tidak terbatas pada teks, grafis, logo, ikon, dan gambar adalah milik PatureNews Media Group atau pemasok kontennya dan dilindungi oleh hukum hak cipta internasional.",
     },
     {
       title: "5. Pembatasan tanggung jawab",
-      content: "Dalam keadaan apa pun InfoFlow tidak bertanggung jawab atas kerugian (termasuk, tanpa batasan, kerugian karena hilangnya data atau keuntungan, atau karena gangguan bisnis) yang timbul dari penggunaan atau ketidakmampuan untuk menggunakan materi di InfoFlow.",
+      content: "Dalam keadaan apa pun PatureNews tidak bertanggung jawab atas kerugian (termasuk, tanpa batasan, kerugian karena hilangnya data atau keuntungan, atau karena gangguan bisnis) yang timbul dari penggunaan atau ketidakmampuan untuk menggunakan materi di PatureNews.",
     },
   ];
 
@@ -42,49 +43,30 @@ export default function TermsPage() {
           <div className="space-y-6">
             <Title className="text-4xl">Ketentuan penggunaan</Title>
             <div className="flex items-center gap-4">
-              <MutedText className="text-[10px] font-bold opacity-40">Terakhir diperbarui: 24 Oktober 2024</MutedText>
+              <span className="text-[10px] font-bold opacity-40">Terakhir diperbarui: 24 Oktober 2024</span>
               <Separator orientation="vertical" className="h-3" />
-              <MutedText className="text-[10px] font-bold opacity-40">Versi 2.0</MutedText>
+              <span className="text-[10px] font-bold opacity-40">Versi 2.0</span>
             </div>
           </div>
 
-          <Card className="border-none shadow-none bg-white/20 backdrop-blur-md">
-            <CardContent className="p-0 space-y-12">
-              <BodyText className="text-sm italic opacity-60">
-                Mohon baca ketentuan penggunaan ini dengan teliti sebelum menggunakan layanan InfoFlow. Penggunaan Anda atas layanan ini menandakan persetujuan Anda untuk terikat oleh ketentuan berikut.
-              </BodyText>
+          <div className="space-y-12">
+            <BodyText className="text-sm italic opacity-60">
+              Mohon baca ketentuan penggunaan ini dengan teliti sebelum menggunakan layanan PatureNews. Penggunaan Anda atas layanan ini menandakan persetujuan Anda untuk terikat oleh ketentuan berikut.
+            </BodyText>
 
-              {sections.map((section, idx) => (
-                <div key={idx} className="space-y-4">
-                  <Heading level={3} className="text-lg">{section.title}</Heading>
-                  <TypographyP className="text-base text-foreground/70 leading-relaxed">
-                    {section.content}
-                  </TypographyP>
-                  {idx !== sections.length - 1 && <Separator className="mt-8 opacity-5" />}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+            {sections.map((section, idx) => (
+              <div key={idx} className="space-y-4">
+                <Heading level={3} className="text-lg">{section.title}</Heading>
+                <TypographyP className="text-base text-foreground/70 leading-relaxed">
+                  {section.content}
+                </TypographyP>
+                {idx !== sections.length - 1 && <Separator className="mt-8 opacity-5" />}
+              </div>
+            ))}
+          </div>
         </motion.div>
       </main>
       <Footer />
     </div>
   );
 }
-
-// Helper to keep the file consistent with context
-const MutedText = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <span className={`text-sm text-muted-foreground/60 font-body font-medium tracking-wide ${className}`}>
-    {children}
-  </span>
-);
-
-const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={`rounded-lg ${className}`}>
-    {children}
-  </div>
-);
-
-const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={className}>{children}</div>
-);

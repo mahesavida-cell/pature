@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -5,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Heading, BodyText, Title, TypographyP } from "@/components/wrapped/Typography";
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/wrapped/Card";
 
 export default function PrivacyPage() {
   const sections = [
@@ -42,56 +44,37 @@ export default function PrivacyPage() {
           <div className="space-y-6">
             <Title className="text-4xl">Kebijakan privasi</Title>
             <div className="flex items-center gap-4">
-              <MutedText className="text-[10px] font-bold opacity-40">Terakhir diperbarui: 24 Oktober 2024</MutedText>
+              <span className="text-[10px] font-bold opacity-40">Terakhir diperbarui: 24 Oktober 2024</span>
               <Separator orientation="vertical" className="h-3" />
-              <MutedText className="text-[10px] font-bold opacity-40">Versi 1.1</MutedText>
+              <span className="text-[10px] font-bold opacity-40">Versi 1.1</span>
             </div>
           </div>
 
-          <Card className="border-none shadow-none bg-white/20 backdrop-blur-md">
-            <CardContent className="p-0 space-y-12">
-              <BodyText className="text-sm italic opacity-60">
-                Di InfoFlow, privasi Anda adalah prioritas utama kami. Kebijakan ini menjelaskan bagaimana kami mengelola data Anda untuk memberikan pengalaman membaca yang aman dan dipersonalisasi.
-              </BodyText>
+          <div className="space-y-12">
+            <BodyText className="text-sm italic opacity-60">
+              Di PatureNews, privasi Anda adalah prioritas utama kami. Kebijakan ini menjelaskan bagaimana kami mengelola data Anda untuk memberikan pengalaman membaca yang aman dan dipersonalisasi.
+            </BodyText>
 
-              {sections.map((section, idx) => (
-                <div key={idx} className="space-y-4">
-                  <Heading level={3} className="text-lg">{section.title}</Heading>
-                  <TypographyP className="text-base text-foreground/70 leading-relaxed">
-                    {section.content}
-                  </TypographyP>
-                  {idx !== sections.length - 1 && <Separator className="mt-8 opacity-5" />}
-                </div>
-              ))}
-
-              <div className="pt-8 p-8 bg-primary/5 rounded-xl space-y-4 border border-primary/5">
-                <Heading level={4} className="text-base">Pertanyaan tentang privasi?</Heading>
-                <TypographyP className="text-sm mt-0">
-                  Jika Anda memiliki pertanyaan tentang kebijakan ini, jangan ragu untuk menghubungi petugas perlindungan data kami di <span className="font-bold text-primary">privacy@infoflow.com</span>.
+            {sections.map((section, idx) => (
+              <div key={idx} className="space-y-4">
+                <Heading level={3} className="text-lg">{section.title}</Heading>
+                <TypographyP className="text-base text-foreground/70 leading-relaxed">
+                  {section.content}
                 </TypographyP>
+                {idx !== sections.length - 1 && <Separator className="mt-8 opacity-5" />}
               </div>
-            </CardContent>
-          </Card>
+            ))}
+
+            <div className="pt-8 p-8 bg-primary/5 rounded-xl space-y-4 border border-primary/5">
+              <Heading level={4} className="text-base">Pertanyaan tentang privasi?</Heading>
+              <TypographyP className="text-sm mt-0">
+                Jika Anda memiliki pertanyaan tentang kebijakan ini, jangan ragu untuk menghubungi petugas perlindungan data kami di <span className="font-bold text-primary">privacy@paturenews.com</span>.
+              </TypographyP>
+            </div>
+          </div>
         </motion.div>
       </main>
       <Footer />
     </div>
   );
 }
-
-// Helper constants for internal use if wrapped/Typography is not enough
-const MutedText = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <span className={`text-sm text-muted-foreground/60 font-body font-medium tracking-wide ${className}`}>
-    {children}
-  </span>
-);
-
-const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={`rounded-lg ${className}`}>
-    {children}
-  </div>
-);
-
-const CardContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={className}>{children}</div>
-);
