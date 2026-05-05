@@ -392,6 +392,13 @@ export default function NewsDetailPage() {
     );
   }
 
+  const popularStories = [
+    { id: "1", title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia", category: "Desain", timeAgo: "2 Jam Yang Lalu" },
+    { id: "2", title: "Masa Depan Kecerdasan Buatan Dalam Jurnalisme", category: "Teknologi", timeAgo: "4 Jam Yang Lalu" },
+    { id: "3", title: "Eksplorasi Ruang Hijau Di Tengah Kota Metropolitan", category: "Budaya", timeAgo: "1 Hari Yang Lalu" },
+    { id: "4", title: "Strategi Investasi Di Era Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam Yang Lalu" }
+  ];
+
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
@@ -535,7 +542,7 @@ export default function NewsDetailPage() {
                   <Heading level={3} className="text-lg tracking-tight">Berita Terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
-                  {[{ id: "1", title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia", category: "Desain", timeAgo: "2 Jam Yang Lalu" }].map((story) => (
+                  {popularStories.map((story) => (
                     <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
                       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm">
                         <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -546,6 +553,11 @@ export default function NewsDetailPage() {
                       </div>
                     </Link>
                   ))}
+                </div>
+                <div className="mt-8 pt-4 border-t border-border/10">
+                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">
+                    Lihat Lebih Banyak
+                  </Link>
                 </div>
               </div>
               <Card className="bg-primary text-primary-foreground p-6 rounded-lg shadow-md relative overflow-hidden">
