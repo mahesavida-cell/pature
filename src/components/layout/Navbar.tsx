@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -102,10 +101,10 @@ export const Navbar = () => {
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-300",
+        "fixed top-0 z-50 w-full transition-colors duration-300 py-4",
         isScrolled 
-          ? "bg-background/80 backdrop-blur-xl border-b border-primary/5 py-2" 
-          : "bg-transparent border-transparent py-4"
+          ? "bg-background/95 backdrop-blur-xl border-b border-primary/5" 
+          : "bg-transparent border-transparent"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 h-12 flex items-center justify-between">
