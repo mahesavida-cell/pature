@@ -33,6 +33,8 @@ export default function LatestNewsPage() {
         title: `Eksplorasi mendalam tentang ${idx % 2 === 0 ? 'Teknologi' : 'Budaya'} masa kini`,
         category: idx % 2 === 0 ? "Teknologi" : "Budaya",
         readTime: "5 mnt",
+        author: "Alex Rivers",
+        excerpt: "Menjelajahi bagaimana perkembangan terbaru mengubah cara kita berinteraksi dengan dunia sekitar.",
         image: PlaceHolderImages[idx % 4].imageUrl
       },
       {
@@ -40,6 +42,8 @@ export default function LatestNewsPage() {
         title: `Bagaimana ${idx % 2 === 0 ? 'Desain' : 'Bisnis'} beradaptasi di era baru`,
         category: idx % 2 === 0 ? "Desain" : "Bisnis",
         readTime: "4 mnt",
+        author: "Maya Lin",
+        excerpt: "Analisis mendalam mengenai tantangan dan peluang yang muncul di tengah transisi global.",
         image: PlaceHolderImages[(idx + 1) % 4].imageUrl
       }
     ]
@@ -51,10 +55,6 @@ export default function LatestNewsPage() {
       <main className="max-w-5xl mx-auto px-4 pt-40 pb-24">
         <div className="space-y-16">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 text-primary opacity-60">
-              <Clock className="h-5 w-5" />
-              <span className="text-xs font-bold tracking-widest uppercase">Pembaruan kronologis</span>
-            </div>
             <Title>Berita terbaru</Title>
             <BodyText className="max-w-2xl">
               Aliran informasi terkini yang dikurasi setiap jam untuk memastikan Anda tetap terhubung dengan perkembangan dunia.
@@ -84,22 +84,49 @@ export default function LatestNewsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {day.posts.map((post) => (
-                    <Link key={post.id} href={`/news/${post.id}`} className="group">
-                      <Card className="border-none shadow-none bg-white/40 hover:bg-white/60 transition-all overflow-hidden group">
-                        <CardContent className="p-0 flex flex-col sm:flex-row gap-6">
-                          <div className="relative aspect-video sm:aspect-square sm:w-40 overflow-hidden rounded-lg shrink-0">
-                            <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                          </div>
-                          <div className="flex flex-col justify-center py-4 pr-6 space-y-3">
-                            <Badge variant="secondary" className="w-fit text-[8px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
-                            <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">{post.title}</h4>
-                            <div className="flex items-center gap-2 text-[9px] font-bold text-muted-foreground/60">
-                              <Clock className="h-3 w-3" /> {post.readTime} baca
+                    <motion.div
+                      key={post.id}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                    >
+                      <Card className="h-full flex flex-col group hover:shadow-xl transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
+                        <Link href={`/news/${post.id}`}>
+                          <div className="relative h-56 w-full overflow-hidden bg-muted">
+                            <Image 
+                              src={post.image} 
+                              alt={post.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute top-4 left-4">
+                              <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                                {post.category}
+                              </Badge>
                             </div>
+                          </div>
+                        </Link>
+                        <CardContent className="p-7 flex-1 flex flex-col">
+                          <div className="mb-6">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                              <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                            </div>
+                            <Link href={`/news/${post.id}`}>
+                              <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                                {post.title}
+                              </h4>
+                            </Link>
+                            <BodyText className="text-sm line-clamp-2 opacity-60">
+                              {post.excerpt}
+                            </BodyText>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                            <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
                           </div>
                         </CardContent>
                       </Card>
-                    </Link>
+                    </motion.div>
                   ))}
                 </div>
               </motion.section>

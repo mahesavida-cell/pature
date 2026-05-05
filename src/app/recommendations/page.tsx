@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, TrendingUp, Filter, Heart } from "lucide-react";
+import { Sparkles, TrendingUp, Filter, Heart, Clock } from "lucide-react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function RecommendationsPage() {
@@ -19,20 +19,18 @@ export default function RecommendationsPage() {
   const sections = [
     {
       title: "Berdasarkan minat Anda",
-      icon: <Heart className="h-5 w-5 text-red-500" />,
       posts: [
-        { id: "r1", title: "Membangun sistem desain yang inklusif", category: "Desain", image: PlaceHolderImages[0].imageUrl },
-        { id: "r2", title: "Masa depan kerja jarak jauh di Asia", category: "Budaya", image: PlaceHolderImages[1].imageUrl },
-        { id: "r3", title: "Inovasi baterai untuk mobilitas perkotaan", category: "Sains", image: PlaceHolderImages[2].imageUrl },
+        { id: "r1", title: "Membangun sistem desain yang inklusif", category: "Desain", author: "Sofia Loren", readTime: "5 mnt", excerpt: "Penerapan standar aksesibilitas dalam setiap tahapan pengembangan produk digital.", image: PlaceHolderImages[0].imageUrl },
+        { id: "r2", title: "Masa depan kerja jarak jauh di Asia", category: "Budaya", author: "Marcus Thorne", readTime: "6 mnt", excerpt: "Eksplorasi bagaimana budaya kerja berubah seiring kemajuan infrastruktur konektivitas.", image: PlaceHolderImages[1].imageUrl },
+        { id: "r3", title: "Inovasi baterai untuk mobilitas perkotaan", category: "Sains", author: "Dr. Elena Smith", readTime: "7 mnt", excerpt: "Solusi energi terbarukan yang memungkinkan transportasi publik bebas emisi.", image: PlaceHolderImages[2].imageUrl },
       ]
     },
     {
       title: "Sedang hangat didiskusikan",
-      icon: <TrendingUp className="h-5 w-5 text-orange-500" />,
       posts: [
-        { id: "h1", title: "Etika kecerdasan buatan dalam seni digital", category: "Teknologi", image: PlaceHolderImages[3].imageUrl },
-        { id: "h2", title: "Krisis ekonomi global dan peluang startup", category: "Bisnis", image: PlaceHolderImages[0].imageUrl },
-        { id: "h3", title: "Urban farming sebagai solusi pangan kota", category: "Budaya", image: PlaceHolderImages[1].imageUrl },
+        { id: "h1", title: "Etika kecerdasan buatan dalam seni digital", category: "Teknologi", author: "Lara Chen", readTime: "4 mnt", excerpt: "Debat mengenai hak cipta dan orisinalitas dalam karya seni yang dihasilkan algoritma.", image: PlaceHolderImages[3].imageUrl },
+        { id: "h2", title: "Krisis ekonomi global dan peluang startup", category: "Bisnis", author: "Jordan Lee", readTime: "8 mnt", excerpt: "Bagaimana efisiensi operasional menjadi kunci bertahan di tengah ketidakpastian pasar.", image: PlaceHolderImages[0].imageUrl },
+        { id: "h3", title: "Urban farming sebagai solusi pangan kota", category: "Budaya", author: "Sarah Chen", readTime: "5 mnt", excerpt: "Memanfaatkan lahan terbatas di atap gedung untuk kemandirian pangan masyarakat kota.", image: PlaceHolderImages[1].imageUrl },
       ]
     }
   ];
@@ -44,10 +42,6 @@ export default function RecommendationsPage() {
         <div className="space-y-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-6 max-w-2xl">
-              <div className="inline-flex items-center gap-2 text-primary opacity-60">
-                <Sparkles className="h-5 w-5" />
-                <span className="text-xs font-bold tracking-widest uppercase">Personalisasi pembaca</span>
-              </div>
               <Title>Rekomendasi untuk Anda</Title>
               <BodyText>
                 Wawasan yang dikurasi khusus berdasarkan riwayat bacaan dan topik yang paling sering Anda jelajahi di InfoFlow.
@@ -69,9 +63,6 @@ export default function RecommendationsPage() {
             {sections.map((section, secIdx) => (
               <section key={section.title} className="space-y-12">
                 <div className="flex items-center gap-4 border-b border-primary/5 pb-6">
-                  <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center">
-                    {section.icon}
-                  </div>
                   <Heading level={2}>{section.title}</Heading>
                 </div>
 
@@ -84,16 +75,42 @@ export default function RecommendationsPage() {
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.1 }}
                     >
-                      <Link href={`/news/${post.id}`} className="group block space-y-5">
-                        <div className="relative aspect-[16/11] rounded-2xl overflow-hidden border border-primary/5 shadow-sm bg-muted">
-                          <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
-                        </div>
-                        <div className="space-y-3">
-                          <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/5 text-primary border-none rounded-sm">{post.category}</Badge>
-                          <h4 className="text-lg font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">{post.title}</h4>
-                          <MutedText className="text-[10px] font-bold block opacity-40 uppercase tracking-widest">Wawasan hari ini</MutedText>
-                        </div>
-                      </Link>
+                      <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
+                        <Link href={`/news/${post.id}`}>
+                          <div className="relative h-56 w-full overflow-hidden bg-muted">
+                            <Image 
+                              src={post.image} 
+                              alt={post.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute top-4 left-4">
+                              <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                                {post.category}
+                              </Badge>
+                            </div>
+                          </div>
+                        </Link>
+                        <CardContent className="p-7 flex-1 flex flex-col">
+                          <div className="mb-6">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                              <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                            </div>
+                            <Link href={`/news/${post.id}`}>
+                              <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                                {post.title}
+                              </h4>
+                            </Link>
+                            <BodyText className="text-sm line-clamp-3 opacity-60">
+                              {post.excerpt}
+                            </BodyText>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                            <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </motion.div>
                   ))}
                 </div>

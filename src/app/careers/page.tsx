@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -57,10 +58,7 @@ export default function CareersPage() {
           {/* Job Listings */}
           <div className="space-y-8">
             <div className="flex items-center justify-between border-b border-primary/5 pb-6">
-              <div className="flex items-center gap-3">
-                <Briefcase className="h-5 w-5 text-primary" />
-                <Heading level={2} className="text-2xl">Posisi terbuka</Heading>
-              </div>
+              <Heading level={2} className="text-2xl">Posisi terbuka</Heading>
               <Badge variant="outline" className="px-3 py-1 text-[10px] font-bold opacity-60">
                 {jobs.length} Posisi tersedia
               </Badge>

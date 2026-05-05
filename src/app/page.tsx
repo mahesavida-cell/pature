@@ -130,9 +130,9 @@ export default function Home() {
   ];
 
   const curatedStories = [
-    { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
-    { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", image: PlaceHolderImages[1].imageUrl },
-    { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", image: PlaceHolderImages[2].imageUrl },
+    { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", excerpt: "Penelitian terbaru menunjukkan potensi besar AI dalam mendeteksi penyakit langka dengan akurasi tinggi.", image: PlaceHolderImages[0].imageUrl, author: "Dr. Elena Smith" },
+    { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", excerpt: "Sektor teknologi finansial terus menunjukkan pertumbuhan positif di pasar domestik tahun ini.", image: PlaceHolderImages[1].imageUrl, author: "Marcus Thorne" },
+    { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", excerpt: "Menggabungkan seni tradisional dengan teknologi VR, pameran ini menarik perhatian audiens global.", image: PlaceHolderImages[2].imageUrl, author: "Lara Chen" },
   ];
 
   const posts = [
@@ -170,22 +170,28 @@ export default function Home() {
       id: "r1",
       title: "Penerapan ekonomi sirkular pada industri kreatif",
       category: "Bisnis",
+      author: "Sofia Loren",
       readTime: "4 mnt",
-      image: "https://picsum.photos/seed/rec1/400/250"
+      excerpt: "Bagaimana desainer mengadopsi model produksi berkelanjutan untuk mengurangi limbah industri.",
+      image: "https://picsum.photos/seed/rec1/600/400"
     },
     {
       id: "r2",
       title: "Eksplorasi material ramah lingkungan untuk hunian",
       category: "Desain",
+      author: "Liam Neeson",
       readTime: "6 mnt",
-      image: "https://picsum.photos/seed/rec2/400/250"
+      excerpt: "Penggunaan material bambu dan tanah liat modern dalam konstruksi bangunan ramah energi.",
+      image: "https://picsum.photos/seed/rec2/600/400"
     },
     {
       id: "r3",
       title: "Potensi pariwisata berkelanjutan di pedesaan",
       category: "Budaya",
+      author: "Diana Prince",
       readTime: "5 mnt",
-      image: "https://picsum.photos/seed/rec3/400/250"
+      excerpt: "Menjelajahi desa-desa wisata yang mempertahankan tradisi lokal sambil menjaga ekosistem alam.",
+      image: "https://picsum.photos/seed/rec3/600/400"
     }
   ];
 
@@ -244,8 +250,7 @@ export default function Home() {
 
             {/* Trending Right */}
             <div className="lg:col-span-4 space-y-8">
-              <div className="flex items-center gap-3 border-b border-primary/5 pb-5">
-                <TrendingUp className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-between border-b border-primary/5 pb-5">
                 <Heading level={3} className="text-lg">Trending</Heading>
               </div>
               <div className="space-y-8">
@@ -285,42 +290,57 @@ export default function Home() {
         {/* Pilihan Redaksi Section */}
         <section className="mb-24 lg:mb-32">
           <div className="flex items-center justify-between mb-10 border-b border-primary/5 pb-6">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <Heading level={2}>Pilihan redaksi</Heading>
-            </div>
+            <Heading level={2}>Pilihan redaksi</Heading>
             <Link href="/editors-choice">
               <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline">Lihat semua</Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
-            {curatedStories.map((story, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+            {curatedStories.map((post, idx) => (
               <motion.div
-                key={story.id}
+                key={post.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.15 }}
               >
-                <Link href={`/news/${story.id}`} className="group block space-y-4">
-                  <div className="relative aspect-video rounded-xl overflow-hidden border border-primary/5 shadow-sm bg-muted">
-                    <Image 
-                      src={story.image} 
-                      alt={story.title} 
-                      fill 
-                      className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm tracking-tight">
-                      {story.category}
-                    </Badge>
-                    <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                      {story.title}
-                    </h4>
-                    <MutedText className="text-[10px] font-bold block">{story.readTime} baca</MutedText>
-                  </div>
-                </Link>
+                <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
+                  <Link href={`/news/${post.id}`}>
+                    <div className="relative h-56 w-full overflow-hidden bg-muted">
+                      <Image 
+                        src={post.image} 
+                        alt={post.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                          {post.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </Link>
+                  <CardContent className="p-7 flex-1 flex flex-col">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                      </div>
+                      <Link href={`/news/${post.id}`}>
+                        <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                          {post.title}
+                        </h3>
+                      </Link>
+                      <BodyText className="text-sm line-clamp-3 opacity-60">
+                        {post.excerpt}
+                      </BodyText>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
+                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                      <BookmarkButton post={post} />
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
@@ -390,44 +410,57 @@ export default function Home() {
         {/* Rekomendasi Section */}
         <section className="mb-32">
           <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-              <Heading level={2}>Rekomendasi untuk anda</Heading>
-            </div>
+            <Heading level={2}>Rekomendasi untuk anda</Heading>
             <Link href="/recommendations">
               <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             {recommendedPosts.map((post, idx) => (
               <motion.div
                 key={post.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.15 }}
               >
-                <Link href={`/news/${post.id}`} className="group block">
-                  <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-5 border border-primary/5 shadow-sm">
-                    <Image 
-                      src={post.image} 
-                      alt={post.title} 
-                      fill 
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm tracking-tight">
-                      {post.category}
-                    </Badge>
-                    <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                      {post.title}
-                    </h4>
-                    <MutedText className="text-[10px] font-bold block tracking-tight">{post.readTime} baca</MutedText>
-                  </div>
-                </Link>
+                <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
+                  <Link href={`/news/${post.id}`}>
+                    <div className="relative h-56 w-full overflow-hidden bg-muted">
+                      <Image 
+                        src={post.image} 
+                        alt={post.title} 
+                        fill 
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                          {post.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </Link>
+                  <CardContent className="p-7 flex-1 flex flex-col">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                      </div>
+                      <Link href={`/news/${post.id}`}>
+                        <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                          {post.title}
+                        </h4>
+                      </Link>
+                      <BodyText className="text-sm line-clamp-3 opacity-60">
+                        {post.excerpt}
+                      </BodyText>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
+                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                      <BookmarkButton post={post} />
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
