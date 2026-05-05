@@ -11,7 +11,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight, Copy, Facebook } from "lucide-react";
+import { 
+  Share2, 
+  ArrowLeft, 
+  Bookmark, 
+  TrendingUp, 
+  ChevronUp, 
+  Send, 
+  Heart, 
+  MessageSquare, 
+  CornerDownRight, 
+  Copy, 
+  Facebook,
+  Camera,
+  Info
+} from "lucide-react";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from "@/components/ui/carousel";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -49,13 +70,13 @@ import {
 const MAX_COMMENT_CHARS = 1000;
 
 const formatRelativeTime = (dateInput: any) => {
-  if (!dateInput) return "baru saja";
+  if (!dateInput) return "Baru saja";
   
   const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return "baru saja";
+  if (diffInSeconds < 60) return "Baru saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
   if (minutes < 60) return `${minutes} Menit yang lalu`;
@@ -83,13 +104,17 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const handleNativeShare = async () => {
     try {
-      await navigator.share({
-        title: post.title,
-        text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
-        url: url,
-      });
+      if (navigator.share) {
+        await navigator.share({
+          title: post.title,
+          text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
+          url: url,
+        });
+      } else {
+        copyToClipboard();
+      }
     } catch (err) {
-      // User cancelled or not supported
+      // User cancelled
     }
   };
 
@@ -114,7 +139,6 @@ const ShareButton = ({ post }: { post: any }) => {
       <Button 
         variant="outline" 
         size="icon" 
-        title="Bagikan berita"
         className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
         onClick={handleNativeShare}
       >
@@ -129,7 +153,6 @@ const ShareButton = ({ post }: { post: any }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          title="Bagikan berita"
           className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
         >
           <Share2 className="h-4 w-4" />
@@ -189,24 +212,15 @@ const CommentItem = ({
   setReplyText: (text: string) => void;
   parentAuthorName?: string;
 }) => {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const isPostAuthor = comment.authorId === postAuthorId;
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
-
-  const displayTime = mounted ? formatRelativeTime(comment.createdAt) : "---";
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l-2 border-primary/5 pl-4 md:pl-6")}>
       <motion.div 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.4 }}
         className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-white/20 hover:border-primary/10 transition-all duration-300 shadow-sm"
       >
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
@@ -220,7 +234,7 @@ const CommentItem = ({
               <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
               {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none rounded-sm">Penulis</Badge>}
               <span className="text-[9px] text-muted-foreground font-medium shrink-0">
-                {displayTime}
+                {formatRelativeTime(comment.createdAt)}
               </span>
             </div>
             {parentAuthorName && depth > 0 && (
@@ -269,10 +283,6 @@ const CommentItem = ({
             className="ml-4 md:ml-8 overflow-hidden"
           >
             <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <MessageSquare className="h-3 w-3 text-primary/40" />
-                <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
-              </div>
               <div className="relative">
                 <Textarea 
                   placeholder="Tulis balasan anda..." 
@@ -290,12 +300,8 @@ const CommentItem = ({
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">
-                  Batal
-                </Button>
-                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">
-                  <Send className="h-3.5 w-3.5 mr-2" /> Kirim balasan
-                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">Batal</Button>
+                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">Kirim balasan</Button>
               </div>
             </div>
           </motion.div>
@@ -356,7 +362,14 @@ export default function NewsDetailPage() {
       readTime: "5 menit baca",
       excerpt: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'.",
       content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
-      image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
+      image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl,
+      imageCaption: "Ruang kosong yang tertata memberikan kejelasan informasi.",
+      imageCredit: "Foto oleh Alex Rivers",
+      gallery: [
+        { url: PlaceHolderImages[0].imageUrl, caption: "Evolusi antarmuka dari masa ke masa." },
+        { url: PlaceHolderImages[1].imageUrl, caption: "Contoh tipografi yang efektif." },
+        { url: PlaceHolderImages[2].imageUrl, caption: "Penerapan warna minimalis pada dashboard." }
+      ]
     }
   ];
 
@@ -376,20 +389,8 @@ export default function NewsDetailPage() {
 
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
-  const mockComments = [
-    {
-      id: "mock-1",
-      content: "Analisis yang sangat menarik. Saya setuju bahwa minimalisme adalah kunci untuk mengurangi kelelahan digital.",
-      authorName: "Dian Pratama",
-      authorId: "user-1",
-      likes: ["user-2", "user-3"],
-      createdAt: { toDate: () => new Date(Date.now() - 3600000) },
-      replies: []
-    }
-  ];
-
   const threadedComments = useMemo(() => {
-    if (!firestoreComments || firestoreComments.length === 0) return mockComments;
+    if (!firestoreComments) return [];
     const map = new Map();
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
     const roots: any[] = [];
@@ -463,13 +464,6 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
   };
 
-  const popularStories = [
-    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
-    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
-  ];
-
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
@@ -481,6 +475,7 @@ export default function NewsDetailPage() {
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
               </Link>
+              
               <div className="space-y-4 mb-10">
                 <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
                 <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post.title}</Title>
@@ -494,7 +489,7 @@ export default function NewsDetailPage() {
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
                       <MutedText className="text-[10px] opacity-60 font-medium">
-                        {mounted ? (post.date || "baru saja") : "---"} • {post.readTime || "5 menit baca"}
+                        {mounted ? (post.date || "Baru saja") : "---"} • {post.readTime || "5 menit baca"}
                       </MutedText>
                     </div>
                   </div>
@@ -503,7 +498,6 @@ export default function NewsDetailPage() {
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      title="Simpan berita"
                       className={cn(
                         "rounded-full h-9 w-9 transition-all border-white/20 shadow-sm bg-white/40 backdrop-blur-md", 
                         isSaved && 'bg-primary text-primary-foreground border-primary'
@@ -515,15 +509,70 @@ export default function NewsDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-12 shadow-sm border border-border/10">
-                <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
+
+              {/* Main Image with Details */}
+              <div className="mb-12">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-border/10 mb-3">
+                  <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
+                </div>
+                {(post.imageCaption || post.imageCredit) && (
+                  <div className="flex items-start gap-3 px-1">
+                    <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                    <div className="space-y-1">
+                      {post.imageCaption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.imageCaption}</p>}
+                      {post.imageCredit && <p className="text-[10px] text-muted-foreground italic">{post.imageCredit}</p>}
+                    </div>
+                  </div>
+                )}
               </div>
-              <article className="prose prose-neutral max-w-none mb-20">
-                {post.content ? post.content.split('\n\n').map((p: string, i: number) => (
-                  <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
-                )) : <BodyText className="text-lg mb-6 opacity-60">Memuat konten...</BodyText>}
+
+              {/* Rich Content Area */}
+              <article className="prose prose-neutral max-w-none mb-16">
+                {post.content ? post.content.split('\n\n').map((p: string, i: number) => {
+                  // Simple simulator for rich text (bold markers)
+                  const parts = p.split(/(\*\*.*?\*\*)/g);
+                  return (
+                    <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">
+                      {parts.map((part, j) => {
+                        if (part.startsWith('**') && part.endsWith('**')) {
+                          return <strong key={j} className="text-primary font-bold">{part.slice(2, -2)}</strong>;
+                        }
+                        return part;
+                      })}
+                    </BodyText>
+                  );
+                }) : <BodyText className="text-lg mb-6 opacity-60">Memuat konten...</BodyText>}
               </article>
+
+              {/* Image Carousel / Gallery Mode */}
+              {post.gallery && post.gallery.length > 0 && (
+                <section className="mb-20">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Camera className="h-5 w-5 text-primary" />
+                    <Heading level={3} className="text-lg">Galeri Foto</Heading>
+                  </div>
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {post.gallery.map((img: any, idx: number) => (
+                        <CarouselItem key={idx}>
+                          <div className="space-y-3">
+                            <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted">
+                              <Image src={img.url} alt={`Gallery image ${idx}`} fill className="object-cover" />
+                            </div>
+                            {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-4" />
+                    <CarouselNext className="right-4" />
+                  </Carousel>
+                </section>
+              )}
+
               <Separator className="my-16 opacity-30" />
+
+              {/* Discussion Community */}
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
@@ -578,6 +627,7 @@ export default function NewsDetailPage() {
               </section>
             </motion.div>
           </div>
+          
           <aside className="lg:col-span-4">
             <div className="sticky top-24 space-y-12">
               <section>
@@ -586,14 +636,14 @@ export default function NewsDetailPage() {
                   <Heading level={3} className="text-lg">Berita terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
-                  {popularStories.map((story) => (
-                    <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
+                  {[1, 2, 3, 4].map((id) => (
+                    <Link key={id} href={`/news/${id}`} className="flex gap-4 group">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm">
-                        <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform" />
+                        <Image src={`https://picsum.photos/seed/${id}/200/200`} alt="Pop" fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{story.category} • {story.timeAgo}</span>
-                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">{story.title}</h4>
+                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">Berita • {id} Jam yang lalu</span>
+                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">Analisis Mendalam Tren Industri Modern</h4>
                       </div>
                     </Link>
                   ))}
@@ -614,18 +664,23 @@ export default function NewsDetailPage() {
           </aside>
         </div>
       </main>
+      
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
         <Button size="icon" className="rounded-full h-12 w-12 shadow-lg bg-primary text-primary-foreground" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <ChevronUp className="h-6 w-6" />
         </Button>
       </motion.div>
+
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
         <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction></AlertDialogFooter>
+          <AlertDialogFooter className="mt-8">
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>

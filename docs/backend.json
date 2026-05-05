@@ -5,51 +5,43 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile within the InfoFlow application, holding public information and app-specific settings.",
+      "description": "Represents a user's profile within the InfoFlow application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserProfile entity."
-        },
-        "authId": {
-          "type": "string",
-          "description": "Identifier from the external authentication system."
-        },
-        "displayName": {
-          "type": "string",
-          "description": "The public name of the user."
-        },
-        "email": {
-          "type": "string",
-          "description": "The email address associated with the user.",
-          "format": "email"
-        },
-        "profileImageUrl": {
-          "type": "string",
-          "description": "URL to the user's profile picture.",
-          "format": "uri"
-        },
-        "bio": {
-          "type": "string",
-          "description": "A short biographical description provided by the user."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "authId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "profileImageUrl": { "type": "string", "format": "uri" },
+        "bio": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "authId",
-        "displayName",
-        "email",
-        "createdAt",
-        "updatedAt"
-      ]
+      "required": ["id", "authId", "displayName", "email", "createdAt", "updatedAt"]
+    },
+    "Post": {
+      "title": "Post",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "image": { "type": "string" },
+        "imageCaption": { "type": "string" },
+        "imageCredit": { "type": "string" },
+        "gallery": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string" },
+              "caption": { "type": "string" }
+            }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
     },
     "Bookmark": {
       "title": "Bookmark",
@@ -73,44 +65,24 @@
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous",
-      "google.com"
-    ]
+    "providers": ["password", "anonymous", "google.com"]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Private user profile information."
-        }
-      },
-      {
-        "path": "/users/{userId}/bookmarks/{postId}",
-        "definition": {
-          "entityName": "Bookmark",
-          "schema": {
-            "$ref": "#/backend/entities/Bookmark"
-          },
-          "description": "Saved posts for the user."
-        }
-      },
-      {
-        "path": "/users/{userId}/history/{postId}",
-        "definition": {
-          "entityName": "History",
-          "schema": {
-            "$ref": "#/backend/entities/History"
-          },
-          "description": "Reading history for the user."
-        }
-      }
-    ]
+    "/users/{userId}": {
+      "schema": { "$ref": "#/backend/entities/UserProfile" },
+      "description": "Private user profile information."
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/backend/entities/Post" },
+      "description": "Main news articles."
+    },
+    "/users/{userId}/bookmarks/{postId}": {
+      "schema": { "$ref": "#/backend/entities/Bookmark" },
+      "description": "Saved posts for the user."
+    },
+    "/users/{userId}/history/{postId}": {
+      "schema": { "$ref": "#/backend/entities/History" },
+      "description": "Reading history for the user."
+    }
   }
 }
