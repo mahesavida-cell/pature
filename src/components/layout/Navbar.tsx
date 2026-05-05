@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -77,7 +78,7 @@ const MarketWeatherBar = () => {
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
-        <div className="flex items-center gap-4 w-72 shrink-0 border-r border-primary/5 mr-4">
+        <div className="flex items-center gap-4 w-40 sm:w-72 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <span className="text-[10px] font-bold text-primary tracking-tight">
@@ -94,11 +95,8 @@ const MarketWeatherBar = () => {
               className="flex items-center gap-2"
             >
               <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-              <span className="text-[10px] font-bold text-primary tracking-tight">
-                {cities[currentCityIndex].name} {cities[currentCityIndex].temp}
-              </span>
-              <span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                {cities[currentCityIndex].status}
+              <span className="text-[10px] font-bold text-primary tracking-tight truncate">
+                {cities[currentCityIndex].temp}
               </span>
             </motion.div>
           </AnimatePresence>
@@ -128,8 +126,8 @@ const MarketWeatherBar = () => {
               </div>
             ))}
           </motion.div>
-          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background/50 to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/50 to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent z-10" />
         </div>
       </div>
     </div>
@@ -211,14 +209,14 @@ export const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between border-b border-primary/5">
-        <div className="flex items-center gap-16">
+        <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
               alt="Pature News Logo" 
               width={140} 
               height={40} 
-              className="h-8 w-auto object-contain"
+              className="h-7 w-auto sm:h-8 object-contain"
               priority
             />
           </Link>
@@ -248,23 +246,23 @@ export const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="relative flex items-center" ref={searchContainerRef}>
             <AnimatePresence>
               {isSearchOpen && (
                 <motion.form
                   onSubmit={handleSearchSubmit}
                   initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 280, opacity: 1 }}
+                  animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 180 : 280, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
-                  className="mr-3 overflow-hidden"
+                  className="mr-2 sm:mr-3 overflow-hidden"
                 >
                   <Input
                     ref={searchInputRef}
-                    placeholder="Cari berita..."
+                    placeholder="Cari..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-10 text-xs font-bold bg-primary/5 border-none rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10 transition-all"
+                    className="h-9 sm:h-10 text-xs font-bold bg-primary/5 border-none rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10 transition-all"
                   />
                 </motion.form>
               )}
@@ -272,7 +270,7 @@ export const Navbar = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-11 w-11 rounded-full transition-all"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-9 w-9 sm:h-11 sm:w-11 rounded-full transition-all"
               onClick={toggleSearch}
             >
               {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
@@ -284,7 +282,7 @@ export const Navbar = () => {
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 5 }}
-                  className="absolute top-14 left-0 w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-sm p-4 z-[60]"
+                  className="absolute top-14 left-0 w-[240px] sm:w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-sm p-4 z-[60]"
                 >
                   {searchQuery.trim() === "" ? (
                     <div className="space-y-4">
@@ -336,12 +334,12 @@ export const Navbar = () => {
             </AnimatePresence>
           </div>
 
-          <div className="hidden md:flex items-center border-l pl-5 border-primary/5 ml-2">
+          <div className="flex items-center sm:border-l sm:pl-5 border-primary/5 sm:ml-2">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-11 w-11 rounded-full p-0 hover:ring-2 hover:ring-primary/5 transition-all">
-                    <Avatar className="h-11 w-11 border border-primary/5">
+                  <Button variant="ghost" className="h-9 w-9 sm:h-11 sm:w-11 rounded-full p-0 hover:ring-2 hover:ring-primary/5 transition-all">
+                    <Avatar className="h-9 w-9 sm:h-11 sm:w-11 border border-primary/5">
                       <AvatarImage src={user.photoURL || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
                         {(user.displayName || user.email || "U")[0]}
@@ -365,7 +363,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all tracking-widest">
+                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all tracking-widest">
                   Masuk
                 </Button>
               </Link>
@@ -374,35 +372,45 @@ export const Navbar = () => {
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground lg:hidden h-11 w-11 hover:bg-primary/5 rounded-full transition-all">
+              <Button variant="ghost" size="icon" className="text-muted-foreground lg:hidden h-9 w-9 hover:bg-primary/5 rounded-full transition-all">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[320px] bg-white border-none p-10">
-              <SheetHeader className="text-left mb-16">
+            <SheetContent side="right" className="w-[300px] sm:w-[360px] bg-white border-none p-6 sm:p-10 flex flex-col">
+              <SheetHeader className="text-left mb-10">
                 <SheetTitle>
                   <Link href="/" onClick={() => setIsOpen(false)}>
-                    <Image src="/pature_news.png" alt="Logo" width={140} height={40} className="h-9 w-auto object-contain" />
+                    <Image src="/pature_news.png" alt="Logo" width={140} height={40} className="h-8 w-auto object-contain" />
                   </Link>
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-8">
-                {dynamicCategories?.map((cat) => (
-                  <div key={cat.id} className="space-y-4">
-                    <Link 
-                      href={`/category/${cat.slug}`} 
-                      onClick={() => setIsOpen(false)}
-                      className="text-xl font-headline font-bold hover:text-primary transition-all block tracking-tight"
-                    >
-                      {cat.name}
-                    </Link>
-                    <div className="pl-5 flex flex-col gap-3 border-l-2 border-primary/5">
-                      {cat.subCategories.map((sub: string) => (
-                        <span key={sub} className="text-[11px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
-                      ))}
+              <div className="flex-1 overflow-y-auto no-scrollbar py-4">
+                <div className="flex flex-col gap-10">
+                  {dynamicCategories?.map((cat) => (
+                    <div key={cat.id} className="space-y-4">
+                      <Link 
+                        href={`/category/${cat.slug}`} 
+                        onClick={() => setIsOpen(false)}
+                        className="text-2xl font-headline font-bold hover:text-primary transition-all block tracking-tight"
+                      >
+                        {cat.name}
+                      </Link>
+                      <div className="pl-5 flex flex-col gap-4 border-l-2 border-primary/5">
+                        {cat.subCategories.map((sub: string) => (
+                          <span key={sub} className="text-[13px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-10 border-t border-primary/5 mt-auto">
+                    <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] mb-4">Informasi</p>
+                    <div className="flex flex-col gap-3">
+                      <Link href="/about" className="text-xs font-bold text-muted-foreground/60">Tentang InfoFlow</Link>
+                      <Link href="/contact" className="text-xs font-bold text-muted-foreground/60">Kontak Redaksi</Link>
+                      <Link href="/terms" className="text-xs font-bold text-muted-foreground/60">Syarat & Ketentuan</Link>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </SheetContent>
           </Sheet>
@@ -412,10 +420,10 @@ export const Navbar = () => {
       <MarketWeatherBar />
 
       <div 
-        className="border-b border-primary/5 overflow-hidden bg-background/50 backdrop-blur-md" 
+        className="border-b border-primary/5 overflow-hidden bg-background/50 backdrop-blur-md relative" 
         onMouseLeave={() => setHoveredCategory(null)}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div 
               key={hoveredCategory ? hoveredCategory.id : "default"}
@@ -423,23 +431,25 @@ export const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               transition={{ duration: 0.3 }}
-              className="flex items-center gap-10 whitespace-nowrap"
+              className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
             >
-              <span className="text-[9px] font-bold text-muted-foreground tracking-[0.25em] mr-4 opacity-40">
+              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground tracking-[0.25em] mr-4 opacity-40">
                 {hoveredCategory ? `Topik ${hoveredCategory.name.toLowerCase()}:` : "Topik populer:"}
               </span>
               {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link 
                   key={idx} 
                   href="#" 
-                  className="text-[10px] font-medium text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body"
+                  className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2"
                 >
-                  <span className="tracking-wide">{sub}</span>
-                  <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all" />
+                  <span className="tracking-wide whitespace-nowrap">{sub}</span>
+                  <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                 </Link>
               ))}
             </motion.div>
           </AnimatePresence>
+          {/* Mobile indicator for scrollable content */}
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
         </div>
       </div>
     </nav>
