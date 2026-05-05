@@ -12,17 +12,18 @@ import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Clock, Bookmark, ChevronRight, Share2, ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
   useUser, 
   useFirestore, 
   useDoc, 
+  useCollection,
   useMemoFirebase, 
   setDocumentNonBlocking, 
   deleteDocumentNonBlocking 
 } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { doc, collection, query, orderBy, limit, where } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import {
@@ -113,7 +114,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
   );
 };
 
-const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sectionTitle: string, viewAllLink: string }) => {
+const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: any[], sectionTitle: string, viewAllLink: string, isLoading?: boolean }) => {
   return (
     <section className="mb-24 lg:mb-32">
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
@@ -122,182 +123,101 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sect
           <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
         </Link>
       </div>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full relative group"
-      >
-        <CarouselContent className="-ml-4">
-          {posts.map((post, idx) => (
-            <CarouselItem key={post.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="h-full"
-              >
-                <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
-                  <Link href={`/news/${post.id}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted">
-                      {post.image && (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map(i => <div key={i} className="aspect-[3/4] rounded-xl bg-primary/5 animate-pulse" />)}
+        </div>
+      ) : (
+        <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative group">
+          <CarouselContent className="-ml-4">
+            {posts.map((post, idx) => (
+              <CarouselItem key={post.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="h-full"
+                >
+                  <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
+                    <Link href={`/news/${post.id}`}>
+                      <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
-                          src={post.image} 
+                          src={post.image || `https://picsum.photos/seed/${post.id}/600/400`} 
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                         />
-                      )}
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                          {post.category}
-                        </Badge>
+                        <div className="absolute top-4 left-4">
+                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                            {post.category}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                  <CardContent className="p-7 flex-1 flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                    </Link>
+                    <CardContent className="p-7 flex-1 flex flex-col">
+                      <div className="mb-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                          <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
+                        </div>
+                        <Link href={`/news/${post.id}`}>
+                          <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
+                            {post.title}
+                          </h3>
+                        </Link>
+                        <BodyText className="text-sm line-clamp-3 opacity-60">
+                          {post.excerpt}
+                        </BodyText>
                       </div>
-                      <Link href={`/news/${post.id}`}>
-                        <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <BodyText className="text-sm line-clamp-3 opacity-60">
-                        {post.excerpt}
-                      </BodyText>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
-                      <BookmarkButton post={post} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="hidden lg:block">
-          <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-primary/5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
-          <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-primary/5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-      </Carousel>
+                      <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author || "Penulis InfoFlow"}</span>
+                        <BookmarkButton post={post} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {posts.length > 3 && (
+            <div className="hidden lg:block">
+              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2" />
+              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2" />
+            </div>
+          )}
+        </Carousel>
+      )}
     </section>
   );
 };
 
 export default function Home() {
+  const db = useFirestore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const heroPost = {
+  // Professional independent mapping from Firestore
+  const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(6)), [db]);
+  const { data: latestPosts, isLoading: isLatestLoading } = useCollection(latestQuery);
+
+  const trendingQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(5)), [db]);
+  const { data: trendingPosts, isLoading: isTrendingLoading } = useCollection(trendingQuery);
+
+  const editorsChoiceQuery = useMemoFirebase(() => query(collection(db, "posts"), where("category", "==", "Media"), limit(4)), [db]);
+  const { data: curatedPosts, isLoading: isCuratedLoading } = useCollection(editorsChoiceQuery);
+
+  const heroPost = latestPosts?.[0] || {
     id: "hero-1",
     title: "Revolusi senyap informasi profesional",
     category: "Media",
     readTime: "5 menit baca",
-    author: "Alex Rivers"
+    author: "Alex Rivers",
+    excerpt: "Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya."
   };
-
-  const trendingStories = [
-    { id: "t1", title: "Kebangkitan ekonomi kreatif digital di Asia Tenggara", category: "Bisnis", readTime: "4 mnt" },
-    { id: "t2", title: "Bagaimana remote work mengubah lanskap perkotaan", category: "Budaya", readTime: "5 mnt" },
-    { id: "t3", title: "Inovasi baterai ramah lingkungan untuk masa depan", category: "Sains", readTime: "6 mnt" },
-    { id: "t4", title: "Seni generatif: antara kreativitas dan algoritma", category: "Teknologi", readTime: "4 mnt" },
-    { id: "t5", title: "Minimalisme dalam arsitektur modern", category: "Desain", readTime: "3 mnt" },
-  ];
-
-  const curatedStories = [
-    { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", excerpt: "Penelitian terbaru menunjukkan potensi besar AI dalam mendeteksi penyakit langka dengan akurasi tinggi.", image: PlaceHolderImages[0].imageUrl, author: "Dr. Elena Smith" },
-    { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", excerpt: "Sektor teknologi finansial terus menunjukkan pertumbuhan positif di pasar domestik tahun ini.", image: PlaceHolderImages[1].imageUrl, author: "Marcus Thorne" },
-    { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", excerpt: "Menggabungkan seni tradisional dengan teknologi VR, pameran ini menarik perhatian audiens global.", image: PlaceHolderImages[2].imageUrl, author: "Lara Chen" },
-    { id: "h4", title: "Evolusi jurnalisme di era digital", category: "Media", readTime: "6 mnt", excerpt: "Analisis mengenai pergeseran konsumsi media dari media cetak ke platform informasi real-time.", image: PlaceHolderImages[3].imageUrl, author: "Alex Rivers" },
-  ];
-
-  const posts = [
-    {
-      id: "1",
-      title: "Evolusi desain digital minimalis",
-      category: "Desain",
-      author: "Alex Rivers",
-      readTime: "5 menit baca",
-      excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
-      image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
-    },
-    {
-      id: "2",
-      title: "Arsitektur berkelanjutan di lingkungan perkotaan",
-      category: "Budaya",
-      author: "Maya Lin",
-      readTime: "8 menit baca",
-      excerpt: "Bagaimana kota mengintegrasikan ruang hijau ke dalam kehidupan vertikal untuk melawan kenaikan suhu global.",
-      image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
-    },
-    {
-      id: "3",
-      title: "Masa depan pasar global terdesentralisasi",
-      category: "Bisnis",
-      author: "Jordan Lee",
-      readTime: "6 menit baca",
-      excerpt: "Pandangan mendalam tentang bagaimana blockchain membentuk kembali infrastruktur perbankan tradisional di ekonomi negara berkembang.",
-      image: PlaceHolderImages.find(img => img.id === "business-news")?.imageUrl
-    },
-    {
-      id: "4",
-      title: "Tren gaya hidup ramah lingkungan",
-      category: "Budaya",
-      author: "Sarah Chen",
-      readTime: "4 menit baca",
-      excerpt: "Kesan sederhana namun bermakna dari perubahan gaya hidup masyarakat urban menuju keberlanjutan.",
-      image: PlaceHolderImages[1].imageUrl
-    }
-  ];
-
-  const recommendedPosts = [
-    {
-      id: "r1",
-      title: "Penerapan ekonomi sirkular pada industri kreatif",
-      category: "Bisnis",
-      author: "Sofia Loren",
-      readTime: "4 mnt",
-      excerpt: "Bagaimana desainer mengadopsi model produksi berkelanjutan untuk mengurangi limbah industri.",
-      image: "https://picsum.photos/seed/rec1/600/400"
-    },
-    {
-      id: "r2",
-      title: "Eksplorasi material ramah lingkungan untuk hunian",
-      category: "Desain",
-      author: "Liam Neeson",
-      readTime: "6 mnt",
-      excerpt: "Penggunaan material bambu dan tanah liat modern dalam konstruksi bangunan ramah energi.",
-      image: "https://picsum.photos/seed/rec2/600/400"
-    },
-    {
-      id: "r3",
-      title: "Potensi pariwisata berkelanjutan di pedesaan",
-      category: "Budaya",
-      author: "Diana Prince",
-      readTime: "5 mnt",
-      excerpt: "Menjelajahi desa-desa wisata yang mempertahankan tradisi lokal sambil menjaga ekosistem alam.",
-      image: "https://picsum.photos/seed/rec3/600/400"
-    },
-    {
-      id: "r4",
-      title: "Digital nomad: Kehidupan tanpa batas geografis",
-      category: "Gaya hidup",
-      author: "Chris Evans",
-      readTime: "7 mnt",
-      excerpt: "Melihat fenomena bekerja dari mana saja dan dampaknya pada produktivitas serta keseimbangan hidup.",
-      image: "https://picsum.photos/seed/rec4/600/400"
-    }
-  ];
 
   if (!mounted) return null;
 
@@ -308,17 +228,16 @@ export default function Home() {
         {/* Hero & Trending Section */}
         <section className="mb-24 lg:mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            {/* Hero Left */}
             <motion.div 
               className="lg:col-span-8 space-y-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <Link href="/news/1" className="block group">
+              <Link href={`/news/${heroPost.id}`} className="block group">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
                   <Image 
-                    src={PlaceHolderImages[0].imageUrl} 
+                    src={heroPost.image || PlaceHolderImages[0].imageUrl} 
                     alt="Berita utama"
                     fill
                     className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
@@ -335,13 +254,13 @@ export default function Home() {
                     {heroPost.title}
                   </Title>
                   <BodyText className="line-clamp-2 max-w-3xl">
-                    Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.
+                    {heroPost.excerpt}
                   </BodyText>
                 </div>
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
                 <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime} • {heroPost.author}
+                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
                   <BookmarkButton post={heroPost} variant="hero" />
@@ -352,13 +271,14 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Trending Right */}
             <div className="lg:col-span-4 space-y-8">
               <div className="flex items-center justify-between border-b border-primary/5 pb-5">
                 <Heading level={3} className="text-lg">Trending</Heading>
               </div>
               <div className="space-y-8">
-                {trendingStories.map((story, idx) => (
+                {isTrendingLoading ? (
+                  [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
+                ) : (trendingPosts || []).map((story, idx) => (
                   <motion.div
                     key={story.id}
                     initial={{ opacity: 0, x: 20 }}
@@ -376,7 +296,7 @@ export default function Home() {
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
                           {story.title}
                         </h4>
-                        <MutedText className="text-[9px] font-bold block">{story.readTime} baca</MutedText>
+                        <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
                       </div>
                     </Link>
                   </motion.div>
@@ -391,25 +311,25 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pilihan Redaksi Section (Carousel) */}
         <NewsCarousel 
-          posts={curatedStories} 
+          posts={curatedPosts || []} 
           sectionTitle="Pilihan redaksi" 
           viewAllLink="/editors-choice" 
+          isLoading={isCuratedLoading}
         />
 
-        {/* Berita Terbaru Section (Carousel) */}
         <NewsCarousel 
-          posts={posts} 
+          posts={latestPosts || []} 
           sectionTitle="Berita terbaru" 
           viewAllLink="/latest" 
+          isLoading={isLatestLoading}
         />
 
-        {/* Rekomendasi Section (Carousel) */}
         <NewsCarousel 
-          posts={recommendedPosts} 
+          posts={latestPosts?.slice().reverse() || []} 
           sectionTitle="Rekomendasi untuk anda" 
           viewAllLink="/recommendations" 
+          isLoading={isLatestLoading}
         />
       </main>
       <Footer />

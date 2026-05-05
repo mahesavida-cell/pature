@@ -11,27 +11,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Sparkles, TrendingUp, Filter, Heart, Clock } from "lucide-react";
-import { PlaceHolderImages } from "@/app/lib/placeholder-images";
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, limit, orderBy } from "firebase/firestore";
 
 export default function RecommendationsPage() {
+  const db = useFirestore();
   const topics = ["Teknologi", "Desain", "Bisnis", "Budaya", "Sains", "Gaya Hidup", "Lingkungan"];
   
+  // Independent mapping logic for dynamic recommendations
+  const recQuery = useMemoFirebase(() => query(collection(db, "posts"), limit(12)), [db]);
+  const { data: firestorePosts, isLoading } = useCollection(recQuery);
+
   const sections = [
     {
       title: "Berdasarkan minat Anda",
-      posts: [
-        { id: "r1", title: "Membangun sistem desain yang inklusif", category: "Desain", author: "Sofia Loren", readTime: "5 mnt", excerpt: "Penerapan standar aksesibilitas dalam setiap tahapan pengembangan produk digital.", image: PlaceHolderImages[0].imageUrl },
-        { id: "r2", title: "Masa depan kerja jarak jauh di Asia", category: "Budaya", author: "Marcus Thorne", readTime: "6 mnt", excerpt: "Eksplorasi bagaimana budaya kerja berubah seiring kemajuan infrastruktur konektivitas.", image: PlaceHolderImages[1].imageUrl },
-        { id: "r3", title: "Inovasi baterai untuk mobilitas perkotaan", category: "Sains", author: "Dr. Elena Smith", readTime: "7 mnt", excerpt: "Solusi energi terbarukan yang memungkinkan transportasi publik bebas emisi.", image: PlaceHolderImages[2].imageUrl },
-      ]
+      posts: firestorePosts?.slice(0, 3) || []
     },
     {
       title: "Sedang hangat didiskusikan",
-      posts: [
-        { id: "h1", title: "Etika kecerdasan buatan dalam seni digital", category: "Teknologi", author: "Lara Chen", readTime: "4 mnt", excerpt: "Debat mengenai hak cipta dan orisinalitas dalam karya seni yang dihasilkan algoritma.", image: PlaceHolderImages[3].imageUrl },
-        { id: "h2", title: "Krisis ekonomi global dan peluang startup", category: "Bisnis", author: "Jordan Lee", readTime: "8 mnt", excerpt: "Bagaimana efisiensi operasional menjadi kunci bertahan di tengah ketidakpastian pasar.", image: PlaceHolderImages[0].imageUrl },
-        { id: "h3", title: "Urban farming sebagai solusi pangan kota", category: "Budaya", author: "Sarah Chen", readTime: "5 mnt", excerpt: "Memanfaatkan lahan terbatas di atap gedung untuk kemandirian pangan masyarakat kota.", image: PlaceHolderImages[1].imageUrl },
-      ]
+      posts: firestorePosts?.slice(3, 6) || []
     }
   ];
 
@@ -44,7 +42,7 @@ export default function RecommendationsPage() {
             <div className="space-y-6 max-w-2xl">
               <Title>Rekomendasi untuk Anda</Title>
               <BodyText>
-                Wawasan yang dikurasi khusus berdasarkan riwayat bacaan dan topik yang paling sering Anda jelajahi di InfoFlow.
+                Wawasan yang dikurasi secara mandiri berdasarkan algoritma mapping konten InfoFlow untuk menjaga kualitas informasi Anda.
               </BodyText>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -60,65 +58,70 @@ export default function RecommendationsPage() {
           </div>
 
           <div className="space-y-32">
-            {sections.map((section, secIdx) => (
-              <section key={section.title} className="space-y-12">
-                <div className="flex items-center gap-4 border-b border-primary/5 pb-6">
-                  <Heading level={2}>{section.title}</Heading>
-                </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[1, 2, 3].map(i => <div key={i} className="aspect-video bg-primary/5 animate-pulse rounded-xl" />)}
+              </div>
+            ) : (
+              sections.map((section, secIdx) => (
+                <section key={section.title} className="space-y-12">
+                  <div className="flex items-center gap-4 border-b border-primary/5 pb-6">
+                    <Heading level={2}>{section.title}</Heading>
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                  {section.posts.map((post, idx) => (
-                    <motion.div
-                      key={post.id}
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
-                        <Link href={`/news/${post.id}`}>
-                          <div className="relative h-56 w-full overflow-hidden bg-muted">
-                            <Image 
-                              src={post.image} 
-                              alt={post.title}
-                              fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                            <div className="absolute top-4 left-4">
-                              <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                                {post.category}
-                              </Badge>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    {section.posts.map((post: any, idx: number) => (
+                      <motion.div
+                        key={post.id}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5">
+                          <Link href={`/news/${post.id}`}>
+                            <div className="relative h-56 w-full overflow-hidden bg-muted">
+                              <Image 
+                                src={post.image || `https://picsum.photos/seed/${post.id}/600/400`} 
+                                alt={post.title}
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                              <div className="absolute top-4 left-4">
+                                <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                                  {post.category}
+                                </Badge>
+                              </div>
                             </div>
-                          </div>
-                        </Link>
-                        <CardContent className="p-7 flex-1 flex flex-col">
-                          <div className="mb-6">
-                            <div className="flex items-center gap-2 mb-3">
-                              <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                              <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
+                          </Link>
+                          <CardContent className="p-7 flex-1 flex flex-col">
+                            <div className="mb-6">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                                <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
+                              </div>
+                              <Link href={`/news/${post.id}`}>
+                                <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                                  {post.title}
+                                </h4>
+                              </Link>
+                              <BodyText className="text-sm line-clamp-3 opacity-60">
+                                {post.excerpt}
+                              </BodyText>
                             </div>
-                            <Link href={`/news/${post.id}`}>
-                              <h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
-                                {post.title}
-                              </h4>
-                            </Link>
-                            <BodyText className="text-sm line-clamp-3 opacity-60">
-                              {post.excerpt}
-                            </BodyText>
-                          </div>
-                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                            <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            ))}
+                            <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                              <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author}</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </section>
+              ))
+            )}
           </div>
 
-          {/* Call to Action */}
           <section className="bg-primary/95 text-primary-foreground rounded-3xl p-16 text-center space-y-8 shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 transition-transform duration-1000 group-hover:scale-175 group-hover:rotate-45">
               <Sparkles className="h-40 w-40" />
