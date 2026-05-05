@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, Bookmark, X, Clock } from "lucide-react";
+import { Search, Menu, User, LogOut, Bookmark, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,12 +34,22 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useUser();
   const auth = useAuth();
   const db = useFirestore();
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Fetch some posts for search preview
   const postsQuery = useMemoFirebase(() => {
@@ -90,9 +101,14 @@ export const Navbar = () => {
     <motion.nav 
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-primary/5"
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        isScrolled 
+          ? "bg-background/80 backdrop-blur-xl border-b border-primary/5 py-2" 
+          : "bg-transparent border-transparent py-4"
+      )}
     >
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 h-12 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
             <Image 
@@ -134,7 +150,7 @@ export const Navbar = () => {
                       placeholder="Cari berita..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-9 text-xs font-bold bg-transparent border-primary/10 rounded-md focus-visible:ring-1 focus-visible:ring-primary/20"
+                      className="h-9 text-xs font-bold bg-white/50 border-primary/10 rounded-md focus-visible:ring-1 focus-visible:ring-primary/20"
                     />
                   </motion.div>
 
