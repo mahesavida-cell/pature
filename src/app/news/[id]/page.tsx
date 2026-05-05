@@ -43,6 +43,14 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
+  const commentsQuery = useMemoFirebase(() => {
+    if (!db || !params.id) return null;
+    return collection(db, "posts", params.id as string, "comments");
+  }, [db, params.id]);
+
+  const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
+
+  // Mock comments to fill space if Firestore is empty during prototype
   const mockComments = [
     {
       id: "mock-1",
@@ -51,28 +59,15 @@ export default function NewsDetailPage() {
       content: "Artikel Ini Memberikan Wawasan Yang Luar Biasa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
       createdAt: "2 Jam Yang Lalu",
       parentId: null,
-      likes: []
-    },
-    {
-      id: "mock-2",
-      authorId: "mock-author-2",
-      authorName: "David Chen",
-      content: "Saya Sangat Setuju Dengan Poin Tentang Ruang Kosong. Ini Sangat Penting Untuk Fokus Pengguna Dan Mengurangi Beban Kognitif.",
-      createdAt: "5 Jam Yang Lalu",
-      parentId: "mock-1",
-      likes: []
+      likes: ["user-1", "user-2"]
     }
   ];
 
-  const commentsQuery = useMemoFirebase(() => {
-    if (!db || !params.id) return null;
-    return collection(db, "posts", params.id as string, "comments");
-  }, [db, params.id]);
-
-  const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
-
   const threadedComments = useMemo(() => {
-    const all = [...(firestoreComments || []), ...mockComments];
+    const all = firestoreComments && firestoreComments.length > 0 
+      ? [...firestoreComments] 
+      : [...mockComments];
+      
     const roots = all.filter(c => !c.parentId);
     const replies = all.filter(c => !!c.parentId);
 
@@ -115,7 +110,7 @@ export default function NewsDetailPage() {
   };
 
   const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
-    if (!user) return;
+    if (!user || !db || commentId.startsWith('mock-')) return;
     
     const isLiked = currentLikes.includes(user.uid);
     const newLikes = isLiked 
@@ -142,23 +137,6 @@ export default function NewsDetailPage() {
     }
   ];
 
-  const trendingStories = [
-    {
-      id: "1",
-      title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia",
-      category: "Desain",
-      timeAgo: "2 Jam Yang Lalu",
-      image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
-    },
-    {
-      id: "2",
-      title: "Masa Depan Keberlanjutan Dalam Arsitektur",
-      category: "Budaya",
-      timeAgo: "4 Jam Yang Lalu",
-      image: PlaceHolderImages.find(img => img.id === "culture-news")?.imageUrl
-    }
-  ];
-
   const post = posts.find(p => p.id === params.id) || posts[0];
 
   const CommentItem = ({ comment, isReply = false }: { comment: any, isReply?: boolean }) => {
@@ -169,13 +147,14 @@ export default function NewsDetailPage() {
     return (
       <div className={cn("space-y-4", isReply && "ml-12 border-l pl-4 border-border/50")}>
         <motion.div 
-          whileTap={{ scale: 0.99 }}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex gap-4 p-4 rounded-2xl hover:bg-accent/5 transition-colors"
         >
-          <Avatar className={cn("h-8 w-8", isReply && "h-6 w-6")}>
-            <AvatarFallback className="text-[10px] font-bold">{comment.authorName[0]}</AvatarFallback>
+          <Avatar className={cn("h-8 w-8 shadow-sm", isReply && "h-6 w-6")}>
+            <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
+              {comment.authorName[0]}
+            </AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -187,7 +166,7 @@ export default function NewsDetailPage() {
             </div>
             <BodyText className="text-sm opacity-80 mb-3">{comment.content}</BodyText>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <motion.button 
                 whileTap={{ scale: 0.9 }}
                 onClick={() => handleLikeComment(comment.id, likes)}
@@ -196,18 +175,21 @@ export default function NewsDetailPage() {
                   isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
                 )}
               >
-                <Heart className={cn("h-3 w-3", isLiked && "fill-current")} />
-                {likes.length > 0 ? `${likes.length} Suka` : "Suka"}
+                <Heart className={cn("h-3.5 w-3.5", isLiked && "fill-current")} />
+                <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
               </motion.button>
 
               {!isReply && user && (
                 <motion.button 
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
-                  className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-muted-foreground hover:text-primary transition-colors"
+                  className={cn(
+                    "flex items-center gap-1.5 text-[10px] font-bold tracking-wide transition-colors",
+                    replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  )}
                 >
-                  <Reply className="h-3 w-3" />
-                  Balas Pesan
+                  <Reply className="h-3.5 w-3.5" />
+                  <span>Balas Pesan</span>
                 </motion.button>
               )}
             </div>
@@ -222,15 +204,16 @@ export default function NewsDetailPage() {
               exit={{ opacity: 0, height: 0 }}
               className="ml-12 pr-4 overflow-hidden"
             >
-              <div className="flex gap-3 items-start py-2">
+              <div className="flex gap-3 items-center py-4 bg-accent/5 rounded-2xl px-4 border border-dashed border-border/50">
                 <Input 
-                  placeholder={`Membalas ${comment.authorName}...`} 
+                  placeholder={`Membalas Pesan ${comment.authorName}...`} 
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  className="bg-accent/5 border-none h-10 rounded-xl text-xs"
+                  className="bg-white border-none h-10 rounded-xl text-xs shadow-sm"
                 />
-                <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-10 px-4">
-                  <Send className="h-3 w-3" />
+                <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-10 px-6 font-bold text-[10px] tracking-wide">
+                  <Send className="h-3 w-3 mr-2" />
+                  Kirim
                 </Button>
               </div>
             </motion.div>
@@ -269,7 +252,9 @@ export default function NewsDetailPage() {
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">{post.author.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
+                        {post.author.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author}</span>
@@ -307,35 +292,37 @@ export default function NewsDetailPage() {
                 
                 {user ? (
                   <div className="flex gap-4 mb-10 items-start">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-accent text-white">{user.email?.[0].toUpperCase()}</AvatarFallback>
+                    <Avatar className="h-10 w-10 shadow-sm">
+                      <AvatarFallback className="bg-accent text-white font-bold">{user.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-3">
                       <Input 
                         placeholder="Tulis Pendapat Anda..." 
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
-                        className="bg-accent/5 border-none h-12 rounded-xl"
+                        className="bg-accent/5 border-none h-12 rounded-xl text-sm shadow-inner"
                       />
                       <div className="flex justify-end">
-                        <Button onClick={() => handlePostComment(null)} className="rounded-xl gap-2 h-10 font-bold tracking-wide">
+                        <Button onClick={() => handlePostComment(null)} className="rounded-xl gap-2 h-10 px-8 font-bold tracking-wide text-[11px]">
                           <Send className="h-4 w-4" /> Kirim Komentar
                         </Button>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-accent/5 p-6 rounded-2xl text-center mb-10 border border-dashed">
-                    <MutedText className="block mb-4">Silakan Masuk Untuk Ikut Berdiskusi.</MutedText>
+                  <Card className="bg-accent/5 p-8 rounded-[24px] text-center mb-10 border border-dashed border-border/50">
+                    <MutedText className="block mb-6 font-bold tracking-wide">Silakan Masuk Untuk Ikut Berdiskusi.</MutedText>
                     <Link href="/auth">
-                      <Button variant="outline" className="rounded-xl px-8 font-bold tracking-wide">Masuk / Daftar</Button>
+                      <Button className="rounded-xl px-12 font-bold tracking-wide h-12">Masuk Sekarang</Button>
                     </Link>
-                  </div>
+                  </Card>
                 )}
 
                 <div className="space-y-10">
-                  {isCommentsLoading && firestoreComments === null ? (
-                    <MutedText>Memuat Diskusi...</MutedText>
+                  {isCommentsLoading && (!firestoreComments || firestoreComments.length === 0) ? (
+                    <div className="flex justify-center py-10">
+                      <MutedText className="animate-pulse font-bold">Memuat Diskusi...</MutedText>
+                    </div>
                   ) : (
                     threadedComments.map((comment) => (
                       <CommentItem key={comment.id} comment={comment} />
@@ -354,10 +341,13 @@ export default function NewsDetailPage() {
               </div>
 
               <div className="space-y-8">
-                {trendingStories.map((story) => (
+                {[
+                  { id: "1", title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia", category: "Desain", timeAgo: "2 Jam Yang Lalu" },
+                  { id: "2", title: "Masa Depan Keberlanjutan Dalam Arsitektur", category: "Budaya", timeAgo: "4 Jam Yang Lalu" }
+                ].map((story) => (
                   <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
-                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl bg-muted">
-                      {story.image && <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />}
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl bg-muted shadow-sm">
+                      <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="flex flex-col justify-center gap-1">
                       <span className="text-[10px] font-bold tracking-wide text-accent">{story.category} • {story.timeAgo}</span>
@@ -367,12 +357,12 @@ export default function NewsDetailPage() {
                 ))}
               </div>
 
-              <Card className="bg-primary text-primary-foreground p-8 rounded-[24px]">
+              <Card className="bg-primary text-primary-foreground p-8 rounded-[24px] shadow-2xl">
                 <h4 className="font-headline font-bold text-xl mb-2">Buletin Berita</h4>
-                <p className="text-xs opacity-70 mb-6">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
+                <p className="text-xs opacity-70 mb-6 leading-relaxed">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
                 <div className="space-y-3">
-                  <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-10 rounded-xl" />
-                  <Button variant="secondary" className="w-full h-11 rounded-xl font-bold tracking-wide text-[11px]">Langganan Sekarang</Button>
+                  <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-xl" />
+                  <Button variant="secondary" className="w-full h-12 rounded-xl font-bold tracking-wide text-[11px] shadow-lg">Langganan Sekarang</Button>
                 </div>
               </Card>
             </div>
@@ -387,7 +377,7 @@ export default function NewsDetailPage() {
       >
         <Button
           size="icon"
-          className="rounded-full h-12 w-12 shadow-2xl bg-primary text-primary-foreground"
+          className="rounded-full h-12 w-12 shadow-2xl bg-primary text-primary-foreground hover:scale-110 transition-transform"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <ChevronUp className="h-6 w-6" />
