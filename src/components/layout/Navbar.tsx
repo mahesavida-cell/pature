@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, PenSquare, Menu, User, LogOut } from "lucide-react";
+import { Search, Menu, User, LogOut, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -37,28 +38,28 @@ export const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Berita", href: "/" },
-    { name: "Fitur", href: "#" },
-    { name: "Arsip", href: "/profile" },
+    { name: "Berita utama", href: "/" },
+    { name: "Topik populer", href: "#" },
+    { name: "Arsip bacaan", href: "/profile" },
   ];
 
   return (
     <motion.nav 
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-white/10"
+      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-primary/5"
     >
-      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="font-headline text-xl font-bold text-primary tracking-tight">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-10">
+          <Link href="/" className="font-headline text-2xl font-bold text-primary tracking-tighter">
             InfoFlow
           </Link>
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href} 
-                className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors"
+                className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-wide"
               >
                 {link.name}
               </Link>
@@ -66,66 +67,65 @@ export const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-9 w-9">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-10 w-10">
             <Search className="h-4 w-4" />
           </Button>
-          
-          <Link href="/create" className="hidden sm:inline-flex">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-9 w-9">
-              <PenSquare className="h-4 w-4" />
-            </Button>
-          </Link>
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground md:hidden h-9 w-9">
+              <Button variant="ghost" size="icon" className="text-muted-foreground md:hidden h-10 w-10">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-white/90 backdrop-blur-2xl border-none">
-              <SheetHeader className="text-left">
-                <SheetTitle className="font-headline text-xl font-bold text-primary mb-8">
+            <SheetContent side="right" className="w-[300px] bg-white/95 backdrop-blur-2xl border-none p-8">
+              <SheetHeader className="text-left mb-12">
+                <SheetTitle className="font-headline text-2xl font-bold text-primary">
                   InfoFlow
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-6 mt-4">
+              <div className="flex flex-col gap-8">
                 {navLinks.map((link) => (
                   <Link 
                     key={link.name} 
                     href={link.href} 
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-headline font-semibold hover:text-accent transition-colors"
+                    className="text-lg font-headline font-semibold hover:text-primary transition-colors"
                   >
                     {link.name}
                   </Link>
                 ))}
-                {user ? (
-                  <>
-                    <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-base font-medium">
-                      <User className="h-4 w-4" /> Profil saya
+                <div className="pt-8 border-t border-primary/5 flex flex-col gap-6">
+                  {user ? (
+                    <>
+                      <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-4 text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
+                        <User className="h-4 w-4" /> Profil saya
+                      </Link>
+                      <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-4 text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
+                        <Bookmark className="h-4 w-4" /> Berita tersimpan
+                      </Link>
+                      <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0 text-sm font-bold text-destructive hover:bg-transparent">
+                        <LogOut className="h-4 w-4 mr-4" /> Keluar akun
+                      </Button>
+                    </>
+                  ) : (
+                    <Link href="/auth" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full h-11 text-xs font-bold rounded-md shadow-sm">
+                        Masuk sekarang
+                      </Button>
                     </Link>
-                    <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0 text-base font-medium text-destructive">
-                      <LogOut className="h-4 w-4 mr-3" /> Keluar akun
-                    </Button>
-                  </>
-                ) : (
-                  <Link href="/auth" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-10 text-sm font-bold rounded-md">
-                      Masuk sekarang
-                    </Button>
-                  </Link>
-                )}
+                  )}
+                </div>
               </div>
             </SheetContent>
           </Sheet>
 
-          <div className="hidden md:flex items-center ml-2 border-l pl-4 border-white/10">
+          <div className="hidden md:flex items-center ml-2 border-l pl-6 border-primary/5">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9 border border-white/20 shadow-sm">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/5 hover:border-primary/10 transition-all p-0">
+                    <Avatar className="h-10 w-10 border-none">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
                         {(user.displayName || user.email || "U")[0]}
@@ -133,22 +133,28 @@ export const Navbar = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48 rounded-lg p-1 bg-white/90 backdrop-blur-xl border-white/10" align="end" forceMount>
-                  <DropdownMenuLabel className="font-headline font-bold px-2 py-1.5 text-xs">Pusat akun</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                <DropdownMenuContent className="w-56 rounded-lg p-1 bg-white/95 backdrop-blur-xl border-primary/5 shadow-xl mt-2" align="end" forceMount>
+                  <DropdownMenuLabel className="font-headline font-bold px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-primary/5" />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-md cursor-pointer py-2 px-2 gap-2 text-xs">
-                      <User className="h-3.5 w-3.5" /> <span>Halaman profil</span>
+                    <DropdownMenuItem className="rounded-md cursor-pointer py-2.5 px-3 gap-3 text-xs font-bold">
+                      <User className="h-4 w-4 text-muted-foreground" /> <span>Halaman profil</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-md cursor-pointer py-2 px-2 gap-2 text-destructive text-xs focus:bg-destructive/5">
-                    <LogOut className="h-3.5 w-3.5" /> <span>Keluar sekarang</span>
+                  <Link href="/profile">
+                    <DropdownMenuItem className="rounded-md cursor-pointer py-2.5 px-3 gap-3 text-xs font-bold">
+                      <Bookmark className="h-4 w-4 text-muted-foreground" /> <span>Berita tersimpan</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator className="bg-primary/5" />
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-md cursor-pointer py-2.5 px-3 gap-3 text-destructive text-xs font-bold focus:bg-destructive/5 focus:text-destructive">
+                    <LogOut className="h-4 w-4" /> <span>Keluar sekarang</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-5 h-8 rounded-md bg-white/50 backdrop-blur-sm border-white/20">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-6 h-9 rounded-md bg-white/50 backdrop-blur-sm border-primary/10 hover:bg-white hover:text-primary transition-all shadow-sm">
                   Masuk
                 </Button>
               </Link>
