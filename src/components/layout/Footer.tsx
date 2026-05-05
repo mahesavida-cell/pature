@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MutedText, Heading, BodyText } from "@/components/wrapped/Typography";
-import { Facebook, Instagram, Linkedin, Mail, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const XIcon = () => (
@@ -14,38 +14,44 @@ const XIcon = () => (
 
 export const Footer = () => {
   return (
-    <footer className="bg-white/50 border-t mt-20 pt-16 pb-12">
+    <footer className="bg-white/40 border-t mt-32 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-20">
           {/* Brand and Mission */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-5 space-y-8">
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
               <Image 
                 src="/pature_news.png" 
                 alt="Pature News Logo" 
-                width={140} 
-                height={40} 
-                className="h-8 w-auto object-contain"
+                width={160} 
+                height={45} 
+                className="h-9 w-auto object-contain"
               />
             </Link>
-            <BodyText className="text-sm max-w-sm leading-relaxed opacity-70 font-medium">
-              InfoFlow adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya.
+            <BodyText className="text-sm max-w-md leading-relaxed opacity-60">
+              InfoFlow adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
             </BodyText>
-            <div className="flex items-center gap-4 text-muted-foreground">
-              <Link href="#" className="hover:text-primary transition-colors"><XIcon /></Link>
-              <Link href="#" className="hover:text-primary transition-colors"><Instagram className="h-4 w-4" /></Link>
-              <Link href="#" className="hover:text-primary transition-colors"><Facebook className="h-4 w-4" /></Link>
-              <Link href="#" className="hover:text-primary transition-colors"><Linkedin className="h-4 w-4" /></Link>
+            <div className="flex items-center gap-6 text-muted-foreground/60">
+              {[
+                { icon: <XIcon />, href: "#" },
+                { icon: <Instagram className="h-5 w-5" />, href: "#" },
+                { icon: <Facebook className="h-5 w-5" />, href: "#" },
+                { icon: <Linkedin className="h-5 w-5" />, href: "#" }
+              ].map((social, idx) => (
+                <Link key={idx} href={social.href} className="hover:text-primary transition-all transform hover:-translate-y-0.5">
+                  {social.icon}
+                </Link>
+              ))}
             </div>
           </div>
 
           {/* Quick Links / Categories */}
-          <div className="lg:col-span-3 space-y-6">
-            <Heading level={4} className="text-sm font-bold uppercase tracking-widest opacity-40">Kategori berita</Heading>
-            <ul className="space-y-3">
+          <div className="lg:col-span-2 space-y-8">
+            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Kategori</Heading>
+            <ul className="space-y-4">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-all">
+                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-widest">
                     {item}
                   </Link>
                 </li>
@@ -54,12 +60,12 @@ export const Footer = () => {
           </div>
 
           {/* Company / Support */}
-          <div className="lg:col-span-3 space-y-6">
-            <Heading level={4} className="text-sm font-bold uppercase tracking-widest opacity-40">Dukungan & legal</Heading>
-            <ul className="space-y-3">
-              {["Tentang kami", "Kontak redaksi", "Karir di InfoFlow", "Ketentuan penggunaan", "Kebijakan privasi"].map((item) => (
+          <div className="lg:col-span-2 space-y-8">
+            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Dukungan</Heading>
+            <ul className="space-y-4">
+              {["Tentang kami", "Kontak redaksi", "Karir", "Ketentuan", "Privasi"].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-all">
+                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-widest">
                     {item}
                   </Link>
                 </li>
@@ -67,32 +73,35 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter / Contact */}
-          <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-sm font-bold uppercase tracking-widest opacity-40">Hubungi kami</Heading>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-primary/5 flex items-center justify-center text-primary">
+          {/* Contact */}
+          <div className="lg:col-span-3 space-y-8">
+            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Hubungi kami</Heading>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4 group">
+                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                   <Mail className="h-4 w-4" />
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground">redaksi@infoflow.com</span>
+                <span className="text-[11px] font-bold text-muted-foreground/80 tracking-widest">redaksi@infoflow.com</span>
               </div>
-              <p className="text-[10px] leading-relaxed text-muted-foreground/60 font-medium">
-                Punya saran atau pertanyaan? Tim kami siap membantu Anda kapan saja.
+              <p className="text-[11px] leading-relaxed text-muted-foreground/50 font-medium italic">
+                Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.
               </p>
             </div>
           </div>
         </div>
 
-        <Separator className="opacity-40" />
+        <Separator className="opacity-5 mx-auto" />
         
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <MutedText className="text-[10px] font-bold opacity-40 tracking-wider">
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+          <MutedText className="text-[10px] font-bold opacity-30 tracking-[0.2em] uppercase">
             © 2024 INFOFLOW MEDIA GROUP. SELURUH HAK CIPTA DILINDUNGI.
           </MutedText>
-          <div className="flex items-center gap-8">
-            <Link href="#" className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary uppercase tracking-widest">Aksesibilitas</Link>
-            <Link href="#" className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary uppercase tracking-widest">Peta situs</Link>
+          <div className="flex items-center gap-10">
+            {["Aksesibilitas", "Peta situs"].map(link => (
+              <Link key={link} href="#" className="text-[9px] font-bold text-muted-foreground/30 hover:text-primary uppercase tracking-[0.25em] transition-all">
+                {link}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
