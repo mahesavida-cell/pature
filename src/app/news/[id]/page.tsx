@@ -102,9 +102,11 @@ const XIcon = () => (
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
   const [url, setUrl] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setUrl(window.location.href);
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
 
   const handleNativeShare = async () => {
@@ -124,11 +126,13 @@ const ShareButton = ({ post }: { post: any }) => {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Tautan disalin",
-      description: "Tautan berita telah berhasil disalin ke papan klip anda.",
-    });
+    if (typeof navigator !== 'undefined') {
+      navigator.clipboard.writeText(url);
+      toast({
+        title: "Tautan disalin",
+        description: "Tautan berita telah berhasil disalin ke papan klip anda.",
+      });
+    }
   };
 
   const shareLinks = [
@@ -136,8 +140,6 @@ const ShareButton = ({ post }: { post: any }) => {
     { name: "Facebook", icon: <Facebook className="h-4 w-4" />, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
     { name: "X", icon: <XIcon />, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}` },
   ];
-
-  const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile && typeof navigator !== 'undefined' && !!navigator.share) {
     return (
@@ -445,6 +447,7 @@ export default function NewsDetailPage() {
     if (!user) { setIsLoginDialogOpen(true); return; }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
+    if (!db) return;
     const colRef = collection(db, "posts", params.id as string, "comments");
     addDocumentNonBlocking(colRef, {
       content: text,
@@ -459,7 +462,7 @@ export default function NewsDetailPage() {
   };
 
   const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
-    if (!user) { setIsLoginDialogOpen(true); return; }
+    if (!user || !db) { setIsLoginDialogOpen(true); return; }
     const likes = Array.isArray(currentLikes) ? currentLikes : [];
     const isLiked = likes.includes(user.uid);
     const newLikes = isLiked ? likes.filter(id => id !== user.uid) : [...likes, user.uid];

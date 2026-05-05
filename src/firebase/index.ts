@@ -12,11 +12,12 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 export function initializeFirebase() {
   const isClient = typeof window !== 'undefined';
   
-  // Jika konfigurasi tidak tersedia (misal di build server), gunakan objek placeholder agar tidak crash
-  const config = firebaseConfig && firebaseConfig.apiKey ? firebaseConfig : {
-    projectId: "placeholder-id",
-    appId: "placeholder-app-id",
-    apiKey: "placeholder-api-key",
+  // Gunakan variabel lingkungan jika tersedia, atau fallback ke config hardcoded
+  const config = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || firebaseConfig.apiKey,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || firebaseConfig.projectId,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || firebaseConfig.appId,
   };
 
   let app: FirebaseApp;
