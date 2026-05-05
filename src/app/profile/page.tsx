@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -57,7 +56,6 @@ export default function ProfilePage() {
     });
   };
 
-  // Logika Rekomendasi Dinamis Berdasarkan Frekuensi Kategori
   const recommendations = useMemo(() => {
     if (!history || history.length === 0) return [];
     
@@ -92,7 +90,7 @@ export default function ProfilePage() {
             <Heading level={2} className="mb-2">Akses Terbatas</Heading>
             <BodyText className="mb-8">Silakan Masuk Untuk Mengakses Halaman Pusat Akun Anda.</BodyText>
             <Link href="/auth">
-              <Button className="rounded-xl px-12 h-12 font-bold tracking-wide shadow-lg shadow-primary/20">
+              <Button className="rounded-xl px-12 h-12 font-bold tracking-tight shadow-lg shadow-primary/20">
                 Masuk Sekarang
               </Button>
             </Link>
@@ -114,26 +112,26 @@ export default function ProfilePage() {
                 <div className="relative inline-block mb-6">
                   <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                     <AvatarImage src={user.photoURL || ""} />
-                    <AvatarFallback className="bg-primary text-white text-4xl font-black">
+                    <AvatarFallback className="bg-primary text-white text-4xl font-bold">
                       {(displayName || user.email || "U")[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute -bottom-2 -right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white" />
                 </div>
                 <Heading level={2} className="mb-1 text-3xl">{displayName}</Heading>
-                <MutedText className="block mb-6 font-bold text-xs tracking-wider opacity-60 uppercase">{user.email}</MutedText>
-                <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[9px] font-black tracking-[0.2em] uppercase mb-10 bg-accent/5 text-accent border-none">
+                <MutedText className="block mb-6 font-bold text-xs opacity-60">{user.email}</MutedText>
+                <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[9px] font-bold mb-10 bg-accent/5 text-accent border-none">
                   Anggota Aktif
                 </Badge>
                 <div className="flex justify-around items-center pt-8 border-t border-border/40">
                   <div className="text-center">
                     <span className="block text-2xl font-headline font-bold text-primary">{bookmarks?.length || 0}</span>
-                    <MutedText className="text-[10px] font-bold tracking-widest uppercase opacity-50">Arsip</MutedText>
+                    <MutedText className="text-[10px] font-bold opacity-50">Arsip</MutedText>
                   </div>
                   <Separator orientation="vertical" className="h-10 opacity-40" />
                   <div className="text-center">
                     <span className="block text-2xl font-headline font-bold text-primary">{history?.length || 0}</span>
-                    <MutedText className="text-[10px] font-bold tracking-widest uppercase opacity-50">Dibaca</MutedText>
+                    <MutedText className="text-[10px] font-bold opacity-50">Dibaca</MutedText>
                   </div>
                 </div>
               </CardContent>
@@ -157,7 +155,7 @@ export default function ProfilePage() {
                       transition={{ delay: idx * 0.1 }}
                       className="p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/5 transition-all cursor-pointer group/item"
                     >
-                      <span className="text-[9px] font-black tracking-[0.15em] uppercase text-accent mb-2 block">{rec.category}</span>
+                      <span className="text-[9px] font-bold text-accent mb-2 block">{rec.category}</span>
                       <h4 className="font-headline font-bold text-sm leading-snug group-hover/item:text-accent transition-colors">{rec.title}</h4>
                     </motion.div>
                   )) : (
@@ -173,13 +171,13 @@ export default function ProfilePage() {
           <section className="lg:col-span-8">
             <Tabs defaultValue="editor" className="w-full">
               <TabsList className="bg-transparent border-b rounded-none w-full justify-start h-auto p-0 mb-12 space-x-10 overflow-x-auto">
-                <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
+                <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-bold transition-all">
                   <Settings className="h-4 w-4 mr-2" /> Editor Akun
                 </TabsTrigger>
-                <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
+                <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-bold transition-all">
                   <Bookmark className="h-4 w-4 mr-2" /> Berita Diarsipkan
                 </TabsTrigger>
-                <TabsTrigger value="history" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
+                <TabsTrigger value="history" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-bold transition-all">
                   <History className="h-4 w-4 mr-2" /> Riwayat Bacaan
                 </TabsTrigger>
               </TabsList>
@@ -190,7 +188,7 @@ export default function ProfilePage() {
                     <Card className="rounded-[40px] p-12 bg-white shadow-xl border border-border/30">
                       <div className="space-y-8">
                         <div className="space-y-3">
-                          <Label htmlFor="displayName" className="text-[10px] font-black tracking-widest uppercase opacity-50">Nama Lengkap Tampilan</Label>
+                          <Label htmlFor="displayName" className="text-[10px] font-bold opacity-50">Nama Lengkap Tampilan</Label>
                           <Input 
                             id="displayName" 
                             value={displayName} 
@@ -199,7 +197,7 @@ export default function ProfilePage() {
                           />
                         </div>
                         <div className="space-y-3">
-                          <Label htmlFor="bio" className="text-[10px] font-black tracking-widest uppercase opacity-50">Biodata Singkat Penulis</Label>
+                          <Label htmlFor="bio" className="text-[10px] font-bold opacity-50">Biodata Singkat Penulis</Label>
                           <Input 
                             id="bio" 
                             value={bio} 
@@ -210,7 +208,7 @@ export default function ProfilePage() {
                         </div>
                         <Button 
                           onClick={handleUpdateProfile} 
-                          className="w-full h-16 rounded-3xl font-black tracking-[0.2em] text-[11px] uppercase shadow-2xl shadow-primary/20 transition-transform active:scale-95"
+                          className="w-full h-16 rounded-3xl font-bold text-[11px] shadow-2xl shadow-primary/20 transition-transform active:scale-95"
                         >
                           Simpan Perubahan Profil
                         </Button>
@@ -222,20 +220,20 @@ export default function ProfilePage() {
                 <TabsContent value="archived">
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {isBookmarksLoading ? (
-                      <div className="col-span-full py-20 text-center"><MutedText className="animate-pulse font-black uppercase tracking-widest">Memuat Arsip...</MutedText></div>
+                      <div className="col-span-full py-20 text-center"><MutedText className="animate-pulse font-bold">Memuat Arsip...</MutedText></div>
                     ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
                         <Card className="rounded-[32px] border-none shadow-lg hover:shadow-2xl transition-all group h-full bg-white/80">
                           <CardContent className="p-8 flex flex-col justify-between h-full">
                             <div>
-                              <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest mb-4 bg-accent/5 text-accent border-none">
+                              <Badge variant="secondary" className="text-[9px] font-bold mb-4 bg-accent/5 text-accent border-none">
                                 {item.category}
                               </Badge>
                               <h3 className="mb-6 text-xl font-headline font-bold leading-tight group-hover:text-accent transition-colors">
                                 {item.title}
                               </h3>
                             </div>
-                            <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[11px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary mt-4 group/link transition-colors">
+                            <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground hover:text-primary mt-4 group/link transition-colors">
                               Baca Sekarang <ChevronRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
                             </Link>
                           </CardContent>
@@ -244,7 +242,7 @@ export default function ProfilePage() {
                     )) : (
                       <div className="col-span-full py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
                         <Bookmark className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                        <MutedText className="font-black uppercase tracking-[0.2em] text-xs opacity-40">Belum Ada Berita Yang Anda Diarsipkan.</MutedText>
+                        <MutedText className="font-bold text-xs opacity-40">Belum Ada Berita Yang Diarsipkan.</MutedText>
                       </div>
                     )}
                   </motion.div>
@@ -253,7 +251,7 @@ export default function ProfilePage() {
                 <TabsContent value="history">
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                     {isHistoryLoading ? (
-                      <div className="py-20 text-center"><MutedText className="animate-pulse font-black uppercase tracking-widest">Memuat Riwayat...</MutedText></div>
+                      <div className="py-20 text-center"><MutedText className="animate-pulse font-bold">Memuat Riwayat...</MutedText></div>
                     ) : history && history.length > 0 ? history.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
                         <Link href={`/news/${item.postId}`}>
@@ -265,9 +263,9 @@ export default function ProfilePage() {
                               <div>
                                 <h4 className="text-lg font-headline font-bold group-hover:text-accent transition-colors mb-1">{item.title}</h4>
                                 <div className="flex items-center gap-3">
-                                  <span className="text-[10px] font-black tracking-widest uppercase opacity-50">{item.category}</span>
+                                  <span className="text-[10px] font-bold opacity-50">{item.category}</span>
                                   <Separator orientation="vertical" className="h-3" />
-                                  <span className="text-[10px] font-black tracking-widest uppercase opacity-30">{new Date(item.viewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                  <span className="text-[10px] font-bold opacity-30">{new Date(item.viewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                                 </div>
                               </div>
                             </div>
@@ -278,7 +276,7 @@ export default function ProfilePage() {
                     )) : (
                       <div className="py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
                         <History className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                        <MutedText className="font-black uppercase tracking-[0.2em] text-xs opacity-40">Riwayat Bacaan Anda Masih Kosong.</MutedText>
+                        <MutedText className="font-bold text-xs opacity-40">Riwayat Bacaan Anda Masih Kosong.</MutedText>
                       </div>
                     )}
                   </motion.div>

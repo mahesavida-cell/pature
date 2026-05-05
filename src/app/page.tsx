@@ -84,10 +84,10 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[10px] tracking-wide shadow-sm">
+                <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[10px] shadow-sm">
                   Unggulan
                 </Badge>
-                <MutedText className="text-[10px] tracking-wide font-bold">Hari Ini</MutedText>
+                <MutedText className="text-[10px] font-bold">Hari Ini</MutedText>
               </div>
               <Title className="leading-tight text-3xl sm:text-4xl md:text-6xl font-headline tracking-tighter">
                 Revolusi Senyap Informasi Profesional
@@ -98,7 +98,7 @@ export default function Home() {
               <div className="flex items-center gap-3 pt-2">
                 <Link href="/news/1" className="flex-1 sm:flex-none">
                   <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button className="w-full sm:px-10 h-12 text-xs font-bold tracking-wide rounded-xl shadow-lg">
+                    <Button className="w-full sm:px-10 h-12 text-xs font-bold rounded-xl shadow-lg">
                       Baca Artikel
                     </Button>
                   </motion.div>
@@ -150,7 +150,7 @@ export default function Home() {
                           />
                         )}
                         <div className="absolute top-3 left-3">
-                          <Badge className="bg-white/95 backdrop-blur-sm text-primary hover:bg-white text-[9px] font-bold tracking-tight border-none shadow-sm px-2">
+                          <Badge className="bg-white/95 backdrop-blur-sm text-primary hover:bg-white text-[9px] font-bold border-none shadow-sm px-2">
                             {post.category}
                           </Badge>
                         </div>
@@ -172,7 +172,7 @@ export default function Home() {
                         </BodyText>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
-                        <span className="text-[10px] font-black text-primary/70 tracking-wide">{post.author}</span>
+                        <span className="text-[10px] font-bold text-primary/70">{post.author}</span>
                         <motion.div whileTap={{ scale: 0.8 }}>
                           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                             <Bookmark className="h-4 w-4" />
@@ -189,7 +189,7 @@ export default function Home() {
               className="mt-12 flex justify-center"
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] tracking-wide rounded-xl shadow-sm">
+              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] rounded-xl shadow-sm">
                 Lihat Lebih Banyak
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
@@ -215,7 +215,7 @@ export default function Home() {
                       {post.rank}
                     </span>
                     <div className="space-y-1 flex-1">
-                      <span className="text-[9px] tracking-wide font-black text-accent">
+                      <span className="text-[9px] font-bold text-accent">
                         {post.category}
                       </span>
                       <Link href={`/news/${post.id}`}>
@@ -239,7 +239,7 @@ export default function Home() {
                     Laporan Eksklusif Dan Tanpa Iklan.
                   </p>
                   <motion.div whileTap={{ scale: 0.95 }}>
-                    <Button variant="secondary" className="w-full font-bold text-[10px] tracking-wide h-10 rounded-xl">
+                    <Button variant="secondary" className="w-full font-bold text-[10px] h-10 rounded-xl">
                       Tingkatkan Akun
                     </Button>
                   </motion.div>
@@ -253,12 +253,12 @@ export default function Home() {
       <footer className="border-t py-16 bg-white/50 mt-20">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-8">
           <Link href="/" className="font-headline text-2xl font-bold text-primary">InfoFlow</Link>
-          <div className="flex gap-6 text-[11px] font-bold tracking-wide text-muted-foreground">
+          <div className="flex gap-6 text-[11px] font-bold text-muted-foreground">
             <Link href="#" className="hover:text-primary">Tentang Kami</Link>
             <Link href="#" className="hover:text-primary">Kontak</Link>
             <Link href="#" className="hover:text-primary">Privasi</Link>
           </div>
-          <MutedText className="text-[10px] font-bold opacity-50 tracking-[0.1em]">© 2024 InfoFlow Media</MutedText>
+          <MutedText className="text-[10px] font-bold opacity-50">© 2024 InfoFlow Media</MutedText>
         </div>
       </footer>
     </div>

@@ -126,7 +126,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-xl font-bold tracking-wide" 
+                      className="w-full h-12 rounded-xl font-bold tracking-tight" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -157,7 +157,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-xl font-bold tracking-wide" 
+                      className="w-full h-12 rounded-xl font-bold tracking-tight" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
@@ -171,15 +171,15 @@ export default function AuthPage() {
                 <div className="absolute inset-0 flex items-center">
                   <Separator />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-muted-foreground font-bold tracking-wider">Atau Masuk Dengan</span>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-white px-2 text-muted-foreground font-bold">Atau Masuk Dengan</span>
                 </div>
               </div>
 
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
                 <Button 
                   variant="outline" 
-                  className="w-full h-12 rounded-xl font-bold tracking-wide flex items-center justify-center gap-3 border-2 border-border/50 hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="w-full h-12 rounded-xl font-bold tracking-tight flex items-center justify-center gap-3 border-2 border-border/50 hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all duration-300 shadow-sm hover:shadow-md"
                   onClick={handleGoogleSignIn}
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24">

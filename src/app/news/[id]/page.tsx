@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -171,7 +170,7 @@ export default function NewsDetailPage() {
         title: "Berhasil Diarsipkan",
         description: `"${post.title}" Berhasil Ditambahkan Ke Arsip.`,
         action: (
-          <Button onClick={() => router.push('/profile')} size="sm" variant="secondary" className="font-bold text-[10px] uppercase tracking-widest">
+          <Button onClick={() => router.push('/profile')} size="sm" variant="secondary" className="font-bold text-[10px] tracking-tight">
             Lihat Arsip
           </Button>
         ),
@@ -238,17 +237,17 @@ export default function NewsDetailPage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-              {isPostAuthor && <Badge variant="default" className="text-[6px] px-1.5 py-0 font-black tracking-widest uppercase bg-primary text-white border-none">Penulis</Badge>}
-              <span className="text-[9px] text-muted-foreground font-bold tracking-tight">{typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}</span>
+              {isPostAuthor && <Badge variant="default" className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
+              <span className="text-[9px] text-muted-foreground font-bold">{typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}</span>
             </div>
             <BodyText className="text-xs opacity-80 mb-3 leading-relaxed">{comment.content}</BodyText>
             <div className="flex items-center gap-4">
-              <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleLikeComment(comment.id, likes)} className={cn("flex items-center gap-1.5 text-[9px] font-black tracking-widest uppercase transition-colors", isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary")}>
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleLikeComment(comment.id, likes)} className={cn("flex items-center gap-1.5 text-[9px] font-bold tracking-tight transition-colors", isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary")}>
                 <Heart className={cn("h-3.5 w-3.5", isLiked && "fill-current")} />
                 <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
               </motion.button>
               {!isReply && (
-                <motion.button whileTap={{ scale: 0.9 }} onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} className={cn("flex items-center gap-1.5 text-[9px] font-black tracking-widest uppercase transition-colors", replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary")}>
+                <motion.button whileTap={{ scale: 0.9 }} onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} className={cn("flex items-center gap-1.5 text-[9px] font-bold tracking-tight transition-colors", replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary")}>
                   <Reply className="h-3.5 w-3.5" />
                   <span>Balas Pesan</span>
                 </motion.button>
@@ -261,7 +260,7 @@ export default function NewsDetailPage() {
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="ml-10 pr-2 overflow-hidden">
               <div className="flex gap-2 items-center py-4 bg-accent/5 rounded-[20px] px-4 border border-dashed border-border/30">
                 <Input placeholder={`Membalas Pesan ${comment.authorName}...`} value={replyText} onChange={(e) => setReplyText(e.target.value)} className="bg-white border-none h-10 rounded-xl text-xs shadow-sm" />
-                <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-10 px-6 font-black text-[9px] tracking-widest uppercase">
+                <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-10 px-6 font-bold text-[9px]">
                   <Send className="h-3.5 w-3.5 mr-2" /> Kirim
                 </Button>
               </div>
@@ -285,22 +284,22 @@ export default function NewsDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
           <div className="lg:col-span-8">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <Link href="/" className="inline-flex items-center gap-2 text-[9px] font-black tracking-[0.2em] uppercase text-muted-foreground hover:text-primary mb-8 group transition-colors">
+              <Link href="/" className="inline-flex items-center gap-2 text-[9px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
                 <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" /> Kembali Ke Feed
               </Link>
               <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase bg-accent/5 text-accent border-none">{post.category}</Badge>
+                <Badge variant="secondary" className="px-3 py-0.5 rounded-full text-[9px] font-bold bg-accent/5 text-accent border-none">{post.category}</Badge>
                 <Title className="text-3xl md:text-5xl font-headline font-bold leading-[1.15] tracking-tight">{post.title}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border-2 border-white shadow-lg">
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
+                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                         {post.author.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-black text-xs text-primary tracking-tight">{post.author}</span>
-                      <MutedText className="text-[9px] tracking-[0.1em] font-bold uppercase opacity-60">{post.date} • {post.readTime}</MutedText>
+                      <span className="block font-bold text-xs text-primary tracking-tight">{post.author}</span>
+                      <MutedText className="text-[9px] font-bold opacity-60">{post.date} • {post.readTime}</MutedText>
                     </div>
                   </div>
                   <TooltipProvider>
@@ -311,7 +310,7 @@ export default function NewsDetailPage() {
                             <Share2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-lg font-bold text-[9px] uppercase tracking-widest"><p>Bagikan Artikel</p></TooltipContent>
+                        <TooltipContent className="rounded-lg font-bold text-[9px]"><p>Bagikan Artikel</p></TooltipContent>
                       </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -319,7 +318,7 @@ export default function NewsDetailPage() {
                             <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="rounded-lg font-bold text-[9px] uppercase tracking-widest"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
+                        <TooltipContent className="rounded-lg font-bold text-[9px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
                       </Tooltip>
                     </div>
                   </TooltipProvider>
@@ -340,12 +339,12 @@ export default function NewsDetailPage() {
                 {user ? (
                   <div className="flex gap-4 mb-12 items-start">
                     <Avatar className="h-10 w-10 shadow-lg border-2 border-white">
-                      <AvatarFallback className="bg-accent text-white font-black text-xs">{user.email?.[0].toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="bg-accent text-white font-bold text-xs">{user.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-3">
                       <Input placeholder="Tuliskan Pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value)} className="bg-accent/5 border-none h-14 rounded-[20px] text-xs shadow-inner px-6" />
                       <div className="flex justify-end">
-                        <Button onClick={() => handlePostComment(null)} className="rounded-[16px] gap-2 h-10 px-8 font-black tracking-widest text-[10px] uppercase shadow-md shadow-primary/10">
+                        <Button onClick={() => handlePostComment(null)} className="rounded-[16px] gap-2 h-10 px-8 font-bold text-[10px] shadow-md shadow-primary/10">
                           <Send className="h-3.5 w-3.5" /> Kirim Komentar
                         </Button>
                       </div>
@@ -353,12 +352,12 @@ export default function NewsDetailPage() {
                   </div>
                 ) : (
                   <Card className="bg-accent/5 p-10 rounded-[32px] text-center mb-12 border border-dashed border-border/40">
-                    <MutedText className="block mb-6 font-black uppercase tracking-[0.2em] text-[10px] opacity-50">Silakan Masuk Untuk Bergabung Dalam Diskusi.</MutedText>
-                    <Link href="/auth"><Button className="rounded-xl px-12 font-black tracking-widest uppercase h-12 shadow-lg">Masuk Sekarang</Button></Link>
+                    <MutedText className="block mb-6 font-bold text-[10px] opacity-50">Silakan Masuk Untuk Bergabung Dalam Diskusi.</MutedText>
+                    <Link href="/auth"><Button className="rounded-xl px-12 font-bold h-12 shadow-lg">Masuk Sekarang</Button></Link>
                   </Card>
                 )}
                 <div className="space-y-8">
-                  {isCommentsLoading ? <div className="flex justify-center py-16"><MutedText className="animate-pulse font-black uppercase tracking-[0.2em] text-[10px]">Memuat Diskusi...</MutedText></div> 
+                  {isCommentsLoading ? <div className="flex justify-center py-16"><MutedText className="animate-pulse font-bold text-[10px]">Memuat Diskusi...</MutedText></div> 
                   : threadedComments.map((comment) => <CommentItem key={comment.id} comment={comment} />)}
                 </div>
               </section>
@@ -377,7 +376,7 @@ export default function NewsDetailPage() {
                       <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                     </div>
                     <div className="flex flex-col justify-center gap-1.5">
-                      <span className="text-[8px] font-black tracking-widest uppercase text-accent opacity-70">{story.category} • {story.timeAgo}</span>
+                      <span className="text-[8px] font-bold text-accent opacity-70">{story.category} • {story.timeAgo}</span>
                       <h4 className="font-headline font-bold text-sm leading-snug group-hover:text-accent transition-colors">{story.title}</h4>
                     </div>
                   </Link>
@@ -391,7 +390,7 @@ export default function NewsDetailPage() {
               <div className="relative z-10 text-center">
                 <h4 className="font-headline font-bold text-xl mb-2 tracking-tight">Buletin Berita</h4>
                 <p className="text-[11px] opacity-70 mb-6 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Langsung Ke Akun Anda.</p>
-                <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-[16px] font-black tracking-widest text-[9px] uppercase shadow-lg transition-transform active:scale-95">Langganan Sekarang</Button></Link>
+                <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-[16px] font-bold text-[9px] shadow-lg transition-transform active:scale-95">Langganan Sekarang</Button></Link>
               </div>
             </Card>
           </div></aside>
@@ -409,8 +408,8 @@ export default function NewsDetailPage() {
             <AlertDialogDescription className="text-base leading-relaxed opacity-70">Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi Dan Memberikan Apresiasi Anda Pada Artikel Ini.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-3 mt-6">
-            <AlertDialogCancel className="rounded-xl font-black text-[10px] tracking-widest uppercase h-12 px-6">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-xl font-black text-[10px] tracking-widest uppercase bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 shadow-lg shadow-primary/20">Masuk Sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-xl font-bold text-[10px] h-12 px-6">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-xl font-bold text-[10px] bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 shadow-lg shadow-primary/20">Masuk Sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

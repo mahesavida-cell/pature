@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -40,7 +39,7 @@ export const Navbar = () => {
   const navLinks = [
     { name: "Berita", href: "/" },
     { name: "Fitur", href: "#" },
-    { name: "Arsip", href: "/profile?tab=archived" },
+    { name: "Arsip", href: "/profile" },
   ];
 
   return (
@@ -112,7 +111,7 @@ export const Navbar = () => {
                   </>
                 ) : (
                   <Link href="/auth" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-12 text-base font-bold tracking-wide rounded-xl">
+                    <Button className="w-full h-12 text-base font-bold rounded-xl">
                       Masuk Sekarang
                     </Button>
                   </Link>
@@ -128,7 +127,7 @@ export const Navbar = () => {
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10 border border-border/50">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
+                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                         {(user.displayName || user.email || "U")[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -149,7 +148,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-xs tracking-wide px-6 h-9 rounded-xl">
+                <Button size="sm" variant="outline" className="font-bold text-xs px-6 h-9 rounded-xl">
                   Masuk
                 </Button>
               </Link>
