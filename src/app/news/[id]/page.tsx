@@ -49,7 +49,6 @@ export default function NewsDetailPage() {
   const [commentText, setCommentText] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
-  const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   
   const { scrollYProgress } = useScroll();
@@ -75,6 +74,15 @@ export default function NewsDetailPage() {
       createdAt: "2 Jam Yang Lalu",
       parentId: null,
       likes: ["user-1", "user-2"]
+    },
+    {
+      id: "mock-2",
+      authorId: "author-alex-1",
+      authorName: "Alex Rivers",
+      content: "Terima Kasih Sarah! Kami Percaya Bahwa Kejelasan Adalah Kunci Utama Dalam Pengalaman Pengguna Di Era Informasi Padat Seperti Sekarang.",
+      createdAt: "1 Jam Yang Lalu",
+      parentId: "mock-1",
+      likes: ["mock-author-1"]
     }
   ];
 
@@ -153,30 +161,6 @@ export default function NewsDetailPage() {
     setReplyToId(replyToId === commentId ? null : commentId);
   };
 
-  const handleNewsletterSignup = () => {
-    if (!newsletterEmail || !newsletterEmail.includes('@')) {
-      toast({
-        variant: "destructive",
-        title: "Kesalahan Alamat Email",
-        description: "Mohon Masukkan Alamat Email Yang Valid.",
-      });
-      return;
-    }
-
-    const signupRef = collection(db, "newsletter_signups");
-    addDocumentNonBlocking(signupRef, {
-      email: newsletterEmail,
-      subscribedAt: serverTimestamp(),
-      source: "Article Details Page"
-    });
-
-    toast({
-      title: "Berhasil Berlangganan",
-      description: "Terima Kasih! Anda Akan Menerima Update Berita Terbaru Di Email Anda.",
-    });
-    setNewsletterEmail("");
-  };
-
   const posts = [
     {
       id: "1",
@@ -186,7 +170,7 @@ export default function NewsDetailPage() {
       authorId: "author-alex-1",
       date: "24 Okt, 2024",
       readTime: "5 Menit Baca",
-      content: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'. Kami Melihat Transisi Masif Di Mana Ruang Kosong Bukan Hanya Ruang Hampa—Ini Adalah Alat Untuk Fokus. Sistem Informasi Modern Memprioritaskan Kejelasan Daripada Kompleksitas, Memastikan Bahwa Pengguna Dapat Menemukan Apa Yang Mereka Butuhkan Tanpa Kelebihan Kognitif.\n\nTipografi Juga Menjadi Pusat Perhatian. Huruf Yang Tebal Dan Mudah Dibaca Menggantikan Huruf Dekoratif Untuk Meningkatkan Aksesibilitas Dan Kecepatan Konsumsi Informasi. Dalam Artikel Ini, Kami Menjelajahi Mengapa Tren Ini Bukan Sekadar Fase Sesaat Tetapi Perubahan Mendasar Dalam Cara Kita Berinteraksi Dengan Data.",
+      content: "Lansekap Desain Digital Sedang Bergeser Ke Arah Pendekatan 'Less Is More'. Kami Melihat Transisi Masif Di Nama Ruang Kosong Bukan Hanya Ruang Hampa—Ini Adalah Alat Untuk Fokus. Sistem Informasi Modern Memprioritaskan Kejelasan Daripada Kompleksitas, Memastikan Bahwa Pengguna Dapat Menemukan Apa Yang Mereka Butuhkan Tanpa Kelebihan Kognitif.\n\nTipografi Juga Menjadi Pusat Perhatian. Huruf Yang Tebal Dan Mudah Didaca Menggantikan Huruf Dekoratif Untuk Meningkatkan Aksesibilitas Dan Kecepatan Konsumsi Informasi. Dalam Artikel Ini, Kami Menjelajahi Mengapa Tren Ini Bukan Sekadar Fase Sesaat Tetapi Perubahan Mendasar Dalam Cara Kita Berinteraksi Dengan Data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
@@ -414,21 +398,14 @@ export default function NewsDetailPage() {
               <Card className="bg-primary text-primary-foreground p-8 rounded-[24px] shadow-2xl">
                 <h4 className="font-headline font-bold text-xl mb-2">Buletin Berita</h4>
                 <p className="text-xs opacity-70 mb-6 leading-relaxed">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
-                <div className="space-y-3">
-                  <Input 
-                    placeholder="Email Anda" 
-                    value={newsletterEmail}
-                    onChange={(e) => setNewsletterEmail(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-xl" 
-                  />
+                <Link href="/auth">
                   <Button 
                     variant="secondary" 
-                    onClick={handleNewsletterSignup}
                     className="w-full h-12 rounded-xl font-bold tracking-wide text-[11px] shadow-lg"
                   >
                     Langganan Sekarang
                   </Button>
-                </div>
+                </Link>
               </Card>
             </div>
           </aside>
