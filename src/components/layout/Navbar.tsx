@@ -184,7 +184,7 @@ export const Navbar = () => {
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 5 }}
-                  className="absolute top-14 right-3 w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-lg p-4 z-[60]"
+                  className="absolute top-14 left-0 w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-sm p-4 z-[60]"
                 >
                   {searchQuery.trim() === "" ? (
                     <div className="space-y-4">
