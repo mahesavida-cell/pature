@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -103,7 +102,7 @@ const CommentItem = ({
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.4 }}
-        className="group relative flex gap-3 md:gap-4 p-4 rounded-md bg-white border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
+        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
       >
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
@@ -164,7 +163,7 @@ const CommentItem = ({
             exit={{ opacity: 0, height: 0 }} 
             className="ml-4 md:ml-8 overflow-hidden"
           >
-            <div className="p-4 bg-primary/5 rounded-md border border-primary/10 space-y-3 mb-4">
+            <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <MessageSquare className="h-3 w-3 text-primary/40" />
                 <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
@@ -173,7 +172,7 @@ const CommentItem = ({
                 placeholder="Tulis balasan anda..." 
                 value={replyText} 
                 onChange={(e) => setReplyText(e.target.value)} 
-                className="bg-white border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                className="bg-white/60 border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">
@@ -401,7 +400,7 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
-                      <MutedText className="text-[10px] opacity-60 font-medium">{post.date || "Baru saja"} • {post.readTime || "5 menit baca"}</MutedText>
+                      <MutedText className="text-[10px] opacity-60 font-medium">{mounted ? (post.date || "Baru saja") : "---"} • {post.readTime || "5 menit baca"}</MutedText>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -409,7 +408,7 @@ export default function NewsDetailPage() {
                       variant="outline" 
                       size="icon" 
                       title="Bagikan berita"
-                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all shadow-sm"
+                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/50 backdrop-blur-sm"
                       onClick={handleShare}
                     >
                       <Share2 className="h-4 w-4" />
@@ -418,7 +417,7 @@ export default function NewsDetailPage() {
                       variant="outline" 
                       size="icon" 
                       title="Simpan berita"
-                      className={cn("rounded-full h-9 w-9 transition-all border-border/40 shadow-sm", isSaved && 'bg-primary text-primary-foreground border-primary')} 
+                      className={cn("rounded-full h-9 w-9 transition-all border-border/40 shadow-sm bg-white/50 backdrop-blur-sm", isSaved && 'bg-primary text-primary-foreground border-primary')} 
                       onClick={handleToggleBookmark}
                     >
                       <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
@@ -426,7 +425,7 @@ export default function NewsDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md mb-12 shadow-sm border border-border/10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-12 shadow-sm border border-border/10">
                 <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
               </div>
               <article className="prose prose-neutral max-w-none mb-20">
@@ -443,7 +442,7 @@ export default function NewsDetailPage() {
                   </Badge>
                 </div>
                 {user ? (
-                  <div className="flex gap-4 mb-14 items-start p-6 rounded-md bg-primary/5 border border-primary/10">
+                  <div className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-primary/5 backdrop-blur-md border border-primary/10">
                     <Avatar className="h-10 w-10 shrink-0">
                       <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
@@ -452,7 +451,7 @@ export default function NewsDetailPage() {
                         placeholder="Tuliskan pendapat anda..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
+                        className="bg-white/60 border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
                       />
                       <div className="flex justify-end">
                         <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
@@ -462,7 +461,7 @@ export default function NewsDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
+                  <Card className="bg-primary/5 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
                     <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
                     <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
                   </Card>
@@ -476,7 +475,7 @@ export default function NewsDetailPage() {
                     threadedComments.map((comment) => (
                       <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post.authorId} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
                     ))
-                  ) : <div className="py-20 text-center rounded-md border border-dashed border-border/40"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
+                  ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
                 </div>
               </section>
             </motion.div>
@@ -491,7 +490,7 @@ export default function NewsDetailPage() {
                 <div className="space-y-8">
                   {popularStories.map((story) => (
                     <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted shadow-sm">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm">
                         <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
@@ -506,7 +505,7 @@ export default function NewsDetailPage() {
                 </div>
               </section>
               
-              <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md">
+              <Card className="bg-primary/95 backdrop-blur-md text-primary-foreground p-6 rounded-lg shadow-md border-none">
                 <div className="text-center">
                   <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
                   <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
@@ -523,7 +522,7 @@ export default function NewsDetailPage() {
         </Button>
       </motion.div>
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-md p-8">
+        <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -47,7 +46,7 @@ export const Navbar = () => {
     <motion.nav 
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b"
+      className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-border/40"
     >
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-8">
@@ -84,7 +83,7 @@ export const Navbar = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
+            <SheetContent side="right" className="w-[280px] bg-white/90 backdrop-blur-2xl border-none">
               <SheetHeader className="text-left">
                 <SheetTitle className="font-headline text-xl font-bold text-primary mb-8">
                   InfoFlow
@@ -121,12 +120,12 @@ export const Navbar = () => {
             </SheetContent>
           </Sheet>
 
-          <div className="hidden md:flex items-center ml-2 border-l pl-4">
+          <div className="hidden md:flex items-center ml-2 border-l pl-4 border-border/40">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9 border border-border/50">
+                    <Avatar className="h-9 w-9 border border-border/50 shadow-sm">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
                         {(user.displayName || user.email || "U")[0].toUpperCase()}
@@ -134,22 +133,22 @@ export const Navbar = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48 rounded-md p-1" align="end" forceMount>
+                <DropdownMenuContent className="w-48 rounded-lg p-1 bg-white/90 backdrop-blur-xl border-border/40" align="end" forceMount>
                   <DropdownMenuLabel className="font-headline font-bold px-2 py-1.5 text-xs">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-sm cursor-pointer py-2 px-2 gap-2 text-xs">
+                    <DropdownMenuItem className="rounded-md cursor-pointer py-2 px-2 gap-2 text-xs">
                       <User className="h-3.5 w-3.5" /> <span>Halaman profil</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-sm cursor-pointer py-2 px-2 gap-2 text-destructive text-xs focus:bg-destructive/5">
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-md cursor-pointer py-2 px-2 gap-2 text-destructive text-xs focus:bg-destructive/5">
                     <LogOut className="h-3.5 w-3.5" /> <span>Keluar sekarang</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-5 h-8 rounded-md">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-5 h-8 rounded-md bg-white/50 backdrop-blur-sm border-border/40">
                   Masuk
                 </Button>
               </Link>

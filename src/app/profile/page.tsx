@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -18,7 +17,6 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Sparkles } from "lucide-react";
 
-// Helper function for relative time with correct Indonesian grammar
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "Baru saja";
   const date = new Date(dateInput);
@@ -119,7 +117,7 @@ export default function ProfilePage() {
       <main className="max-w-7xl mx-auto px-4 pt-8 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <aside className="lg:col-span-4 space-y-8">
-            <Card className="rounded-lg border-none shadow-md bg-white/70 backdrop-blur-xl">
+            <Card className="rounded-lg border-none shadow-md bg-white/40 backdrop-blur-xl border border-border/20">
               <CardContent className="p-8 text-center">
                 <div className="relative inline-block mb-6">
                   <Avatar className="h-24 w-24 border-2 border-white shadow-md">
@@ -147,7 +145,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-lg bg-primary text-primary-foreground p-6 shadow-md relative overflow-hidden group">
+            <Card className="rounded-lg bg-primary/95 text-primary-foreground p-6 shadow-md relative overflow-hidden group border-none backdrop-blur-md">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-105 transition-transform duration-500"><Sparkles className="h-16 w-16" /></div>
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-6"><Sparkles className="h-4 w-4 text-accent" /><Heading level={3} className="text-white text-lg">Rekomendasi cerdas</Heading></div>
@@ -173,15 +171,15 @@ export default function ProfilePage() {
               <AnimatePresence mode="wait">
                 <TabsContent value="editor">
                   <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                    <Card className="rounded-lg p-10 bg-white shadow-sm border border-border/30">
+                    <Card className="rounded-lg p-10 bg-white/60 backdrop-blur-md shadow-sm border border-border/30">
                       <div className="space-y-6">
                         <div className="space-y-3">
                           <Label htmlFor="displayName" className="text-[10px] font-bold opacity-50">Nama lengkap tampilan</Label>
-                          <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-12 rounded-md bg-accent/5 border-none shadow-inner text-sm font-bold px-5" />
+                          <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-12 rounded-md bg-white/40 border-none shadow-inner text-sm font-bold px-5" />
                         </div>
                         <div className="space-y-3">
                           <Label htmlFor="bio" className="text-[10px] font-bold opacity-50">Biodata singkat</Label>
-                          <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tuliskan sesuatu tentang diri Anda..." className="h-12 rounded-md bg-accent/5 border-none shadow-inner text-sm font-bold px-5" />
+                          <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tuliskan sesuatu tentang diri Anda..." className="h-12 rounded-md bg-white/40 border-none shadow-inner text-sm font-bold px-5" />
                         </div>
                         <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-md font-bold text-[11px] shadow-sm">Simpan perubahan profil</Button>
                       </div>
@@ -194,7 +192,7 @@ export default function ProfilePage() {
                       <div className="col-span-full py-20 text-center"><MutedText className="font-bold">Memuat arsip...</MutedText></div>
                     ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
-                        <Card className="rounded-lg border-none shadow-sm hover:shadow-md transition-all group h-full bg-white/80">
+                        <Card className="rounded-lg border-none shadow-sm hover:shadow-md transition-all group h-full bg-white/60 backdrop-blur-md">
                           <CardContent className="p-6 flex flex-col justify-between h-full">
                             <div>
                               <Badge variant="secondary" className="text-[9px] font-bold mb-4 bg-accent/5 text-accent border-none">{item.category}</Badge>
@@ -204,7 +202,7 @@ export default function ProfilePage() {
                           </CardContent>
                         </Card>
                       </motion.div>
-                    )) : <div className="col-span-full py-20 text-center border border-dashed border-border/40 rounded-lg"><MutedText className="text-xs opacity-50">Belum ada berita yang diarsipkan.</MutedText></div>}
+                    )) : <div className="col-span-full py-20 text-center border border-dashed border-border/40 rounded-lg bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada berita yang diarsipkan.</MutedText></div>}
                   </motion.div>
                 </TabsContent>
                 <TabsContent value="history">
@@ -214,7 +212,7 @@ export default function ProfilePage() {
                     ) : history && history.length > 0 ? history.map((item, idx) => (
                       <motion.div key={item.id} initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
                         <Link href={`/news/${item.postId}`}>
-                          <div className="flex items-center justify-between p-6 rounded-lg hover:bg-white hover:shadow-md transition-all group bg-white/40 backdrop-blur-sm">
+                          <div className="flex items-center justify-between p-6 rounded-lg hover:bg-white/80 hover:shadow-md transition-all group bg-white/40 backdrop-blur-xl border border-border/10">
                             <div className="flex items-center gap-5">
                               <div className="h-10 w-10 rounded-md bg-primary/5 flex items-center justify-center text-primary shadow-inner"><LayoutDashboard className="h-5 w-5" /></div>
                               <div>
@@ -230,7 +228,7 @@ export default function ProfilePage() {
                           </div>
                         </Link>
                       </motion.div>
-                    )) : <div className="py-20 text-center border border-dashed border-border/40 rounded-lg"><MutedText className="text-xs opacity-50">Riwayat bacaan Anda masih kosong.</MutedText></div>}
+                    )) : <div className="py-20 text-center border border-dashed border-border/40 rounded-lg bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Riwayat bacaan Anda masih kosong.</MutedText></div>}
                   </motion.div>
                 </TabsContent>
               </AnimatePresence>

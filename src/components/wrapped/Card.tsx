@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -13,7 +12,7 @@ interface WrappedCardProps {
 
 export const Card = ({ children, className, animate = true }: WrappedCardProps) => {
   const content = (
-    <BaseCard className={cn("overflow-hidden border-none shadow-sm bg-white/50 backdrop-blur-sm hover:shadow-md transition-shadow duration-300 rounded-lg", className)}>
+    <BaseCard className={cn("overflow-hidden border-none shadow-sm bg-white/40 backdrop-blur-md hover:shadow-md transition-all duration-300 rounded-lg", className)}>
       {children}
     </BaseCard>
   );
