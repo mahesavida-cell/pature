@@ -21,7 +21,7 @@ export default function Home() {
   const posts = [
     {
       id: "1",
-      title: "Evolusi desain digital minimalis",
+      title: "Evolusi Desain Digital Minimalis",
       category: "Desain",
       author: "Alex Rivers",
       readTime: "5 menit baca",
@@ -30,7 +30,7 @@ export default function Home() {
     },
     {
       id: "2",
-      title: "Arsitektur berkelanjutan di lingkungan perkotaan",
+      title: "Arsitektur Berkelanjutan di Lingkungan Perkotaan",
       category: "Budaya",
       author: "Maya Lin",
       readTime: "8 menit baca",
@@ -39,7 +39,7 @@ export default function Home() {
     },
     {
       id: "3",
-      title: "Masa depan pasar global terdesentralisasi",
+      title: "Masa Depan Pasar Global Terdesentralisasi",
       category: "Bisnis",
       author: "Jordan Lee",
       readTime: "6 menit baca",
@@ -49,9 +49,9 @@ export default function Home() {
   ];
 
   const popularPosts = [
-    { id: "1", title: "Mengapa tipografi lebih penting dari yang Anda pikirkan", category: "Desain", rank: "01" },
-    { id: "2", title: "Kebangkitan AI dalam jurnalisme modern", category: "Teknologi", rank: "02" },
-    { id: "3", title: "10 Prinsip hidup berkelanjutan", category: "Budaya", rank: "03" }
+    { id: "1", title: "Mengapa Tipografi Lebih Penting dari yang Anda Pikirkan", category: "Desain", rank: "01" },
+    { id: "2", title: "Kebangkitan AI dalam Jurnalisme Modern", category: "Teknologi", rank: "02" },
+    { id: "3", title: "10 Prinsip Hidup Berkelanjutan", category: "Budaya", rank: "03" }
   ];
 
   return (
@@ -89,7 +89,7 @@ export default function Home() {
                 <MutedText className="text-[10px] font-bold">Hari ini</MutedText>
               </div>
               <Title className="leading-tight text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tighter">
-                Revolusi senyap informasi profesional
+                Revolusi Senyap Informasi Profesional
               </Title>
               <BodyText className="text-base md:text-lg text-foreground/70">
                 Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis.

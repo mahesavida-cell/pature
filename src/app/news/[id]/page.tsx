@@ -41,7 +41,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// Helper function for relative time with correct Indonesian grammar
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "Baru saja";
   
@@ -140,7 +139,7 @@ const CommentItem = ({
               )}
             >
               <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
-              <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
+              <span>{likes.length > 0 ? `${likes.length} suka` : "Suka"}</span>
             </motion.button>
             <motion.button 
               whileTap={{ scale: 0.9 }} 
@@ -171,7 +170,7 @@ const CommentItem = ({
                 <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
               </div>
               <Textarea 
-                placeholder={`Tulis balasan Anda...`} 
+                placeholder="Tulis balasan anda..." 
                 value={replyText} 
                 onChange={(e) => setReplyText(e.target.value)} 
                 className="bg-white border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
@@ -230,19 +229,19 @@ export default function NewsDetailPage() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   const postRef = useMemoFirebase(() => params.id ? doc(db, "posts", params.id as string) : null, [db, params.id]);
-  const { data: firestorePost, isLoading: isPostLoading } = useDoc(postRef);
+  const { data: firestorePost } = useDoc(postRef);
 
   const staticPosts = [
     {
       id: "1",
-      title: "Evolusi desain digital minimalis",
+      title: "Evolusi Desain Digital Minimalis",
       category: "Desain",
       author: "Alex Rivers",
       authorId: "author-alex-1",
       date: "24 Okt, 2024",
       readTime: "5 menit baca",
       excerpt: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'.",
-      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di nama ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah didaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
+      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
@@ -271,26 +270,7 @@ export default function NewsDetailPage() {
       authorId: "user-1",
       likes: ["user-2", "user-3"],
       createdAt: { toDate: () => new Date(Date.now() - 3600000) },
-      replies: [
-        {
-          id: "mock-2",
-          content: "Tepat sekali! Terkadang kita lupa bahwa desain yang baik adalah desain yang tidak terlihat.",
-          authorName: "Alex Rivers",
-          authorId: "author-alex-1",
-          likes: ["user-1"],
-          createdAt: { toDate: () => new Date(Date.now() - 3000000) },
-          replies: [
-            {
-              id: "mock-3",
-              content: "Ini menarik. Bagaimana dengan aksesibilitas untuk pengguna dengan gangguan penglihatan?",
-              authorName: "Rudi Hartono",
-              authorId: "user-2",
-              likes: [],
-              createdAt: { toDate: () => new Date(Date.now() - 1500000) }
-            }
-          ]
-        }
-      ]
+      replies: []
     }
   ];
 
@@ -357,7 +337,7 @@ export default function NewsDetailPage() {
         await navigator.clipboard.writeText(window.location.href);
         toast({
           title: "Tautan berhasil disalin",
-          description: "Tautan berita telah disalin ke papan klip Anda.",
+          description: "Tautan berita telah disalin ke papan klip anda.",
         });
       }
     } catch (err) {
@@ -392,10 +372,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi tipografi dalam desain", category: "Desain", timeAgo: "2 jam yang lalu" },
-    { id: "2", title: "Masa depan AI di media", category: "Teknologi", timeAgo: "4 jam yang lalu" },
-    { id: "3", title: "Arsitektur kota hijau", category: "Budaya", timeAgo: "1 hari yang lalu" },
-    { id: "4", title: "Strategi ekonomi digital", category: "Bisnis", timeAgo: "6 jam yang lalu" }
+    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
+    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
   ];
 
   return (
@@ -469,7 +449,7 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div className="flex-1 space-y-4">
                       <Textarea 
-                        placeholder="Tuliskan pendapat Anda..." 
+                        placeholder="Tuliskan pendapat anda..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
                         className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
@@ -529,7 +509,7 @@ export default function NewsDetailPage() {
               <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md">
                 <div className="text-center">
                   <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
+                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
                   <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
                 </div>
               </Card>
