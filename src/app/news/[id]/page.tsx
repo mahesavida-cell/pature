@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight, Copy, Facebook, Twitter } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight, Copy, Facebook } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -45,6 +45,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+const MAX_COMMENT_CHARS = 1000;
 
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "baru saja";
@@ -271,12 +273,22 @@ const CommentItem = ({
                 <MessageSquare className="h-3 w-3 text-primary/40" />
                 <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
               </div>
-              <Textarea 
-                placeholder="Tulis balasan anda..." 
-                value={replyText} 
-                onChange={(e) => setReplyText(e.target.value)} 
-                className="bg-white/60 border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
-              />
+              <div className="relative">
+                <Textarea 
+                  placeholder="Tulis balasan anda..." 
+                  value={replyText} 
+                  onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
+                  className="bg-white/60 border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                />
+                <div className="flex justify-end mt-1">
+                  <span className={cn(
+                    "text-[9px] font-bold opacity-40",
+                    replyText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
+                  )}>
+                    {replyText.length}/{MAX_COMMENT_CHARS} karakter tersisa
+                  </span>
+                </div>
+              </div>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">
                   Batal
@@ -520,21 +532,29 @@ export default function NewsDetailPage() {
                   </Badge>
                 </div>
                 {user ? (
-                  <div className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-white/40 backdrop-blur-md border border-white/20">
-                    <Avatar className="h-10 w-10 shrink-0">
-                      <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-4">
-                      <Textarea 
-                        placeholder="Tuliskan pendapat anda..." 
-                        value={commentText} 
-                        onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white/60 border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
-                      />
-                      <div className="flex justify-end">
-                        <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
-                          <Send className="h-3.5 w-3.5" /> Kirim komentar
-                        </Button>
+                  <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-white/20">
+                    <div className="flex gap-4 items-start">
+                      <Avatar className="h-10 w-10 shrink-0">
+                        <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <Textarea 
+                          placeholder="Tuliskan pendapat anda..." 
+                          value={commentText} 
+                          onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
+                          className="bg-white/60 border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
+                        />
+                        <div className="flex justify-between items-center">
+                          <span className={cn(
+                            "text-[10px] font-bold opacity-40",
+                            commentText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
+                          )}>
+                            {commentText.length}/{MAX_COMMENT_CHARS} karakter tersisa
+                          </span>
+                          <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
+                            <Send className="h-3.5 w-3.5" /> Kirim komentar
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
