@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn } from "@/firebase";
@@ -40,7 +39,7 @@ export default function AuthPage() {
       if (type === 'register') {
         await initiateEmailSignUp(auth, email, password);
         toast({
-          title: "Berhasil daftar",
+          title: "Berhasil mendaftar",
           description: "Akun berhasil dibuat! Selamat datang di InfoFlow.",
         });
       } else {
@@ -54,7 +53,7 @@ export default function AuthPage() {
     } catch (error: any) {
       let message = error.message;
       if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
-        message = "Metode masuk ini belum diaktifkan di Firebase Console. Silakan aktifkan 'Email/Password' di menu Authentication.";
+        message = "Metode masuk ini belum diaktifkan di Firebase Console. Silakan aktifkan email/kata sandi di menu Authentication.";
       }
       toast({
         variant: "destructive",
@@ -77,7 +76,7 @@ export default function AuthPage() {
       }
       toast({
         variant: "destructive",
-        title: "Kesalahan Google Sign-In",
+        title: "Kesalahan masuk Google",
         description: message,
       });
     }
@@ -101,15 +100,15 @@ export default function AuthPage() {
           <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/20 backdrop-blur-md">
             <CardContent className="pt-8 px-8 pb-10">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-10">
-                  <TabsTrigger value="login" className="text-xs font-bold py-2">Masuk sekarang</TabsTrigger>
-                  <TabsTrigger value="register" className="text-xs font-bold py-2">Daftar akun</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-10 bg-primary/5 p-1 rounded-md">
+                  <TabsTrigger value="login" className="text-xs font-bold py-2 transition-all">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register" className="text-xs font-bold py-2 transition-all">Daftar akun</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login" className="mt-0 focus-visible:outline-none">
                   <div className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Alamat email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-50">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
@@ -120,7 +119,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Kata sandi</Label>
+                      <Label htmlFor="password" className="text-[10px] font-bold opacity-50">Kata sandi</Label>
                       <div className="relative">
                         <Input 
                           id="password" 
@@ -153,7 +152,7 @@ export default function AuthPage() {
                 <TabsContent value="register" className="mt-0 focus-visible:outline-none">
                   <div className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Alamat email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
@@ -164,7 +163,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Kata sandi</Label>
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-50">Kata sandi</Label>
                       <div className="relative">
                         <Input 
                           id="reg-password" 
@@ -197,7 +196,7 @@ export default function AuthPage() {
 
               <div className="flex items-center my-10 gap-4">
                 <div className="h-[1px] flex-1 bg-primary/10" />
-                <span className="text-[10px] font-bold text-muted-foreground/40 whitespace-nowrap uppercase tracking-widest">Atau masuk dengan</span>
+                <span className="text-[10px] font-bold text-muted-foreground/40 whitespace-nowrap">Atau masuk dengan</span>
                 <div className="h-[1px] flex-1 bg-primary/10" />
               </div>
 
@@ -228,7 +227,7 @@ export default function AuthPage() {
                 </Button>
               </motion.div>
 
-              <MutedText className="text-[10px] text-center block pt-10 opacity-30 font-medium">
+              <MutedText className="text-[10px] text-center block pt-10 opacity-30 font-medium leading-relaxed">
                 Dengan melanjutkan, Anda setuju untuk menerima update berita terbaru kami.
               </MutedText>
             </CardContent>
