@@ -18,14 +18,16 @@ import {
   useUser, 
   useFirestore, 
   useDoc, 
-  useCollection,
   useMemoFirebase, 
   setDocumentNonBlocking, 
   deleteDocumentNonBlocking 
 } from "@/firebase";
-import { doc, collection, query, orderBy, limit, where } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { POSTS_QUERY } from "@/sanity/lib/queries";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,9 +53,10 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const postId = post._id || post.id;
   const bookmarkRef = useMemoFirebase(() => 
-    user && post.id ? doc(db, "users", user.uid, "bookmarks", post.id) : null, 
-    [db, user, post.id]
+    user && postId ? doc(db, "users", user.uid, "bookmarks", postId) : null, 
+    [db, user, postId]
   );
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
@@ -72,9 +75,9 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
       toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
-        postId: post.id,
+        postId: postId,
         title: post.title,
-        category: post.category,
+        category: post.categories?.[0] || post.category || "Berita",
         savedAt: new Date().toISOString()
       }, { merge: true });
       toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
@@ -127,11 +130,15 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => <div key={i} className="aspect-[3/4] rounded-xl bg-primary/5 animate-pulse" />)}
         </div>
+      ) : posts.length === 0 ? (
+        <div className="py-20 text-center bg-primary/5 rounded-xl border border-dashed border-primary/10">
+          <MutedText className="text-xs font-bold opacity-40">Belum ada konten untuk bagian ini.</MutedText>
+        </div>
       ) : (
         <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative group">
           <CarouselContent className="-ml-4">
             {posts.map((post, idx) => (
-              <CarouselItem key={post.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={post._id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -140,17 +147,17 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                   className="h-full"
                 >
                   <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
-                    <Link href={`/news/${post.id}`}>
+                    <Link href={`/news/${post.slug}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
-                          src={post.image || `https://picsum.photos/seed/${post.id}/600/400`} 
+                          src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                         />
                         <div className="absolute top-4 left-4">
                           <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
-                            {post.category}
+                            {post.categories?.[0] || "Berita"}
                           </Badge>
                         </div>
                       </div>
@@ -161,7 +168,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                           <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
                           <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
                         </div>
-                        <Link href={`/news/${post.id}`}>
+                        <Link href={`/news/${post.slug}`}>
                           <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
                             {post.title}
                           </h3>
@@ -171,7 +178,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                         </BodyText>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author || "Redaksi PatureNews"}</span>
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi PatureNews"}</span>
                         <BookmarkButton post={post} />
                       </div>
                     </CardContent>
@@ -193,37 +200,51 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
 };
 
 export default function Home() {
-  const db = useFirestore();
   const [mounted, setMounted] = useState(false);
+  const [sanityPosts, setSanityPosts] = useState<any[]>([]);
+  const [isSanityLoading, setIsSanityLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+    const fetchSanityData = async () => {
+      try {
+        const posts = await client.fetch(POSTS_QUERY);
+        setSanityPosts(posts);
+      } catch (error) {
+        console.error("Gagal mengambil data dari Sanity:", error);
+      } finally {
+        setIsSanityLoading(false);
+      }
+    };
+    fetchSanityData();
   }, []);
 
-  const heroQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(1)), [db]);
-  const { data: heroData } = useCollection(heroQuery);
-  const heroPost = heroData?.[0] || {
-    id: "hero-placeholder",
-    title: "Revolusi senyap informasi profesional di PatureNews",
-    category: "Media",
-    readTime: "5 menit baca",
-    author: "Alex Rivers",
-    excerpt: "Temukan bagaimana PatureNews menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
-    image: PlaceHolderImages[0].imageUrl
-  };
+  const heroPost = useMemo(() => {
+    if (sanityPosts.length > 0) return sanityPosts[0];
+    return {
+      _id: "hero-placeholder",
+      title: "Revolusi senyap informasi profesional di PatureNews",
+      categories: ["Media"],
+      readTime: "5 menit baca",
+      author: "Alex Rivers",
+      excerpt: "Temukan bagaimana PatureNews menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
+      mainImage: null,
+      slug: "#"
+    };
+  }, [sanityPosts]);
 
-  const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(7)), [db]);
-  const { data: allLatestPosts, isLoading: isLatestLoading } = useCollection(latestQuery);
-  const carouselLatestPosts = useMemo(() => {
-    if (!allLatestPosts) return [];
-    return allLatestPosts.slice(1);
-  }, [allLatestPosts]);
+  const latestPosts = useMemo(() => {
+    if (sanityPosts.length <= 1) return [];
+    return sanityPosts.slice(1, 7);
+  }, [sanityPosts]);
 
-  const trendingQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(5)), [db]);
-  const { data: trendingPosts, isLoading: isTrendingLoading } = useCollection(trendingQuery);
+  const trendingPosts = useMemo(() => {
+    return sanityPosts.filter(p => p.isTrending).slice(0, 5);
+  }, [sanityPosts]);
 
-  const curatedQuery = useMemoFirebase(() => query(collection(db, "posts"), where("category", "==", "Media"), limit(6)), [db]);
-  const { data: curatedPosts, isLoading: isCuratedLoading } = useCollection(curatedQuery);
+  const curatedPosts = useMemo(() => {
+    return sanityPosts.filter(p => p.isEditorsChoice).slice(0, 6);
+  }, [sanityPosts]);
 
   if (!mounted) return null;
 
@@ -239,10 +260,10 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <Link href={`/news/${heroPost.id}`} className="block group">
+              <Link href={`/news/${heroPost.slug}`} className="block group">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
                   <Image 
-                    src={heroPost.image || PlaceHolderImages[0].imageUrl} 
+                    src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} 
                     alt="Berita utama"
                     fill
                     className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
@@ -265,7 +286,7 @@ export default function Home() {
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
                 <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
+                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.author || "Redaksi PatureNews"}
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
                   <BookmarkButton post={heroPost} variant="hero" />
@@ -281,22 +302,22 @@ export default function Home() {
                 <Heading level={3} className="text-lg">Trending</Heading>
               </div>
               <div className="space-y-8">
-                {isTrendingLoading ? (
+                {isSanityLoading ? (
                   [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
-                ) : (trendingPosts || []).map((story, idx) => (
+                ) : trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
                   <motion.div
-                    key={story.id}
+                    key={story._id}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1, duration: 0.5 }}
                   >
-                    <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
+                    <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
                       <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
                         0{idx + 1}
                       </span>
                       <div className="space-y-1.5 flex-1">
                         <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
-                          {story.category}
+                          {story.categories?.[0] || "Berita"}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
                           {story.title}
@@ -305,7 +326,9 @@ export default function Home() {
                       </div>
                     </Link>
                   </motion.div>
-                ))}
+                )) : (
+                  <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>
+                )}
               </div>
               <Link href="/latest" className="block">
                 <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
@@ -317,24 +340,24 @@ export default function Home() {
         </section>
 
         <NewsCarousel 
-          posts={curatedPosts || []} 
+          posts={curatedPosts} 
           sectionTitle="Pilihan redaksi" 
           viewAllLink="/editors-choice" 
-          isLoading={isCuratedLoading}
+          isLoading={isSanityLoading}
         />
 
         <NewsCarousel 
-          posts={carouselLatestPosts || []} 
+          posts={latestPosts} 
           sectionTitle="Berita terbaru" 
           viewAllLink="/latest" 
-          isLoading={isLatestLoading}
+          isLoading={isSanityLoading}
         />
 
         <NewsCarousel 
-          posts={curatedPosts?.slice().reverse() || []} 
+          posts={curatedPosts.slice().reverse()} 
           sectionTitle="Rekomendasi untuk anda" 
           viewAllLink="/recommendations" 
-          isLoading={isCuratedLoading}
+          isLoading={isSanityLoading}
         />
       </main>
       <Footer />

@@ -87,6 +87,20 @@ export const postType = defineType({
       type: 'blockContent',
     }),
     defineField({
+      name: 'gallery',
+      title: 'Galeri foto',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            { name: 'caption', type: 'string', title: 'Keterangan' }
+          ]
+        }
+      ]
+    }),
+    defineField({
       name: 'isEditorsChoice',
       title: 'Pilihan redaksi',
       type: 'boolean',
