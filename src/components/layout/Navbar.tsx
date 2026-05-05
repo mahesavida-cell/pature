@@ -116,7 +116,7 @@ export const Navbar = () => {
                 key={cat.id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-bold transition-all tracking-[0.05em] uppercase pb-2 group",
+                  "relative text-[11px] font-bold transition-all tracking-[0.05em] pb-2 group",
                   hoveredCategory?.id === cat.id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -179,7 +179,7 @@ export const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] tracking-[0.2em] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all">
@@ -194,7 +194,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all uppercase tracking-widest">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all tracking-widest">
                   Masuk
                 </Button>
               </Link>
@@ -227,7 +227,7 @@ export const Navbar = () => {
                     </Link>
                     <div className="pl-5 flex flex-col gap-3 border-l-2 border-primary/5">
                       {cat.subCategories.map((sub: string) => (
-                        <span key={sub} className="text-[11px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide uppercase">{sub}</span>
+                        <span key={sub} className="text-[11px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
                       ))}
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export const Navbar = () => {
               transition={{ duration: 0.3 }}
               className="flex items-center gap-10 whitespace-nowrap"
             >
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.25em] mr-4 opacity-40">
+              <span className="text-[9px] font-bold text-muted-foreground tracking-[0.25em] mr-4 opacity-40">
                 {hoveredCategory ? `Topik ${hoveredCategory.name}:` : "Topik populer:"}
               </span>
               {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
@@ -261,7 +261,7 @@ export const Navbar = () => {
                   href="#" 
                   className="text-[10px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group"
                 >
-                  <span className="uppercase tracking-widest">{sub}</span>
+                  <span className="tracking-widest">{sub}</span>
                   <span className="h-1.5 w-1.5 rounded-full bg-primary/10 group-hover:bg-primary transition-all" />
                 </Link>
               ))}

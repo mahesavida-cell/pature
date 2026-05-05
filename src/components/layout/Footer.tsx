@@ -47,7 +47,7 @@ export const Footer = () => {
 
           {/* Quick Links / Categories */}
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 uppercase tracking-widest">Kategori</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Kategori</Heading>
             <ul className="space-y-1.5">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}>
@@ -61,7 +61,7 @@ export const Footer = () => {
 
           {/* Company / Support */}
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 uppercase tracking-widest">Dukungan</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Dukungan</Heading>
             <ul className="space-y-1.5">
               {["Tentang kami", "Kontak redaksi", "Karir", "Ketentuan", "Privasi"].map((item) => (
                 <li key={item}>
@@ -75,7 +75,7 @@ export const Footer = () => {
 
           {/* Contact */}
           <div className="lg:col-span-3 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 uppercase tracking-widest">Hubungi kami</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Hubungi kami</Heading>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">

@@ -108,7 +108,7 @@ export default function Home() {
                     />
                   )}
                   <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary uppercase tracking-wider">
+                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
                       Unggulan hari ini
                     </Badge>
                   </div>
@@ -123,7 +123,7 @@ export default function Home() {
                 </div>
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">
+                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-[0.15em]">
                   <Clock className="h-3.5 w-3.5" /> 5 menit baca • Alex Rivers
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
@@ -169,7 +169,7 @@ export default function Home() {
                         />
                       </div>
                       <div className="space-y-2 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0.5 h-auto text-[9px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none uppercase tracking-tight">
+                        <Badge variant="secondary" className="px-2 py-0.5 h-auto text-[9px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
                           {story.category}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
@@ -181,7 +181,7 @@ export default function Home() {
                   </motion.div>
                 ))}
               </div>
-              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-wider uppercase">
+              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-wider">
                 Lihat berita lainnya <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -193,7 +193,7 @@ export default function Home() {
         <section className="mb-24 lg:mb-32">
           <div className="flex items-center justify-between mb-12 border-b border-primary/5 pb-6">
             <Heading level={2}>Cerita terbaru</Heading>
-            <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold uppercase tracking-widest px-6 hover:bg-primary/5">Lihat semua</Button>
+            <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold tracking-widest px-6 hover:bg-primary/5">Lihat semua</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
             {posts.map((post, idx) => (
@@ -217,7 +217,7 @@ export default function Home() {
                         />
                       )}
                       <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 uppercase tracking-wide">
+                        <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
                           {post.category}
                         </Badge>
                       </div>
@@ -227,7 +227,7 @@ export default function Home() {
                     <div className="mb-6">
                       <div className="flex items-center gap-2 mb-3">
                         <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{post.readTime}</span>
+                        <span className="text-[10px] font-bold text-muted-foreground tracking-widest">{post.readTime}</span>
                       </div>
                       <Link href={`/news/${post.id}`}>
                         <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
@@ -279,13 +279,13 @@ export default function Home() {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/5 text-primary border-none rounded-sm uppercase tracking-tighter">
+                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/5 text-primary border-none rounded-sm tracking-tighter">
                       {post.category}
                     </Badge>
                     <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}
                     </h4>
-                    <MutedText className="text-[10px] font-bold block uppercase tracking-widest">{post.readTime} baca</MutedText>
+                    <MutedText className="text-[10px] font-bold block tracking-widest">{post.readTime} baca</MutedText>
                   </div>
                 </Link>
               </motion.div>

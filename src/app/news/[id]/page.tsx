@@ -158,7 +158,7 @@ const ShareButton = ({ post }: { post: any }) => {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 p-2 bg-white/90 backdrop-blur-xl border-primary/10 rounded-lg shadow-xl">
         <div className="grid gap-1">
-          <MutedText className="px-2 py-1.5 text-[10px] font-bold opacity-40 uppercase tracking-wider">Bagikan melalui</MutedText>
+          <MutedText className="px-2 py-1.5 text-[10px] font-bold opacity-40 tracking-wider">Bagikan melalui</MutedText>
           {shareLinks.map((link) => (
             <a 
               key={link.name} 
@@ -222,7 +222,7 @@ const CommentItem = ({
         className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300 shadow-sm"
       >
         <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
-          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary uppercase">
+          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
             {comment.authorName ? comment.authorName[0] : "A"}
           </AvatarFallback>
         </Avatar>
@@ -585,7 +585,7 @@ export default function NewsDetailPage() {
                   <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10">
                     <div className="flex gap-4 items-start">
                       <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
+                        <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 space-y-2">
                         <Textarea 
