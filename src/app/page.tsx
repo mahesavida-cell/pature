@@ -57,42 +57,40 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <Card className="p-0 border-none bg-transparent shadow-none" animate={false}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted group cursor-pointer">
-                  {heroImage?.imageUrl ? (
-                    <Image 
-                      src={heroImage.imageUrl} 
-                      alt="Featured News"
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      data-ai-hint="abstract news"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-accent/10 flex items-center justify-center">
-                      <MutedText>No Preview Available</MutedText>
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-6">
-                  <Badge variant="secondary" className="bg-white/80 text-primary px-3 py-1 rounded-full border-none">
-                    Featured Story
-                  </Badge>
-                  <Title className="leading-tight">
-                    The Silent Revolution of Professional Information Flow
-                  </Title>
-                  <BodyText className="text-lg">
-                    Discover how InfoFlow is setting a new benchmark for minimalist digital journalism, focusing on clarity, depth, and user experience.
-                  </BodyText>
-                  <div className="flex items-center gap-4 py-2">
-                    <Button className="px-8 font-medium">Read Full Article</Button>
-                    <Button variant="ghost" className="gap-2">
-                      Save for later <ArrowRight className="h-4 w-4" />
-                    </Button>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted group cursor-pointer">
+                {heroImage?.imageUrl ? (
+                  <Image 
+                    src={heroImage.imageUrl} 
+                    alt="Featured News"
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    data-ai-hint="abstract news"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-accent/10 flex items-center justify-center">
+                    <MutedText>No Preview Available</MutedText>
                   </div>
+                )}
+              </div>
+              <div className="space-y-6">
+                <Badge variant="secondary" className="bg-white/80 text-primary px-3 py-1 rounded-full border-none">
+                  Featured Story
+                </Badge>
+                <Title className="leading-tight">
+                  The Silent Revolution of Professional Information Flow
+                </Title>
+                <BodyText className="text-lg">
+                  Discover how InfoFlow is setting a new benchmark for minimalist digital journalism, focusing on clarity, depth, and user experience.
+                </BodyText>
+                <div className="flex items-center gap-4 py-2">
+                  <Button className="px-8 font-medium">Read Full Article</Button>
+                  <Button variant="ghost" className="gap-2">
+                    Save for later <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            </Card>
+            </div>
           </motion.div>
         </section>
 
