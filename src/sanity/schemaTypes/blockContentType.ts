@@ -1,36 +1,43 @@
 
 import {defineType, defineArrayMember} from 'sanity'
 
+/**
+ * Definisi skema untuk konten blok editorial PatureNews.
+ * Menggunakan standar Sanity Studio v3.
+ */
 export const blockContentType = defineType({
-  title: 'Block Content',
+  title: 'Konten blok',
   name: 'blockContent',
   type: 'array',
   of: [
     defineArrayMember({
-      title: 'Block',
+      title: 'Blok',
       type: 'block',
+      // Gaya teks yang tersedia untuk editor
       styles: [
         {title: 'Normal', value: 'normal'},
         {title: 'H1', value: 'h1'},
         {title: 'H2', value: 'h2'},
         {title: 'H3', value: 'h3'},
         {title: 'H4', value: 'h4'},
-        {title: 'Quote', value: 'blockquote'},
+        {title: 'Kutipan', value: 'blockquote'},
       ],
-      lists: [{title: 'Bullet', value: 'bullet'}],
+      lists: [{title: 'Poin', value: 'bullet'}],
       marks: {
+        // Dekorator teks dasar
         decorators: [
-          {title: 'Strong', value: 'strong'},
-          {title: 'Emphasis', value: 'em'},
+          {title: 'Tebal', value: 'strong'},
+          {title: 'Miring', value: 'em'},
         ],
-        links: [
+        // Anotasi untuk tautan (sebelumnya salah menggunakan properti 'links')
+        annotations: [
           {
-            title: 'URL',
+            title: 'Tautan URL',
             name: 'link',
             type: 'object',
             fields: [
               {
-                title: 'URL',
+                title: 'Alamat URL',
                 name: 'href',
                 type: 'url',
               },
@@ -39,6 +46,7 @@ export const blockContentType = defineType({
         ],
       },
     }),
+    // Memungkinkan penyisipan gambar di dalam konten teks
     defineArrayMember({
       type: 'image',
       options: {hotspot: true},
@@ -46,7 +54,7 @@ export const blockContentType = defineType({
         {
           name: 'alt',
           type: 'string',
-          title: 'Alternative Text',
+          title: 'Teks alternatif',
         },
       ],
     }),
