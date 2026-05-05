@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, ChevronRight, Share2 } from "lucide-react";
+import { Clock, Bookmark, ChevronRight, Share2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -203,15 +203,18 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [sanityPosts, setSanityPosts] = useState<any[]>([]);
   const [isSanityLoading, setIsSanityLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const fetchSanityData = async () => {
       try {
         const posts = await client.fetch(POSTS_QUERY);
-        setSanityPosts(posts);
+        setSanityPosts(posts || []);
+        setHasError(false);
       } catch (error) {
         console.error("Gagal mengambil data dari Sanity:", error);
+        setHasError(true);
       } finally {
         setIsSanityLoading(false);
       }
@@ -252,6 +255,15 @@ export default function Home() {
     <div className="bg-background min-h-screen">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-20">
+        {hasError && (
+          <div className="mb-12 p-6 bg-red-50 border border-red-100 rounded-xl flex items-center gap-4 text-red-800">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <div className="text-sm font-medium">
+              Koneksi ke Sanity terganggu. Pastikan domain Anda telah terdaftar di CORS Sanity dashboard. Menampilkan data cadangan...
+            </div>
+          </div>
+        )}
+
         <section className="mb-24 lg:mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             <motion.div 

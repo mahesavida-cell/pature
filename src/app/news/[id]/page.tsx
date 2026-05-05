@@ -23,7 +23,8 @@ import {
   CornerDownRight, 
   Copy, 
   Facebook,
-  Info
+  Info,
+  AlertCircle
 } from "lucide-react";
 import { 
   Carousel, 
@@ -350,6 +351,7 @@ export default function NewsDetailPage() {
   const [sanityPost, setSanityPost] = useState<any>(null);
   const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
   const [isLoadingSanity, setIsLoadingSanity] = useState(true);
+  const [hasError, setHasError] = useState(false);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -364,9 +366,11 @@ export default function NewsDetailPage() {
           client.fetch(TRENDING_POSTS_QUERY)
         ]);
         setSanityPost(postData);
-        setTrendingPosts(trendingData);
+        setTrendingPosts(trendingData || []);
+        setHasError(false);
       } catch (err) {
         console.error("Gagal menarik data:", err);
+        setHasError(true);
       } finally {
         setIsLoadingSanity(false);
       }
@@ -469,7 +473,7 @@ export default function NewsDetailPage() {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
   }
 
-  if (!post) {
+  if (!post && !hasError) {
     return <div className="min-h-screen flex flex-col items-center justify-center p-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-4">Kembali ke beranda</Button></Link></div>;
   }
 
@@ -478,6 +482,12 @@ export default function NewsDetailPage() {
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 md:px-6">
+        {hasError && (
+          <div className="mt-8 p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-4 text-red-800">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <div className="text-xs font-medium">Koneksi Sanity terganggu. Silakan periksa pengaturan CORS di Sanity dashboard.</div>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
           <div className="lg:col-span-8 pt-12">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -486,19 +496,19 @@ export default function NewsDetailPage() {
               </Link>
               
               <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.categories?.[0] || "Berita"}</Badge>
-                <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post.title}</Title>
+                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post?.categories?.[0] || "Berita"}</Badge>
+                <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post?.title || "Judul berita"}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-white shadow-sm">
                       <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
-                        {post.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
+                        {post?.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-bold text-xs text-primary">{post.author || "Redaksi PatureNews"}</span>
+                      <span className="block font-bold text-xs text-primary">{post?.author || "Redaksi PatureNews"}</span>
                       <MutedText className="text-[10px] opacity-60 font-medium">
-                        {new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} • {post.readTime || "5 mnt baca"}
+                        {post?.publishedAt ? new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-- October 2024"} • {post?.readTime || "5 mnt baca"}
                       </MutedText>
                     </div>
                   </div>
@@ -521,9 +531,9 @@ export default function NewsDetailPage() {
 
               <div className="mb-12">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
-                  <Image src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
+                  <Image src={post?.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post?.title || "Berita"} fill className="object-cover" priority />
                 </div>
-                {(post.mainImage?.caption || post.mainImage?.credit) && (
+                {(post?.mainImage?.caption || post?.mainImage?.credit) && (
                   <div className="flex items-start gap-3 px-1">
                     <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                     <div className="space-y-1">
@@ -535,10 +545,10 @@ export default function NewsDetailPage() {
               </div>
 
               <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
-                {post.body && <PortableText value={post.body} />}
+                {post?.body ? <PortableText value={post.body} /> : <TypographyP>Memuat isi berita atau konten tidak tersedia...</TypographyP>}
               </article>
 
-              {post.gallery && post.gallery.length > 0 && (
+              {post?.gallery && post.gallery.length > 0 && (
                 <section className="mb-20">
                   <div className="space-y-2 mb-8">
                     <Heading level={3} className="text-lg">Galeri foto</Heading>
@@ -611,7 +621,7 @@ export default function NewsDetailPage() {
                     </div>
                   ) : threadedComments.length > 0 ? (
                     threadedComments.map((comment) => (
-                      <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post.authorId} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
+                      <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
                     ))
                   ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
                 </div>
