@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -244,7 +243,7 @@ export const Navbar = () => {
                 key={cat.id || `cat-${idx}`} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-bold transition-all tracking-[0.05em] pb-2 group",
+                  "relative text-[11px] font-bold transition-all pb-2 group",
                   hoveredCategory?.id === cat.id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -270,7 +269,7 @@ export const Navbar = () => {
                 <motion.form
                   onSubmit={handleSearchSubmit}
                   initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 180 : 280, opacity: 1 }}
+                  animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 160 : 260, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
                   className="mr-2 sm:mr-3 overflow-hidden"
                 >
@@ -305,7 +304,7 @@ export const Navbar = () => {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 px-1">
                         <TrendingUp className="h-3.5 w-3.5 text-primary/40" />
-                        <span className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">Pencarian populer</span>
+                        <span className="text-[10px] font-bold text-muted-foreground/60">Pencarian populer</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {popularSearches.map((term, idx) => (
@@ -321,7 +320,7 @@ export const Navbar = () => {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1 tracking-wider">Saran pencarian</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1">Saran pencarian</span>
                       {searchResults.length > 0 ? (
                         <div className="space-y-1">
                           {searchResults.map((result, idx) => (
@@ -334,7 +333,7 @@ export const Navbar = () => {
                               }}
                               className="flex flex-col p-2 rounded-lg hover:bg-primary/5 transition-colors group"
                             >
-                              <span className="text-[11px] font-bold text-primary group-hover:text-primary transition-colors line-clamp-1">{result.title}</span>
+                              <span className="text-[11px] font-bold text-primary transition-colors line-clamp-1">{result.title}</span>
                               <span className="text-[9px] font-medium text-muted-foreground/50">{result.category}</span>
                             </Link>
                           ))}
@@ -365,7 +364,7 @@ export const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-lg mt-3 border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] tracking-[0.2em] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all">
@@ -380,7 +379,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all tracking-widest">
+                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all">
                   Masuk
                 </Button>
               </Link>
@@ -420,7 +419,7 @@ export const Navbar = () => {
                     </div>
                   ))}
                   <div className="pt-10 border-t border-primary/5 mt-auto">
-                    <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] mb-4">Informasi</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/30 uppercase mb-4">Informasi</p>
                     <div className="flex flex-col gap-3">
                       <Link href="/about" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Tentang PatureNews</Link>
                       <Link href="/contact" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Kontak redaksi</Link>
@@ -454,7 +453,7 @@ export const Navbar = () => {
               transition={{ duration: 0.3 }}
               className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
             >
-              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground tracking-[0.25em] mr-4 opacity-40">
+              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40">
                 {hoveredCategory ? `Topik ${hoveredCategory.name.toLowerCase()}:` : "Topik populer:"}
               </span>
               {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
@@ -463,7 +462,7 @@ export const Navbar = () => {
                   href="#" 
                   className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2"
                 >
-                  <span className="tracking-wide whitespace-nowrap">{sub}</span>
+                  <span className="whitespace-nowrap">{sub}</span>
                   <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                 </Link>
               ))}
