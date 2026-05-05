@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Heading, BodyText } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -91,15 +91,15 @@ export default function AuthPage() {
   return (
     <div className="bg-background min-h-screen flex flex-col overflow-hidden">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+      <main className="flex-1 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 min-h-[550px] lg:max-h-[650px]"
+          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 min-h-[500px] lg:max-h-[600px]"
         >
-          {/* Sisi Kiri - Branding & Info */}
-          <div className="hidden lg:flex flex-col relative bg-primary p-10 text-white">
+          {/* Sisi kiri - branding & info */}
+          <div className="hidden lg:flex flex-col relative bg-primary p-8 text-white">
             <div className="absolute inset-0 opacity-10">
               <Image 
                 src="https://picsum.photos/seed/patureauth/800/1200" 
@@ -115,74 +115,74 @@ export default function AuthPage() {
                   <Newspaper className="h-5 w-5" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman Anda</h2>
-                  <p className="text-white/60 text-xs leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif ke jurnalisme berkualitas.</p>
+                  <h2 className="text-xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman Anda</h2>
+                  <p className="text-white/60 text-[11px] leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif ke jurnalisme berkualitas.</p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 {[
-                  { icon: <CheckCircle2 className="h-3.5 w-3.5" />, text: "Akses artikel mendalam tanpa batas" },
-                  { icon: <ShieldCheck className="h-3.5 w-3.5" />, text: "Pengalaman membaca yang aman dan privat" },
-                  { icon: <Newspaper className="h-3.5 w-3.5" />, text: "Buletin harian pilihan redaksi" }
+                  { icon: <CheckCircle2 className="h-3 w-3" />, text: "Akses artikel mendalam tanpa batas" },
+                  { icon: <ShieldCheck className="h-3 w-3" />, text: "Pengalaman membaca yang aman dan privat" },
+                  { icon: <Newspaper className="h-3 w-3" />, text: "Buletin harian pilihan redaksi" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-[11px] font-medium">
+                  <div key={`benefit-${i}`} className="flex items-center gap-3 text-[10px] font-medium">
                     <span className="text-white/30">{item.icon}</span>
                     <span>{item.text}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-6 border-t border-white/10">
-                <p className="text-[9px] font-bold text-white/30 tracking-[0.2em] uppercase">PatureNews media group</p>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-[9px] font-bold text-white/30 tracking-[0.2em] uppercase">PatureNews Media Group</p>
               </div>
             </div>
           </div>
 
-          {/* Sisi Kanan - Formulir */}
-          <div className="flex flex-col p-8 sm:p-10 justify-center bg-white relative">
-            <div className="mb-6 lg:hidden">
-              <Heading level={2} className="text-xl font-bold tracking-tight mb-1">PatureNews</Heading>
-              <BodyText className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Jurnalisme modern dan terpercaya</BodyText>
+          {/* Sisi kanan - formulir */}
+          <div className="flex flex-col p-6 sm:p-8 justify-center bg-white relative">
+            <div className="mb-4 lg:hidden">
+              <Heading level={2} className="text-lg font-bold tracking-tight mb-1">PatureNews</Heading>
+              <BodyText className="text-[9px] opacity-60 font-bold uppercase tracking-widest">Jurnalisme modern dan terpercaya</BodyText>
             </div>
 
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 h-9">
-                <TabsTrigger value="login" className="text-[10px] font-bold tracking-widest uppercase transition-all">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="text-[10px] font-bold tracking-widest uppercase transition-all">Daftar</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 h-8">
+                <TabsTrigger value="login" className="text-[10px] font-bold tracking-widest transition-all">Masuk</TabsTrigger>
+                <TabsTrigger value="register" className="text-[10px] font-bold tracking-widest transition-all">Daftar</TabsTrigger>
               </TabsList>
               
               <AnimatePresence mode="wait">
-                <TabsContent value="login" className="mt-0 focus-visible:outline-none">
+                <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none">
                   <motion.div 
                     initial={{ opacity: 0, x: 5 }} 
                     animate={{ opacity: 1, x: 0 }} 
-                    className="space-y-4"
+                    className="space-y-3"
                   >
-                    <div className="space-y-1.5">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="nama@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-10 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                        className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
                       />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <div className="flex justify-between items-center px-1">
-                        <Label htmlFor="password" className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Kata sandi</Label>
+                        <Label htmlFor="password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Kata sandi</Label>
                         <button className="text-[9px] font-bold text-primary/60 hover:text-primary">Lupa sandi?</button>
                       </div>
                       <div className="relative">
                         <Input 
                           id="password" 
                           type={showPassword ? "text" : "password"} 
-                          placeholder="Masukkan sandi Anda"
+                          placeholder="Masukkan sandi anda"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-10 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                          className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
                         />
                         <button
                           type="button"
@@ -194,7 +194,7 @@ export default function AuthPage() {
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-10 font-bold text-[10px] tracking-widest mt-2" 
+                      className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -203,25 +203,25 @@ export default function AuthPage() {
                   </motion.div>
                 </TabsContent>
 
-                <TabsContent value="register" className="mt-0 focus-visible:outline-none">
+                <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none">
                   <motion.div 
                     initial={{ opacity: 0, x: -5 }} 
                     animate={{ opacity: 1, x: 0 }} 
-                    className="space-y-4"
+                    className="space-y-3"
                   >
-                    <div className="space-y-1.5">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
                         placeholder="nama@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-10 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                        className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-40 uppercase tracking-widest px-1">Kata sandi baru</Label>
+                    <div className="space-y-1">
+                      <Label htmlFor="reg-password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Kata sandi baru</Label>
                       <div className="relative">
                         <Input 
                           id="reg-password" 
@@ -229,7 +229,7 @@ export default function AuthPage() {
                           placeholder="Buat sandi yang aman"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-10 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                          className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
                         />
                         <button
                           type="button"
@@ -241,7 +241,7 @@ export default function AuthPage() {
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-10 font-bold text-[10px] tracking-widest mt-2" 
+                      className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
@@ -252,7 +252,7 @@ export default function AuthPage() {
               </AnimatePresence>
             </Tabs>
 
-            <div className="flex items-center my-6 gap-3">
+            <div className="flex items-center my-4 gap-3">
               <div className="h-[1px] flex-1 bg-primary/5" />
               <span className="text-[9px] font-bold text-muted-foreground/40 whitespace-nowrap tracking-widest uppercase">Atau</span>
               <div className="h-[1px] flex-1 bg-primary/5" />
@@ -260,7 +260,7 @@ export default function AuthPage() {
 
             <Button 
               variant="outline"
-              className="w-full h-10 font-bold text-[9px] flex items-center justify-center gap-2.5 border-primary/10 hover:bg-primary/5 tracking-widest"
+              className="w-full h-9 font-bold text-[9px] flex items-center justify-center gap-2 border-primary/10 hover:bg-primary/5 tracking-widest"
               onClick={handleGoogleSignIn}
             >
               <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
@@ -272,13 +272,13 @@ export default function AuthPage() {
               <span>Lanjutkan dengan Google</span>
             </Button>
 
-            <div className="mt-8 pt-6 flex flex-col items-center gap-2 border-t border-primary/5">
+            <div className="mt-6 pt-4 flex flex-col items-center gap-1 border-t border-primary/5">
               <div className="flex gap-4">
                 <button onClick={() => setIsTermsOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary">Ketentuan penggunaan</button>
                 <button onClick={() => setIsPrivacyOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary">Kebijakan privasi</button>
               </div>
               <p className="text-[8px] text-center opacity-30 font-bold leading-relaxed max-w-[200px] uppercase tracking-tighter">
-                PatureNews media group © 2024. Seluruh hak cipta dilindungi.
+                PatureNews Media Group © 2024. Seluruh hak cipta dilindungi.
               </p>
             </div>
           </div>
