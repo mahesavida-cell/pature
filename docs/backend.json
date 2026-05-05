@@ -1,116 +1,79 @@
-
 {
   "entities": {
     "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile within the PatureNews application.",
+      "description": "Stores additional, non-authentication related information about users, complementing Firebase Authentication data.",
       "properties": {
-        "id": { "type": "string" },
-        "authId": { "type": "string" },
-        "displayName": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "profileImageUrl": { "type": "string", "format": "uri" },
-        "bio": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["id", "authId", "displayName", "email", "createdAt", "updatedAt"]
-    },
-    "Post": {
-      "title": "Post",
-      "type": "object",
-      "description": "Main news articles metadata stored in Firestore for interaction (Sync with Sanity).",
-      "properties": {
-        "title": { "type": "string" },
-        "content": { "type": "string" },
-        "category": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "image": { "type": "string" },
-        "excerpt": { "type": "string" },
-        "readTime": { "type": "string" },
-        "imageCaption": { "type": "string" },
-        "imageCredit": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Comment": {
-      "title": "Comment",
-      "type": "object",
-      "properties": {
-        "postId": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "content": { "type": "string" },
-        "parentId": { "type": "string" },
-        "likes": { "type": "array", "items": { "type": "string" } },
-        "createdAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Category": {
-      "title": "Category",
-      "type": "object",
-      "description": "Dynamic category for the main navigation menu.",
-      "properties": {
-        "name": { "type": "string" },
-        "slug": { "type": "string" },
-        "subCategories": {
-          "type": "array",
-          "items": { "type": "string" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity. This typically corresponds to the user's unique ID from Firebase Authentication (uid)."
         },
-        "order": { "type": "number" }
+        "displayName": {
+          "type": "string",
+          "description": "The public name chosen by the user, displayed across the platform."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, primarily for display or contact. Not used for authentication purposes.",
+          "format": "email"
+        },
+        "profilePictureUrl": {
+          "type": "string",
+          "description": "An optional URL to the user's profile picture or avatar.",
+          "format": "uri"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role assigned to the user within the application, e.g., 'reader' or 'creator', to determine access and permissions."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating the last time the user profile was updated.",
+          "format": "date-time"
+        }
       },
-      "required": ["name", "slug", "subCategories", "order"]
-    },
-    "Bookmark": {
-      "title": "Bookmark",
-      "type": "object",
-      "properties": {
-        "postId": { "type": "string" },
-        "title": { "type": "string" },
-        "category": { "type": "string" },
-        "savedAt": { "type": "string", "format": "date-time" }
-      }
-    },
-    "History": {
-      "title": "History",
-      "type": "object",
-      "properties": {
-        "postId": { "type": "string" },
-        "title": { "type": "string" },
-        "category": { "type": "string" },
-        "viewedAt": { "type": "string", "format": "date-time" }
-      }
+      "required": [
+        "id",
+        "displayName",
+        "email",
+        "role",
+        "createdAt",
+        "updatedAt"
+      ]
     }
   },
   "auth": {
-    "providers": ["password", "anonymous", "google.com"]
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": { "$ref": "#/backend/entities/UserProfile" },
-      "description": "Private user profile information."
-    },
-    "/posts/{postId}": {
-      "schema": { "$ref": "#/backend/entities/Post" },
-      "description": "Main news articles interaction metadata."
-    },
-    "/posts/{postId}/comments/{commentId}": {
-      "schema": { "$ref": "#/backend/entities/Comment" },
-      "description": "Comments for a specific post."
-    },
-    "/categories/{categoryId}": {
-      "schema": { "$ref": "#/backend/entities/Category" },
-      "description": "Navigation menu categories."
-    },
-    "/users/{userId}/bookmarks/{postId}": {
-      "schema": { "$ref": "#/backend/entities/Bookmark" },
-      "description": "Saved posts for the user."
-    },
-    "/users/{userId}/history/{postId}": {
-      "schema": { "$ref": "#/backend/entities/History" },
-      "description": "Reading history for the user."
-    }
+    "structure": [
+      {
+        "path": "/user_profiles/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores individual user profiles, where each document ID corresponds to the Firebase Authentication UID (`userId`). This structure ensures direct ownership and simplifies security rules. It includes a denormalized 'role' field for basic authorization context.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, matching their Firebase Authentication UID."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure for InfoFlow focuses on managing user profiles, as the core content (news articles, media posts) is handled by Sanity.io, a headless CMS. The primary design principle applied is **Authorization Independence**, ensuring that security rules are simple, robust, and do not rely on expensive or complex `get()` calls to parent documents or other collections.\n\nTo achieve Authorization Independence, user profiles are stored in a top-level collection: `/user_profiles/{userId}`. Each document's ID (`{userId}`) directly corresponds to the Firebase Authentication UID of the owning user. This crucial design choice means that establishing ownership for any operation on a user's profile only requires checking `request.auth.uid == userId`, which is atomic and highly efficient. There are no hierarchical authorization dependencies to break atomic operations, as each profile document is self-contained with its authorization context (its `id` field matching the `userId` in the path).\n\n**Denormalization Strategy:** The `UserProfile` entity includes a `role` field (e.g., 'reader', 'creator'). This role, while a property of the user, is directly embedded within their profile document. This is a form of denormalization for authorization context, as the role is immediately available within the document being accessed, further eliminating the need for `get()` calls to other `roles` collections to determine a user's basic permissions within the application.\n\n**QAPs (Rules are not Filters) Support:** The structural segregation of user profiles into `/user_profiles` ensures a **homogeneous security posture** across all documents in this collection. All documents are of the `UserProfile` type and share similar access requirements. This enables secure and efficient `list` operations without requiring complex server-side filtering. For instance, authenticated users might be allowed to `list` all user profiles to see display names and profile pictures (e.g., for author lists). Security rules can then be applied to specific fields if necessary (e.g., only the owner can read their `email`), rather than needing to filter entire documents from the result set, thus upholding the QAP principle."
   }
 }

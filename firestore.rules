@@ -1,43 +1,102 @@
+/**
+ * # Firestore Security Rules Documentation
+ *
+ * ## Core Philosophy
+ * This ruleset implements an **Authorization Independence** model. The primary goal is to provide a 
+ * highly secure yet efficient environment by ensuring that authorization logic is self-contained 
+ * within the document path or the document data itself, minimizing the need for cross-document lookups.
+ *
+ * ## Data Structure
+ * The database follows a flat, top-level architecture for user-related data:
+ * - `/user_profiles/{userId}`: Stores metadata for individual users.
+ *
+ * ## Key Security Decisions
+ * 1. **Identity-Path Parity**: Security is primarily enforced by matching the document ID (`{userId}`) 
+ *    with the authenticated user's UID (`request.auth.uid`). This provides O(1) authorization.
+ * 2. **Denormalization for Authorization**: The user's `role` (e.g., 'reader', 'creator') is 
+ *    denormalized directly into the `UserProfile` document. This allows the system to understand 
+ *    user permissions immediately upon reading the profile without secondary queries.
+ * 3. **Public Discoverability**: To support social features and author attribution (as referenced 
+ *    in the CMS integration), basic user profiles are readable by any authenticated user.
+ * 4. **Self-Managed Profiles**: Users are permitted to create their own profile document 
+ *    upon first sign-in (Self-Creation pattern), provided the document ID matches their UID.
+ * 5. **Relational Integrity**: During creation and updates, the rules enforce that the internal 
+ *    `id` field of a profile remains consistent with the document's path and is immutable.
+ *
+ * ## Prototyping Mode Notice
+ * These rules enforce strict **authorization** (who can access data) but maintain **flexible data shapes**. 
+ * Schema validation (field types, mandatory content) is deferred to the application logic to 
+ * allow for rapid iteration during the prototyping phase.
+ */
+
+/* 
+  Step 1: Analysis & Synthesis
+  - Path: /user_profiles/{userId}
+  - Pattern: Ownership (P3.1) + Self-Creation (P3.4) + Signed-In Read (P3.5 modified)
+  - Reasoning: The IR emphasizes direct ownership via UID matching. It suggests that users 
+    should be able to list profiles for author lists, implying 'list' is open to authenticated users.
+*/
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // --- Helper Functions ---
+
+    /** 
+     * @description Basic check to see if the request is from an authenticated user.
+     */
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /** 
+     * @description Checks if the provided ID matches the UID of the authenticated user.
+     */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    match /users/{userId} {
-      allow get, list, create, update: if isOwner(userId);
-      
-      match /bookmarks/{postId} {
-        allow read, write: if isOwner(userId);
-      }
-      
-      match /history/{postId} {
-        allow read, write: if isOwner(userId);
-      }
+    /** 
+     * @description Verifies ownership and ensures the document exists for state-changing operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
 
-    match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if false; 
+    /** 
+     * @description Enforces relational integrity between the document path and the internal 'id' field.
+     */
+    function isRelationalValid(userId) {
+      return request.resource.data.id == userId;
     }
 
-    match /posts/{postId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
+    // --- Collection Rules ---
 
-      match /comments/{commentId} {
-        allow get, list: if true;
-        allow create: if isSignedIn();
-        allow update, delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || request.auth.uid == get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
-      }
+    /**
+     * @description Rules for user profile documents. Allows users to manage their own profiles 
+     * while allowing other authenticated users to view profiles for display/attribution purposes.
+     * @path /user_profiles/{userId}
+     * @allow (get, list) If the requestor is signed in.
+     * @allow (create) If the user is creating their own profile and the internal ID matches the path.
+     * @allow (update, delete) If the user owns the profile and it already exists.
+     * @deny (write) If the userId in the path does not match the request.auth.uid.
+     * @principle Enforces identity-based ownership and data-to-path consistency.
+     */
+    match /user_profiles/{userId} {
+      allow get, list: if isSignedIn();
+      
+      allow create: if isOwner(userId) && isRelationalValid(userId);
+      
+      allow update: if isExistingOwner(userId) 
+                    && request.resource.data.id == resource.data.id;
+      
+      allow delete: if isExistingOwner(userId);
+    }
+
+    // Default deny for any paths not explicitly matched
+    match /{path=**} {
+      allow read, write: if false;
     }
   }
 }
