@@ -532,7 +532,7 @@ export default function NewsDetailPage() {
                 {post.content ? post.content.split('\n\n').map((p: string, i: number) => {
                   const parts = p.split(/(\*\*.*?\*\*)/g);
                   return (
-                    <TypographyP key={i} className="text-lg opacity-95 font-medium">
+                    <TypographyP key={i} className="text-lg">
                       {parts.map((part, j) => {
                         if (part.startsWith('**') && part.endsWith('**')) {
                           return <strong key={j} className="text-primary font-bold">{part.slice(2, -2)}</strong>;

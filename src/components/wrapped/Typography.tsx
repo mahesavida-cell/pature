@@ -34,7 +34,7 @@ export const BodyText = ({ children, className }: TextProps) => (
 );
 
 export const TypographyP = ({ children, className }: TextProps) => (
-  <p className={cn("leading-7 [&:not(:first-child)]:mt-6 text-foreground/90 font-body", className)}>
+  <p className={cn("leading-7 [&:not(:first-child)]:mt-6 font-normal text-foreground/90", className)}>
     {children}
   </p>
 );
