@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight, Copy, Facebook, Twitter } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -39,6 +40,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "baru saja";
@@ -50,13 +56,110 @@ const formatRelativeTime = (dateInput: any) => {
   if (diffInSeconds < 60) return "baru saja";
   
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} menit yang lalu`;
+  if (minutes < 60) return `${minutes} Menit yang lalu`;
   
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam yang lalu`;
+  if (hours < 24) return `${hours} Jam yang lalu`;
   
   const days = Math.floor(hours / 24);
-  return `${days} hari yang lalu`;
+  return `${days} Hari yang lalu`;
+};
+
+const XIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const ShareButton = ({ post }: { post: any }) => {
+  const { toast } = useToast();
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
+
+  const handleNativeShare = async () => {
+    try {
+      await navigator.share({
+        title: post.title,
+        text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
+        url: url,
+      });
+    } catch (err) {
+      // User cancelled or not supported
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(url);
+    toast({
+      title: "Tautan disalin",
+      description: "Tautan berita telah berhasil disalin ke papan klip anda.",
+    });
+  };
+
+  const shareLinks = [
+    { name: "WhatsApp", icon: <MessageSquare className="h-4 w-4" />, href: `https://wa.me/?text=${encodeURIComponent(post.title + " " + url)}` },
+    { name: "Facebook", icon: <Facebook className="h-4 w-4" />, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
+    { name: "X", icon: <XIcon />, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}` },
+  ];
+
+  const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile && typeof navigator !== 'undefined' && navigator.share) {
+    return (
+      <Button 
+        variant="outline" 
+        size="icon" 
+        title="Bagikan berita"
+        className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
+        onClick={handleNativeShare}
+      >
+        <Share2 className="h-4 w-4" />
+      </Button>
+    );
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button 
+          variant="outline" 
+          size="icon" 
+          title="Bagikan berita"
+          className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
+        >
+          <Share2 className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-56 p-2 bg-white/90 backdrop-blur-xl border-white/20 rounded-lg shadow-xl">
+        <div className="grid gap-1">
+          <MutedText className="px-2 py-1.5 text-[10px] font-bold opacity-40 uppercase tracking-wider">Bagikan melalui</MutedText>
+          {shareLinks.map((link) => (
+            <a 
+              key={link.name} 
+              href={link.href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors group"
+            >
+              <span className="text-muted-foreground group-hover:text-primary">{link.icon}</span>
+              <span>{link.name}</span>
+            </a>
+          ))}
+          <Separator className="my-1 opacity-40" />
+          <button 
+            onClick={copyToClipboard}
+            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors group text-left w-full"
+          >
+            <span className="text-muted-foreground group-hover:text-primary"><Copy className="h-4 w-4" /></span>
+            <span>Salin tautan</span>
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 };
 
 const CommentItem = ({ 
@@ -322,28 +425,6 @@ export default function NewsDetailPage() {
     }
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: post.title,
-      text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
-      url: window.location.href,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-        toast({
-          title: "Tautan berhasil disalin",
-          description: "Tautan berita telah disalin ke papan klip anda.",
-        });
-      }
-    } catch (err) {
-      // User cancelled
-    }
-  };
-
   const handlePostComment = (parentId: string | null = null) => {
     if (!user) { setIsLoginDialogOpen(true); return; }
     const text = parentId ? replyText : commentText;
@@ -371,10 +452,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 jam yang lalu" },
-    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 jam yang lalu" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 hari yang lalu" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 jam yang lalu" }
+    { id: "1", title: "Psikologi Tipografi dalam Desain", category: "Desain", timeAgo: "2 Jam yang lalu" },
+    { id: "2", title: "Masa Depan AI di Media", category: "Teknologi", timeAgo: "4 Jam yang lalu" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari yang lalu" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam yang lalu" }
   ];
 
   return (
@@ -406,15 +487,7 @@ export default function NewsDetailPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      title="Bagikan berita"
-                      className="rounded-full h-9 w-9 border-white/20 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
-                      onClick={handleShare}
-                    >
-                      <Share2 className="h-4 w-4" />
-                    </Button>
+                    <ShareButton post={post} />
                     <Button 
                       variant="outline" 
                       size="icon" 
