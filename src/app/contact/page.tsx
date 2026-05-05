@@ -49,7 +49,13 @@ export default function ContactPage() {
 
             <div className="space-y-8">
               {contactInfo.map((info, idx) => (
-                <div key={idx} className="flex gap-5 items-start">
+                <motion.div 
+                  key={idx} 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  className="flex gap-5 items-start"
+                >
                   <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary shrink-0">
                     {info.icon}
                   </div>
@@ -57,7 +63,7 @@ export default function ContactPage() {
                     <Heading level={4} className="text-base">{info.title}</Heading>
                     <MutedText className="text-xs">{info.detail}</MutedText>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
@@ -82,23 +88,44 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Nama lengkap</Label>
-                      <Input id="name" placeholder="Nama Anda" className="bg-white/40 border-primary/5 h-11" required />
+                      <Label htmlFor="name" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Nama lengkap</Label>
+                      <Input 
+                        id="name" 
+                        placeholder="Nama Anda" 
+                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                        required 
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Alamat email</Label>
-                      <Input id="email" type="email" placeholder="email@contoh.com" className="bg-white/40 border-primary/5 h-11" required />
+                      <Label htmlFor="email" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Alamat email</Label>
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="email@contoh.com" 
+                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                        required 
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Subjek</Label>
-                    <Input id="subject" placeholder="Bagaimana kami bisa membantu?" className="bg-white/40 border-primary/5 h-11" required />
+                    <Label htmlFor="subject" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Subjek</Label>
+                    <Input 
+                      id="subject" 
+                      placeholder="Bagaimana kami bisa membantu?" 
+                      className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                      required 
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-[10px] font-bold opacity-50 uppercase tracking-wider">Pesan</Label>
-                    <Textarea id="message" placeholder="Tuliskan pesan Anda secara detail..." className="min-h-[160px] bg-white/40 border-primary/5 resize-none" required />
+                    <Label htmlFor="message" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Pesan</Label>
+                    <Textarea 
+                      id="message" 
+                      placeholder="Tuliskan pesan Anda secara detail..." 
+                      className="min-h-[160px] rounded-md bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs resize-none"
+                      required 
+                    />
                   </div>
-                  <Button type="submit" className="w-full h-12 font-bold text-xs tracking-widest shadow-md">
+                  <Button type="submit" className="w-full h-12 font-bold text-[11px] tracking-widest shadow-md">
                     Kirim pesan sekarang
                   </Button>
                 </form>
