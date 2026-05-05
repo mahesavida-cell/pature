@@ -1,7 +1,7 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Button } from "@/components/ui/button";
@@ -347,25 +347,7 @@ export default function Home() {
           </section>
         </div>
       </main>
-      <footer className="border-t py-12 bg-white/50 mt-20">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6">
-          <Link href="/" className="transition-opacity hover:opacity-80">
-            <Image 
-              src="/pature_news.png" 
-              alt="InfoFlow Logo" 
-              width={120} 
-              height={35} 
-              className="h-7 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all"
-            />
-          </Link>
-          <div className="flex gap-6 text-[10px] font-bold text-muted-foreground">
-            <Link href="#" className="hover:text-primary">Tentang kami</Link>
-            <Link href="#" className="hover:text-primary">Kontak</Link>
-            <Link href="#" className="hover:text-primary">Privasi</Link>
-          </div>
-          <MutedText className="text-[10px] font-bold opacity-50">© 2024 InfoFlow Media</MutedText>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
