@@ -2,7 +2,7 @@
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { Heading, BodyText, MutedText, Title } from "@/components/wrapped/Typography";
+import { Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,10 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, updateDocumentNonBlocking } from "@/firebase";
 import { collection, doc, query, orderBy, limit } from "firebase/firestore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard } from "lucide-react";
+import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Sparkles } from "lucide-react";
 
 export default function ProfilePage() {
   const { user } = useUser();
@@ -27,14 +27,17 @@ export default function ProfilePage() {
   const userDocRef = useMemoFirebase(() => (user ? doc(db, "users", user.uid) : null), [db, user]);
   const { data: profileData } = useDoc(userDocRef);
 
-  const bookmarksQuery = useMemoFirebase(() => (user ? collection(db, "users", user.uid, "bookmarks") : null), [db, user]);
-  const { data: bookmarks } = useCollection(bookmarksQuery);
-
-  const historyQuery = useMemoFirebase(() => 
-    user ? query(collection(db, "users", user.uid, "history"), orderBy("viewedAt", "desc"), limit(5)) : null, 
+  const bookmarksQuery = useMemoFirebase(() => 
+    user ? query(collection(db, "users", user.uid, "bookmarks"), orderBy("savedAt", "desc")) : null, 
     [db, user]
   );
-  const { data: history } = useCollection(historyQuery);
+  const { data: bookmarks, isLoading: isBookmarksLoading } = useCollection(bookmarksQuery);
+
+  const historyQuery = useMemoFirebase(() => 
+    user ? query(collection(db, "users", user.uid, "history"), orderBy("viewedAt", "desc"), limit(10)) : null, 
+    [db, user]
+  );
+  const { data: history, isLoading: isHistoryLoading } = useCollection(historyQuery);
 
   useEffect(() => {
     if (profileData) {
@@ -54,29 +57,46 @@ export default function ProfilePage() {
     });
   };
 
+  // Logika Rekomendasi Dinamis Berdasarkan Frekuensi Kategori
   const recommendations = useMemo(() => {
     if (!history || history.length === 0) return [];
-    const categories = history.map(h => h.category);
-    const mostFrequent = categories.sort((a,b) =>
-      categories.filter(v => v===a).length - categories.filter(v => v===b).length
-    ).pop();
     
+    const categoryCounts: Record<string, number> = {};
+    history.forEach(item => {
+      if (item.category) {
+        categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+      }
+    });
+
+    const favoriteCategory = Object.entries(categoryCounts)
+      .sort(([, a], [, b]) => b - a)[0]?.[0];
+
+    if (!favoriteCategory) return [];
+
     return [
-      { id: "rec-1", title: `Kenapa ${mostFrequent} Adalah Masa Depan`, category: mostFrequent },
-      { id: "rec-2", title: `5 Tren Baru Di Dunia ${mostFrequent}`, category: mostFrequent }
-    ];
+      { id: "rec-1", title: `Kenapa ${favoriteCategory} Adalah Masa Depan`, category: favoriteCategory },
+      { id: "rec-2", title: `Tren Terbaru Di Industri ${favoriteCategory}`, category: favoriteCategory },
+      { id: "rec-3", title: `Panduan Lengkap Eksplorasi ${favoriteCategory}`, category: favoriteCategory }
+    ].slice(0, 2);
   }, [history]);
 
   if (!user) {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="bg-background min-h-screen flex flex-col">
         <Navbar />
-        <main className="max-w-7xl mx-auto px-4 py-20 text-center">
-          <Heading level={2} className="mb-4">Silakan Masuk Dahulu</Heading>
-          <BodyText className="mb-8">Anda Perlu Masuk Untuk Mengakses Halaman Pusat Akun.</BodyText>
-          <Link href="/auth">
-            <Button className="rounded-xl px-12 h-12 font-bold tracking-wide">Masuk Sekarang</Button>
-          </Link>
+        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <User className="h-10 w-10 text-accent" />
+            </div>
+            <Heading level={2} className="mb-2">Akses Terbatas</Heading>
+            <BodyText className="mb-8">Silakan Masuk Untuk Mengakses Halaman Pusat Akun Anda.</BodyText>
+            <Link href="/auth">
+              <Button className="rounded-xl px-12 h-12 font-bold tracking-wide shadow-lg shadow-primary/20">
+                Masuk Sekarang
+              </Button>
+            </Link>
+          </motion.div>
         </main>
       </div>
     );
@@ -85,145 +105,185 @@ export default function ProfilePage() {
   return (
     <div className="bg-background min-h-screen pb-20">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 pt-12">
+      <main className="max-w-7xl mx-auto px-4 pt-8 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           <aside className="lg:col-span-4 space-y-8">
-            <Card className="rounded-[32px] overflow-hidden border-none shadow-xl bg-white/60 backdrop-blur-md">
+            <Card className="rounded-[40px] overflow-hidden border-none shadow-2xl bg-white/70 backdrop-blur-xl">
               <CardContent className="p-10 text-center">
-                <Avatar className="h-32 w-32 mx-auto mb-6 border-4 border-white shadow-2xl">
-                  <AvatarImage src={user.photoURL || ""} />
-                  <AvatarFallback className="bg-primary text-white text-3xl font-bold">
-                    {(displayName || "U")[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <Heading level={2} className="mb-2">{displayName}</Heading>
-                <MutedText className="block mb-6 font-bold tracking-wide">{user.email}</MutedText>
-                <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-8">
+                <div className="relative inline-block mb-6">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
+                    <AvatarImage src={user.photoURL || ""} />
+                    <AvatarFallback className="bg-primary text-white text-4xl font-black">
+                      {(displayName || user.email || "U")[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-2 -right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white" />
+                </div>
+                <Heading level={2} className="mb-1 text-3xl">{displayName}</Heading>
+                <MutedText className="block mb-6 font-bold text-xs tracking-wider opacity-60 uppercase">{user.email}</MutedText>
+                <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[9px] font-black tracking-[0.2em] uppercase mb-10 bg-accent/5 text-accent border-none">
                   Anggota Aktif
                 </Badge>
-                <div className="flex justify-around pt-6 border-t border-border/40">
-                  <div>
-                    <span className="block text-xl font-headline font-bold text-primary">{bookmarks?.length || 0}</span>
-                    <MutedText className="text-[10px] font-bold">Arsip</MutedText>
+                <div className="flex justify-around items-center pt-8 border-t border-border/40">
+                  <div className="text-center">
+                    <span className="block text-2xl font-headline font-bold text-primary">{bookmarks?.length || 0}</span>
+                    <MutedText className="text-[10px] font-bold tracking-widest uppercase opacity-50">Arsip</MutedText>
                   </div>
-                  <Separator orientation="vertical" className="h-10" />
-                  <div>
-                    <span className="block text-xl font-headline font-bold text-primary">{history?.length || 0}</span>
-                    <MutedText className="text-[10px] font-bold">Dibaca</MutedText>
+                  <Separator orientation="vertical" className="h-10 opacity-40" />
+                  <div className="text-center">
+                    <span className="block text-2xl font-headline font-bold text-primary">{history?.length || 0}</span>
+                    <MutedText className="text-[10px] font-bold tracking-widest uppercase opacity-50">Dibaca</MutedText>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-[32px] bg-primary text-primary-foreground p-8 shadow-2xl">
-              <Heading level={3} className="text-white text-xl mb-4">Rekomendasi Untuk Anda</Heading>
-              <div className="space-y-4">
-                {recommendations.length > 0 ? recommendations.map(rec => (
-                  <div key={rec.id} className="p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors cursor-pointer group">
-                    <span className="text-[9px] font-black tracking-widest uppercase opacity-70">{rec.category}</span>
-                    <h4 className="font-headline font-bold text-sm leading-tight group-hover:translate-x-1 transition-transform">{rec.title}</h4>
-                  </div>
-                )) : (
-                  <MutedText className="text-white/60 text-xs italic">Baca Lebih Banyak Artikel Untuk Mendapat Rekomendasi.</MutedText>
-                )}
+            <Card className="rounded-[40px] bg-primary text-primary-foreground p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                <Sparkles className="h-20 w-20" />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-6">
+                  <Sparkles className="h-4 w-4 text-accent" />
+                  <Heading level={3} className="text-white text-xl">Rekomendasi Cerdas</Heading>
+                </div>
+                <div className="space-y-4">
+                  {recommendations.length > 0 ? recommendations.map((rec, idx) => (
+                    <motion.div 
+                      key={rec.id} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/5 transition-all cursor-pointer group/item"
+                    >
+                      <span className="text-[9px] font-black tracking-[0.15em] uppercase text-accent mb-2 block">{rec.category}</span>
+                      <h4 className="font-headline font-bold text-sm leading-snug group-hover/item:text-accent transition-colors">{rec.title}</h4>
+                    </motion.div>
+                  )) : (
+                    <div className="py-6 px-4 bg-white/5 rounded-3xl border border-white/5 text-center">
+                      <MutedText className="text-white/40 text-[10px] font-bold italic block">Silakan Baca Lebih Banyak Artikel Untuk Mendapatkan Rekomendasi Akurat.</MutedText>
+                    </div>
+                  )}
+                </div>
               </div>
             </Card>
           </aside>
 
           <section className="lg:col-span-8">
             <Tabs defaultValue="editor" className="w-full">
-              <TabsList className="bg-transparent border-b rounded-none w-full justify-start h-auto p-0 mb-10 space-x-8">
-                <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-sm font-bold tracking-wide transition-all">
+              <TabsList className="bg-transparent border-b rounded-none w-full justify-start h-auto p-0 mb-12 space-x-10 overflow-x-auto">
+                <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
                   <Settings className="h-4 w-4 mr-2" /> Editor Akun
                 </TabsTrigger>
-                <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-sm font-bold tracking-wide transition-all">
+                <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
                   <Bookmark className="h-4 w-4 mr-2" /> Berita Diarsipkan
                 </TabsTrigger>
-                <TabsTrigger value="history" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-sm font-bold tracking-wide transition-all">
+                <TabsTrigger value="history" className="bg-transparent rounded-none border-b-4 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-5 text-xs font-black tracking-widest uppercase transition-all">
                   <History className="h-4 w-4 mr-2" /> Riwayat Bacaan
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="editor">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-                  <Card className="rounded-[32px] p-10 bg-white shadow-sm border border-border/40">
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="displayName" className="text-xs font-bold tracking-wide">Nama Tampilan</Label>
-                        <Input 
-                          id="displayName" 
-                          value={displayName} 
-                          onChange={(e) => setDisplayName(e.target.value)}
-                          className="h-14 rounded-2xl bg-accent/5 border-none shadow-none text-sm font-medium"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="bio" className="text-xs font-bold tracking-wide">Biodata Singkat</Label>
-                        <Input 
-                          id="bio" 
-                          value={bio} 
-                          onChange={(e) => setBio(e.target.value)}
-                          placeholder="Ceritakan Sedikit Tentang Diri Anda..."
-                          className="h-14 rounded-2xl bg-accent/5 border-none shadow-none text-sm font-medium"
-                        />
-                      </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-14 rounded-2xl font-bold tracking-widest text-xs uppercase shadow-lg shadow-primary/20">
-                        Simpan Perubahan Profil
-                      </Button>
-                    </div>
-                  </Card>
-                </motion.div>
-              </TabsContent>
-
-              <TabsContent value="archived">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {bookmarks && bookmarks.length > 0 ? bookmarks.map((item) => (
-                    <Card key={item.id} className="rounded-3xl border-none shadow-sm hover:shadow-xl transition-all group">
-                      <CardContent className="p-6 flex flex-col justify-between h-full">
-                        <div>
-                          <Badge variant="secondary" className="text-[8px] font-black uppercase mb-3">{item.category}</Badge>
-                          <Heading level={4} className="mb-4 text-lg leading-tight group-hover:text-accent transition-colors">
-                            {item.title}
-                          </Heading>
+              <AnimatePresence mode="wait">
+                <TabsContent value="editor">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+                    <Card className="rounded-[40px] p-12 bg-white shadow-xl border border-border/30">
+                      <div className="space-y-8">
+                        <div className="space-y-3">
+                          <Label htmlFor="displayName" className="text-[10px] font-black tracking-widest uppercase opacity-50">Nama Lengkap Tampilan</Label>
+                          <Input 
+                            id="displayName" 
+                            value={displayName} 
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            className="h-16 rounded-3xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
+                          />
                         </div>
-                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 transition-colors">
-                          Baca Sekarang <ChevronRight className="h-3 w-3" />
-                        </Link>
-                      </CardContent>
+                        <div className="space-y-3">
+                          <Label htmlFor="bio" className="text-[10px] font-black tracking-widest uppercase opacity-50">Biodata Singkat Penulis</Label>
+                          <Input 
+                            id="bio" 
+                            value={bio} 
+                            onChange={(e) => setBio(e.target.value)}
+                            placeholder="Tuliskan Sesuatu Tentang Diri Anda..."
+                            className="h-16 rounded-3xl bg-accent/5 border-none shadow-inner text-sm font-bold px-6 focus-visible:ring-1 focus-visible:ring-primary/20"
+                          />
+                        </div>
+                        <Button 
+                          onClick={handleUpdateProfile} 
+                          className="w-full h-16 rounded-3xl font-black tracking-[0.2em] text-[11px] uppercase shadow-2xl shadow-primary/20 transition-transform active:scale-95"
+                        >
+                          Simpan Perubahan Profil
+                        </Button>
+                      </div>
                     </Card>
-                  )) : (
-                    <div className="col-span-full py-20 text-center">
-                      <MutedText className="font-bold">Belum Ada Berita Yang Diarsipkan.</MutedText>
-                    </div>
-                  )}
-                </motion.div>
-              </TabsContent>
+                  </motion.div>
+                </TabsContent>
 
-              <TabsContent value="history">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                  {history && history.length > 0 ? history.map((item) => (
-                    <Link key={item.id} href={`/news/${item.postId}`}>
-                      <div className="flex items-center justify-between p-6 rounded-3xl hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-border/40 group">
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-primary">
-                            <LayoutDashboard className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <Heading level={4} className="text-sm md:text-base group-hover:text-accent transition-colors">{item.title}</Heading>
-                            <MutedText className="text-[10px] font-bold tracking-wide">{item.category} • {new Date(item.viewedAt).toLocaleDateString()}</MutedText>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                <TabsContent value="archived">
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {isBookmarksLoading ? (
+                      <div className="col-span-full py-20 text-center"><MutedText className="animate-pulse font-black uppercase tracking-widest">Memuat Arsip...</MutedText></div>
+                    ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
+                      <motion.div key={item.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
+                        <Card className="rounded-[32px] border-none shadow-lg hover:shadow-2xl transition-all group h-full bg-white/80">
+                          <CardContent className="p-8 flex flex-col justify-between h-full">
+                            <div>
+                              <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest mb-4 bg-accent/5 text-accent border-none">
+                                {item.category}
+                              </Badge>
+                              <h3 className="mb-6 text-xl font-headline font-bold leading-tight group-hover:text-accent transition-colors">
+                                {item.title}
+                              </h3>
+                            </div>
+                            <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[11px] font-black tracking-widest uppercase text-muted-foreground hover:text-primary mt-4 group/link transition-colors">
+                              Baca Sekarang <ChevronRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                            </Link>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    )) : (
+                      <div className="col-span-full py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
+                        <Bookmark className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                        <MutedText className="font-black uppercase tracking-[0.2em] text-xs opacity-40">Belum Ada Berita Yang Anda Diarsipkan.</MutedText>
                       </div>
-                    </Link>
-                  )) : (
-                    <div className="py-20 text-center">
-                      <MutedText className="font-bold">Riwayat Bacaan Kosong.</MutedText>
-                    </div>
-                  )}
-                </motion.div>
-              </TabsContent>
+                    )}
+                  </motion.div>
+                </TabsContent>
+
+                <TabsContent value="history">
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                    {isHistoryLoading ? (
+                      <div className="py-20 text-center"><MutedText className="animate-pulse font-black uppercase tracking-widest">Memuat Riwayat...</MutedText></div>
+                    ) : history && history.length > 0 ? history.map((item, idx) => (
+                      <motion.div key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
+                        <Link href={`/news/${item.postId}`}>
+                          <div className="flex items-center justify-between p-8 rounded-[32px] hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-border/30 group bg-white/40 backdrop-blur-sm">
+                            <div className="flex items-center gap-6">
+                              <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary shadow-inner">
+                                <LayoutDashboard className="h-6 w-6" />
+                              </div>
+                              <div>
+                                <h4 className="text-lg font-headline font-bold group-hover:text-accent transition-colors mb-1">{item.title}</h4>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[10px] font-black tracking-widest uppercase opacity-50">{item.category}</span>
+                                  <Separator orientation="vertical" className="h-3" />
+                                  <span className="text-[10px] font-black tracking-widest uppercase opacity-30">{new Date(item.viewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
+                          </div>
+                        </Link>
+                      </motion.div>
+                    )) : (
+                      <div className="py-24 text-center border-2 border-dashed border-border/40 rounded-[40px]">
+                        <History className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                        <MutedText className="font-black uppercase tracking-[0.2em] text-xs opacity-40">Riwayat Bacaan Anda Masih Kosong.</MutedText>
+                      </div>
+                    )}
+                  </motion.div>
+                </TabsContent>
+              </AnimatePresence>
             </Tabs>
           </section>
         </div>
