@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, Bookmark, X, ChevronRight, TrendingUp } from "lucide-react";
+import { Search, Menu, User, LogOut, Bookmark, X, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +10,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter, usePathname } from "next/navigation";
-import { collection, query, limit } from "firebase/firestore";
+import { collection, query, limit, orderBy } from "firebase/firestore";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -28,33 +29,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const CATEGORIES = [
-  { 
-    id: "tech", 
-    name: "Teknologi", 
-    href: "/category/technology",
-    subs: ["Kecerdasan buatan", "Gadget terbaru", "Keamanan siber", "Software"] 
-  },
-  { 
-    id: "design", 
-    name: "Desain", 
-    href: "/category/design",
-    subs: ["UI/UX", "Arsitektur", "Tipografi", "Desain interior"] 
-  },
-  { 
-    id: "business", 
-    name: "Bisnis", 
-    href: "/category/business",
-    subs: ["Ekonomi global", "Startup", "Pasar modal", "Investasi"] 
-  },
-  { 
-    id: "culture", 
-    name: "Budaya", 
-    href: "/category/culture",
-    subs: ["Seni visual", "Gaya hidup", "Wisata kuliner", "Sejarah"] 
-  },
-];
 
 const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
 
@@ -80,6 +54,13 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Fetch dynamic categories from Firestore
+  const categoriesQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, "categories"), orderBy("order", "asc"));
+  }, [db]);
+  const { data: dynamicCategories } = useCollection(categoriesQuery);
 
   const postsQuery = useMemoFirebase(() => {
     if (!db) return null;
@@ -142,7 +123,7 @@ export const Navbar = () => {
           </Link>
           
           <div className="hidden lg:flex items-center gap-7">
-            {CATEGORIES.map((cat) => (
+            {dynamicCategories?.map((cat) => (
               <button 
                 key={cat.id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
@@ -307,17 +288,17 @@ export const Navbar = () => {
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-6">
-                {CATEGORIES.map((cat) => (
+                {dynamicCategories?.map((cat) => (
                   <div key={cat.id} className="space-y-3">
                     <Link 
-                      href={cat.href} 
+                      href={`/category/${cat.slug}`} 
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-headline font-bold hover:text-primary transition-colors block"
                     >
                       {cat.name}
                     </Link>
                     <div className="pl-4 flex flex-col gap-2">
-                      {cat.subs.map(sub => (
+                      {cat.subCategories.map((sub: string) => (
                         <span key={sub} className="text-[11px] font-bold text-muted-foreground hover:text-primary cursor-pointer">{sub}</span>
                       ))}
                     </div>
@@ -343,7 +324,7 @@ export const Navbar = () => {
               <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mr-2 opacity-40">
                 {hoveredCategory ? `Topik ${hoveredCategory.name}:` : "Topik populer:"}
               </span>
-              {(hoveredCategory ? hoveredCategory.subs : DEFAULT_TOPICS).map((sub: string, idx: number) => (
+              {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link 
                   key={idx} 
                   href="#" 

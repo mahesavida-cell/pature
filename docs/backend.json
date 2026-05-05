@@ -45,6 +45,21 @@
         "createdAt": { "type": "string", "format": "date-time" }
       }
     },
+    "Category": {
+      "title": "Category",
+      "type": "object",
+      "description": "Dynamic category for the main navigation menu.",
+      "properties": {
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "subCategories": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "slug", "subCategories", "order"]
+    },
     "Bookmark": {
       "title": "Bookmark",
       "type": "object",
@@ -77,6 +92,10 @@
     "/posts/{postId}": {
       "schema": { "$ref": "#/backend/entities/Post" },
       "description": "Main news articles."
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/backend/entities/Category" },
+      "description": "Navigation menu categories."
     },
     "/users/{userId}/bookmarks/{postId}": {
       "schema": { "$ref": "#/backend/entities/Bookmark" },
