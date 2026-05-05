@@ -14,6 +14,14 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
 import { Eye, EyeOff } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AuthPage() {
   const auth = useAuth();
@@ -23,6 +31,10 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // States for legal dialogs
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   const handleAuth = async (type: 'login' | 'register') => {
     if (!email || !password) {
@@ -229,8 +241,18 @@ export default function AuthPage() {
 
               <div className="mt-6 pt-5 border-t border-primary/5 space-y-3">
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-1">
-                  <button className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan penggunaan</button>
-                  <button className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Kebijakan privasi</button>
+                  <button 
+                    onClick={() => setIsTermsOpen(true)}
+                    className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors"
+                  >
+                    Ketentuan penggunaan
+                  </button>
+                  <button 
+                    onClick={() => setIsPrivacyOpen(true)}
+                    className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors"
+                  >
+                    Kebijakan privasi
+                  </button>
                 </div>
                 <MutedText className="text-[9px] text-center block opacity-30 font-medium leading-relaxed">
                   Dengan melanjutkan, Anda setuju dengan ketentuan penggunaan dan kebijakan privasi InfoFlow.
@@ -240,6 +262,78 @@ export default function AuthPage() {
           </Card>
         </motion.div>
       </main>
+
+      {/* Terms of Use Dialog */}
+      <Dialog open={isTermsOpen} onOpenChange={setIsTermsOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden border-2 border-primary/10 bg-white/95 backdrop-blur-xl">
+          <DialogHeader className="p-6 border-b border-primary/5">
+            <DialogTitle className="font-headline font-bold text-lg">Ketentuan penggunaan</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="flex-1 p-6">
+            <div className="space-y-4 text-sm leading-relaxed text-foreground/80">
+              <section>
+                <h4 className="font-bold text-primary mb-2">1. Penerimaan ketentuan</h4>
+                <p>Dengan mengakses platform InfoFlow, Anda setuju untuk terikat oleh ketentuan penggunaan ini, semua hukum dan peraturan yang berlaku, dan setuju bahwa Anda bertanggung jawab untuk kepatuhan terhadap hukum setempat yang berlaku.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">2. Penggunaan platform</h4>
+                <p>InfoFlow disediakan untuk konsumsi informasi pribadi Anda. Anda dilarang menggunakan platform ini untuk tujuan komersial yang tidak sah atau aktivitas ilegal yang dapat merugikan sistem atau pengguna lain.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">3. Akun pengguna</h4>
+                <p>Saat membuat akun, Anda wajib memberikan informasi yang akurat. Anda bertanggung jawab penuh atas keamanan kata sandi Anda dan setiap aktivitas yang terjadi di bawah akun Anda.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">4. Pembatasan tanggung jawab</h4>
+                <p>InfoFlow tidak bertanggung jawab atas kerugian tidak langsung, insidental, atau konsekuensial yang timbul dari penggunaan atau ketidakmampuan untuk menggunakan layanan kami.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">5. Perubahan ketentuan</h4>
+                <p>Kami berhak memperbarui ketentuan ini kapan saja tanpa pemberitahuan sebelumnya. Penggunaan berkelanjutan Anda atas platform menandakan persetujuan Anda terhadap ketentuan yang diperbarui.</p>
+              </section>
+            </div>
+          </ScrollArea>
+          <div className="p-4 border-t border-primary/5 flex justify-end">
+            <Button onClick={() => setIsTermsOpen(false)} size="sm" className="font-bold text-[10px] px-6">Tutup</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Privacy Policy Dialog */}
+      <Dialog open={isPrivacyOpen} onOpenChange={setIsPrivacyOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 overflow-hidden border-2 border-primary/10 bg-white/95 backdrop-blur-xl">
+          <DialogHeader className="p-6 border-b border-primary/5">
+            <DialogTitle className="font-headline font-bold text-lg">Kebijakan privasi</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="flex-1 p-6">
+            <div className="space-y-4 text-sm leading-relaxed text-foreground/80">
+              <section>
+                <h4 className="font-bold text-primary mb-2">1. Informasi yang kami kumpulkan</h4>
+                <p>Kami mengumpulkan alamat email dan nama Anda saat Anda mendaftar melalui email atau Google Auth. Kami juga mencatat riwayat bacaan dan artikel yang Anda arsipkan untuk personalisasi layanan.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">2. Penggunaan informasi</h4>
+                <p>Informasi Anda digunakan untuk menyediakan akses ke fitur akun, mengelola riwayat bacaan Anda, dan memberikan rekomendasi berita yang relevan. Kami tidak akan menjual data Anda kepada pihak ketiga.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">3. Keamanan data</h4>
+                <p>Kami menggunakan layanan Google Firebase yang aman untuk menyimpan data autentikasi dan database Anda. Kami melakukan upaya terbaik untuk melindungi data Anda dari akses yang tidak sah.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">4. Hak Anda</h4>
+                <p>Anda memiliki hak untuk melihat, memperbarui, atau menghapus data pribadi Anda kapan saja melalui halaman profil akun Anda di InfoFlow.</p>
+              </section>
+              <section>
+                <h4 className="font-bold text-primary mb-2">5. Cookie dan teknologi serupa</h4>
+                <p>Kami menggunakan penyimpanan lokal (local storage) untuk menjaga sesi masuk Anda tetap aktif dan menyimpan preferensi tema atau navigasi dasar Anda.</p>
+              </section>
+            </div>
+          </ScrollArea>
+          <div className="p-4 border-t border-primary/5 flex justify-end">
+            <Button onClick={() => setIsPrivacyOpen(false)} size="sm" className="font-bold text-[10px] px-6">Tutup</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
