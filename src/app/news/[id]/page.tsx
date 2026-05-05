@@ -47,7 +47,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Moved outside to prevent re-renders and animation glitches
 const CommentItem = ({ 
   comment, 
   depth = 0, 
@@ -87,7 +86,7 @@ const CommentItem = ({
     ? (comment.createdAt?.toDate 
         ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) 
         : "Baru Saja")
-    : "";
+    : "---";
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l border-primary/10 pl-4 md:pl-6")}>
@@ -217,11 +216,7 @@ export default function NewsDetailPage() {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   const postRef = useMemoFirebase(() => params.id ? doc(db, "posts", params.id as string) : null, [db, params.id]);
   const { data: firestorePost, isLoading: isPostLoading } = useDoc(postRef);
@@ -259,7 +254,7 @@ export default function NewsDetailPage() {
   const mockComments = [
     {
       id: "mock-1",
-      content: "Analisis Yang Sangat Menarik. Saya Setuju Bahwa Minimalisme Adalah Kunci Untuk Mengurangi Kelelahan Digital Di Era Informasi Yang Begitu Cepat Ini.",
+      content: "Analisis Yang Sangat Menarik. Saya Setuju Bahwa Minimalisme Adalah Kunci Untuk Mengurangi Kelelahan Digital.",
       authorName: "Dian Pratama",
       authorId: "user-1",
       likes: ["user-2", "user-3"],
@@ -267,41 +262,20 @@ export default function NewsDetailPage() {
       replies: [
         {
           id: "mock-2",
-          content: "Tepat Sekali! Terkadang Kita Lupa Bahwa Desain Yang Baik Adalah Desain Yang Tidak Terlihat Namun Berfungsi Maksimal.",
+          content: "Tepat Sekali! Terkadang Kita Lupa Bahwa Desain Yang Baik Adalah Desain Yang Tidak Terlihat.",
           authorName: "Alex Rivers",
           authorId: "author-alex-1",
           likes: ["user-1"],
-          createdAt: { toDate: () => new Date(Date.now() - 3000000) },
-          replies: [
-            {
-              id: "mock-3",
-              content: "Betul Pak Alex. Terima Kasih Sudah Berbagi Wawasan Ini Lewat Artikel Anda.",
-              authorName: "Dian Pratama",
-              authorId: "user-1",
-              likes: [],
-              createdAt: { toDate: () => new Date(Date.now() - 2400000) }
-            }
-          ]
+          createdAt: { toDate: () => new Date(Date.now() - 3000000) }
         }
       ]
-    },
-    {
-      id: "mock-4",
-      content: "Apakah Ada Rekomendasi Buku Untuk Mempelajari Lebih Dalam Tentang Psikologi Tipografi?",
-      authorName: "Rina Wijaya",
-      authorId: "user-4",
-      likes: ["user-1"],
-      createdAt: { toDate: () => new Date(Date.now() - 7200000) },
-      replies: []
     }
   ];
 
   const threadedComments = useMemo(() => {
     if (!firestoreComments || firestoreComments.length === 0) return mockComments;
-
     const map = new Map();
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
-    
     const roots: any[] = [];
     firestoreComments.forEach(c => {
       const item = map.get(c.id);
@@ -311,14 +285,12 @@ export default function NewsDetailPage() {
         roots.push(item);
       }
     });
-
-    return [...roots];
+    return roots;
   }, [firestoreComments]);
 
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
-    
     if (user && db && params.id) {
       const historyRef = doc(db, "users", user.uid, "history", params.id as string);
       setDocumentNonBlocking(historyRef, {
@@ -328,22 +300,15 @@ export default function NewsDetailPage() {
         viewedAt: new Date().toISOString()
       }, { merge: true });
     }
-    
     return () => window.removeEventListener("scroll", handleScroll);
   }, [user, db, params.id, post.title, post.category]);
 
   const handleToggleBookmark = () => {
-    if (!user) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
+    if (!user) { setIsLoginDialogOpen(true); return; }
     if (!bookmarkRef) return;
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
-      toast({
-        title: "Dihapus Dari Arsip",
-        description: `"${post.title}" Telah Dihapus Dari Daftar Simpanan Anda.`,
-      });
+      toast({ title: "Dihapus Dari Arsip", description: `"${post.title}" Berhasil Dihapus.` });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
         postId: params.id,
@@ -351,52 +316,29 @@ export default function NewsDetailPage() {
         category: post.category,
         savedAt: new Date().toISOString()
       }, { merge: true });
-      toast({
-        title: "Berhasil Diarsipkan",
-        description: `"${post.title}" Berhasil Ditambahkan Ke Arsip.`,
-        action: (
-          <Button onClick={() => router.push('/profile')} size="sm" variant="secondary" className="font-bold text-[10px] tracking-tight rounded-sm">
-            Lihat Arsip
-          </Button>
-        ),
-      });
+      toast({ title: "Berhasil Diarsipkan", description: `"${post.title}" Tersimpan Di Profil.` });
     }
   };
 
   const handlePostComment = (parentId: string | null = null) => {
-    if (!user) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
+    if (!user) { setIsLoginDialogOpen(true); return; }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
     const colRef = collection(db, "posts", params.id as string, "comments");
     addDocumentNonBlocking(colRef, {
       content: text,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna Anonim",
+      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna InfoFlow",
       createdAt: serverTimestamp(),
       postId: params.id,
       parentId: parentId,
       likes: []
     });
-    if (parentId) {
-      setReplyText("");
-      setReplyToId(null);
-    } else {
-      setCommentText("");
-    }
-    toast({
-      title: "Komentar Terkirim",
-      description: "Terima Kasih Telah Berkontribusi Dalam Diskusi.",
-    });
+    if (parentId) { setReplyText(""); setReplyToId(null); } else { setCommentText(""); }
   };
 
   const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
-    if (!user) {
-      setIsLoginDialogOpen(true);
-      return;
-    }
+    if (!user) { setIsLoginDialogOpen(true); return; }
     const likes = Array.isArray(currentLikes) ? currentLikes : [];
     const isLiked = likes.includes(user.uid);
     const newLikes = isLiked ? likes.filter(id => id !== user.uid) : [...likes, user.uid];
@@ -404,22 +346,11 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
   };
 
-  if (isPostLoading && !firestorePost) {
-    return (
-      <div className="bg-background min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <MutedText className="font-bold text-xs">Menyiapkan Artikel...</MutedText>
-        </div>
-      </div>
-    );
-  }
-
   const popularStories = [
-    { id: "1", title: "Bagaimana Tipografi Mempengaruhi Psikologi Manusia", category: "Desain", timeAgo: "2 Jam Yang Lalu" },
-    { id: "2", title: "Masa Depan Kecerdasan Buatan Dalam Jurnalisme", category: "Teknologi", timeAgo: "4 Jam Yang Lalu" },
-    { id: "3", title: "Eksplorasi Ruang Hijau Di Tengah Kota Metropolitan", category: "Budaya", timeAgo: "1 Hari Yang Lalu" },
-    { id: "4", title: "Strategi Investasi Di Era Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam Yang Lalu" }
+    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam" },
+    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam" }
   ];
 
   return (
@@ -429,13 +360,13 @@ export default function NewsDetailPage() {
       <main className="max-w-6xl mx-auto px-4 md:px-6 pt-8 md:pt-14">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
           <div className="lg:col-span-8">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali Ke Feed Berita
               </Link>
               <div className="space-y-4 mb-10">
                 <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
-                <Title className="text-3xl md:text-4xl font-headline font-bold leading-[1.2] tracking-tight">{post.title}</Title>
+                <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post.title}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-white shadow-sm">
@@ -444,115 +375,76 @@ export default function NewsDetailPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-bold text-xs text-primary tracking-tight">{post.author || "Penulis InfoFlow"}</span>
-                      <MutedText className="text-[10px] font-medium opacity-60">{post.date || "Baru Saja"} • {post.readTime || "5 Menit Baca"}</MutedText>
+                      <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
+                      <MutedText className="text-[10px] opacity-60 font-medium">{post.date || "Baru Saja"} • {post.readTime || "5 Menit Baca"}</MutedText>
                     </div>
                   </div>
-                  <TooltipProvider>
-                    <div className="flex items-center gap-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all">
-                            <Share2 className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="rounded-sm font-bold text-[10px]"><p>Bagikan Artikel</p></TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            className={cn(
-                              "rounded-full h-9 w-9 transition-all border-border/40", 
-                              isSaved && 'bg-primary text-primary-foreground border-primary shadow-sm'
-                            )} 
-                            onClick={handleToggleBookmark}
-                          >
-                            <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="rounded-sm font-bold text-[10px]"><p>{isSaved ? "Hapus Dari Arsip" : "Simpan Artikel"}</p></TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </TooltipProvider>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className={cn("rounded-full h-9 w-9 transition-all border-border/40", isSaved && 'bg-primary text-primary-foreground border-primary shadow-sm')} 
+                      onClick={handleToggleBookmark}
+                    >
+                      <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md mb-12 shadow-md border border-border/10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md mb-12 shadow-sm border border-border/10">
                 <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
               </div>
               <article className="prose prose-neutral max-w-none mb-20">
                 {post.content ? post.content.split('\n\n').map((p: string, i: number) => (
                   <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
-                )) : (
-                  <BodyText className="text-lg mb-6 leading-relaxed opacity-90 font-medium">Memuat Konten Artikel...</BodyText>
-                )}
+                )) : <BodyText className="text-lg mb-6 opacity-60">Memuat Konten...</BodyText>}
               </article>
               <Separator className="my-16 opacity-30" />
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
                   <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                    {firestoreComments?.length || mockComments.length}
+                    {firestoreComments?.length || 0}
                   </Badge>
                 </div>
                 {user ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-md bg-primary/5 border border-primary/10">
-                    <Avatar className="h-10 w-10 shadow-sm border border-white shrink-0">
+                  <div className="flex gap-4 mb-14 items-start p-6 rounded-md bg-primary/5 border border-primary/10">
+                    <Avatar className="h-10 w-10 shrink-0">
                       <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-4">
                       <Textarea 
-                        placeholder="Tuliskan Pendapat Anda Tentang Artikel Ini..." 
+                        placeholder="Tuliskan Pendapat Anda..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm px-6 py-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                        className="bg-white border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20" 
                       />
                       <div className="flex justify-end">
-                        <Button 
-                          onClick={() => handlePostComment(null)} 
-                          disabled={!commentText.trim()}
-                          className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm transition-transform active:scale-95"
-                        >
+                        <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
                           <Send className="h-3.5 w-3.5" /> Kirim Komentar
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ) : (
                   <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
-                    <MutedText className="block mb-6 font-medium text-xs opacity-60">Silakan Masuk Terlebih Dahulu Untuk Bergabung Dalam Diskusi Komunitas Kami.</MutedText>
-                    <Link href="/auth">
-                      <Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button>
-                    </Link>
+                    <MutedText className="block mb-6 font-medium text-xs">Masuk Untuk Bergabung Dalam Diskusi.</MutedText>
+                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11">Masuk Sekarang</Button></Link>
                   </Card>
                 )}
                 <div className="space-y-8">
                   {isCommentsLoading ? (
-                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <div className="flex flex-col items-center py-20 gap-4">
                       <div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                      <MutedText className="font-medium text-xs">Memuat Diskusi...</MutedText>
                     </div>
                   ) : threadedComments.length > 0 ? (
                     threadedComments.map((comment) => (
-                      <CommentItem 
-                        key={comment.id} 
-                        comment={comment} 
-                        user={user} 
-                        postAuthorId={post.authorId} 
-                        onLike={handleLikeComment}
-                        onReply={handlePostComment}
-                        replyToId={replyToId}
-                        setReplyToId={setReplyToId}
-                        replyText={replyText}
-                        setReplyText={setReplyText}
-                      />
+                      <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post.authorId} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
                     ))
-                  ) : (
-                    <div className="py-20 text-center rounded-md border border-dashed border-border/40">
-                      <MutedText className="text-xs opacity-50 font-normal">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
-                    </div>
-                  )}
+                  ) : <div className="py-20 text-center rounded-md border border-dashed border-border/40"><MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText></div>}
                 </div>
               </section>
             </motion.div>
@@ -562,60 +454,48 @@ export default function NewsDetailPage() {
               <div>
                 <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
                   <TrendingUp className="h-4 w-4 text-primary" />
-                  <Heading level={3} className="text-lg tracking-tight">Berita Terpopuler</Heading>
+                  <Heading level={3} className="text-lg">Berita Terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
                   {popularStories.map((story) => (
                     <Link key={story.id} href={`/news/${story.id}`} className="flex gap-4 group">
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-muted shadow-sm">
-                        <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted shadow-sm">
+                        <Image src={`https://picsum.photos/seed/${story.id}/200/200`} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
-                      <div className="flex flex-col justify-center gap-1.5">
-                        <span className="text-[9px] font-bold text-accent opacity-70">{story.category} • {story.timeAgo}</span>
-                        <h4 className="font-headline font-bold text-sm leading-snug group-hover:text-primary transition-colors">{story.title}</h4>
+                      <div className="flex flex-col justify-center">
+                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{story.category} • {story.timeAgo}</span>
+                        <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">{story.title}</h4>
                       </div>
                     </Link>
                   ))}
                 </div>
                 <div className="mt-8 pt-4 border-t border-border/10">
-                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">
-                    Lihat Lebih Banyak Berita
-                  </Link>
+                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat Lebih Banyak Berita</Link>
                 </div>
               </div>
-              <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                  <TrendingUp className="h-24 w-24" />
-                </div>
-                <div className="relative z-10 text-center">
-                  <Heading level={3} className="text-white text-lg mb-2 tracking-tight">Buletin Berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Langsung Ke Akun Anda Setiap Hari.</BodyText>
-                  <Link href="/auth">
-                    <Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm transition-transform active:scale-95">
-                      Langganan Sekarang
-                    </Button>
-                  </Link>
+              <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md">
+                <div className="text-center">
+                  <Heading level={3} className="text-white text-lg mb-2">Buletin Berita</Heading>
+                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan Ringkasan Berita Terpenting Setiap Hari.</BodyText>
+                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan Sekarang</Button></Link>
                 </div>
               </Card>
             </div>
           </aside>
         </div>
       </main>
-      <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: showBackToTop ? 1 : 0, scale: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
-        <Button size="icon" className="rounded-full h-12 w-12 shadow-lg bg-primary text-primary-foreground hover:scale-110 transition-transform" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
+        <Button size="icon" className="rounded-full h-12 w-12 shadow-lg bg-primary text-primary-foreground" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <ChevronUp className="h-6 w-6" />
         </Button>
       </motion.div>
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-md p-8 border-none shadow-xl">
+        <AlertDialogContent className="rounded-md p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl mb-2">Akses Terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm leading-relaxed opacity-70 mb-2">Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi, Memberikan Suka, Atau Menyimpan Artikel Ini Ke Arsip Anda.</AlertDialogDescription>
+            <AlertDialogTitle className="font-headline font-bold text-xl">Akses Terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm opacity-70">Silakan Masuk Terlebih Dahulu Untuk Berpartisipasi.</AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-3 mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 px-6 border-border">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 shadow-sm">Masuk Sekarang</AlertDialogAction>
-          </AlertDialogFooter>
+          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11">Masuk Sekarang</AlertDialogAction></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
