@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { ArrowRight, Clock, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === "hero-news");
+  
   const posts = [
     {
       id: 1,
@@ -59,7 +60,7 @@ export default function Home() {
             <Card className="p-0 border-none bg-transparent shadow-none" animate={false}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted">
-                  {heroImage?.imageUrl && (
+                  {heroImage?.imageUrl ? (
                     <Image 
                       src={heroImage.imageUrl} 
                       alt="Featured News"
@@ -67,10 +68,14 @@ export default function Home() {
                       className="object-cover"
                       data-ai-hint="abstract news"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-accent/10 flex items-center justify-center">
+                      <MutedText>No Preview Available</MutedText>
+                    </div>
                   )}
                 </div>
                 <div className="space-y-6">
-                  <Badge variant="secondary" className="bg-white/80 text-primary px-3 py-1 rounded-full">
+                  <Badge variant="secondary" className="bg-white/80 text-primary px-3 py-1 rounded-full border-none">
                     Featured Story
                   </Badge>
                   <Title className="leading-tight">
@@ -104,16 +109,18 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post, idx) => (
+            {posts.map((post) => (
               <Card key={post.id} className="h-full flex flex-col">
                 <div className="relative h-48 w-full overflow-hidden bg-muted">
-                  {post.image && (
+                  {post.image ? (
                     <Image 
                       src={post.image} 
                       alt={post.title}
                       fill
                       className="object-cover hover:scale-105 transition-transform duration-500"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-accent/5 flex items-center justify-center" />
                   )}
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col justify-between">
@@ -179,9 +186,9 @@ export default function Home() {
             <MutedText className="block">© 2024 InfoFlow Media Group. All rights reserved.</MutedText>
           </div>
           <div className="flex gap-8 text-sm">
-            <Link href="/privacy" className="hover:text-accent transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-accent transition-colors">Terms of Service</Link>
-            <Link href="/contact" className="hover:text-accent transition-colors">Contact</Link>
+            <Link href="#" className="hover:text-accent transition-colors">Privacy Policy</Link>
+            <Link href="#" className="hover:text-accent transition-colors">Terms of Service</Link>
+            <Link href="#" className="hover:text-accent transition-colors">Contact</Link>
           </div>
         </div>
       </footer>
