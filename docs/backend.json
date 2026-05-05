@@ -1,72 +1,204 @@
 {
   "entities": {
-    "ReaderProfile": {
+    "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "ReaderProfile",
+      "title": "UserProfile",
       "type": "object",
-      "description": "Represents a profile for a user who reads content and can subscribe to news notifications. This entity stores information about individual readers, separate from content creators.",
+      "description": "Represents a user's profile within the InfoFlow application, holding public information and app-specific settings. Authentication details are managed by an external system.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the ReaderProfile entity."
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "authId": {
+          "type": "string",
+          "description": "Identifier from the external authentication system, linking this profile to an authenticated user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The public name of the user."
         },
         "email": {
           "type": "string",
-          "description": "The email address of the reader, primarily used for sending notifications and as a unique identifier for login. This email must be unique across all reader profiles.",
+          "description": "The email address associated with the user, typically from the authentication system.",
           "format": "email"
         },
-        "name": {
+        "profileImageUrl": {
           "type": "string",
-          "description": "The display name or full name of the reader."
+          "description": "URL to the user's profile picture, if available.",
+          "format": "uri"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biographical description provided by the user."
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp indicating when the reader profile was created.",
+          "description": "Timestamp when the user profile was created.",
           "format": "date-time"
         },
         "updatedAt": {
           "type": "string",
-          "description": "Timestamp indicating when the reader profile was last updated.",
+          "description": "Timestamp when the user profile was last updated.",
           "format": "date-time"
         }
       },
       "required": [
         "id",
+        "authId",
+        "displayName",
         "email",
-        "name",
         "createdAt",
         "updatedAt"
       ]
     },
-    "Subscription": {
+    "Post": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Subscription",
+      "title": "Post",
       "type": "object",
-      "description": "Manages a reader's subscription status for receiving news notifications via email, typically a general platform-wide news feed.",
+      "description": "Represents metadata for a news article or media post, with its primary content stored in Sanity.io. This entity facilitates app-specific features like search, filtering, and user engagement.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Subscription entity."
+          "description": "Unique identifier for the Post entity."
         },
-        "readerId": {
+        "sanityContentId": {
           "type": "string",
-          "description": "Reference to the ReaderProfile who owns this subscription. (Relationship: ReaderProfile 1:N Subscription)"
+          "description": "Unique identifier for the corresponding content in the Sanity.io CMS. This ID is used to fetch the full article/media from Sanity.io."
         },
-        "subscribedAt": {
+        "authorId": {
           "type": "string",
-          "description": "Timestamp indicating when the subscription was initially created or activated.",
+          "description": "Reference to the UserProfile of the author who created this post. (Relationship: UserProfile 1:N Post)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the post, primarily for display in app feeds and search results."
+        },
+        "excerpt": {
+          "type": "string",
+          "description": "A brief summary or introduction of the post content, suitable for display in feeds."
+        },
+        "thumbnailImageUrl": {
+          "type": "string",
+          "description": "URL for a thumbnail image associated with the post, typically sourced from Sanity.io for visual representation.",
+          "format": "uri"
+        },
+        "publishedAt": {
+          "type": "string",
+          "description": "Timestamp when the post was first published and made visible to users.",
           "format": "date-time"
         },
-        "isActive": {
-          "type": "boolean",
-          "description": "A boolean flag indicating whether the subscription is currently active. If false, the reader should not receive notifications."
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the post's metadata was last updated in the app's database.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The publication status of the post (e.g., 'published', 'archived'), controlling its visibility in the app."
+        },
+        "viewCount": {
+          "type": "number",
+          "description": "A counter for the number of times the post has been viewed within the InfoFlow app."
+        },
+        "keywords": {
+          "type": "array",
+          "description": "An array of keywords or tags associated with the post, used for basic search and filtering.",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
         "id",
-        "readerId",
-        "subscribedAt",
-        "isActive"
+        "sanityContentId",
+        "authorId",
+        "title",
+        "publishedAt",
+        "updatedAt",
+        "status"
+      ]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a user's comment on a specific media post, allowing for interaction and discussion.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Comment entity."
+        },
+        "postId": {
+          "type": "string",
+          "description": "Reference to the Post the comment belongs to. (Relationship: Post 1:N Comment)"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to the UserProfile of the user who made the comment. (Relationship: UserProfile 1:N Comment)"
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the comment."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the comment was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the comment was last updated.",
+          "format": "date-time"
+        },
+        "parentId": {
+          "type": "string",
+          "description": "Optional reference to another Comment, indicating that this comment is a reply. (Relationship: Comment 1:N Comment)"
+        }
+      },
+      "required": [
+        "id",
+        "postId",
+        "authorId",
+        "content",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Reaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Reaction",
+      "type": "object",
+      "description": "Represents a user's reaction (e.g., a 'like' or 'heart') to a media post, indicating engagement.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Reaction entity."
+        },
+        "postId": {
+          "type": "string",
+          "description": "Reference to the Post the reaction is for. (Relationship: Post 1:N Reaction)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile of the user who made the reaction. (Relationship: UserProfile 1:N Reaction)"
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of reaction (e.g., 'like', 'love', 'clap')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the reaction was recorded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "postId",
+        "userId",
+        "type",
+        "createdAt"
       ]
     }
   },
@@ -79,42 +211,114 @@
   "firestore": {
     "structure": [
       {
-        "path": "/readerProfiles/{readerId}",
+        "path": "/users/{userId}",
         "definition": {
-          "entityName": "ReaderProfile",
+          "entityName": "UserProfile",
           "schema": {
-            "$ref": "#/backend/entities/ReaderProfile"
+            "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores individual reader profiles. The document ID (`{readerId}`) corresponds to the Firebase Authentication UID of the reader, enabling path-based ownership. The 'id' field within the document should match the document ID for self-validation.",
+          "description": "Stores private user profile information, including sensitive details like email. Access is strictly limited to the authenticated owner. This collection follows a homogeneous security posture where all documents are owner-only for read and write access.",
           "params": [
             {
-              "name": "readerId",
-              "description": "The unique identifier (Firebase Auth UID) of the reader. This serves as the document ID for the reader's profile."
+              "name": "userId",
+              "description": "The unique identifier of the user, matching 'request.auth.uid'."
             }
           ]
         }
       },
       {
-        "path": "/readerProfiles/{readerId}/subscriptions/{subscriptionId}",
+        "path": "/roles_creator/{userId}",
         "definition": {
-          "entityName": "Subscription",
+          "entityName": "UserRole",
           "schema": {
-            "$ref": "#/backend/entities/Subscription"
+            "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores individual subscription records for a specific reader. The 'readerId' field within each document is denormalized from the parent path for authorization independence, allowing security rules to verify ownership without `get()` calls. The 'id' field within the document should match the document ID for the subscription.",
+          "description": "A collection used for Database-Backed Access Control (DBAC) to define users with 'creator' privileges. The mere existence of a document at this path for a given 'userId' grants the creator role, enabling authorization for actions like publishing posts.",
           "params": [
             {
-              "name": "readerId",
-              "description": "The unique identifier (Firebase Auth UID) of the parent reader, owning this subscription."
+              "name": "userId",
+              "description": "The unique identifier of the user who possesses the 'creator' role."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}",
+        "definition": {
+          "entityName": "Post",
+          "schema": {
+            "$ref": "#/backend/entities/Post"
+          },
+          "description": "Contains metadata for all published media posts. All documents in this collection are publicly readable, facilitating the main news feed and content display. Only the 'authorId' (denormalized within the document) can modify or delete their own posts. This collection represents a homogeneous security posture for publicly accessible content.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier for the published post."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{authorId}/draft_posts/{postId}",
+        "definition": {
+          "entityName": "Post",
+          "schema": {
+            "$ref": "#/backend/entities/Post"
+          },
+          "description": "Stores private draft versions of media posts, accessible only by the respective 'authorId'. This segregates private content from public content, simplifying security rules and enabling efficient queries for a user's own drafts. The 'authorId' is part of the path, ensuring clear ownership and authorization.",
+          "params": [
+            {
+              "name": "authorId",
+              "description": "The unique identifier of the user who authored and owns this draft post."
             },
             {
-              "name": "subscriptionId",
-              "description": "The unique identifier for a specific subscription document."
+              "name": "postId",
+              "description": "The unique identifier for the draft post."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "A subcollection holding comments for a specific post. All comments are publicly readable. The 'authorId' (the commenter's ID) is denormalized within each comment document for authorization independence, allowing the commenter to manage their own comment. To support moderation by the parent post's author, the 'postAuthorId' (the author of the parent post) would also be denormalized into each comment document.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier of the parent post to which the comment belongs."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier for the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}/reactions/{reactionId}",
+        "definition": {
+          "entityName": "Reaction",
+          "schema": {
+            "$ref": "#/backend/entities/Reaction"
+          },
+          "description": "A subcollection storing user reactions (e.g., likes) for a specific post. All reactions are publicly readable for displaying counts. The 'userId' (the reactor's ID) is denormalized within each reaction document to ensure authorization independence, allowing the reactor to create or delete their own reaction without relying on parent document lookups.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier of the parent post to which the reaction belongs."
+            },
+            {
+              "name": "reactionId",
+              "description": "The unique identifier for the reaction."
             }
           ]
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to be minimalistic, secure, and highly efficient, focusing exclusively on managing reader profiles and their subscriptions, as content management is delegated to Sanity.io. \n\n**Authorization Independence:** This design achieves authorization independence by using a hierarchical path structure combined with explicit denormalization. For `ReaderProfile` documents, the document ID (`{readerId}`) directly corresponds to the Firebase `request.auth.uid` of the authenticated user. This means a user's profile is found at `/readerProfiles/{request.auth.uid}`, making access checks immediate and atomic without requiring `get()` calls to other documents.\n\nFor `Subscription` documents, they are nested under the `ReaderProfile` at `/readerProfiles/{readerId}/subscriptions/{subscriptionId}`. Critically, each `Subscription` document *also* contains a `readerId` field within its data (`resource.data.readerId`). This denormalization ensures that security rules can verify ownership (i.e., `request.auth.uid == readerId` from the path AND `request.auth.uid == resource.data.readerId` from the document data) without needing to fetch the parent `ReaderProfile` document. This allows for atomic creation, update, and deletion of subscriptions.\n\n**Querying for Authorization and Security Rules (QAPs):** The structure inherently supports secure `list` operations (QAPs) by leveraging path-based ownership. A reader can easily query their own profile at `/readerProfiles/{request.auth.uid}`. Similarly, a reader can query all their subscriptions by listing documents under `/readerProfiles/{request.auth.uid}/subscriptions`. The security rules would enforce that the `readerId` wildcard in the path matches `request.auth.uid`, effectively filtering results to only the current user's data. This prevents unauthorized users from performing wide `list` queries across all profiles or subscriptions, fulfilling the QAP principle by moving authorization filtering to the path and explicit document fields rather than relying on `get()` calls or complex rule logic.\n\n**Structural Segregation and Access Modeling:** Each collection (`/readerProfiles` and `/readerProfiles/{readerId}/subscriptions`) has a homogeneous security posture. All documents within `/readerProfiles` are private to the `readerId` specified in the path. Similarly, all `Subscription` documents are private to their parent `readerId`. This clear segregation simplifies security rules significantly, making them easy to write, understand, and debug."
+    "reasoning": "The Firestore structure for the InfoFlow application prioritizes security, scalability, and debuggability, adhering strictly to the core design principles and strategy mandates. The design ensures robust access control, optimizes for performance under the Firebase Spark Plan, and simplifies security rules.\n\nKey aspects of this design:\n\n1.  **Authorization Independence (CRITICAL):** This is achieved primarily through **denormalization**. For documents in subcollections like `comments` and `reactions`, any authorization context derived from the parent (`Post`) or the user (`UserProfile`) is copied directly into the child document. For example, a `Comment` document includes its `authorId` (the commenter) for self-moderation, and is explicitly recommended to include `postAuthorId` (the author of the parent `Post`) if moderation rights for the post author are required. Similarly, `Reaction` documents contain the `userId` of the reactor. This eliminates the need for expensive and potentially unreliable `get()` calls within security rules, ensuring atomic operations and simplifying rule debugging.\n\n2.  **Structural Segregation (Homogeneous Security Posture):** This is applied to `Post` entities. Rather than using a single collection with a `status` field to differentiate between public and private posts (drafts), two distinct collections are used: `/posts/{postId}` for all `published` posts and `/users/{authorId}/draft_posts/{postId}` for private `draft` posts. This ensures that all documents within a given collection share the exact same security requirements. For instance, all documents in `/posts` are publicly readable, while all documents in `/users/{authorId}/draft_posts` are only accessible by their owner. This significantly simplifies security rules and improves query performance for public feeds, as rules are applied *after* the query.\n\n3.  **QAPs (Rules are not Filters):** The structural segregation directly supports Queryable Authorization Policies. For the main news feed, applications can query `/posts` directly, knowing that all documents returned are legitimately public, and security rules can simply allow `read: if true;`. There's no need for client-side filtering or complex server-side rule logic to prevent unauthorized data from being exposed. Similarly, `comments` and `reactions` are subcollections under `posts`, allowing for efficient and secure retrieval of all related items for a specific post without broad collection scans.\n\n4.  **DBAC (Database-Backed Access Control):** Global roles, such as 'creator', are managed through dedicated top-level collections like `/roles_creator/{userId}`. The presence of a document in this collection indicates a user's role. Security rules can then use efficient `exists()` checks to verify roles, rather than relying on custom claims or complex document content reads. For instance, to create a new `Post`, a user's `uid` must exist in `/roles_creator`.\n\n5.  **Path-Based Ownership:** For user-specific data like `UserProfile` and `draft_posts`, data is nested under `/users/{userId}/...`. This leverages the path itself for authorization, making rules for owner-only access simple and explicit (e.g., `match /users/{userId}/{...} { allow read, write: if request.auth.uid == userId; }`).\n\n6.  **Schema Adherence and Denormalization for Display:** The `UserProfile` entity, as defined, contains both private (`email`) and potentially public (`displayName`, `profileImageUrl`) fields. To strictly adhere to the 'Homogeneous Security Posture' (Mandate B) and keep `email` private, the `/users/{userId}` collection is designated as **owner-only** for read/write. This implies that if author display names or profile images are needed for `Post` and `Comment` entities, and are not provided by the Sanity.io CMS (which handles main content), they would need to be denormalized into the `Post` and `Comment` documents. While not explicitly in the provided schema for `Post` and `Comment`, this is a crucial consideration for performance and cost-efficiency on the Spark Plan. For this design, we assume the `UserProfile` is private and `displayName` retrieval for posts/comments is handled externally (e.g., by Sanity.io content) or via client-side lookups where appropriate."
   }
 }
