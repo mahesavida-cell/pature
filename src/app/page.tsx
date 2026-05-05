@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, TrendingUp, ChevronRight, Share2 } from "lucide-react";
+import { Clock, Bookmark, TrendingUp, ChevronRight, Share2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -57,6 +57,30 @@ export default function Home() {
     }
   ];
 
+  const recommendedPosts = [
+    {
+      id: "r1",
+      title: "Penerapan ekonomi sirkular pada industri kreatif",
+      category: "Bisnis",
+      readTime: "4 mnt",
+      image: "https://picsum.photos/seed/rec1/400/250"
+    },
+    {
+      id: "r2",
+      title: "Eksplorasi material ramah lingkungan untuk hunian",
+      category: "Desain",
+      readTime: "6 mnt",
+      image: "https://picsum.photos/seed/rec2/400/250"
+    },
+    {
+      id: "r3",
+      title: "Potensi pariwisata berkelanjutan di pedesaan",
+      category: "Budaya",
+      readTime: "5 mnt",
+      image: "https://picsum.photos/seed/rec3/400/250"
+    }
+  ];
+
   const popularPosts = [
     { id: "1", title: "Mengapa tipografi lebih penting dari yang Anda pikirkan", category: "Desain", rank: "01" },
     { id: "2", title: "Kebangkitan AI dalam jurnalisme modern", category: "Teknologi", rank: "02" },
@@ -67,7 +91,7 @@ export default function Home() {
     <div className="bg-background min-h-screen pb-10">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-32 md:pt-40">
-        {/* Rombakan Hero Section: 2 Segmen */}
+        {/* Hero Section */}
         <section className="mb-16 lg:mb-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
@@ -166,68 +190,109 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Bagian bawah tetap seperti semula sesuai instruksi */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
           <section className="lg:col-span-8">
-            <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
-              <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Cerita terbaru</Heading>
-              <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat semua</Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-              {posts.map((post, idx) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileTap={{ scale: 0.99 }}
-                >
-                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-lg overflow-hidden shadow-sm">
-                    <Link href={`/news/${post.id}`}>
-                      <div className="relative h-44 w-full overflow-hidden bg-muted">
-                        {post.image && (
-                          <Image 
-                            src={post.image} 
-                            alt={post.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        )}
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-white/95 backdrop-blur-sm text-primary hover:bg-white text-[9px] font-bold border-none shadow-sm px-2">
-                            {post.category}
-                          </Badge>
+            {/* Cerita Terbaru */}
+            <div className="mb-16">
+              <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
+                <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Cerita terbaru</Heading>
+                <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold">Lihat semua</Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                {posts.map((post, idx) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
+                    <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-lg overflow-hidden shadow-sm">
+                      <Link href={`/news/${post.id}`}>
+                        <div className="relative h-44 w-full overflow-hidden bg-muted">
+                          {post.image && (
+                            <Image 
+                              src={post.image} 
+                              alt={post.title}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          )}
+                          <div className="absolute top-3 left-3">
+                            <Badge className="bg-white/95 backdrop-blur-sm text-primary hover:bg-white text-[9px] font-bold border-none shadow-sm px-2">
+                              {post.category}
+                            </Badge>
+                          </div>
                         </div>
+                      </Link>
+                      <CardContent className="p-5 flex-1 flex flex-col">
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-[10px] font-bold text-muted-foreground">{post.readTime}</span>
+                          </div>
+                          <Link href={`/news/${post.id}`}>
+                            <h3 className="text-base font-headline font-bold mb-2 group-hover:text-accent transition-colors leading-snug">
+                              {post.title}
+                            </h3>
+                          </Link>
+                          <BodyText className="text-xs line-clamp-2 text-foreground/60">
+                            {post.excerpt}
+                          </BodyText>
+                        </div>
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
+                          <span className="text-[10px] font-bold text-primary/70">{post.author}</span>
+                          <motion.div whileTap={{ scale: 0.8 }}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                              <Bookmark className="h-4 w-4" />
+                            </Button>
+                          </motion.div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Rekomendasi untuk Anda */}
+            <div className="mb-16">
+              <div className="flex items-center gap-3 mb-8 border-b border-border/60 pb-4">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <Heading level={2} className="text-xl md:text-2xl font-headline font-bold">Rekomendasi untuk anda</Heading>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {recommendedPosts.map((post, idx) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <Link href={`/news/${post.id}`} className="group block">
+                      <div className="relative aspect-[4/3] rounded-lg overflow-hidden mb-3 border border-primary/5 shadow-sm">
+                        <Image 
+                          src={post.image} 
+                          alt={post.title} 
+                          fill 
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Badge variant="secondary" className="px-1.5 py-0 text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm">
+                          {post.category}
+                        </Badge>
+                        <h4 className="text-sm font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                          {post.title}
+                        </h4>
+                        <span className="text-[9px] font-bold text-muted-foreground opacity-60 block">{post.readTime} baca</span>
                       </div>
                     </Link>
-                    <CardContent className="p-5 flex-1 flex flex-col">
-                      <div className="mb-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-[10px] font-bold text-muted-foreground">{post.readTime}</span>
-                        </div>
-                        <Link href={`/news/${post.id}`}>
-                          <h3 className="text-base font-headline font-bold mb-2 group-hover:text-accent transition-colors leading-snug">
-                            {post.title}
-                          </h3>
-                        </Link>
-                        <BodyText className="text-xs line-clamp-2 text-foreground/60">
-                          {post.excerpt}
-                        </BodyText>
-                      </div>
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
-                        <span className="text-[10px] font-bold text-primary/70">{post.author}</span>
-                        <motion.div whileTap={{ scale: 0.8 }}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                            <Bookmark className="h-4 w-4" />
-                          </Button>
-                        </motion.div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </section>
 
