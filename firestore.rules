@@ -1,140 +1,47 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * INFOFLOW SECURITY RULES (PROTOTYPING MODE)
-     *
-     * CORE PHILOSOPHY:
-     * This ruleset implements a strict authorization model tailored for the InfoFlow news application.
-     * It prioritizes the Firebase Spark Plan by maximizing "Authorization Independence" through 
-     * data denormalization. By including owner UIDs directly in documents, we minimize expensive 
-     * cross-document lookups (get() calls).
-     *
-     * DATA STRUCTURE:
-     * - /users/{userId}: Private user profiles, strictly owner-only.
-     * - /roles_creator/{userId}: A DBAC (Database-Backed Access Control) collection to identify creators.
-     * - /posts/{postId}: Publicly readable news metadata; writes restricted to creators and owners.
-     * - /users/{userId}/draft_posts/{postId}: Private owner-only staging for content.
-     * - /posts/{postId}/comments & /posts/{postId}/reactions: Publicly readable subcollections 
-     *   with owner-restricted writes for engagement.
-     *
-     * KEY SECURITY DECISIONS:
-     * 1. Structural Segregation: Drafts are separated into user-specific paths to simplify 
-     *    public feed queries and prevent accidental exposure of unpublished work.
-     * 2. Denormalization for Authorization: 'authorId' and 'userId' are required in 
-     *    document bodies to allow rules to validate ownership without fetching parent documents.
-     * 3. Role-Based Access: Creator privileges are verified via an efficient exists() check 
-     *    on the /roles_creator collection.
-     * 4. Prototyping Flexibility: Rules enforce WHO can write but do not strictly validate 
-     *    the non-relational data shape (e.g., descriptions, thumbnails).
-     */
-
-    // --- HELPER FUNCTIONS ---
-
-    /** @description Checks if the request is from an authenticated user. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** @description Checks if the user's UID matches the provided ID. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** @description Checks if the user is the owner of an existing document. Used for updates/deletes. */
-    function isExistingOwner(ownerId) {
-      return resource != null && isOwner(ownerId);
-    }
-
-    /** @description Checks if the user has been granted the 'creator' role via DBAC. */
-    function isCreator() {
-      return exists(/databases/$(database)/documents/roles_creator/$(request.auth.uid));
-    }
-
-    // --- COLLECTION RULES ---
-
-    /**
-     * @description Rules for private user profiles.
-     * @path /users/{userId}
-     * @allow (get, list, create, update) if request.auth.uid == userId
-     * @deny (list) if auth.uid != userId
-     * @principle Path-based ownership: Users can only see or modify their own profile data.
-     */
     match /users/{userId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      allow get, list, create, update: if isOwner(userId);
+      
+      match /bookmarks/{postId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /history/{postId} {
+        allow read, write: if isOwner(userId);
+      }
     }
 
-    /**
-     * @description DBAC role mapping for creators.
-     * @path /roles_creator/{userId}
-     * @allow (get) if isSignedIn() - Users might need to check their own role.
-     * @deny (write) All - Roles should be managed by a system admin/service account.
-     * @principle Database-Backed Access Control (DBAC) for role verification.
-     */
     match /roles_creator/{userId} {
       allow get: if isSignedIn();
-      allow list: if false;
-      allow create, update, delete: if false;
+      allow list, write: if false;
     }
 
-    /**
-     * @description Publicly readable news posts with owner-only writes.
-     * @path /posts/{postId}
-     * @allow (get, list) if true - Public consumption.
-     * @allow (create) if user is a creator and sets themselves as author.
-     * @deny (update) if user is not the original author.
-     * @principle Public Read / Owner Write with Role validation.
-     */
     match /posts/{postId} {
       allow get, list: if true;
-      allow create: if isCreator() && request.resource.data.authorId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.authorId) && request.resource.data.authorId == resource.data.authorId;
-      allow delete: if isExistingOwner(resource.data.authorId);
+      allow create: if isSignedIn() && exists(/databases/$(database)/documents/roles_creator/$(request.auth.uid));
+      allow update, delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
 
-      /**
-       * @description User comments on posts.
-       * @path /posts/{postId}/comments/{commentId}
-       * @allow (get, list) if true.
-       * @allow (create) if authorId in data matches current user.
-       * @principle Denormalization for authorization; avoids get() on parent post.
-       */
       match /comments/{commentId} {
         allow get, list: if true;
-        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-        allow update: if isExistingOwner(resource.data.authorId) && request.resource.data.authorId == resource.data.authorId;
-        allow delete: if isExistingOwner(resource.data.authorId);
+        allow create, update, delete: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
       }
 
-      /**
-       * @description Post reactions (likes/claps).
-       * @path /posts/{postId}/reactions/{reactionId}
-       * @allow (get, list) if true.
-       * @allow (create) if userId in data matches current user.
-       * @principle Relational integrity enforced on creation via internal ID check.
-       */
       match /reactions/{reactionId} {
         allow get, list: if true;
-        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-        allow update: if false; // Reactions are typically deleted and recreated, not updated.
-        allow delete: if isExistingOwner(resource.data.userId);
+        allow create, delete: if isSignedIn() && request.auth.uid == (request.resource.data.userId || resource.data.userId);
       }
-    }
-
-    /**
-     * @description Private drafts nested under the author's path.
-     * @path /users/{authorId}/draft_posts/{postId}
-     * @allow (all) if request.auth.uid == authorId.
-     * @principle Structural Segregation: Private data is kept out of public collections.
-     */
-    match /users/{authorId}/draft_posts/{postId} {
-      allow get, list: if isOwner(authorId);
-      allow create: if isOwner(authorId) && request.resource.data.authorId == authorId;
-      allow update: if isExistingOwner(authorId) && request.resource.data.authorId == resource.data.authorId;
-      allow delete: if isExistingOwner(authorId);
     }
   }
 }

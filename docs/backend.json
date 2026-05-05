@@ -5,7 +5,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile within the InfoFlow application, holding public information and app-specific settings. Authentication details are managed by an external system.",
+      "description": "Represents a user's profile within the InfoFlow application, holding public information and app-specific settings.",
       "properties": {
         "id": {
           "type": "string",
@@ -13,7 +13,7 @@
         },
         "authId": {
           "type": "string",
-          "description": "Identifier from the external authentication system, linking this profile to an authenticated user."
+          "description": "Identifier from the external authentication system."
         },
         "displayName": {
           "type": "string",
@@ -21,12 +21,12 @@
         },
         "email": {
           "type": "string",
-          "description": "The email address associated with the user, typically from the authentication system.",
+          "description": "The email address associated with the user.",
           "format": "email"
         },
         "profileImageUrl": {
           "type": "string",
-          "description": "URL to the user's profile picture, if available.",
+          "description": "URL to the user's profile picture.",
           "format": "uri"
         },
         "bio": {
@@ -35,12 +35,10 @@
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp when the user profile was created.",
           "format": "date-time"
         },
         "updatedAt": {
           "type": "string",
-          "description": "Timestamp when the user profile was last updated.",
           "format": "date-time"
         }
       },
@@ -53,154 +51,25 @@
         "updatedAt"
       ]
     },
-    "Post": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Post",
+    "Bookmark": {
+      "title": "Bookmark",
       "type": "object",
-      "description": "Represents metadata for a news article or media post, with its primary content stored in Sanity.io. This entity facilitates app-specific features like search, filtering, and user engagement.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Post entity."
-        },
-        "sanityContentId": {
-          "type": "string",
-          "description": "Unique identifier for the corresponding content in the Sanity.io CMS. This ID is used to fetch the full article/media from Sanity.io."
-        },
-        "authorId": {
-          "type": "string",
-          "description": "Reference to the UserProfile of the author who created this post. (Relationship: UserProfile 1:N Post)"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the post, primarily for display in app feeds and search results."
-        },
-        "excerpt": {
-          "type": "string",
-          "description": "A brief summary or introduction of the post content, suitable for display in feeds."
-        },
-        "thumbnailImageUrl": {
-          "type": "string",
-          "description": "URL for a thumbnail image associated with the post, typically sourced from Sanity.io for visual representation.",
-          "format": "uri"
-        },
-        "publishedAt": {
-          "type": "string",
-          "description": "Timestamp when the post was first published and made visible to users.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp when the post's metadata was last updated in the app's database.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The publication status of the post (e.g., 'published', 'archived'), controlling its visibility in the app."
-        },
-        "viewCount": {
-          "type": "number",
-          "description": "A counter for the number of times the post has been viewed within the InfoFlow app."
-        },
-        "keywords": {
-          "type": "array",
-          "description": "An array of keywords or tags associated with the post, used for basic search and filtering.",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "id",
-        "sanityContentId",
-        "authorId",
-        "title",
-        "publishedAt",
-        "updatedAt",
-        "status"
-      ]
+        "postId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "savedAt": { "type": "string", "format": "date-time" }
+      }
     },
-    "Comment": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Comment",
+    "History": {
+      "title": "History",
       "type": "object",
-      "description": "Represents a user's comment on a specific media post, allowing for interaction and discussion.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Comment entity."
-        },
-        "postId": {
-          "type": "string",
-          "description": "Reference to the Post the comment belongs to. (Relationship: Post 1:N Comment)"
-        },
-        "authorId": {
-          "type": "string",
-          "description": "Reference to the UserProfile of the user who made the comment. (Relationship: UserProfile 1:N Comment)"
-        },
-        "content": {
-          "type": "string",
-          "description": "The text content of the comment."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the comment was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp when the comment was last updated.",
-          "format": "date-time"
-        },
-        "parentId": {
-          "type": "string",
-          "description": "Optional reference to another Comment, indicating that this comment is a reply. (Relationship: Comment 1:N Comment)"
-        }
-      },
-      "required": [
-        "id",
-        "postId",
-        "authorId",
-        "content",
-        "createdAt",
-        "updatedAt"
-      ]
-    },
-    "Reaction": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Reaction",
-      "type": "object",
-      "description": "Represents a user's reaction (e.g., a 'like' or 'heart') to a media post, indicating engagement.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Reaction entity."
-        },
-        "postId": {
-          "type": "string",
-          "description": "Reference to the Post the reaction is for. (Relationship: Post 1:N Reaction)"
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the UserProfile of the user who made the reaction. (Relationship: UserProfile 1:N Reaction)"
-        },
-        "type": {
-          "type": "string",
-          "description": "The type of reaction (e.g., 'like', 'love', 'clap')."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the reaction was recorded.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "postId",
-        "userId",
-        "type",
-        "createdAt"
-      ]
+        "postId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "viewedAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "auth": {
@@ -219,108 +88,29 @@
           "schema": {
             "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores private user profile information, including sensitive details like email. Access is strictly limited to the authenticated owner. This collection follows a homogeneous security posture where all documents are owner-only for read and write access.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user, matching 'request.auth.uid'."
-            }
-          ]
+          "description": "Private user profile information."
         }
       },
       {
-        "path": "/roles_creator/{userId}",
+        "path": "/users/{userId}/bookmarks/{postId}",
         "definition": {
-          "entityName": "UserRole",
+          "entityName": "Bookmark",
           "schema": {
-            "$ref": "#/backend/entities/UserProfile"
+            "$ref": "#/backend/entities/Bookmark"
           },
-          "description": "A collection used for Database-Backed Access Control (DBAC) to define users with 'creator' privileges. The mere existence of a document at this path for a given 'userId' grants the creator role, enabling authorization for actions like publishing posts.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user who possesses the 'creator' role."
-            }
-          ]
+          "description": "Saved posts for the user."
         }
       },
       {
-        "path": "/posts/{postId}",
+        "path": "/users/{userId}/history/{postId}",
         "definition": {
-          "entityName": "Post",
+          "entityName": "History",
           "schema": {
-            "$ref": "#/backend/entities/Post"
+            "$ref": "#/backend/entities/History"
           },
-          "description": "Contains metadata for all published media posts. All documents in this collection are publicly readable, facilitating the main news feed and content display. Only the 'authorId' (denormalized within the document) can modify or delete their own posts. This collection represents a homogeneous security posture for publicly accessible content.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "The unique identifier for the published post."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{authorId}/draft_posts/{postId}",
-        "definition": {
-          "entityName": "Post",
-          "schema": {
-            "$ref": "#/backend/entities/Post"
-          },
-          "description": "Stores private draft versions of media posts, accessible only by the respective 'authorId'. This segregates private content from public content, simplifying security rules and enabling efficient queries for a user's own drafts. The 'authorId' is part of the path, ensuring clear ownership and authorization.",
-          "params": [
-            {
-              "name": "authorId",
-              "description": "The unique identifier of the user who authored and owns this draft post."
-            },
-            {
-              "name": "postId",
-              "description": "The unique identifier for the draft post."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/posts/{postId}/comments/{commentId}",
-        "definition": {
-          "entityName": "Comment",
-          "schema": {
-            "$ref": "#/backend/entities/Comment"
-          },
-          "description": "A subcollection holding comments for a specific post. All comments are publicly readable. The 'authorId' (the commenter's ID) is denormalized within each comment document for authorization independence, allowing the commenter to manage their own comment. To support moderation by the parent post's author, the 'postAuthorId' (the author of the parent post) would also be denormalized into each comment document.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "The unique identifier of the parent post to which the comment belongs."
-            },
-            {
-              "name": "commentId",
-              "description": "The unique identifier for the comment."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/posts/{postId}/reactions/{reactionId}",
-        "definition": {
-          "entityName": "Reaction",
-          "schema": {
-            "$ref": "#/backend/entities/Reaction"
-          },
-          "description": "A subcollection storing user reactions (e.g., likes) for a specific post. All reactions are publicly readable for displaying counts. The 'userId' (the reactor's ID) is denormalized within each reaction document to ensure authorization independence, allowing the reactor to create or delete their own reaction without relying on parent document lookups.",
-          "params": [
-            {
-              "name": "postId",
-              "description": "The unique identifier of the parent post to which the reaction belongs."
-            },
-            {
-              "name": "reactionId",
-              "description": "The unique identifier for the reaction."
-            }
-          ]
+          "description": "Reading history for the user."
         }
       }
-    ],
-    "reasoning": "The Firestore structure for the InfoFlow application prioritizes security, scalability, and debuggability, adhering strictly to the core design principles and strategy mandates. The design ensures robust access control, optimizes for performance under the Firebase Spark Plan, and simplifies security rules.\n\nKey aspects of this design:\n\n1.  **Authorization Independence (CRITICAL):** This is achieved primarily through **denormalization**. For documents in subcollections like `comments` and `reactions`, any authorization context derived from the parent (`Post`) or the user (`UserProfile`) is copied directly into the child document. For example, a `Comment` document includes its `authorId` (the commenter) for self-moderation, and is explicitly recommended to include `postAuthorId` (the author of the parent `Post`) if moderation rights for the post author are required. Similarly, `Reaction` documents contain the `userId` of the reactor. This eliminates the need for expensive and potentially unreliable `get()` calls within security rules, ensuring atomic operations and simplifying rule debugging.\n\n2.  **Structural Segregation (Homogeneous Security Posture):** This is applied to `Post` entities. Rather than using a single collection with a `status` field to differentiate between public and private posts (drafts), two distinct collections are used: `/posts/{postId}` for all `published` posts and `/users/{authorId}/draft_posts/{postId}` for private `draft` posts. This ensures that all documents within a given collection share the exact same security requirements. For instance, all documents in `/posts` are publicly readable, while all documents in `/users/{authorId}/draft_posts` are only accessible by their owner. This significantly simplifies security rules and improves query performance for public feeds, as rules are applied *after* the query.\n\n3.  **QAPs (Rules are not Filters):** The structural segregation directly supports Queryable Authorization Policies. For the main news feed, applications can query `/posts` directly, knowing that all documents returned are legitimately public, and security rules can simply allow `read: if true;`. There's no need for client-side filtering or complex server-side rule logic to prevent unauthorized data from being exposed. Similarly, `comments` and `reactions` are subcollections under `posts`, allowing for efficient and secure retrieval of all related items for a specific post without broad collection scans.\n\n4.  **DBAC (Database-Backed Access Control):** Global roles, such as 'creator', are managed through dedicated top-level collections like `/roles_creator/{userId}`. The presence of a document in this collection indicates a user's role. Security rules can then use efficient `exists()` checks to verify roles, rather than relying on custom claims or complex document content reads. For instance, to create a new `Post`, a user's `uid` must exist in `/roles_creator`.\n\n5.  **Path-Based Ownership:** For user-specific data like `UserProfile` and `draft_posts`, data is nested under `/users/{userId}/...`. This leverages the path itself for authorization, making rules for owner-only access simple and explicit (e.g., `match /users/{userId}/{...} { allow read, write: if request.auth.uid == userId; }`).\n\n6.  **Schema Adherence and Denormalization for Display:** The `UserProfile` entity, as defined, contains both private (`email`) and potentially public (`displayName`, `profileImageUrl`) fields. To strictly adhere to the 'Homogeneous Security Posture' (Mandate B) and keep `email` private, the `/users/{userId}` collection is designated as **owner-only** for read/write. This implies that if author display names or profile images are needed for `Post` and `Comment` entities, and are not provided by the Sanity.io CMS (which handles main content), they would need to be denormalized into the `Post` and `Comment` documents. While not explicitly in the provided schema for `Post` and `Comment`, this is a crucial consideration for performance and cost-efficiency on the Spark Plan. For this design, we assume the `UserProfile` is private and `displayName` retrieval for posts/comments is handled externally (e.g., by Sanity.io content) or via client-side lookups where appropriate."
+    ]
   }
 }

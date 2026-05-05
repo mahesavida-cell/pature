@@ -1,10 +1,14 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, PenSquare, Menu } from "lucide-react";
+import { Search, PenSquare, Menu, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useUser, useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import {
   Sheet,
   SheetContent,
@@ -12,14 +16,31 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push("/");
+  };
 
   const navLinks = [
-    { name: "Berita", href: "/news" },
-    { name: "Fitur", href: "/features" },
-    { name: "Arsip", href: "/archive" },
+    { name: "Berita", href: "/" },
+    { name: "Fitur", href: "#" },
+    { name: "Arsip", href: "/profile?tab=archived" },
   ];
 
   return (
@@ -38,7 +59,7 @@ export const Navbar = () => {
               <Link 
                 key={link.name} 
                 href={link.href} 
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
               >
                 {link.name}
               </Link>
@@ -80,27 +101,59 @@ export const Navbar = () => {
                     {link.name}
                   </Link>
                 ))}
-                <div className="h-[1px] w-full bg-border my-2" />
-                <Link href="/create" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-lg font-medium">
-                  <PenSquare className="h-5 w-5" /> Tulis Cerita
-                </Link>
-                <div className="pt-8">
+                {user ? (
+                  <>
+                    <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-lg font-medium">
+                      <User className="h-5 w-5" /> Profil Saya
+                    </Link>
+                    <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0 text-lg font-medium text-destructive">
+                      <LogOut className="h-5 w-5 mr-3" /> Keluar Akun
+                    </Button>
+                  </>
+                ) : (
                   <Link href="/auth" onClick={() => setIsOpen(false)}>
                     <Button className="w-full h-12 text-base font-bold tracking-wide rounded-xl">
                       Masuk Sekarang
                     </Button>
                   </Link>
-                </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
 
           <div className="hidden md:flex items-center ml-2 border-l pl-4">
-            <Link href="/auth">
-              <Button size="sm" variant="outline" className="font-bold text-xs tracking-wide px-6 h-9 rounded-xl">
-                Masuk
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10 border border-border/50">
+                      <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
+                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
+                        {(user.displayName || user.email || "U")[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-2xl p-2" align="end" forceMount>
+                  <DropdownMenuLabel className="font-headline font-bold px-3 py-2">Pusat Akun</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <Link href="/profile">
+                    <DropdownMenuItem className="rounded-xl cursor-pointer py-3 px-3 gap-3">
+                      <User className="h-4 w-4" /> <span>Halaman Profil</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-xl cursor-pointer py-3 px-3 gap-3 text-destructive focus:bg-destructive/10">
+                    <LogOut className="h-4 w-4" /> <span>Keluar Sekarang</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth">
+                <Button size="sm" variant="outline" className="font-bold text-xs tracking-wide px-6 h-9 rounded-xl">
+                  Masuk
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
