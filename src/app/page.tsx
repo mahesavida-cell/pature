@@ -139,7 +139,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
         <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative group">
           <CarouselContent className="-ml-4">
             {posts.map((post, idx) => (
-              <CarouselItem key={post._id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={post._id || `carousel-item-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -151,7 +151,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                     <Link href={`/news/${post.slug}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
-                          src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
+                          src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id || idx}/600/400`} 
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
@@ -322,7 +322,7 @@ export default function Home() {
                   [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
                 ) : trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
                   <motion.div
-                    key={story._id}
+                    key={story._id || `trending-${idx}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1, duration: 0.5 }}

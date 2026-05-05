@@ -113,7 +113,7 @@ const MarketWeatherBar = () => {
             className="flex items-center gap-12 whitespace-nowrap"
           >
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
-              <div key={idx} className="flex items-center gap-2">
+              <div key={`stock-${idx}`} className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
                 <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
                 <div className={cn(
@@ -230,7 +230,7 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
-              alt="PatureNews Logo" 
+              alt="PatureNews logo" 
               width={140} 
               height={40} 
               className="h-7 w-auto sm:h-8 object-contain"
@@ -239,9 +239,9 @@ export const Navbar = () => {
           </Link>
           
           <div className="hidden lg:flex items-center gap-10">
-            {dynamicCategories?.map((cat) => (
+            {dynamicCategories?.map((cat, idx) => (
               <button 
-                key={cat.id} 
+                key={cat.id || `cat-${idx}`} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
                   "relative text-[11px] font-bold transition-all tracking-[0.05em] pb-2 group",
@@ -310,7 +310,7 @@ export const Navbar = () => {
                       <div className="flex flex-wrap gap-2">
                         {popularSearches.map((term, idx) => (
                           <button
-                            key={idx}
+                            key={`popular-${idx}`}
                             onClick={() => setSearchQuery(term)}
                             className="text-[10px] font-bold px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-primary/70 transition-colors"
                           >
@@ -324,9 +324,9 @@ export const Navbar = () => {
                       <span className="text-[10px] font-bold text-muted-foreground/60 px-1 tracking-wider">Saran pencarian</span>
                       {searchResults.length > 0 ? (
                         <div className="space-y-1">
-                          {searchResults.map((result) => (
+                          {searchResults.map((result, idx) => (
                             <Link 
-                              key={result.id}
+                              key={result.id || `result-${idx}`}
                               href={`/news/${result.id}`}
                               onClick={() => {
                                 setIsSearchOpen(false);
@@ -397,14 +397,14 @@ export const Navbar = () => {
               <SheetHeader className="text-left mb-10">
                 <SheetTitle>
                   <Link href="/" onClick={() => setIsOpen(false)}>
-                    <Image src="/pature_news.png" alt="Logo" width={140} height={40} className="h-8 w-auto object-contain" />
+                    <Image src="/pature_news.png" alt="logo" width={140} height={40} className="h-8 w-auto object-contain" />
                   </Link>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto no-scrollbar py-4">
                 <div className="flex flex-col gap-10">
-                  {dynamicCategories?.map((cat) => (
-                    <div key={cat.id} className="space-y-4">
+                  {dynamicCategories?.map((cat, idx) => (
+                    <div key={cat.id || `sheet-cat-${idx}`} className="space-y-4">
                       <Link 
                         href={`/category/${cat.slug}`} 
                         onClick={() => setIsOpen(false)}
@@ -413,8 +413,8 @@ export const Navbar = () => {
                         {cat.name}
                       </Link>
                       <div className="pl-5 flex flex-col gap-4 border-l-2 border-primary/5">
-                        {cat.subCategories.map((sub: string) => (
-                          <span key={sub} className="text-[13px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
+                        {cat.subCategories.map((sub: string, subIdx: number) => (
+                          <span key={`${sub}-${subIdx}`} className="text-[13px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
                         ))}
                       </div>
                     </div>
@@ -422,9 +422,9 @@ export const Navbar = () => {
                   <div className="pt-10 border-t border-primary/5 mt-auto">
                     <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] mb-4">Informasi</p>
                     <div className="flex flex-col gap-3">
-                      <Link href="/about" className="text-xs font-bold text-muted-foreground/60">Tentang PatureNews</Link>
-                      <Link href="/contact" className="text-xs font-bold text-muted-foreground/60">Kontak redaksi</Link>
-                      <Link href="/terms" className="text-xs font-bold text-muted-foreground/60">Syarat & ketentuan</Link>
+                      <Link href="/about" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Tentang PatureNews</Link>
+                      <Link href="/contact" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Kontak redaksi</Link>
+                      <Link href="/terms" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Syarat & ketentuan</Link>
                     </div>
                   </div>
                 </div>
@@ -459,7 +459,7 @@ export const Navbar = () => {
               </span>
               {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link 
-                  key={idx} 
+                  key={`${sub}-${idx}`} 
                   href="#" 
                   className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2"
                 >
