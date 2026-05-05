@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -53,17 +52,17 @@ export default function ProfilePage() {
     setMounted(true);
   }, []);
 
-  const userDocRef = useMemoFirebase(() => (user ? doc(db, "users", user.uid) : null), [db, user]);
+  const userDocRef = useMemoFirebase(() => (user && db ? doc(db, "users", user.uid) : null), [db, user]);
   const { data: profileData } = useDoc(userDocRef);
 
   const bookmarksQuery = useMemoFirebase(() => 
-    user ? query(collection(db, "users", user.uid, "bookmarks"), orderBy("savedAt", "desc")) : null, 
+    user && db ? query(collection(db, "users", user.uid, "bookmarks"), orderBy("savedAt", "desc")) : null, 
     [db, user]
   );
   const { data: bookmarks, isLoading: isBookmarksLoading } = useCollection(bookmarksQuery);
 
   const historyQuery = useMemoFirebase(() => 
-    user ? query(collection(db, "users", user.uid, "history"), orderBy("viewedAt", "desc"), limit(10)) : null, 
+    user && db ? query(collection(db, "users", user.uid, "history"), orderBy("viewedAt", "desc"), limit(10)) : null, 
     [db, user]
   );
   const { data: history, isLoading: isHistoryLoading } = useCollection(historyQuery);

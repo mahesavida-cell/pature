@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,13 @@ import { collection, query, limit } from "firebase/firestore";
 
 export default function RecommendationsPage() {
   const db = useFirestore();
-  const topics = ["Teknologi", "Desain", "Bisnis", "Budaya", "Sains", "Gaya Hidup", "Lingkungan"];
+  const topics = ["Teknologi", "Desain", "Bisnis", "Budaya", "Sains", "Gaya hidup", "Lingkungan"];
   
-  const recQuery = useMemoFirebase(() => query(collection(db, "posts"), limit(12)), [db]);
+  const recQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, "posts"), limit(12));
+  }, [db]);
+  
   const { data: firestorePosts, isLoading } = useCollection(recQuery);
 
   const sections = [

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -56,7 +55,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
 
   const postId = post?._id || post?.id;
   const bookmarkRef = useMemoFirebase(() => 
-    user && postId ? doc(db, "users", user.uid, "bookmarks", postId) : null, 
+    user && db && postId ? doc(db, "users", user.uid, "bookmarks", postId) : null, 
     [db, user, postId]
   );
   const { data: bookmarkData } = useDoc(bookmarkRef);
@@ -214,7 +213,6 @@ export default function Home() {
         setSanityPosts(posts || []);
         setHasError(false);
       } catch (error) {
-        console.error("Gagal mengambil data dari Sanity:", error);
         setHasError(true);
       } finally {
         setIsSanityLoading(false);

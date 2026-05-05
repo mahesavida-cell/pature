@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -110,8 +109,8 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const handleNativeShare = async () => {
     try {
-      if (typeof navigator !== 'undefined' && 'share' in navigator) {
-        await (navigator as any).share({
+      if (typeof navigator !== 'undefined' && !!navigator.share) {
+        await navigator.share({
           title: post.title,
           text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
           url: url,
@@ -140,7 +139,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  if (isMobile && typeof navigator !== 'undefined' && (navigator as any).share) {
+  if (isMobile && typeof navigator !== 'undefined' && !!navigator.share) {
     return (
       <Button 
         variant="outline" 
@@ -396,7 +395,7 @@ export default function NewsDetailPage() {
   const post = sanityPost;
 
   const bookmarkRef = useMemoFirebase(() => 
-    user && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
+    user && db && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
     [db, user, params.id]
   );
   const { data: bookmarkData } = useDoc(bookmarkRef);

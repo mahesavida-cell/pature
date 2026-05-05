@@ -9,8 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Clock, Calendar } from "lucide-react";
-import { PlaceHolderImages } from "@/app/lib/placeholder-images";
+import { Clock } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { useMemo } from "react";
@@ -18,10 +17,13 @@ import { useMemo } from "react";
 export default function LatestNewsPage() {
   const db = useFirestore();
 
-  const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(20)), [db]);
+  const latestQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(20));
+  }, [db]);
+  
   const { data: firestorePosts, isLoading } = useCollection(latestQuery);
 
-  // Dynamic grouping logic based on Firestore data
   const groupedPosts = useMemo(() => {
     if (!firestorePosts) return [];
     
@@ -45,7 +47,7 @@ export default function LatestNewsPage() {
           <div className="space-y-4">
             <Title>Berita terbaru</Title>
             <BodyText className="max-w-2xl">
-              Aliran informasi terkini yang dikurasi secara mandiri dari berbagai kategori untuk memastikan Anda tetap terhubung dengan perkembangan dunia.
+              Aliran informasi terkini yang dikurasi secara mandiri dari berbagai kategori untuk memastikan anda tetap terhubung dengan perkembangan dunia.
             </BodyText>
           </div>
 

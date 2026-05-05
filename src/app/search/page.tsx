@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -17,9 +16,6 @@ import { collection, query, limit } from "firebase/firestore";
 import { useMemo, Suspense } from "react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
-/**
- * Komponen konten pencarian yang memerlukan Suspense.
- */
 function SearchResults() {
   const searchParams = useSearchParams();
   const queryText = searchParams.get("q") || "";
@@ -30,6 +26,7 @@ function SearchResults() {
     if (!db) return null;
     return query(collection(db, "posts"), limit(50));
   }, [db]);
+  
   const { data: firestorePosts, isLoading } = useCollection(postsQuery);
 
   const filteredResults = useMemo(() => {

@@ -15,8 +15,11 @@ import { collection, query, where, limit } from "firebase/firestore";
 export default function EditorsChoicePage() {
   const db = useFirestore();
 
-  // Mapping logic for Editors Choice - using category "Media" as a placeholder for curated content
-  const editorsQuery = useMemoFirebase(() => query(collection(db, "posts"), where("category", "==", "Media"), limit(12)), [db]);
+  const editorsQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, "posts"), where("category", "==", "Media"), limit(12));
+  }, [db]);
+  
   const { data: firestorePosts, isLoading } = useCollection(editorsQuery);
 
   return (

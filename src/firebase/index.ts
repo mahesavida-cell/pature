@@ -1,4 +1,3 @@
-
 'use client';
 
 import { firebaseConfig } from '@/firebase/config';
@@ -11,28 +10,22 @@ import { getFirestore, Firestore } from 'firebase/firestore';
  * Memastikan tidak ada error 'app/no-options' saat proses prerendering.
  */
 export function initializeFirebase() {
-  // Jika konfigurasi tidak tersedia (misal di build server), gunakan objek kosong agar tidak crash
+  const isClient = typeof window !== 'undefined';
+  
+  // Jika konfigurasi tidak tersedia (misal di build server), gunakan objek placeholder agar tidak crash
   const config = firebaseConfig && firebaseConfig.apiKey ? firebaseConfig : {
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    projectId: "placeholder-id",
+    appId: "placeholder-app-id",
+    apiKey: "placeholder-api-key",
   };
 
   let app: FirebaseApp;
   
   if (!getApps().length) {
-    try {
-      app = initializeApp(config as any);
-    } catch (e) {
-      console.warn('Firebase initialization failed, falling back to existing app.');
-      app = getApp();
-    }
+    app = initializeApp(config as any);
   } else {
     app = getApp();
   }
-
-  // Pada lingkungan server sejati (bukan JSDOM), service mungkin tidak tersedia
-  const isClient = typeof window !== 'undefined';
 
   return {
     firebaseApp: app,
