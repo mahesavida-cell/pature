@@ -25,27 +25,18 @@ service cloud.firestore {
 
     match /categories/{categoryId} {
       allow read: if true;
-      allow write: if false; // Only manageable via Admin SDK or Console for security
-    }
-
-    match /roles_creator/{userId} {
-      allow get: if isSignedIn();
-      allow list, write: if false;
+      allow write: if false; 
     }
 
     match /posts/{postId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && exists(/databases/$(database)/documents/roles_creator/$(request.auth.uid));
+      allow create: if isSignedIn();
       allow update, delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
 
       match /comments/{commentId} {
         allow get, list: if true;
-        allow create, update, delete: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-      }
-
-      match /reactions/{reactionId} {
-        allow get, list: if true;
-        allow create, delete: if isSignedIn() && request.auth.uid == (request.resource.data.userId || resource.data.userId);
+        allow create: if isSignedIn();
+        allow update, delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || request.auth.uid == get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
       }
     }
   }

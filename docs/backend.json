@@ -2,7 +2,6 @@
 {
   "entities": {
     "UserProfile": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
       "description": "Represents a user's profile within the InfoFlow application.",
@@ -28,20 +27,23 @@
         "authorId": { "type": "string" },
         "authorName": { "type": "string" },
         "image": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "readTime": { "type": "string" },
         "imageCaption": { "type": "string" },
         "imageCredit": { "type": "string" },
-        "galleryTitle": { "type": "string" },
-        "gallerySubtitle": { "type": "string" },
-        "gallery": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "url": { "type": "string" },
-              "caption": { "type": "string" }
-            }
-          }
-        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Comment": {
+      "title": "Comment",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "content": { "type": "string" },
+        "parentId": { "type": "string" },
+        "likes": { "type": "array", "items": { "type": "string" } },
         "createdAt": { "type": "string", "format": "date-time" }
       }
     },
@@ -92,6 +94,10 @@
     "/posts/{postId}": {
       "schema": { "$ref": "#/backend/entities/Post" },
       "description": "Main news articles."
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/backend/entities/Comment" },
+      "description": "Comments for a specific post."
     },
     "/categories/{categoryId}": {
       "schema": { "$ref": "#/backend/entities/Category" },
