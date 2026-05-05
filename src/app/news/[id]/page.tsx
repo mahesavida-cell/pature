@@ -2,7 +2,7 @@
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -121,7 +121,7 @@ const ShareButton = ({ post }: { post: any }) => {
     navigator.clipboard.writeText(url);
     toast({
       title: "Tautan disalin",
-      description: "Tautan berita telah berhasil disalin ke papan klip anda.",
+      description: "Tautan berita telah berhasil disalin ke papan klip Anda.",
     });
   };
 
@@ -231,7 +231,7 @@ const CommentItem = ({
           <div className="flex flex-col mb-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
-              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none rounded-sm">penulis</Badge>}
+              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none rounded-sm">Penulis</Badge>}
               <span className="text-[9px] text-muted-foreground font-medium shrink-0">
                 {formatRelativeTime(comment.createdAt)}
               </span>
@@ -240,7 +240,7 @@ const CommentItem = ({
               <div className="flex items-center gap-1.5 mt-1">
                 <CornerDownRight className="h-3 w-3 text-muted-foreground/40" />
                 <span className="text-[9px] font-bold text-accent/60">
-                  membalas <span className="text-primary/70">@{parentAuthorName}</span>
+                  Membalas <span className="text-primary/70">@{parentAuthorName}</span>
                 </span>
               </div>
             )}
@@ -256,7 +256,7 @@ const CommentItem = ({
               )}
             >
               <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
-              <span>{likes.length > 0 ? `${likes.length} suka` : "suka"}</span>
+              <span>{likes.length > 0 ? `${likes.length} suka` : "Suka"}</span>
             </motion.button>
             <motion.button 
               whileTap={{ scale: 0.9 }} 
@@ -267,7 +267,7 @@ const CommentItem = ({
               )}
             >
               <MessageSquare className="h-4 w-4" />
-              <span>balas pesan</span>
+              <span>Balas pesan</span>
             </motion.button>
           </div>
         </div>
@@ -284,7 +284,7 @@ const CommentItem = ({
             <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
               <div className="relative">
                 <Textarea 
-                  placeholder="Tulis balasan anda..." 
+                  placeholder="Tulis balasan Anda..." 
                   value={replyText} 
                   onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
                   className="bg-white/60 border-none min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
@@ -299,8 +299,8 @@ const CommentItem = ({
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">batal</Button>
-                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">kirim balasan</Button>
+                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">Batal</Button>
+                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">Kirim balasan</Button>
               </div>
             </div>
           </motion.div>
@@ -354,10 +354,10 @@ export default function NewsDetailPage() {
     {
       id: "1",
       title: "Evolusi Desain Digital Minimalis",
-      category: "desain",
+      category: "Desain",
       author: "Alex Rivers",
       authorId: "author-alex-1",
-      date: "24 okt 2024",
+      date: "24 Okt 2024",
       readTime: "5 menit baca",
       excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
       content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal dan mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
@@ -427,7 +427,7 @@ export default function NewsDetailPage() {
     if (!bookmarkRef) return;
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
-      toast({ title: "dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
+      toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
         postId: params.id,
@@ -435,7 +435,7 @@ export default function NewsDetailPage() {
         category: post.category,
         savedAt: new Date().toISOString()
       }, { merge: true });
-      toast({ title: "berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
+      toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
     }
   };
 
@@ -447,7 +447,7 @@ export default function NewsDetailPage() {
     addDocumentNonBlocking(colRef, {
       content: text,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "pengguna InfoFlow",
+      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna InfoFlow",
       createdAt: serverTimestamp(),
       postId: params.id,
       parentId: parentId,
@@ -474,7 +474,7 @@ export default function NewsDetailPage() {
           <div className="lg:col-span-8">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> kembali ke feed berita
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
               </Link>
               
               <div className="space-y-4 mb-10">
@@ -488,9 +488,9 @@ export default function NewsDetailPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-bold text-xs text-primary">{post.author || "penulis InfoFlow"}</span>
+                      <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
                       <MutedText className="text-[10px] opacity-60 font-medium">
-                        {mounted ? (post.date || "baru saja") : "---"} • {post.readTime || "5 menit baca"}
+                        {mounted ? (post.date || "Baru saja") : "---"} • {post.readTime || "5 menit baca"}
                       </MutedText>
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export default function NewsDetailPage() {
                 </div>
               </div>
 
-              {/* Main Image with Details */}
+              {/* Main image with details */}
               <div className="mb-12">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-border/10 mb-3">
                   <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
@@ -527,28 +527,28 @@ export default function NewsDetailPage() {
                 )}
               </div>
 
-              {/* Rich Content Area */}
+              {/* Typography content area */}
               <article className="prose prose-neutral max-w-none mb-16">
                 {post.content ? post.content.split('\n\n').map((p: string, i: number) => {
                   const parts = p.split(/(\*\*.*?\*\*)/g);
                   return (
-                    <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">
+                    <TypographyP key={i} className="text-lg opacity-95 font-medium">
                       {parts.map((part, j) => {
                         if (part.startsWith('**') && part.endsWith('**')) {
                           return <strong key={j} className="text-primary font-bold">{part.slice(2, -2)}</strong>;
                         }
                         return part;
                       })}
-                    </BodyText>
+                    </TypographyP>
                   );
-                }) : <BodyText className="text-lg mb-6 opacity-60">memuat konten...</BodyText>}
+                }) : <TypographyP className="text-lg opacity-60">Memuat konten...</TypographyP>}
               </article>
 
-              {/* Image Carousel / Gallery Mode */}
+              {/* Image carousel / Gallery mode */}
               {post.gallery && post.gallery.length > 0 && (
                 <section className="mb-20">
                   <div className="space-y-2 mb-8">
-                    <Heading level={3} className="text-lg">{post.galleryTitle || "galeri foto"}</Heading>
+                    <Heading level={3} className="text-lg">{post.galleryTitle || "Galeri foto"}</Heading>
                     {post.gallerySubtitle && (
                       <BodyText className="text-sm opacity-70 max-w-2xl">{post.gallerySubtitle}</BodyText>
                     )}
@@ -559,7 +559,7 @@ export default function NewsDetailPage() {
                         <CarouselItem key={idx}>
                           <div className="space-y-3">
                             <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted">
-                              <Image src={img.url} alt={`Gallery image ${idx}`} fill className="object-cover" />
+                              <Image src={img.url} alt={`Galeri foto ${idx}`} fill className="object-cover" />
                             </div>
                             {img.caption && <p className="text-[11px] text-center text-muted-foreground font-medium px-4">{img.caption}</p>}
                           </div>
@@ -574,10 +574,10 @@ export default function NewsDetailPage() {
 
               <Separator className="my-16 opacity-30" />
 
-              {/* Discussion Community */}
+              {/* Discussion community */}
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
-                  <Heading level={2} className="text-xl">diskusi komunitas</Heading>
+                  <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
                   <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
                     {firestoreComments?.length || 0}
                   </Badge>
@@ -590,7 +590,7 @@ export default function NewsDetailPage() {
                       </Avatar>
                       <div className="flex-1 space-y-2">
                         <Textarea 
-                          placeholder="Tuliskan pendapat anda..." 
+                          placeholder="Tuliskan pendapat Anda..." 
                           value={commentText} 
                           onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
                           className="bg-white/60 border-none min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
@@ -603,7 +603,7 @@ export default function NewsDetailPage() {
                             {commentText.length}/{MAX_COMMENT_CHARS} karakter tersisa
                           </span>
                           <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
-                            <Send className="h-3.5 w-3.5" /> kirim komentar
+                            <Send className="h-3.5 w-3.5" /> Kirim komentar
                           </Button>
                         </div>
                       </div>
@@ -611,8 +611,8 @@ export default function NewsDetailPage() {
                   </div>
                 ) : (
                   <Card className="bg-white/40 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
-                    <MutedText className="block mb-6 font-medium text-xs">masuk untuk bergabung dalam diskusi.</MutedText>
-                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">masuk sekarang</Button></Link>
+                    <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
+                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
                   </Card>
                 )}
                 <div className="space-y-8">
@@ -624,7 +624,7 @@ export default function NewsDetailPage() {
                     threadedComments.map((comment) => (
                       <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post.authorId} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
                     ))
-                  ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">belum ada komentar. jadilah yang pertama memberikan pendapat!</MutedText></div>}
+                  ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
                 </div>
               </section>
             </motion.div>
@@ -635,7 +635,7 @@ export default function NewsDetailPage() {
               <section>
                 <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
                   <TrendingUp className="h-4 w-4 text-primary" />
-                  <Heading level={3} className="text-lg">berita terpopuler</Heading>
+                  <Heading level={3} className="text-lg">Berita terpopuler</Heading>
                 </div>
                 <div className="space-y-8">
                   {[1, 2, 3, 4].map((id) => (
@@ -644,22 +644,22 @@ export default function NewsDetailPage() {
                         <Image src={`https://picsum.photos/seed/${id}/200/200`} alt="Pop" fill className="object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">berita • {id} jam yang lalu</span>
+                        <span className="text-[9px] font-bold text-accent opacity-70 mb-1">Berita • {id} jam yang lalu</span>
                         <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors">Analisis Mendalam Tren Industri Modern</h4>
                       </div>
                     </Link>
                   ))}
                 </div>
                 <div className="mt-8 pt-4 border-t border-border/10">
-                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">lihat lebih banyak berita</Link>
+                  <Link href="/" className="text-[10px] font-bold text-muted-foreground hover:text-primary hover:underline transition-all">Lihat lebih banyak berita</Link>
                 </div>
               </section>
               
               <Card className="bg-primary/95 text-primary-foreground p-6 rounded-lg shadow-md border-none">
                 <div className="text-center">
-                  <Heading level={3} className="text-white text-lg mb-2">buletin berita</Heading>
-                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
-                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">langganan sekarang</Button></Link>
+                  <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
+                  <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
+                  <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
                 </div>
               </Card>
             </div>
@@ -676,12 +676,12 @@ export default function NewsDetailPage() {
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
         <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl">akses terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70">silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
+            <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">masuk sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

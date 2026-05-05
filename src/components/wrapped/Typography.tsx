@@ -33,6 +33,12 @@ export const BodyText = ({ children, className }: TextProps) => (
   </p>
 );
 
+export const TypographyP = ({ children, className }: TextProps) => (
+  <p className={cn("leading-7 [&:not(:first-child)]:mt-6 text-foreground/90 font-body", className)}>
+    {children}
+  </p>
+);
+
 export const MutedText = ({ children, className }: TextProps) => (
   <span className={cn("text-sm text-muted-foreground font-body", className)}>
     {children}
