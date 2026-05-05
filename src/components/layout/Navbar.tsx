@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, Bookmark, X } from "lucide-react";
+import { Search, Menu, User, LogOut, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { collection, query, limit, orderBy } from "firebase/firestore";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -32,11 +32,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
 
 export const Navbar = () => {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
   
   const { user } = useUser();
@@ -45,14 +43,6 @@ export const Navbar = () => {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const categoriesQuery = useMemoFirebase(() => {
     if (!db) return null;
@@ -91,10 +81,8 @@ export const Navbar = () => {
   return (
     <nav 
       className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-500",
-        isScrolled 
-          ? "bg-background/90 backdrop-blur-2xl border-b border-primary/5 shadow-sm" 
-          : "bg-transparent border-transparent"
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        "bg-background/95 backdrop-blur-2xl border-b border-primary/5 shadow-sm"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
@@ -253,7 +241,7 @@ export const Navbar = () => {
               className="flex items-center gap-10 whitespace-nowrap"
             >
               <span className="text-[9px] font-bold text-muted-foreground tracking-[0.25em] mr-4 opacity-40">
-                {hoveredCategory ? `Topik ${hoveredCategory.name}:` : "Topik populer:"}
+                {hoveredCategory ? `Topik ${hoveredCategory.name.toLowerCase()}:` : "Topik populer:"}
               </span>
               {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link 
