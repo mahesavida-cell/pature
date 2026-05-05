@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/wrapped/Card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply, Heart } from "lucide-react";
@@ -43,13 +43,12 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
-  // Mock comments integrated for prototype
   const mockComments = [
     {
       id: "mock-1",
       authorId: "mock-author-1",
       authorName: "Sarah Jenkins",
-      content: "Artikel Ini Memberikan Wawasan Yang Luar Bisa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
+      content: "Artikel Ini Memberikan Wawasan Yang Luar Biasa Tentang Tren Desain Modern. Minimalisme Benar-Benar Masa Depan Informasi Digital.",
       createdAt: "2 Jam Yang Lalu",
       parentId: null,
       likes: []
@@ -65,7 +64,6 @@ export default function NewsDetailPage() {
     }
   ];
 
-  // Fetch comments from Firestore
   const commentsQuery = useMemoFirebase(() => {
     if (!db || !params.id) return null;
     return collection(db, "posts", params.id as string, "comments");
@@ -73,7 +71,6 @@ export default function NewsDetailPage() {
 
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
-  // Group comments into threads
   const threadedComments = useMemo(() => {
     const all = [...(firestoreComments || []), ...mockComments];
     const roots = all.filter(c => !c.parentId);
@@ -183,8 +180,8 @@ export default function NewsDetailPage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-              {isPostAuthor && <Badge variant="default" className="text-[7px] px-1.5 py-0 uppercase font-bold tracking-tighter">Penulis</Badge>}
-              <span className="text-[8px] text-muted-foreground uppercase font-bold">
+              {isPostAuthor && <Badge variant="default" className="text-[7px] px-1.5 py-0 font-bold tracking-tight">Penulis</Badge>}
+              <span className="text-[9px] text-muted-foreground font-bold">
                 {typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}
               </span>
             </div>
@@ -195,7 +192,7 @@ export default function NewsDetailPage() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => handleLikeComment(comment.id, likes)}
                 className={cn(
-                  "flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors",
+                  "flex items-center gap-1.5 text-[10px] font-bold tracking-wide transition-colors",
                   isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
                 )}
               >
@@ -207,7 +204,7 @@ export default function NewsDetailPage() {
                 <motion.button 
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
-                  className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+                  className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Reply className="h-3 w-3" />
                   Balas Pesan
@@ -217,7 +214,6 @@ export default function NewsDetailPage() {
           </div>
         </motion.div>
 
-        {/* Reply Input Field */}
         <AnimatePresence>
           {replyToId === comment.id && (
             <motion.div 
@@ -241,7 +237,6 @@ export default function NewsDetailPage() {
           )}
         </AnimatePresence>
 
-        {/* Render Nested Replies */}
         {comment.replies && comment.replies.length > 0 && (
           <div className="space-y-4">
             {comment.replies.map((reply: any) => (
@@ -262,13 +257,13 @@ export default function NewsDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-20">
           <div className="lg:col-span-8">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary mb-8 group">
+              <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-wide text-muted-foreground hover:text-primary mb-8 group">
                 <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-1" />
                 Kembali Ke Feed
               </Link>
 
               <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-full uppercase text-[9px] font-bold tracking-widest">{post.category}</Badge>
+                <Badge variant="secondary" className="px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide">{post.category}</Badge>
                 <Title className="text-3xl md:text-6xl font-headline font-bold leading-tight">{post.title}</Title>
                 
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
@@ -278,11 +273,11 @@ export default function NewsDetailPage() {
                     </Avatar>
                     <div>
                       <span className="block font-bold text-xs text-primary">{post.author}</span>
-                      <MutedText className="text-[9px] uppercase tracking-widest font-bold">{post.date} • {post.readTime}</MutedText>
+                      <MutedText className="text-[10px] tracking-wide font-bold">{post.date} • {post.readTime}</MutedText>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" className="rounded-full"><Share2 className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="rounded-full h-10 w-10"><Share2 className="h-4 w-4" /></Button>
                     <Button 
                       variant="outline" 
                       size="icon" 
@@ -307,7 +302,6 @@ export default function NewsDetailPage() {
 
               <Separator className="my-16" />
 
-              {/* Comments Section */}
               <section id="comments" className="mb-16">
                 <Heading level={3} className="mb-8">Diskusi ({threadedComments.length})</Heading>
                 
@@ -324,7 +318,7 @@ export default function NewsDetailPage() {
                         className="bg-accent/5 border-none h-12 rounded-xl"
                       />
                       <div className="flex justify-end">
-                        <Button onClick={() => handlePostComment(null)} className="rounded-xl gap-2 h-10">
+                        <Button onClick={() => handlePostComment(null)} className="rounded-xl gap-2 h-10 font-bold tracking-wide">
                           <Send className="h-4 w-4" /> Kirim Komentar
                         </Button>
                       </div>
@@ -334,7 +328,7 @@ export default function NewsDetailPage() {
                   <div className="bg-accent/5 p-6 rounded-2xl text-center mb-10 border border-dashed">
                     <MutedText className="block mb-4">Silakan Masuk Untuk Ikut Berdiskusi.</MutedText>
                     <Link href="/auth">
-                      <Button variant="outline" className="rounded-xl px-8">Masuk / Daftar</Button>
+                      <Button variant="outline" className="rounded-xl px-8 font-bold tracking-wide">Masuk / Daftar</Button>
                     </Link>
                   </div>
                 )}
@@ -356,7 +350,7 @@ export default function NewsDetailPage() {
             <div className="sticky top-24 space-y-12">
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <Heading level={3} className="text-xl">Trending Stories</Heading>
+                <Heading level={3} className="text-xl">Berita Terpopuler</Heading>
               </div>
 
               <div className="space-y-8">
@@ -366,7 +360,7 @@ export default function NewsDetailPage() {
                       {story.image && <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />}
                     </div>
                     <div className="flex flex-col justify-center gap-1">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-accent">{story.category} • {story.timeAgo}</span>
+                      <span className="text-[10px] font-bold tracking-wide text-accent">{story.category} • {story.timeAgo}</span>
                       <h4 className="font-headline font-bold text-sm leading-snug group-hover:text-accent transition-colors">{story.title}</h4>
                     </div>
                   </Link>
@@ -374,11 +368,11 @@ export default function NewsDetailPage() {
               </div>
 
               <Card className="bg-primary text-primary-foreground p-8 rounded-[24px]">
-                <h4 className="font-headline font-bold text-xl mb-2">Newsletter</h4>
+                <h4 className="font-headline font-bold text-xl mb-2">Buletin Berita</h4>
                 <p className="text-xs opacity-70 mb-6">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
                 <div className="space-y-3">
                   <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-10 rounded-xl" />
-                  <Button variant="secondary" className="w-full h-10 rounded-xl font-bold uppercase tracking-widest text-[10px]">Langganan Sekarang</Button>
+                  <Button variant="secondary" className="w-full h-11 rounded-xl font-bold tracking-wide text-[11px]">Langganan Sekarang</Button>
                 </div>
               </Card>
             </div>

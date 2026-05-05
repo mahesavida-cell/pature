@@ -1,10 +1,9 @@
-
 "use client";
 
 import Link from "next/link";
-import { Search, PenSquare, Menu, X } from "lucide-react";
+import { Search, PenSquare, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import {
   Sheet,
@@ -18,9 +17,9 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "News", href: "/news" },
-    { name: "Features", href: "/features" },
-    { name: "Archive", href: "/archive" },
+    { name: "Berita", href: "/news" },
+    { name: "Fitur", href: "/features" },
+    { name: "Arsip", href: "/archive" },
   ];
 
   return (
@@ -58,7 +57,6 @@ export const Navbar = () => {
             </Button>
           </Link>
 
-          {/* Mobile Menu Trigger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-muted-foreground md:hidden">
@@ -82,14 +80,14 @@ export const Navbar = () => {
                     {link.name}
                   </Link>
                 ))}
-                <Separator className="my-2" />
+                <div className="h-[1px] w-full bg-border my-2" />
                 <Link href="/create" onClick={() => setIsOpen(false)} className="flex items-center gap-3 text-lg font-medium">
-                  <PenSquare className="h-5 w-5" /> Write Story
+                  <PenSquare className="h-5 w-5" /> Tulis Cerita
                 </Link>
                 <div className="pt-8">
                   <Link href="/auth" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full h-12 text-base font-bold uppercase tracking-widest">
-                      Sign In
+                    <Button className="w-full h-12 text-base font-bold tracking-wide rounded-xl">
+                      Masuk Sekarang
                     </Button>
                   </Link>
                 </div>
@@ -99,8 +97,8 @@ export const Navbar = () => {
 
           <div className="hidden md:flex items-center ml-2 border-l pl-4">
             <Link href="/auth">
-              <Button size="sm" variant="outline" className="font-bold text-xs uppercase tracking-widest px-6 h-9">
-                Log In
+              <Button size="sm" variant="outline" className="font-bold text-xs tracking-wide px-6 h-9 rounded-xl">
+                Masuk
               </Button>
             </Link>
           </div>
@@ -109,7 +107,3 @@ export const Navbar = () => {
     </motion.nav>
   );
 };
-
-const Separator = ({ className }: { className?: string }) => (
-  <div className={`h-[1px] w-full bg-border ${className}`} />
-);

@@ -25,8 +25,8 @@ export default function AuthPage() {
     if (!email || !password) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please Fill In All Fields.",
+        title: "Kesalahan",
+        description: "Mohon Isi Semua Bidang.",
       });
       return;
     }
@@ -36,21 +36,21 @@ export default function AuthPage() {
       if (type === 'register') {
         initiateEmailSignUp(auth, email, password);
         toast({
-          title: "Success",
-          description: "Account Created! Welcome To InfoFlow.",
+          title: "Berhasil",
+          description: "Akun Berhasil Dibuat! Selamat Datang Di InfoFlow.",
         });
       } else {
         initiateEmailSignIn(auth, email, password);
         toast({
-          title: "Welcome Back",
-          description: "Signed In Successfully.",
+          title: "Selamat Datang Kembali",
+          description: "Berhasil Masuk Ke Akun Anda.",
         });
       }
       router.push("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Authentication Error",
+        title: "Kesalahan Autentikasi",
         description: error.message,
       });
     } finally {
@@ -103,7 +103,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <Button 
-                      className="w-full" 
+                      className="w-full h-12 rounded-xl font-bold tracking-wide" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -134,7 +134,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <Button 
-                      className="w-full" 
+                      className="w-full h-12 rounded-xl font-bold tracking-wide" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
