@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -7,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply, Heart } from "lucide-react";
@@ -25,16 +26,19 @@ import {
   updateDocumentNonBlocking
 } from "@/firebase";
 import { collection, serverTimestamp, doc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewsDetailPage() {
   const params = useParams();
   const { user } = useUser();
   const db = useFirestore();
+  const { toast } = useToast();
   const [isSaved, setIsSaved] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -50,7 +54,6 @@ export default function NewsDetailPage() {
 
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
-  // Mock comments to fill space if Firestore is empty during prototype
   const mockComments = [
     {
       id: "mock-1",
@@ -121,6 +124,30 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, {
       likes: newLikes
     });
+  };
+
+  const handleNewsletterSignup = () => {
+    if (!newsletterEmail || !newsletterEmail.includes('@')) {
+      toast({
+        variant: "destructive",
+        title: "Kesalahan Alamat Email",
+        description: "Mohon Masukkan Alamat Email Yang Valid.",
+      });
+      return;
+    }
+
+    const signupRef = collection(db, "newsletter_signups");
+    addDocumentNonBlocking(signupRef, {
+      email: newsletterEmail,
+      subscribedAt: serverTimestamp(),
+      source: "Article Details Page"
+    });
+
+    toast({
+      title: "Berhasil Berlangganan",
+      description: "Terima Kasih! Anda Akan Menerima Update Berita Terbaru Di Email Anda.",
+    });
+    setNewsletterEmail("");
   };
 
   const posts = [
@@ -361,8 +388,19 @@ export default function NewsDetailPage() {
                 <h4 className="font-headline font-bold text-xl mb-2">Buletin Berita</h4>
                 <p className="text-xs opacity-70 mb-6 leading-relaxed">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
                 <div className="space-y-3">
-                  <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-xl" />
-                  <Button variant="secondary" className="w-full h-12 rounded-xl font-bold tracking-wide text-[11px] shadow-lg">Langganan Sekarang</Button>
+                  <Input 
+                    placeholder="Email Anda" 
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-12 rounded-xl" 
+                  />
+                  <Button 
+                    variant="secondary" 
+                    onClick={handleNewsletterSignup}
+                    className="w-full h-12 rounded-xl font-bold tracking-wide text-[11px] shadow-lg"
+                  >
+                    Langganan Sekarang
+                  </Button>
                 </div>
               </Card>
             </div>

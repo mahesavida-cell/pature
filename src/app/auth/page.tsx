@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { FirebaseError } from "firebase/app";
 
 export default function AuthPage() {
   const auth = useAuth();
@@ -27,8 +28,8 @@ export default function AuthPage() {
     if (!email || !password) {
       toast({
         variant: "destructive",
-        title: "Kesalahan",
-        description: "Mohon Isi Semua Bidang.",
+        title: "Kesalahan Input",
+        description: "Mohon Isi Semua Bidang Yang Tersedia.",
       });
       return;
     }
@@ -36,13 +37,13 @@ export default function AuthPage() {
     setIsLoading(true);
     try {
       if (type === 'register') {
-        initiateEmailSignUp(auth, email, password);
+        await initiateEmailSignUp(auth, email, password);
         toast({
-          title: "Berhasil",
+          title: "Berhasil Daftar",
           description: "Akun Berhasil Dibuat! Selamat Datang Di InfoFlow.",
         });
       } else {
-        initiateEmailSignIn(auth, email, password);
+        await initiateEmailSignIn(auth, email, password);
         toast({
           title: "Selamat Datang Kembali",
           description: "Berhasil Masuk Ke Akun Anda.",
@@ -50,26 +51,34 @@ export default function AuthPage() {
       }
       router.push("/");
     } catch (error: any) {
+      let message = error.message;
+      if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
+        message = "Metode Masuk Ini Belum Diaktifkan Di Firebase Console. Silakan Aktifkan 'Email/Password' Di Menu Authentication.";
+      }
       toast({
         variant: "destructive",
         title: "Kesalahan Autentikasi",
-        description: error.message,
+        description: message,
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     try {
-      initiateGoogleSignIn(auth);
+      await initiateGoogleSignIn(auth);
       // Logic relies on onAuthStateChanged in FirebaseProvider
       router.push("/");
     } catch (error: any) {
+      let message = error.message;
+      if (error instanceof FirebaseError && error.code === 'auth/operation-not-allowed') {
+        message = "Metode Google Sign-In Belum Diaktifkan Di Firebase Console. Silakan Aktifkan Di Menu Authentication.";
+      }
       toast({
         variant: "destructive",
         title: "Kesalahan Google Sign-In",
-        description: error.message,
+        description: message,
       });
     }
   };
@@ -93,14 +102,14 @@ export default function AuthPage() {
             <CardContent className="pt-6">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger value="login">Masuk</TabsTrigger>
-                  <TabsTrigger value="register">Daftar</TabsTrigger>
+                  <TabsTrigger value="login">Masuk Sekarang</TabsTrigger>
+                  <TabsTrigger value="register">Daftar Akun</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">Alamat Email</Label>
                       <Input 
                         id="email" 
                         type="email" 
@@ -110,7 +119,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">Kata Sandi</Label>
                       <Input 
                         id="password" 
                         type="password" 
@@ -123,7 +132,7 @@ export default function AuthPage() {
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
-                      {isLoading ? "Memproses..." : "Masuk Sekarang"}
+                      {isLoading ? "Sedang Memproses..." : "Masuk Ke Akun"}
                     </Button>
                   </div>
                 </TabsContent>
@@ -131,7 +140,7 @@ export default function AuthPage() {
                 <TabsContent value="register">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email">Email</Label>
+                      <Label htmlFor="reg-email">Alamat Email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
@@ -141,7 +150,7 @@ export default function AuthPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password">Password</Label>
+                      <Label htmlFor="reg-password">Kata Sandi</Label>
                       <Input 
                         id="reg-password" 
                         type="password" 
@@ -154,7 +163,7 @@ export default function AuthPage() {
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
-                      {isLoading ? "Memproses..." : "Daftar Berlangganan"}
+                      {isLoading ? "Sedang Memproses..." : "Daftar Berlangganan"}
                     </Button>
                   </div>
                 </TabsContent>
