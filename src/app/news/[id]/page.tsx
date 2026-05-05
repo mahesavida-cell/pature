@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Heart, MessageSquare, CornerDownRight } from "lucide-react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -47,7 +47,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Komponen CommentItem dipindahkan ke luar untuk mencegah re-mounting saat state parent berubah
+// Komponen CommentItem didefinisikan secara global untuk performa optimal
 const CommentItem = ({ 
   comment, 
   depth = 0, 
@@ -58,7 +58,8 @@ const CommentItem = ({
   replyToId,
   setReplyToId,
   replyText,
-  setReplyText
+  setReplyText,
+  parentAuthorName
 }: { 
   comment: any; 
   depth?: number; 
@@ -70,6 +71,7 @@ const CommentItem = ({
   setReplyToId: (id: string | null) => void;
   replyText: string;
   setReplyText: (text: string) => void;
+  parentAuthorName?: string;
 }) => {
   const [mounted, setMounted] = useState(false);
   
@@ -81,7 +83,6 @@ const CommentItem = ({
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
 
-  // Menghindari kesalahan hidrasi dengan memformat waktu hanya di sisi klien
   const displayTime = mounted 
     ? (comment.createdAt?.toDate 
         ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) 
@@ -89,27 +90,35 @@ const CommentItem = ({
     : "";
 
   return (
-    <div className={cn("space-y-3", depth > 0 && "ml-6 md:ml-10 border-l border-primary/10 pl-4")}>
+    <div className={cn("space-y-4", depth > 0 && "ml-5 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
       <motion.div 
         initial={{ opacity: 0, y: 10 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.4 }}
-        className="group flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm"
+        className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/10 transition-all duration-300 shadow-sm"
       >
-        <Avatar className={cn("h-10 w-10 shadow-sm", depth > 0 && "h-8 w-8")}>
+        <Avatar className={cn("h-10 w-10 shadow-sm shrink-0", depth > 0 && "h-8 w-8")}>
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
             {comment.authorName[0]}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col mb-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
               {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
               <span className="text-[9px] text-muted-foreground font-medium shrink-0">
                 {displayTime}
               </span>
             </div>
+            {parentAuthorName && depth > 0 && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <CornerDownRight className="h-3 w-3 text-muted-foreground/40" />
+                <span className="text-[9px] font-bold text-accent/60">
+                  Membalas <span className="text-primary/70">@{parentAuthorName}</span>
+                </span>
+              </div>
+            )}
           </div>
           <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words">{comment.content}</BodyText>
           <div className="flex items-center gap-5">
@@ -145,14 +154,18 @@ const CommentItem = ({
             initial={{ opacity: 0, height: 0 }} 
             animate={{ opacity: 1, height: "auto" }} 
             exit={{ opacity: 0, height: 0 }} 
-            className="ml-6 md:ml-10 overflow-hidden mt-3"
+            className="ml-5 md:ml-10 overflow-hidden"
           >
-            <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3">
+            <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3 mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="h-3 w-3 text-primary/40" />
+                <span className="text-[10px] font-bold opacity-60">Membalas {comment.authorName}</span>
+              </div>
               <Textarea 
-                placeholder={`Membalas Pesan ${comment.authorName}...`} 
+                placeholder={`Tulis Balasan Anda...`} 
                 value={replyText} 
                 onChange={(e) => setReplyText(e.target.value)} 
-                className="bg-white border-none min-h-[80px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+                className="bg-white border-none min-h-[90px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-8 px-3 font-bold text-[10px]">
@@ -168,7 +181,7 @@ const CommentItem = ({
       </AnimatePresence>
 
       {comment.replies && comment.replies.length > 0 && (
-        <div className="space-y-4 pt-2">
+        <div className="space-y-4">
           {comment.replies.map((reply: any) => (
             <CommentItem 
               key={reply.id} 
@@ -182,6 +195,7 @@ const CommentItem = ({
               setReplyToId={setReplyToId}
               replyText={replyText}
               setReplyText={setReplyText}
+              parentAuthorName={comment.authorName}
             />
           ))}
         </div>
@@ -476,7 +490,7 @@ export default function NewsDetailPage() {
                     </Link>
                   </Card>
                 )}
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {isCommentsLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                       <div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
