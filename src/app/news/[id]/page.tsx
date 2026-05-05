@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -49,6 +50,10 @@ import {
 } from "@/firebase";
 import { collection, serverTimestamp, doc, query, orderBy } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { PortableText } from "next-sanity";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { POST_DETAIL_QUERY } from "@/sanity/lib/queries";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,7 +110,7 @@ const ShareButton = ({ post }: { post: any }) => {
       if (navigator.share) {
         await navigator.share({
           title: post.title,
-          text: post.excerpt || `Baca berita terbaru di InfoFlow: ${post.title}`,
+          text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
           url: url,
         });
       } else {
@@ -342,38 +347,45 @@ export default function NewsDetailPage() {
   const [replyText, setReplyText] = useState("");
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [sanityPost, setSanityPost] = useState<any>(null);
+  const [isLoadingSanity, setIsLoadingSanity] = useState(true);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  const postRef = useMemoFirebase(() => params.id ? doc(db, "posts", params.id as string) : null, [db, params.id]);
-  const { data: firestorePost } = useDoc(postRef);
+  useEffect(() => {
+    setMounted(true);
+    const fetchSanityPost = async () => {
+      if (!params.id) return;
+      try {
+        const data = await client.fetch(POST_DETAIL_QUERY, { slug: params.id });
+        setSanityPost(data);
+      } catch (err) {
+        console.error("Gagal menarik detail berita:", err);
+      } finally {
+        setIsLoadingSanity(false);
+      }
+    };
+    fetchSanityPost();
 
-  const staticPosts = [
-    {
-      id: "1",
-      title: "Evolusi Desain Digital Minimalis",
-      category: "Desain",
-      author: "Alex Rivers",
-      authorId: "author-alex-1",
-      date: "24 Okt 2024",
-      readTime: "5 menit baca",
-      excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
-      content: "Lansekap desain digital sedang bergeser ke arah pendekatan 'less is more'. Kami melihat transisi masif di mana ruang kosong bukan hanya ruang hampa—ini adalah alat untuk fokus. Sistem informasi modern memprioritaskan kejelasan daripada kompleksitas, memastikan bahwa pengguna dapat menemukan apa yang mereka butuhkan tanpa kelebihan kognitif.\n\nTipografi juga menjadi pusat perhatian. Huruf yang tebal and mudah dibaca menggantikan huruf dekoratif untuk meningkatkan aksesibilitas dan kecepatan konsumsi informasi. Dalam artikel ini, kami menjelajahi mengapa tren ini bukan sekadar fase sesaat tetapi perubahan mendasar dalam cara kita berinteraksi dengan data.",
-      image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl,
-      imageCaption: "Ruang kosong yang tertata memberikan kejelasan informasi.",
-      imageCredit: "Foto oleh Alex Rivers",
-      galleryTitle: "Evolusi antarmuka modern",
-      gallerySubtitle: "Melihat lebih dekat bagaimana elemen visual minimalis diterapkan dalam berbagai studi kasus desain.",
-      gallery: [
-        { url: PlaceHolderImages[0].imageUrl, caption: "Evolusi antarmuka dari masa ke masa." },
-        { url: PlaceHolderImages[1].imageUrl, caption: "Contoh tipografi yang efektif." },
-        { url: PlaceHolderImages[2].imageUrl, caption: "Penerapan warna minimalis pada dashboard." }
-      ]
+    const handleScroll = () => setShowBackToTop(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [params.id]);
+
+  useEffect(() => {
+    if (user && db && params.id && sanityPost) {
+      const historyRef = doc(db, "users", user.uid, "history", params.id as string);
+      setDocumentNonBlocking(historyRef, {
+        postId: params.id,
+        title: sanityPost.title,
+        category: sanityPost.categories?.[0] || "Berita",
+        viewedAt: new Date().toISOString()
+      }, { merge: true });
     }
-  ];
+  }, [user, db, params.id, sanityPost]);
 
-  const post = firestorePost || staticPosts.find(p => p.id === params.id) || staticPosts[0];
+  const post = sanityPost;
 
   const bookmarkRef = useMemoFirebase(() => 
     user && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
@@ -405,25 +417,9 @@ export default function NewsDetailPage() {
     return roots;
   }, [firestoreComments]);
 
-  useEffect(() => {
-    setMounted(true);
-    const handleScroll = () => setShowBackToTop(window.scrollY > 400);
-    window.addEventListener("scroll", handleScroll);
-    if (user && db && params.id) {
-      const historyRef = doc(db, "users", user.uid, "history", params.id as string);
-      setDocumentNonBlocking(historyRef, {
-        postId: params.id,
-        title: post.title,
-        category: post.category,
-        viewedAt: new Date().toISOString()
-      }, { merge: true });
-    }
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [user, db, params.id, post.title, post.category]);
-
   const handleToggleBookmark = () => {
     if (!user) { setIsLoginDialogOpen(true); return; }
-    if (!bookmarkRef) return;
+    if (!bookmarkRef || !post) return;
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
       toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
@@ -431,7 +427,7 @@ export default function NewsDetailPage() {
       setDocumentNonBlocking(bookmarkRef, {
         postId: params.id,
         title: post.title,
-        category: post.category,
+        category: post.categories?.[0] || "Berita",
         savedAt: new Date().toISOString()
       }, { merge: true });
       toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
@@ -446,7 +442,7 @@ export default function NewsDetailPage() {
     addDocumentNonBlocking(colRef, {
       content: text,
       authorId: user.uid,
-      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna InfoFlow",
+      authorName: user.displayName || user.email?.split('@')[0] || "Pengguna PatureNews",
       createdAt: serverTimestamp(),
       postId: params.id,
       parentId: parentId,
@@ -464,6 +460,14 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
   };
 
+  if (isLoadingSanity) {
+    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
+  }
+
+  if (!post) {
+    return <div className="min-h-screen flex flex-col items-center justify-center p-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-4">Kembali ke Beranda</Button></Link></div>;
+  }
+
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
@@ -477,7 +481,7 @@ export default function NewsDetailPage() {
               </Link>
               
               <div className="space-y-4 mb-10">
-                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.category}</Badge>
+                <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post.categories?.[0] || "Berita"}</Badge>
                 <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post.title}</Title>
                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
                   <div className="flex items-center gap-3">
@@ -487,9 +491,9 @@ export default function NewsDetailPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-bold text-xs text-primary">{post.author || "Penulis InfoFlow"}</span>
+                      <span className="block font-bold text-xs text-primary">{post.author || "Redaksi PatureNews"}</span>
                       <MutedText className="text-[10px] opacity-60 font-medium">
-                        {mounted ? (post.date || "Baru saja") : "---"} • {post.readTime || "5 menit baca"}
+                        {new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} • {post.readTime || "5 mnt baca"}
                       </MutedText>
                     </div>
                   </div>
@@ -513,44 +517,29 @@ export default function NewsDetailPage() {
               {/* Main image with details */}
               <div className="mb-12">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
-                  <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
+                  <Image src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
                 </div>
-                {(post.imageCaption || post.imageCredit) && (
+                {(post.mainImage?.caption || post.mainImage?.credit) && (
                   <div className="flex items-start gap-3 px-1">
                     <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                     <div className="space-y-1">
-                      {post.imageCaption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.imageCaption}</p>}
-                      {post.imageCredit && <p className="text-[10px] text-muted-foreground italic">{post.imageCredit}</p>}
+                      {post.mainImage?.caption && <p className="text-[11px] leading-snug text-foreground/70 font-medium">{post.mainImage.caption}</p>}
+                      {post.mainImage?.credit && <p className="text-[10px] text-muted-foreground italic">{post.mainImage.credit}</p>}
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Typography content area */}
-              <article className="prose prose-neutral max-w-none mb-16">
-                {post.content ? post.content.split('\n\n').map((p: string, i: number) => {
-                  const parts = p.split(/(\*\*.*?\*\*)/g);
-                  return (
-                    <TypographyP key={i} className="text-lg">
-                      {parts.map((part, j) => {
-                        if (part.startsWith('**') && part.endsWith('**')) {
-                          return <strong key={j} className="text-primary font-bold">{part.slice(2, -2)}</strong>;
-                        }
-                        return part;
-                      })}
-                    </TypographyP>
-                  );
-                }) : <TypographyP className="text-lg opacity-60">Memuat konten...</TypographyP>}
+              <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
+                {post.body && <PortableText value={post.body} />}
               </article>
 
               {/* Image carousel / Gallery mode */}
               {post.gallery && post.gallery.length > 0 && (
                 <section className="mb-20">
                   <div className="space-y-2 mb-8">
-                    <Heading level={3} className="text-lg">{post.galleryTitle || "Galeri foto"}</Heading>
-                    {post.gallerySubtitle && (
-                      <BodyText className="text-sm opacity-70 max-w-2xl">{post.gallerySubtitle}</BodyText>
-                    )}
+                    <Heading level={3} className="text-lg">Galeri foto</Heading>
                   </div>
                   <Carousel className="w-full">
                     <CarouselContent>
