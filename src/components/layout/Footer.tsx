@@ -13,6 +13,14 @@ const XIcon = () => (
 );
 
 export const Footer = () => {
+  const supportLinks = [
+    { name: "Tentang kami", href: "/about" },
+    { name: "Kontak redaksi", href: "/contact" },
+    { name: "Karir", href: "/careers" },
+    { name: "Ketentuan", href: "/terms" },
+    { name: "Privasi", href: "/privacy" }
+  ];
+
   return (
     <footer className="bg-white/40 border-t mt-32 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -28,10 +36,10 @@ export const Footer = () => {
                 className="h-9 w-auto object-contain"
               />
             </Link>
-            <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium">
+            <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium mt-2">
               InfoFlow adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
             </p>
-            <div className="flex items-center gap-6 text-muted-foreground/40 pt-2">
+            <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
               {[
                 { icon: <XIcon />, href: "#" },
                 { icon: <Instagram className="h-5 w-5" />, href: "#" },
@@ -48,7 +56,7 @@ export const Footer = () => {
           {/* Quick Links / Categories */}
           <div className="lg:col-span-2 space-y-6">
             <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Kategori</Heading>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}>
                   <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all">
@@ -62,11 +70,11 @@ export const Footer = () => {
           {/* Company / Support */}
           <div className="lg:col-span-2 space-y-6">
             <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Dukungan</Heading>
-            <ul className="space-y-1.5">
-              {["Tentang kami", "Kontak redaksi", "Karir", "Ketentuan", "Privasi"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all">
-                    {item}
+            <ul className="space-y-2">
+              {supportLinks.map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all">
+                    {item.name}
                   </Link>
                 </li>
               ))}
@@ -97,11 +105,8 @@ export const Footer = () => {
             © 2024 Infoflow Media Group. Seluruh hak cipta dilindungi.
           </span>
           <div className="flex items-center gap-10">
-            {["Aksesibilitas", "Peta situs"].map(link => (
-              <Link key={link} href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">
-                {link}
-              </Link>
-            ))}
+            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>
+            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Peta situs</Link>
           </div>
         </div>
       </div>
