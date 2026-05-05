@@ -11,11 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send } from "lucide-react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, ChevronUp, Send, Reply } from "lucide-react";
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
   useUser, 
@@ -33,6 +33,8 @@ export default function NewsDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [replyToId, setReplyToId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -41,25 +43,23 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
-  // Mock comments for demonstration
+  // Mock comments integrated for prototype
   const mockComments = [
     {
       id: "mock-1",
+      authorId: "mock-author-1",
       authorName: "Sarah Jenkins",
       content: "This Article Provides Such A Great Insight Into Modern Design Trends. Minimalism Is Truly The Future Of Digital Information.",
       createdAt: "2 Hours Ago",
+      parentId: null
     },
     {
       id: "mock-2",
+      authorId: "mock-author-2",
       authorName: "David Chen",
       content: "I Completely Agree With The Point About Whitespace. It's Essential For User Focus And Reducing Cognitive Overload.",
       createdAt: "5 Hours Ago",
-    },
-    {
-      id: "mock-3",
-      authorName: "Elena Rodriguez",
-      content: "Minimalism Is Not Just About Aesthetic, It's About Functionality. Great Read For Every Modern Designer Out There.",
-      createdAt: "Yesterday",
+      parentId: "mock-1"
     }
   ];
 
@@ -71,8 +71,17 @@ export default function NewsDetailPage() {
 
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
-  // Combine firestore comments with mock comments for the prototype
-  const allComments = [...(firestoreComments || []), ...mockComments];
+  // Group comments into threads
+  const threadedComments = useMemo(() => {
+    const all = [...(firestoreComments || []), ...mockComments];
+    const roots = all.filter(c => !c.parentId);
+    const replies = all.filter(c => !!c.parentId);
+
+    return roots.map(root => ({
+      ...root,
+      replies: replies.filter(r => r.parentId === root.id)
+    }));
+  }, [firestoreComments]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,19 +91,27 @@ export default function NewsDetailPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handlePostComment = () => {
+  const handlePostComment = (parentId: string | null = null) => {
     if (!user) return;
-    if (!commentText.trim()) return;
+    const text = parentId ? replyText : commentText;
+    if (!text.trim()) return;
 
     const colRef = collection(db, "posts", params.id as string, "comments");
     addDocumentNonBlocking(colRef, {
-      content: commentText,
+      content: text,
       authorId: user.uid,
       authorName: user.displayName || user.email?.split('@')[0] || "Anonymous User",
       createdAt: serverTimestamp(),
-      postId: params.id
+      postId: params.id,
+      parentId: parentId
     });
-    setCommentText("");
+
+    if (parentId) {
+      setReplyText("");
+      setReplyToId(null);
+    } else {
+      setCommentText("");
+    }
   };
 
   const posts = [
@@ -103,6 +120,7 @@ export default function NewsDetailPage() {
       title: "The Evolution Of Minimalist Digital Design",
       category: "Design",
       author: "Alex Rivers",
+      authorId: "author-alex-1",
       date: "Oct 24, 2024",
       readTime: "5 Min Read",
       content: "The Landscape Of Digital Design Is Shifting Towards A 'Less Is More' Approach. We're Seeing A Massive Transition Where Whitespace Isn't Just Empty Space—It's A Tool For Focus. Modern Information Systems Are Prioritizing Clarity Over Complexity, Ensuring That Users Can Find What They Need Without Cognitive Overload.\n\nTypography Has Also Taken Center Stage. Bold, Readable Fonts Are Replacing Decorative Ones To Improve Accessibility And Speed Of Information Consumption. In This Article, We Explore Why This Trend Is Not Just A Passing Phase But A Fundamental Change In How We Interact With Data.",
@@ -128,6 +146,78 @@ export default function NewsDetailPage() {
   ];
 
   const post = posts.find(p => p.id === params.id) || posts[0];
+
+  const CommentItem = ({ comment, isReply = false }: { comment: any, isReply?: boolean }) => {
+    const isPostAuthor = comment.authorId === post.authorId;
+
+    return (
+      <div className={cn("space-y-4", isReply && "ml-12 border-l pl-4 border-border/50")}>
+        <motion.div 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex gap-4 p-4 rounded-2xl hover:bg-accent/5 transition-colors"
+        >
+          <Avatar className={cn("h-8 w-8", isReply && "h-6 w-6")}>
+            <AvatarFallback className="text-[10px] font-bold">{comment.authorName[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-bold text-primary">{comment.authorName}</span>
+              {isPostAuthor && <Badge variant="default" className="text-[7px] px-1.5 py-0 uppercase font-bold tracking-tighter">Author</Badge>}
+              <span className="text-[8px] text-muted-foreground uppercase font-bold">
+                {typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}
+              </span>
+            </div>
+            <BodyText className="text-sm opacity-80 mb-2">{comment.content}</BodyText>
+            
+            {!isReply && user && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-[9px] font-bold uppercase tracking-widest gap-1 p-0 hover:bg-transparent hover:text-primary"
+                onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)}
+              >
+                <Reply className="h-3 w-3" /> Balas Pesan
+              </Button>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Reply Input Field */}
+        <AnimatePresence>
+          {replyToId === comment.id && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="ml-12 pr-4 overflow-hidden"
+            >
+              <div className="flex gap-3 items-start py-2">
+                <Input 
+                  placeholder={`Membalas ${comment.authorName}...`} 
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  className="bg-accent/5 border-none h-10 rounded-xl text-xs"
+                />
+                <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-xl h-10 px-4">
+                  <Send className="h-3 w-3" />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Render Nested Replies */}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="space-y-4">
+            {comment.replies.map((reply: any) => (
+              <CommentItem key={reply.id} comment={reply} isReply />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="bg-background min-h-screen pb-10">
@@ -185,7 +275,7 @@ export default function NewsDetailPage() {
 
               {/* Comments Section */}
               <section id="comments" className="mb-16">
-                <Heading level={3} className="mb-8">Diskusi ({allComments.length})</Heading>
+                <Heading level={3} className="mb-8">Diskusi ({threadedComments.length})</Heading>
                 
                 {user ? (
                   <div className="flex gap-4 mb-10 items-start">
@@ -200,8 +290,8 @@ export default function NewsDetailPage() {
                         className="bg-accent/5 border-none h-12 rounded-xl"
                       />
                       <div className="flex justify-end">
-                        <Button onClick={handlePostComment} className="rounded-xl gap-2 h-10">
-                          <Send className="h-4 w-4" /> Kirim
+                        <Button onClick={() => handlePostComment(null)} className="rounded-xl gap-2 h-10">
+                          <Send className="h-4 w-4" /> Kirim Komentar
                         </Button>
                       </div>
                     </div>
@@ -215,30 +305,12 @@ export default function NewsDetailPage() {
                   </div>
                 )}
 
-                <div className="space-y-6">
+                <div className="space-y-10">
                   {isCommentsLoading && firestoreComments === null ? (
-                    <MutedText>Memuat Komentar...</MutedText>
+                    <MutedText>Memuat Diskusi...</MutedText>
                   ) : (
-                    allComments.map((comment) => (
-                      <motion.div 
-                        key={comment.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex gap-4 p-4 rounded-2xl hover:bg-accent/5 transition-colors"
-                      >
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="text-[10px] font-bold">{comment.authorName[0]}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-bold text-primary">{comment.authorName}</span>
-                            <span className="text-[8px] text-muted-foreground uppercase font-bold">
-                              {typeof comment.createdAt === 'string' ? comment.createdAt : "Baru Saja"}
-                            </span>
-                          </div>
-                          <BodyText className="text-sm opacity-80">{comment.content}</BodyText>
-                        </div>
-                      </motion.div>
+                    threadedComments.map((comment) => (
+                      <CommentItem key={comment.id} comment={comment} />
                     ))
                   )}
                 </div>
@@ -272,7 +344,7 @@ export default function NewsDetailPage() {
                 <p className="text-xs opacity-70 mb-6">Jangan Ketinggalan Berita Terpenting Hari Ini.</p>
                 <div className="space-y-3">
                   <Input placeholder="Email Anda" className="bg-white/10 border-white/20 text-white placeholder:text-white/40 h-10 rounded-xl" />
-                  <Button variant="secondary" className="w-full h-10 rounded-xl font-bold uppercase tracking-widest text-[10px]">Langganan</Button>
+                  <Button variant="secondary" className="w-full h-10 rounded-xl font-bold uppercase tracking-widest text-[10px]">Langganan Sekarang</Button>
                 </div>
               </Card>
             </div>
@@ -283,7 +355,7 @@ export default function NewsDetailPage() {
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: showBackToTop ? 1 : 0, scale: showBackToTop ? 1 : 0 }}
-        className="fixed bottom-6 right-6 z-50 md:hidden"
+        className="fixed bottom-6 right-6 z-50"
       >
         <Button
           size="icon"
