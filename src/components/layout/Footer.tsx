@@ -28,10 +28,10 @@ export const Footer = () => {
                 className="h-9 w-auto object-contain"
               />
             </Link>
-            <BodyText className="text-sm max-w-md leading-relaxed opacity-60">
+            <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium">
               InfoFlow adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
-            </BodyText>
-            <div className="flex items-center gap-6 text-muted-foreground/60">
+            </p>
+            <div className="flex items-center gap-6 text-muted-foreground/40">
               {[
                 { icon: <XIcon />, href: "#" },
                 { icon: <Instagram className="h-5 w-5" />, href: "#" },
@@ -46,12 +46,12 @@ export const Footer = () => {
           </div>
 
           {/* Quick Links / Categories */}
-          <div className="lg:col-span-2 space-y-8">
-            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Kategori</Heading>
-            <ul className="space-y-4">
+          <div className="lg:col-span-2 space-y-6">
+            <Heading level={4} className="text-xs font-bold opacity-40">Kategori</Heading>
+            <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-widest">
+                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-wide">
                     {item}
                   </Link>
                 </li>
@@ -60,12 +60,12 @@ export const Footer = () => {
           </div>
 
           {/* Company / Support */}
-          <div className="lg:col-span-2 space-y-8">
-            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Dukungan</Heading>
-            <ul className="space-y-4">
+          <div className="lg:col-span-2 space-y-6">
+            <Heading level={4} className="text-xs font-bold opacity-40">Dukungan</Heading>
+            <ul className="space-y-2">
               {["Tentang kami", "Kontak redaksi", "Karir", "Ketentuan", "Privasi"].map((item) => (
                 <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-widest">
+                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-wide">
                     {item}
                   </Link>
                 </li>
@@ -74,16 +74,16 @@ export const Footer = () => {
           </div>
 
           {/* Contact */}
-          <div className="lg:col-span-3 space-y-8">
-            <Heading level={4} className="text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Hubungi kami</Heading>
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 group">
-                <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+          <div className="lg:col-span-3 space-y-6">
+            <Heading level={4} className="text-xs font-bold opacity-40">Hubungi kami</Heading>
+            <div className="space-y-5">
+              <div className="flex items-center gap-3 group">
+                <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                   <Mail className="h-4 w-4" />
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground/80 tracking-widest">redaksi@infoflow.com</span>
+                <span className="text-[11px] font-bold text-muted-foreground/80">redaksi@infoflow.com</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground/50 font-medium italic">
+              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic">
                 Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.
               </p>
             </div>
@@ -93,12 +93,12 @@ export const Footer = () => {
         <Separator className="opacity-5 mx-auto" />
         
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          <MutedText className="text-[10px] font-bold opacity-30 tracking-[0.2em] uppercase">
+          <span className="text-[9px] font-bold text-muted-foreground/30 tracking-widest uppercase">
             © 2024 INFOFLOW MEDIA GROUP. SELURUH HAK CIPTA DILINDUNGI.
-          </MutedText>
+          </span>
           <div className="flex items-center gap-10">
             {["Aksesibilitas", "Peta situs"].map(link => (
-              <Link key={link} href="#" className="text-[9px] font-bold text-muted-foreground/30 hover:text-primary uppercase tracking-[0.25em] transition-all">
+              <Link key={link} href="#" className="text-[9px] font-bold text-muted-foreground/30 hover:text-primary transition-all uppercase tracking-widest">
                 {link}
               </Link>
             ))}
