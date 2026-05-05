@@ -101,9 +101,9 @@ export default function AuthPage() {
           <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/20 backdrop-blur-md">
             <CardContent className="pt-8 px-8 pb-10">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-10 bg-primary/5 p-1 rounded-md border border-primary/5">
-                  <TabsTrigger value="login" className="text-[10px] font-bold py-2.5 rounded-sm data-[state=active]:shadow-sm uppercase tracking-wider">Masuk sekarang</TabsTrigger>
-                  <TabsTrigger value="register" className="text-[10px] font-bold py-2.5 rounded-sm data-[state=active]:shadow-sm uppercase tracking-wider">Daftar akun</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-10">
+                  <TabsTrigger value="login" className="text-xs font-bold py-2">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register" className="text-xs font-bold py-2">Daftar akun</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login" className="mt-0 focus-visible:outline-none">
@@ -203,7 +203,7 @@ export default function AuthPage() {
 
               <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.99 }}>
                 <Button 
-                  className="w-full h-12 rounded-md font-bold text-xs flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white transition-all duration-300 shadow-sm text-primary"
+                  className="w-full h-12 rounded-md font-bold text-xs flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white transition-all duration-300 shadow-sm text-primary group"
                   onClick={handleGoogleSignIn}
                 >
                   <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
@@ -224,7 +224,7 @@ export default function AuthPage() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Masuk dengan akun Google
+                  <span className="group-hover:text-primary transition-colors">Masuk dengan akun Google</span>
                 </Button>
               </motion.div>
 
