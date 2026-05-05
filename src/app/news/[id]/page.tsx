@@ -223,7 +223,12 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
-  const posts = [
+  // Ambil data post secara real-time dari Firestore
+  const postRef = useMemoFirebase(() => params.id ? doc(db, "posts", params.id as string) : null, [db, params.id]);
+  const { data: firestorePost, isLoading: isPostLoading } = useDoc(postRef);
+
+  // Data cadangan jika post belum ada di Firestore
+  const staticPosts = [
     {
       id: "1",
       title: "Evolusi Desain Digital Minimalis",
@@ -236,8 +241,10 @@ export default function NewsDetailPage() {
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     }
   ];
-  const post = posts.find(p => p.id === params.id) || posts[0];
 
+  const post = firestorePost || staticPosts.find(p => p.id === params.id) || staticPosts[0];
+
+  // Ambil status simpan/arsip secara real-time
   const bookmarkRef = useMemoFirebase(() => 
     user && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
     [db, user, params.id]
@@ -245,6 +252,7 @@ export default function NewsDetailPage() {
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
+  // Ambil komentar secara real-time
   const commentsQuery = useMemoFirebase(() => {
     if (!db || !params.id) return null;
     return query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc"));
@@ -261,32 +269,14 @@ export default function NewsDetailPage() {
         createdAt: { toDate: () => new Date(Date.now() - 3600000) },
         likes: ["user-x", "user-y"],
         authorId: "user-budi",
-        replies: [
-          {
-            id: "mock-reply-1",
-            authorName: "Alex Rivers",
-            content: "Terima Kasih, Budi! Memang Benar, Ruang Kosong Memberikan Ruang Bernapas Bagi Konten Utama.",
-            createdAt: { toDate: () => new Date(Date.now() - 1800000) },
-            likes: ["user-budi"],
-            authorId: "author-alex-1",
-            replies: [
-              {
-                id: "mock-reply-2",
-                authorName: "Siti Aminah",
-                content: "Sangat Setuju Dengan Penjelasan Alex. Terkadang Desainer Terlalu Takut Dengan Ruang Kosong.",
-                createdAt: { toDate: () => new Date(Date.now() - 900000) },
-                likes: [],
-                authorId: "user-siti",
-              }
-            ]
-          }
-        ]
+        replies: []
       }
     ];
 
     if (!firestoreComments || firestoreComments.length === 0) return mockComments;
 
     const map = new Map();
+    // Gabungkan mock dan data asli jika perlu, atau gunakan data asli saja
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
     
     const roots: any[] = [];
@@ -299,12 +289,13 @@ export default function NewsDetailPage() {
       }
     });
 
-    return [...mockComments, ...roots];
+    return [...roots];
   }, [firestoreComments]);
 
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
+    
     if (user && db && params.id) {
       const historyRef = doc(db, "users", user.uid, "history", params.id as string);
       setDocumentNonBlocking(historyRef, {
@@ -314,6 +305,7 @@ export default function NewsDetailPage() {
         viewedAt: new Date().toISOString()
       }, { merge: true });
     }
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, [user, db, params.id, post.title, post.category]);
 
@@ -389,6 +381,17 @@ export default function NewsDetailPage() {
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
   };
 
+  if (isPostLoading && !firestorePost) {
+    return (
+      <div className="bg-background min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <MutedText className="font-bold text-xs">Menyiapkan Artikel...</MutedText>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
@@ -407,12 +410,12 @@ export default function NewsDetailPage() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-white shadow-sm">
                       <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
-                        {post.author.split(' ').map(n => n[0]).join('')}
+                        {post.author ? post.author.split(' ').map(n => n[0]).join('') : "A"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <span className="block font-bold text-xs text-primary tracking-tight">{post.author}</span>
-                      <MutedText className="text-[10px] font-medium opacity-60">{post.date} • {post.readTime}</MutedText>
+                      <span className="block font-bold text-xs text-primary tracking-tight">{post.author || "Penulis InfoFlow"}</span>
+                      <MutedText className="text-[10px] font-medium opacity-60">{post.date || "Baru Saja"} • {post.readTime || "5 Menit Baca"}</MutedText>
                     </div>
                   </div>
                   <TooltipProvider>
@@ -446,17 +449,21 @@ export default function NewsDetailPage() {
                 </div>
               </div>
               <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-12 shadow-md border border-border/10">
-                {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority />}
+                <Image src={post.image || PlaceHolderImages[0].imageUrl} alt={post.title} fill className="object-cover" priority />
               </div>
               <article className="prose prose-neutral max-w-none mb-20">
-                {post.content.split('\n\n').map((p, i) => <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>)}
+                {post.content ? post.content.split('\n\n').map((p, i) => (
+                  <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
+                )) : (
+                  <BodyText className="text-lg mb-6 leading-relaxed opacity-90 font-medium">Memuat konten artikel...</BodyText>
+                )}
               </article>
               <Separator className="my-16 opacity-30" />
               <section id="comments" className="mb-24">
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
                   <Badge className="rounded-full px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                    {firestoreComments?.length ? firestoreComments.length + 3 : 3}
+                    {firestoreComments?.length || 0}
                   </Badge>
                 </div>
                 {user ? (
