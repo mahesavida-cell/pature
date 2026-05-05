@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -57,14 +58,16 @@ export default function Home() {
           >
             <Card className="p-0 border-none bg-transparent shadow-none" animate={false}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg">
-                  <Image 
-                    src={heroImage?.imageUrl || ""} 
-                    alt="Featured News"
-                    fill
-                    className="object-cover"
-                    data-ai-hint="abstract news"
-                  />
+                <div className="relative aspect-[16/9] lg:aspect-square overflow-hidden rounded-lg bg-muted">
+                  {heroImage?.imageUrl && (
+                    <Image 
+                      src={heroImage.imageUrl} 
+                      alt="Featured News"
+                      fill
+                      className="object-cover"
+                      data-ai-hint="abstract news"
+                    />
+                  )}
                 </div>
                 <div className="space-y-6">
                   <Badge variant="secondary" className="bg-white/80 text-primary px-3 py-1 rounded-full">
@@ -103,13 +106,15 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post, idx) => (
               <Card key={post.id} className="h-full flex flex-col">
-                <div className="relative h-48 w-full overflow-hidden">
-                  <Image 
-                    src={post.image || ""} 
-                    alt={post.title}
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-500"
-                  />
+                <div className="relative h-48 w-full overflow-hidden bg-muted">
+                  {post.image && (
+                    <Image 
+                      src={post.image} 
+                      alt={post.title}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  )}
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col justify-between">
                   <div>
