@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -12,16 +13,19 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock, Search as SearchIcon, ArrowRight, RefreshCw } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, limit, orderBy } from "firebase/firestore";
+import { collection, query, limit } from "firebase/firestore";
 import { useState, useMemo } from "react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
-const NewsCarousel = ({ posts, sectionTitle }: { posts: any[], sectionTitle: string }) => {
+const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sectionTitle: string, viewAllLink: string }) => {
   return (
-    <section className="mb-20">
+    <section className="mb-24">
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
         <Heading level={2}>{sectionTitle}</Heading>
+        <Link href={viewAllLink}>
+          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
+        </Link>
       </div>
       <Carousel opts={{ align: "start", loop: true }} className="w-full">
         <CarouselContent className="-ml-4">
@@ -31,7 +35,7 @@ const NewsCarousel = ({ posts, sectionTitle }: { posts: any[], sectionTitle: str
                 <Link href={`/news/${post.id}`}>
                   <div className="relative h-56 w-full overflow-hidden bg-muted">
                     <Image 
-                      src={post.image || PlaceHolderImages[0].imageUrl} 
+                      src={post.image || PlaceHolderImages[idx % 4].imageUrl} 
                       alt={post.title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover/card:scale-105"
@@ -59,7 +63,7 @@ const NewsCarousel = ({ posts, sectionTitle }: { posts: any[], sectionTitle: str
                     </BodyText>
                   </div>
                   <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                    <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                    <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Penulis InfoFlow"}</span>
                     <ArrowRight className="h-4 w-4 text-primary opacity-0 group-hover/card:opacity-100 transition-all transform translate-x-1" />
                   </div>
                 </CardContent>
@@ -82,10 +86,25 @@ export default function SearchPage() {
     if (!db) return null;
     return query(collection(db, "posts"), limit(50));
   }, [db]);
-  const { data: posts, isLoading } = useCollection(postsQuery);
+  const { data: firestorePosts, isLoading } = useCollection(postsQuery);
+
+  // Fallback data if firestore is empty
+  const staticFallbackPosts = [
+    { id: "1", title: "Evolusi desain digital minimalis", category: "Desain", author: "Alex Rivers", readTime: "5 mnt", excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.", image: PlaceHolderImages[0].imageUrl },
+    { id: "2", title: "Arsitektur berkelanjutan di lingkungan perkotaan", category: "Budaya", author: "Maya Lin", readTime: "8 mnt", excerpt: "Bagaimana kota mengintegrasikan ruang hijau ke dalam kehidupan vertikal.", image: PlaceHolderImages[1].imageUrl },
+    { id: "3", title: "Masa depan pasar global terdesentralisasi", category: "Bisnis", author: "Jordan Lee", readTime: "6 mnt", excerpt: "Pandangan mendalam tentang bagaimana blockchain membentuk kembali infrastruktur perbankan.", image: PlaceHolderImages[2].imageUrl },
+    { id: "4", title: "Tren gaya hidup ramah lingkungan", category: "Budaya", author: "Sarah Chen", readTime: "4 mnt", excerpt: "Kesan sederhana namun bermakna dari perubahan gaya hidup masyarakat urban.", image: PlaceHolderImages[3].imageUrl },
+    { id: "5", title: "Inovasi AI dalam industri kreatif", category: "Teknologi", author: "Lara Chen", readTime: "7 mnt", excerpt: "Bagaimana algoritma membantu desainer menciptakan karya yang lebih personal.", image: PlaceHolderImages[0].imageUrl },
+    { id: "6", title: "Kesehatan mental di dunia digital", category: "Budaya", author: "Dr. Elena Smith", readTime: "5 mnt", excerpt: "Strategi untuk menjaga keseimbangan antara produktivitas dan kesejahteraan emosional.", image: PlaceHolderImages[1].imageUrl },
+  ];
+
+  const posts = useMemo(() => {
+    if (!firestorePosts || firestorePosts.length === 0) return staticFallbackPosts;
+    return firestorePosts;
+  }, [firestorePosts]);
 
   const filteredResults = useMemo(() => {
-    if (!queryText.trim() || !posts) return [];
+    if (!queryText.trim()) return [];
     return posts.filter(post => 
       post.title?.toLowerCase().includes(queryText.toLowerCase()) ||
       post.category?.toLowerCase().includes(queryText.toLowerCase()) ||
@@ -94,13 +113,11 @@ export default function SearchPage() {
   }, [queryText, posts]);
 
   const latestNews = useMemo(() => {
-    if (!posts) return [];
     return posts.slice(0, 6);
   }, [posts]);
 
   const recommendedNews = useMemo(() => {
-    if (!posts) return [];
-    return posts.slice(6, 12);
+    return posts.slice().reverse().slice(0, 6);
   }, [posts]);
 
   return (
@@ -162,7 +179,7 @@ export default function SearchPage() {
                     <Link href={`/news/${post.id}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
-                          src={post.image || PlaceHolderImages[0].imageUrl} 
+                          src={post.image || PlaceHolderImages[idx % 4].imageUrl} 
                           alt={post.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -190,7 +207,7 @@ export default function SearchPage() {
                         </BodyText>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Penulis InfoFlow"}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -202,8 +219,8 @@ export default function SearchPage() {
 
         {/* Branding & More News */}
         <div className="pt-20 space-y-32">
-          <NewsCarousel posts={latestNews} sectionTitle="Berita terbaru" />
-          <NewsCarousel posts={recommendedNews} sectionTitle="Rekomendasi untuk Anda" />
+          <NewsCarousel posts={latestNews} sectionTitle="Berita terbaru" viewAllLink="/latest" />
+          <NewsCarousel posts={recommendedNews} sectionTitle="Rekomendasi untuk Anda" viewAllLink="/recommendations" />
         </div>
       </main>
       <Footer />
