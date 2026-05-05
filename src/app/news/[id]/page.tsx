@@ -47,7 +47,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Komponen CommentItem didefinisikan secara global untuk performa optimal
 const CommentItem = ({ 
   comment, 
   depth = 0, 
@@ -223,11 +222,9 @@ export default function NewsDetailPage() {
     restDelta: 0.001
   });
 
-  // Ambil data post secara real-time dari Firestore
   const postRef = useMemoFirebase(() => params.id ? doc(db, "posts", params.id as string) : null, [db, params.id]);
   const { data: firestorePost, isLoading: isPostLoading } = useDoc(postRef);
 
-  // Data cadangan jika post belum ada di Firestore
   const staticPosts = [
     {
       id: "1",
@@ -244,7 +241,6 @@ export default function NewsDetailPage() {
 
   const post = firestorePost || staticPosts.find(p => p.id === params.id) || staticPosts[0];
 
-  // Ambil status simpan/arsip secara real-time
   const bookmarkRef = useMemoFirebase(() => 
     user && params.id ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
     [db, user, params.id]
@@ -252,7 +248,6 @@ export default function NewsDetailPage() {
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
-  // Ambil komentar secara real-time
   const commentsQuery = useMemoFirebase(() => {
     if (!db || !params.id) return null;
     return query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc"));
@@ -276,7 +271,6 @@ export default function NewsDetailPage() {
     if (!firestoreComments || firestoreComments.length === 0) return mockComments;
 
     const map = new Map();
-    // Gabungkan mock dan data asli jika perlu, atau gunakan data asli saja
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
     
     const roots: any[] = [];
@@ -462,7 +456,7 @@ export default function NewsDetailPage() {
                 {post.content ? post.content.split('\n\n').map((p, i) => (
                   <BodyText key={i} className="text-lg mb-6 leading-relaxed opacity-90 font-medium">{p}</BodyText>
                 )) : (
-                  <BodyText className="text-lg mb-6 leading-relaxed opacity-90 font-medium">Memuat konten artikel...</BodyText>
+                  <BodyText className="text-lg mb-6 leading-relaxed opacity-90 font-medium">Memuat Konten Artikel...</BodyText>
                 )}
               </article>
               <Separator className="my-16 opacity-30" />
