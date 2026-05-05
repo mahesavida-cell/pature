@@ -1,3 +1,4 @@
+
 'use client';
 
 import { firebaseConfig } from '@/firebase/config';
@@ -6,11 +7,13 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 /**
- * Robust Firebase initialization for Client and Server (SSR/Build) environments.
+ * Inisialisasi Firebase yang robust untuk lingkungan Client dan SSR/Build.
+ * Memastikan tidak ada crash saat dijalankan di sisi server selama proses build.
  */
 export function initializeFirebase() {
   const isClient = typeof window !== 'undefined';
   
+  // Gunakan config dari env jika tersedia, jika tidak gunakan dari config.ts
   const config = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || firebaseConfig.apiKey,
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
@@ -26,9 +29,10 @@ export function initializeFirebase() {
     app = getApp();
   }
 
-  // Safety: Ensure Firestore and Auth are only called in valid environments
-  const firestore = isClient ? getFirestore(app) : (null as unknown as Firestore);
-  const auth = isClient ? getAuth(app) : (null as unknown as Auth);
+  // Firestore dan Auth hanya benar-benar berfungsi di sisi Klien (Browser)
+  // Namun, kita kembalikan instance-nya jika app sudah diinisialisasi
+  const firestore = getFirestore(app);
+  const auth = getAuth(app);
 
   return {
     firebaseApp: app,

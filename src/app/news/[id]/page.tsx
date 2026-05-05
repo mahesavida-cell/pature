@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -24,16 +25,8 @@ import {
   CornerDownRight, 
   Copy, 
   Facebook,
-  Info,
   AlertCircle
 } from "lucide-react";
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselNext, 
-  CarouselPrevious 
-} from "@/components/ui/carousel";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -52,7 +45,7 @@ import {
 } from "@/firebase";
 import { collection, serverTimestamp, doc, query, orderBy } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import { PortableText } from "next-sanity";
+import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { POST_DETAIL_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
@@ -76,19 +69,14 @@ const MAX_COMMENT_CHARS = 1000;
 
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "baru saja";
-  
   const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
   if (diffInSeconds < 60) return "baru saja";
-  
   const minutes = Math.floor(diffInSeconds / 60);
   if (minutes < 60) return `${minutes} menit yang lalu`;
-  
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours} jam yang lalu`;
-  
   const days = Math.floor(hours / 24);
   return `${days} hari yang lalu`;
 };
@@ -102,56 +90,33 @@ const XIcon = () => (
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
   const [url, setUrl] = useState("");
-  const [isClient, setIsClient] = useState(false);
+  const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
     setUrl(window.location.href);
-    setIsClient(true);
+    setCanShare(typeof navigator !== 'undefined' && !!navigator.share);
   }, []);
 
-  const handleNativeShare = async () => {
-    if (!isClient) return;
-    try {
-      if (typeof navigator !== 'undefined' && 'share' in navigator) {
+  const handleShare = async () => {
+    if (canShare) {
+      try {
         await navigator.share({
           title: post.title,
-          text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
-          url: url,
+          text: post.excerpt,
+          url: url
         });
-      } else {
-        copyToClipboard();
-      }
-    } catch (err) {
-      // Ignored
+      } catch (e) { /* silent */ }
     }
   };
 
   const copyToClipboard = () => {
-    if (typeof navigator !== 'undefined' && 'clipboard' in navigator) {
-      navigator.clipboard.writeText(url);
-      toast({
-        title: "Tautan disalin",
-        description: "Tautan berita telah berhasil disalin ke papan klip anda.",
-      });
-    }
+    navigator.clipboard.writeText(url);
+    toast({ title: "Tautan disalin", description: "Tautan berita telah disalin ke papan klip." });
   };
 
-  const shareLinks = [
-    { name: "WhatsApp", icon: <MessageSquare className="h-4 w-4" />, href: `https://wa.me/?text=${encodeURIComponent(post.title + " " + url)}` },
-    { name: "Facebook", icon: <Facebook className="h-4 w-4" />, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
-    { name: "X", icon: <XIcon />, href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}` },
-  ];
-
-  const canNativeShare = isClient && typeof navigator !== 'undefined' && 'share' in navigator;
-
-  if (canNativeShare) {
+  if (canShare) {
     return (
-      <Button 
-        variant="outline" 
-        size="icon" 
-        className="rounded-full h-9 w-9 border-primary/10 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
-        onClick={handleNativeShare}
-      >
+      <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40" onClick={handleShare}>
         <Share2 className="h-4 w-4" />
       </Button>
     );
@@ -160,36 +125,17 @@ const ShareButton = ({ post }: { post: any }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="rounded-full h-9 w-9 border-primary/10 hover:bg-primary/5 hover:text-primary transition-all shadow-sm bg-white/40 backdrop-blur-md"
-        >
+        <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40">
           <Share2 className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-56 p-2 bg-white/90 backdrop-blur-xl border-primary/10 rounded-lg shadow-xl">
+      <PopoverContent align="end" className="w-56 p-2 rounded-lg bg-white/90 backdrop-blur-xl border-primary/5">
         <div className="grid gap-1">
-          <MutedText className="px-2 py-1.5 text-[10px] font-bold opacity-40 tracking-wider">Bagikan melalui</MutedText>
-          {shareLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors group"
-            >
-              <span className="text-muted-foreground group-hover:text-primary">{link.icon}</span>
-              <span>{link.name}</span>
-            </a>
-          ))}
-          <Separator className="my-1 opacity-40" />
-          <button 
-            onClick={copyToClipboard}
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors group text-left w-full"
-          >
-            <span className="text-muted-foreground group-hover:text-primary"><Copy className="h-4 w-4" /></span>
-            <span>Salin tautan</span>
+          <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(post.title + " " + url)}`)} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors">
+            <MessageSquare className="h-4 w-4 text-green-600" /> WhatsApp
+          </button>
+          <button onClick={copyToClipboard} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors">
+            <Copy className="h-4 w-4 text-muted-foreground" /> Salin tautan
           </button>
         </div>
       </PopoverContent>
@@ -198,133 +144,47 @@ const ShareButton = ({ post }: { post: any }) => {
 };
 
 const CommentItem = ({ 
-  comment, 
-  depth = 0, 
-  user, 
-  postAuthorId, 
-  onLike, 
-  onReply,
-  replyToId,
-  setReplyToId,
-  replyText,
-  setReplyText,
-  parentAuthorName
-}: { 
-  comment: any; 
-  depth?: number; 
-  user: any; 
-  postAuthorId: string;
-  onLike: (id: string, likes: string[]) => void;
-  onReply: (parentId: string) => void;
-  replyToId: string | null;
-  setReplyToId: (id: string | null) => void;
-  replyText: string;
-  setReplyText: (text: string) => void;
-  parentAuthorName?: string;
-}) => {
-  const isPostAuthor = comment.authorId === postAuthorId;
+  comment, depth = 0, user, postAuthorId, onLike, onReply, replyToId, setReplyToId, replyText, setReplyText, parentAuthorName 
+}: any) => {
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
 
   return (
-    <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l-2 border-primary/5 pl-4 md:pl-6")}>
-      <div className="group relative flex gap-3 md:gap-4 p-4 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10 hover:border-primary/20 transition-all duration-300 shadow-sm">
-        <Avatar className={cn("h-8 w-8 shadow-sm shrink-0", depth === 0 && "h-10 w-10")}>
-          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
-            {comment.authorName ? comment.authorName[0] : "A"}
-          </AvatarFallback>
+    <div className={cn("space-y-4", depth > 0 && "ml-6 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
+      <div className="flex gap-4 p-4 rounded-lg bg-white/40 border border-primary/10 shadow-sm">
+        <Avatar className="h-8 w-8">
+          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">{comment.authorName?.[0] || "A"}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col mb-2">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
-              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none rounded-sm">Penulis</Badge>}
-              <span className="text-[9px] text-muted-foreground font-medium shrink-0">
-                {formatRelativeTime(comment.createdAt)}
-              </span>
-            </div>
-            {parentAuthorName && depth > 0 && (
-              <div className="flex items-center gap-1.5 mt-1">
-                <CornerDownRight className="h-3 w-3 text-muted-foreground/40" />
-                <span className="text-[9px] font-bold text-accent/60">
-                  Membalas <span className="text-primary/70">@{parentAuthorName}</span>
-                </span>
-              </div>
-            )}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-bold text-primary">{comment.authorName}</span>
+            <span className="text-[9px] text-muted-foreground">{formatRelativeTime(comment.createdAt)}</span>
           </div>
-          <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words font-medium">{comment.content}</BodyText>
-          <div className="flex items-center gap-5">
-            <button 
-              onClick={() => onLike(comment.id, likes)} 
-              className={cn(
-                "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
-                isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
-              )}
-            >
-              <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
-              <span>{likes.length > 0 ? `${likes.length} suka` : "Suka"}</span>
+          <BodyText className="text-sm text-foreground/80 mb-3 font-medium">{comment.content}</BodyText>
+          <div className="flex items-center gap-4">
+            <button onClick={() => onLike(comment.id, likes)} className={cn("flex items-center gap-1.5 text-[10px] font-bold", isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary")}>
+              <Heart className={cn("h-3.5 w-3.5", isLiked && "fill-current")} /> {likes.length || ""} Suka
             </button>
-            <button 
-              onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} 
-              className={cn(
-                "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
-                replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary"
-              )}
-            >
-              <MessageSquare className="h-4 w-4" />
-              <span>Balas pesan</span>
+            <button onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground hover:text-primary">
+              <MessageSquare className="h-3.5 w-3.5" /> Balas
             </button>
           </div>
         </div>
       </div>
       
       {replyToId === comment.id && (
-        <div className="ml-4 md:ml-8 overflow-hidden">
-          <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
-            <div className="relative">
-              <Textarea 
-                placeholder="Tulis balasan anda..." 
-                value={replyText} 
-                onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                className="bg-transparent border-primary/10 min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
-              />
-              <div className="flex justify-end mt-1">
-                <span className={cn(
-                  "text-[9px] font-bold opacity-40",
-                  replyText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
-                )}>
-                  {replyText.length}/{MAX_COMMENT_CHARS} karakter tersisa
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-sm h-8 px-3 font-bold text-[10px]">Batal</Button>
-              <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">Kirim balasan</Button>
-            </div>
+        <div className="ml-6 space-y-3">
+          <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value.slice(0, 500))} className="bg-white/60 min-h-[80px] text-sm" placeholder="Tulis balasan..." />
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="h-8 text-[10px] font-bold">Batal</Button>
+            <Button size="sm" onClick={() => onReply(comment.id)} className="h-8 text-[10px] font-bold">Kirim</Button>
           </div>
         </div>
       )}
 
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="space-y-4">
-          {comment.replies.map((reply: any) => (
-            <CommentItem 
-              key={reply.id} 
-              comment={reply} 
-              depth={depth + 1} 
-              user={user} 
-              postAuthorId={postAuthorId} 
-              onLike={onLike} 
-              onReply={onReply}
-              replyToId={replyToId}
-              setReplyToId={setReplyToId}
-              replyText={replyText}
-              setReplyText={setReplyText}
-              parentAuthorName={comment.authorName}
-            />
-          ))}
-        </div>
-      )}
+      {comment.replies?.map((reply: any) => (
+        <CommentItem key={reply.id} comment={reply} depth={depth + 1} user={user} postAuthorId={postAuthorId} onLike={onLike} onReply={onReply} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} parentAuthorName={comment.authorName} />
+      ))}
     </div>
   );
 };
@@ -335,15 +195,12 @@ export default function NewsDetailPage() {
   const { user } = useUser();
   const db = useFirestore();
   const { toast } = useToast();
-  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [sanityPost, setSanityPost] = useState<any>(null);
+  const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
-  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
-  const [sanityPost, setSanityPost] = useState<any>(null);
-  const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
-  const [isLoadingSanity, setIsLoadingSanity] = useState(true);
-  const [hasError, setHasError] = useState(false);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -358,18 +215,13 @@ export default function NewsDetailPage() {
         ]);
         setSanityPost(postData);
         setTrendingPosts(trendingData || []);
-        setHasError(false);
       } catch (err) {
-        setHasError(true);
+        console.error("Fetch error:", err);
       } finally {
-        setIsLoadingSanity(false);
+        setIsLoading(false);
       }
     };
     fetchData();
-
-    const handleScroll = () => setShowBackToTop(window.scrollY > 400);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, [params.id]);
 
   useEffect(() => {
@@ -384,21 +236,12 @@ export default function NewsDetailPage() {
     }
   }, [user, db, params.id, sanityPost]);
 
-  const post = sanityPost;
-
-  const bookmarkRef = useMemoFirebase(() => 
-    (user && db && params.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, 
-    [db, user, params.id]
-  );
+  const bookmarkRef = useMemoFirebase(() => (user && db && params.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, [db, user, params.id]);
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
-  const commentsQuery = useMemoFirebase(() => {
-    if (!db || !params.id) return null;
-    return query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc"));
-  }, [db, params.id]);
-
-  const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
+  const commentsQuery = useMemoFirebase(() => (db && params.id) ? query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc")) : null, [db, params.id]);
+  const { data: firestoreComments } = useCollection(commentsQuery);
 
   const threadedComments = useMemo(() => {
     if (!firestoreComments) return [];
@@ -407,39 +250,34 @@ export default function NewsDetailPage() {
     const roots: any[] = [];
     firestoreComments.forEach(c => {
       const item = map.get(c.id);
-      if (c.parentId && map.has(c.parentId)) {
-        map.get(c.parentId).replies.push(item);
-      } else {
-        roots.push(item);
-      }
+      if (c.parentId && map.has(c.parentId)) map.get(c.parentId).replies.push(item);
+      else roots.push(item);
     });
     return roots;
   }, [firestoreComments]);
 
   const handleToggleBookmark = () => {
-    if (!user) { setIsLoginDialogOpen(true); return; }
-    if (!bookmarkRef || !post) return;
+    if (!user) { router.push('/auth'); return; }
+    if (!bookmarkRef || !sanityPost) return;
     if (isSaved) {
       deleteDocumentNonBlocking(bookmarkRef);
-      toast({ title: "Dihapus dari arsip", description: `"${post.title}" berhasil dihapus.` });
+      toast({ title: "Dihapus", description: "Berita dihapus dari arsip." });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
         postId: params.id,
-        title: post.title,
-        category: post.categories?.[0] || "Berita",
+        title: sanityPost.title,
+        category: sanityPost.categories?.[0] || "Berita",
         savedAt: new Date().toISOString()
       }, { merge: true });
-      toast({ title: "Berhasil diarsipkan", description: `"${post.title}" tersimpan di profil.` });
+      toast({ title: "Berhasil diarsipkan", description: "Tersimpan di profil anda." });
     }
   };
 
   const handlePostComment = (parentId: string | null = null) => {
-    if (!user) { setIsLoginDialogOpen(true); return; }
+    if (!user || !db) { router.push('/auth'); return; }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
-    if (!db) return;
-    const colRef = collection(db, "posts", params.id as string, "comments");
-    addDocumentNonBlocking(colRef, {
+    addDocumentNonBlocking(collection(db, "posts", params.id as string, "comments"), {
       content: text,
       authorId: user.uid,
       authorName: user.displayName || user.email?.split('@')[0] || "Pengguna PatureNews",
@@ -448,200 +286,106 @@ export default function NewsDetailPage() {
       parentId: parentId,
       likes: []
     });
-    if (parentId) { setReplyText(""); setReplyToId(null); } else { setCommentText(""); }
+    if (parentId) { setReplyText(""); setReplyToId(null); } else setCommentText("");
   };
 
-  const handleLikeComment = (commentId: string, currentLikes: string[] = []) => {
-    if (!user || !db) { setIsLoginDialogOpen(true); return; }
-    const likes = Array.isArray(currentLikes) ? currentLikes : [];
-    const isLiked = likes.includes(user.uid);
-    const newLikes = isLiked ? likes.filter(id => id !== user.uid) : [...likes, user.uid];
-    const commentRef = doc(db, "posts", params.id as string, "comments", commentId);
-    updateDocumentNonBlocking(commentRef, { likes: newLikes });
-  };
-
-  if (isLoadingSanity) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
-  }
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin opacity-20" /></div>;
+  if (!sanityPost) return <div className="min-h-screen flex flex-col items-center justify-center gap-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button>Kembali ke beranda</Button></Link></div>;
 
   return (
     <div className="bg-background min-h-screen pb-10">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left" style={{ scaleX }} />
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 md:px-6">
-        {hasError && (
-          <div className="mt-8">
-            <Alert variant="destructive" className="bg-red-50 border-red-200">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Masalah koneksi data</AlertTitle>
-              <AlertDescription className="text-xs">
-                Gagal memuat berita dari Sanity. Mohon periksa koneksi data anda.
-              </AlertDescription>
-            </Alert>
-          </div>
-        )}
-        
-        {!post && !hasError ? (
-          <div className="mt-20 text-center">
-            <Heading level={2}>Berita tidak ditemukan</Heading>
-            <Link href="/"><Button className="mt-6">Kembali ke beranda</Button></Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-            <div className="lg:col-span-8 pt-12">
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-muted-foreground hover:text-primary mb-8 group transition-colors">
-                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed berita
-                </Link>
-                
-                <div className="space-y-4 mb-10">
-                  <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none">{post?.categories?.[0] || "Berita"}</Badge>
-                  <Title className="text-3xl md:text-4xl font-headline font-bold leading-tight">{post?.title || "Judul berita"}</Title>
-                  <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-border/20">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10 border border-white shadow-sm">
-                        <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">
-                          {post?.author ? post.author.split(' ').map((n: string) => n[0]).join('') : "A"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <span className="block font-bold text-xs text-primary">{post?.author || "Redaksi PatureNews"}</span>
-                        <MutedText className="text-[10px] opacity-60 font-medium">
-                          {post?.publishedAt ? new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "-- October 2024"} • {post?.readTime || "5 mnt baca"}
-                        </MutedText>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ShareButton post={post} />
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className={cn(
-                          "rounded-full h-9 w-9 transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
-                          isSaved && 'bg-primary text-primary-foreground border-primary'
-                        )} 
-                        onClick={handleToggleBookmark}
-                      >
-                        <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-12">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg shadow-sm border border-primary/10 mb-3">
-                    <Image src={post?.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={post?.title || "Berita"} fill className="object-cover" priority />
-                  </div>
-                </div>
-
-                <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
-                  {post?.body ? <PortableText value={post.body} /> : <TypographyP>Memuat isi berita atau konten tidak tersedia...</TypographyP>}
-                </article>
-
-                <Separator className="my-16 opacity-30" />
-
-                <section id="comments" className="mb-24">
-                  <div className="flex items-center gap-3 mb-10">
-                    <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
-                    <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                      {firestoreComments?.length || 0}
-                    </Badge>
-                  </div>
-                  {user ? (
-                    <div className="flex flex-col gap-4 mb-14 p-6 rounded-lg bg-white/40 backdrop-blur-md border border-primary/10">
-                      <div className="flex gap-4 items-start">
-                        <Avatar className="h-10 w-10 shrink-0">
-                          <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0]}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 space-y-2">
-                          <Textarea 
-                            placeholder="Tuliskan pendapat anda..." 
-                            value={commentText} 
-                            onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
-                            className="bg-transparent border-primary/10 min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
-                          />
-                          <div className="flex justify-between items-center">
-                            <span className={cn(
-                              "text-[10px] font-bold opacity-40",
-                              commentText.length >= MAX_COMMENT_CHARS && "text-destructive opacity-100"
-                            )}>
-                              {commentText.length}/{MAX_COMMENT_CHARS} karakter tersisa
-                            </span>
-                            <Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="rounded-sm gap-2 h-10 px-8 font-bold text-[11px] shadow-sm">
-                              <Send className="h-3.5 w-3.5" /> Kirim komentar
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <Card className="bg-white/40 backdrop-blur-md p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
-                      <MutedText className="block mb-6 font-medium text-xs">Masuk untuk bergabung dalam diskusi.</MutedText>
-                      <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk sekarang</Button></Link>
-                    </Card>
-                  )}
-                  <div className="space-y-8">
-                    {isCommentsLoading ? (
-                      <div className="flex flex-col items-center py-20 gap-4">
-                        <div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                      </div>
-                    ) : threadedComments.length > 0 ? (
-                      threadedComments.map((comment) => (
-                        <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} parentAuthorName={comment.authorName} />
-                      ))
-                    ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
-                  </div>
-                </section>
-              </motion.div>
-            </div>
+      <main className="max-w-6xl mx-auto px-4 pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-8">
+            <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mb-8 group uppercase tracking-widest">
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed
+            </Link>
             
-            <aside className="lg:col-span-4 pt-12">
-              <div className="sticky top-24 space-y-12">
-                <section>
-                  <div className="flex items-center gap-2 mb-6 border-b border-border/20 pb-3">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    <Heading level={3} className="text-lg">Berita terpopuler</Heading>
+            <header className="space-y-4 mb-10">
+              <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none uppercase">{sanityPost.categories?.[0] || "Berita"}</Badge>
+              <Title className="text-3xl md:text-5xl">{sanityPost.title}</Title>
+              <div className="flex items-center justify-between pt-6 border-t border-primary/5">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">{sanityPost.author?.[0] || "A"}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <span className="block font-bold text-xs text-primary">{sanityPost.author}</span>
+                    <MutedText className="text-[10px] opacity-60 uppercase">{sanityPost.readTime || "5 mnt baca"}</MutedText>
                   </div>
-                  <div className="space-y-8">
-                    {trendingPosts.length > 0 ? trendingPosts.map((trend: any) => (
-                      <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
-                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted shadow-sm border border-primary/5">
-                          <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
-                        </div>
-                        <div className="flex flex-col justify-center">
-                          <span className="text-[9px] font-bold text-accent opacity-70 mb-1">{trend.categories?.[0] || "Berita"} • {trend.readTime || "5 mnt"} baca</span>
-                          <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4>
-                        </div>
-                      </Link>
-                    )) : (
-                      <MutedText className="text-xs opacity-40 italic">Tidak ada berita populer saat ini.</MutedText>
-                    )}
-                  </div>
-                </section>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ShareButton post={sanityPost} />
+                  <Button variant="outline" size="icon" className={cn("rounded-full h-9 w-9 border-primary/10 bg-white/40", isSaved && "bg-primary text-white border-primary")} onClick={handleToggleBookmark}>
+                    <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
+                  </Button>
+                </div>
               </div>
-            </aside>
-          </div>
-        )}
-      </main>
-      
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: showBackToTop ? 1 : 0 }} className="fixed bottom-8 right-8 z-50">
-        <Button size="icon" className="rounded-full h-12 w-12 shadow-lg bg-primary text-primary-foreground" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <ChevronUp className="h-6 w-6" />
-        </Button>
-      </motion.div>
+            </header>
 
-      <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk berpartisipasi dalam diskusi.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8">
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 mb-12 shadow-sm">
+              <Image src={sanityPost.mainImage ? urlFor(sanityPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={sanityPost.title} fill className="object-cover" priority />
+            </div>
+
+            <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80">
+              <PortableText value={sanityPost.body} />
+            </article>
+
+            <section id="comments" className="mb-24 pt-16 border-t border-primary/5">
+              <div className="flex items-center gap-3 mb-10">
+                <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
+                <Badge className="bg-primary/5 text-primary border-none">{firestoreComments?.length || 0}</Badge>
+              </div>
+
+              {user ? (
+                <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4">
+                  <Textarea placeholder="Tulis pendapat anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5" />
+                  <div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest shadow-lg">Kirim komentar</Button></div>
+                </div>
+              ) : (
+                <Card className="p-10 text-center bg-white/40 border-dashed border-primary/20 mb-12">
+                  <MutedText className="block mb-6 uppercase tracking-widest text-[10px] font-bold">Masuk untuk bergabung dalam diskusi</MutedText>
+                  <Link href="/auth"><Button className="px-10 h-11 font-bold text-[10px] uppercase tracking-widest shadow-lg">Masuk sekarang</Button></Link>
+                </Card>
+              )}
+
+              <div className="space-y-8">
+                {threadedComments.length > 0 ? threadedComments.map((comment) => (
+                  <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={sanityPost.authorId || ""} onLike={(id: string, current: string[]) => {
+                    if (!user || !db) return;
+                    const isLiked = current.includes(user.uid);
+                    updateDocumentNonBlocking(doc(db, "posts", params.id as string, "comments", id), { likes: isLiked ? current.filter(uid => uid !== user.uid) : [...current, user.uid] });
+                  }} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
+                )) : <div className="py-20 text-center border-2 border-dashed border-primary/5 rounded-xl"><MutedText className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Belum ada diskusi</MutedText></div>}
+              </div>
+            </section>
+          </div>
+          
+          <aside className="lg:col-span-4 space-y-12">
+            <section>
+              <div className="flex items-center gap-2 mb-6 border-b border-primary/5 pb-3">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <Heading level={3} className="text-lg">Sedang populer</Heading>
+              </div>
+              <div className="space-y-6">
+                {trendingPosts.map((trend: any) => (
+                  <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
+                    <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5 shadow-inner">
+                      <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
+                    </div>
+                    <div className="flex flex-col justify-center min-w-0">
+                      <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{trend.categories?.[0] || "Berita"}</span>
+                      <h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+      </main>
       <Footer />
     </div>
   );

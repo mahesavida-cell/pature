@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -40,10 +41,12 @@ export default function AuthPage() {
     }
 
     setIsLoading(true);
-    if (type === 'register') {
-      initiateEmailSignUp(auth!, email, password);
-    } else {
-      initiateEmailSignIn(auth!, email, password);
+    if (auth) {
+      if (type === 'register') {
+        initiateEmailSignUp(auth, email, password);
+      } else {
+        initiateEmailSignIn(auth, email, password);
+      }
     }
     
     setTimeout(() => setIsLoading(false), 800);

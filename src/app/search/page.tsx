@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ import { collection, query, limit } from "firebase/firestore";
 import { useMemo, Suspense } from "react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
-function SearchResults() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const queryText = searchParams.get("q") || "";
   const db = useFirestore();
@@ -41,7 +42,7 @@ function SearchResults() {
   return (
     <div className="space-y-12 mb-20">
       <div className="flex flex-col gap-4">
-        <MutedText className="text-[10px] font-bold opacity-40 tracking-widest">Hasil pencarian</MutedText>
+        <MutedText className="text-[10px] font-bold opacity-40 tracking-widest uppercase">Hasil pencarian</MutedText>
         <Title className="text-4xl md:text-5xl tracking-tighter">
           &ldquo;{queryText}&rdquo;
         </Title>
@@ -65,7 +66,7 @@ function SearchResults() {
             <Button 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               variant="outline" 
-              className="rounded-full px-8 h-12 font-bold text-[11px] tracking-widest bg-white/40"
+              className="rounded-full px-8 h-12 font-bold text-[11px] tracking-widest bg-white/40 shadow-none border-primary/10"
             >
               <RefreshCw className="h-4 w-4 mr-2" /> Cari kata kunci lain
             </Button>
@@ -135,8 +136,13 @@ export default function SearchPage() {
     <div className="bg-background min-h-screen">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 pt-40 pb-24">
-        <Suspense fallback={<div className="py-20 text-center"><RefreshCw className="h-8 w-8 animate-spin mx-auto opacity-20" /></div>}>
-          <SearchResults />
+        <Suspense fallback={
+          <div className="py-20 text-center flex flex-col items-center gap-4">
+            <RefreshCw className="h-8 w-8 animate-spin opacity-20" />
+            <BodyText className="text-xs opacity-40">Menyiapkan hasil pencarian...</BodyText>
+          </div>
+        }>
+          <SearchResultsContent />
         </Suspense>
       </main>
       <Footer />

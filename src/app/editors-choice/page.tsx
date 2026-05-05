@@ -1,8 +1,9 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -16,7 +17,6 @@ export default function EditorsChoicePage() {
   const db = useFirestore();
 
   const editorsQuery = useMemoFirebase(() => {
-    // Keamanan ekstra: pastikan db tersedia sebelum memanggil collection()
     if (!db) return null;
     return query(collection(db, "posts"), where("category", "==", "Media"), limit(12));
   }, [db]);
