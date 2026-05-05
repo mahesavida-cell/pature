@@ -2,10 +2,11 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, Bookmark } from "lucide-react";
+import { Search, Menu, User, LogOut, Bookmark, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -28,13 +29,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSignOut = async () => {
     await signOut(auth);
     router.push("/");
+  };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
   };
 
   const navLinks = [
@@ -55,7 +66,7 @@ export const Navbar = () => {
             InfoFlow
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {!isSearchOpen && navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href} 
@@ -68,9 +79,35 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-10 w-10">
-            <Search className="h-4 w-4" />
-          </Button>
+          <div className="relative flex items-center">
+            <AnimatePresence>
+              {isSearchOpen && (
+                <motion.div
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 240, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="mr-2 overflow-hidden"
+                >
+                  <Input
+                    ref={searchInputRef}
+                    placeholder="Cari berita..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="h-9 text-xs font-bold bg-transparent border-primary/10 rounded-md focus-visible:ring-1 focus-visible:ring-primary/20"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-muted-foreground hover:text-primary h-10 w-10 transition-transform active:scale-90"
+              onClick={toggleSearch}
+            >
+              {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+            </Button>
+          </div>
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
