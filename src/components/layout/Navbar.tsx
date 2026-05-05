@@ -78,7 +78,7 @@ const MarketWeatherBar = () => {
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
-        <div className="flex items-center gap-4 w-40 sm:w-72 shrink-0 border-r border-primary/5 mr-4">
+        <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <span className="text-[10px] font-bold text-primary tracking-tight">
@@ -96,7 +96,7 @@ const MarketWeatherBar = () => {
             >
               <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
               <span className="text-[10px] font-bold text-primary tracking-tight truncate">
-                {cities[currentCityIndex].temp}
+                {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
               </span>
             </motion.div>
           </AnimatePresence>
@@ -217,7 +217,6 @@ export const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Monitor sub-header scroll on resize
   useEffect(() => {
     handleScroll();
     window.addEventListener('resize', handleScroll);
@@ -472,7 +471,6 @@ export const Navbar = () => {
           </AnimatePresence>
         </div>
 
-        {/* Pro Scroll Indicators - Left Gradient */}
         <AnimatePresence>
           {showLeftGradient && (
             <motion.div 
@@ -484,7 +482,6 @@ export const Navbar = () => {
           )}
         </AnimatePresence>
 
-        {/* Pro Scroll Indicators - Right Gradient */}
         <AnimatePresence>
           {showRightGradient && (
             <motion.div 
