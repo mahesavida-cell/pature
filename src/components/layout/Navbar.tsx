@@ -132,14 +132,14 @@ export const Navbar = () => {
                     />
                   </motion.div>
 
-                  {/* Dynamic Search Results Dropdown */}
+                  {/* Dynamic Search Results Dropdown - Solid Background for Readability */}
                   <AnimatePresence>
                     {searchQuery.trim() !== "" && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-12 right-2 w-80 bg-white/95 backdrop-blur-xl rounded-lg border-2 border-primary/10 shadow-xl overflow-hidden z-[60]"
+                        className="absolute top-12 right-2 w-80 bg-white rounded-lg border-2 border-primary/10 shadow-xl overflow-hidden z-[60]"
                       >
                         <div className="p-2">
                           <p className="px-3 py-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-b border-primary/5">
