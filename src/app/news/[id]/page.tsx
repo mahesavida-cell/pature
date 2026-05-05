@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -7,10 +6,8 @@ import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/w
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { 
@@ -18,16 +15,13 @@ import {
   ArrowLeft, 
   Bookmark, 
   TrendingUp, 
-  ChevronUp, 
   Send, 
   Heart, 
   MessageSquare, 
-  CornerDownRight, 
   Copy, 
-  Facebook,
-  AlertCircle
+  RefreshCw
 } from "lucide-react";
-import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
@@ -50,22 +44,10 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { POST_DETAIL_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-const MAX_COMMENT_CHARS = 1000;
 
 const formatRelativeTime = (dateInput: any) => {
   if (!dateInput) return "baru saja";
@@ -80,12 +62,6 @@ const formatRelativeTime = (dateInput: any) => {
   const days = Math.floor(hours / 24);
   return `${days} hari yang lalu`;
 };
-
-const XIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
 
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
@@ -144,7 +120,7 @@ const ShareButton = ({ post }: { post: any }) => {
 };
 
 const CommentItem = ({ 
-  comment, depth = 0, user, postAuthorId, onLike, onReply, replyToId, setReplyToId, replyText, setReplyText, parentAuthorName 
+  comment, depth = 0, user, postAuthorId, onLike, onReply, replyToId, setReplyToId, replyText, setReplyText 
 }: any) => {
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
@@ -183,7 +159,7 @@ const CommentItem = ({
       )}
 
       {comment.replies?.map((reply: any) => (
-        <CommentItem key={reply.id} comment={reply} depth={depth + 1} user={user} postAuthorId={postAuthorId} onLike={onLike} onReply={onReply} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} parentAuthorName={comment.authorName} />
+        <CommentItem key={reply.id} comment={reply} depth={depth + 1} user={user} postAuthorId={postAuthorId} onLike={onLike} onReply={onReply} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
       ))}
     </div>
   );
@@ -269,7 +245,7 @@ export default function NewsDetailPage() {
         category: sanityPost.categories?.[0] || "Berita",
         savedAt: new Date().toISOString()
       }, { merge: true });
-      toast({ title: "Berhasil diarsipkan", description: "Tersimpan di profil anda." });
+      toast({ title: "Berhasil diarsipkan", description: "Tersimpan di profil Anda." });
     }
   };
 
@@ -341,7 +317,7 @@ export default function NewsDetailPage() {
 
               {user ? (
                 <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4">
-                  <Textarea placeholder="Tulis pendapat anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5" />
+                  <Textarea placeholder="Tulis pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5" />
                   <div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest shadow-lg">Kirim komentar</Button></div>
                 </div>
               ) : (

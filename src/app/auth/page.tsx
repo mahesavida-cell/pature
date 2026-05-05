@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -78,7 +77,7 @@ export default function AuthPage() {
                   <Newspaper className="h-5 w-5" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-headline font-bold leading-tight text-white">Kejernihan informasi di genggaman anda</h2>
+                  <h2 className="text-2xl font-headline font-bold leading-tight text-white">Kejernihan informasi di genggaman Anda</h2>
                   <p className="text-white/60 text-xs leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif.</p>
                 </div>
               </div>
@@ -98,7 +97,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Sisi kanan - formulir */}
+          {/* Sisi kanan - formulir murni ShadCN */}
           <div className="flex flex-col p-8 sm:p-10 justify-center bg-white relative">
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg">
@@ -124,7 +123,7 @@ export default function AuthPage() {
                     <Input 
                       id="password" 
                       type={showPassword ? "text" : "password"} 
-                      placeholder="Masukkan sandi anda"
+                      placeholder="Masukkan kata sandi Anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
@@ -165,7 +164,7 @@ export default function AuthPage() {
                     <Input 
                       id="reg-password" 
                       type={showPassword ? "text" : "password"} 
-                      placeholder="Buat sandi yang aman"
+                      placeholder="Buat kata sandi yang aman"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -59,7 +58,7 @@ function SearchResultsContent() {
           <div className="space-y-3">
             <Heading level={2} className="text-2xl">Maaf, kami tidak menemukan hasil</Heading>
             <BodyText className="max-w-md mx-auto">
-              Coba gunakan kata kunci lain yang lebih umum atau periksa kembali ejaan anda.
+              Coba gunakan kata kunci lain yang lebih umum atau periksa kembali ejaan Anda.
             </BodyText>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">

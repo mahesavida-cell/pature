@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -13,14 +12,17 @@ export const Title = ({ children, className }: TextProps) => (
   </h1>
 );
 
-type HeadingLevel = 2 | 3 | 4;
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export const Heading = ({ children, className, level = 2 }: TextProps & { level?: HeadingLevel }) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  const sizes = {
+  const Tag = `h${level}` as any;
+  const sizes: Record<HeadingLevel, string> = {
+    1: "text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tighter",
     2: "text-2xl md:text-3xl lg:text-4xl tracking-tight",
     3: "text-xl md:text-2xl tracking-tight",
     4: "text-lg md:text-xl tracking-tight",
+    5: "text-base md:text-lg tracking-tight",
+    6: "text-sm md:text-base tracking-tight",
   };
   return (
     <Tag className={cn("font-headline font-bold text-primary", sizes[level], className)}>
