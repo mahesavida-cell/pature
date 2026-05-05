@@ -47,6 +47,136 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// Komponen CommentItem dipindahkan ke luar untuk mencegah re-mounting saat state parent berubah
+const CommentItem = ({ 
+  comment, 
+  depth = 0, 
+  user, 
+  postAuthorId, 
+  onLike, 
+  onReply,
+  replyToId,
+  setReplyToId,
+  replyText,
+  setReplyText
+}: { 
+  comment: any; 
+  depth?: number; 
+  user: any; 
+  postAuthorId: string;
+  onLike: (id: string, likes: string[]) => void;
+  onReply: (parentId: string) => void;
+  replyToId: string | null;
+  setReplyToId: (id: string | null) => void;
+  replyText: string;
+  setReplyText: (text: string) => void;
+}) => {
+  const isPostAuthor = comment.authorId === postAuthorId;
+  const likes = Array.isArray(comment.likes) ? comment.likes : [];
+  const isLiked = user && likes.includes(user.uid);
+
+  return (
+    <div className={cn("space-y-3", depth > 0 && "ml-6 md:ml-10 border-l border-primary/10 pl-4")}>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.4 }}
+        className="group flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm"
+      >
+        <Avatar className={cn("h-10 w-10 shadow-sm", depth > 0 && "h-8 w-8")}>
+          <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
+            {comment.authorName[0]}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
+              {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
+              <span className="text-[9px] text-muted-foreground font-medium shrink-0">
+                {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
+              </span>
+            </div>
+          </div>
+          <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words">{comment.content}</BodyText>
+          <div className="flex items-center gap-5">
+            <motion.button 
+              whileTap={{ scale: 0.9 }} 
+              onClick={() => onLike(comment.id, likes)} 
+              className={cn(
+                "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
+                isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
+              <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
+            </motion.button>
+            <motion.button 
+              whileTap={{ scale: 0.9 }} 
+              onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} 
+              className={cn(
+                "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
+                replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Balas Pesan</span>
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
+      
+      <AnimatePresence>
+        {replyToId === comment.id && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: "auto" }} 
+            exit={{ opacity: 0, height: 0 }} 
+            className="ml-6 md:ml-10 overflow-hidden mt-3"
+          >
+            <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3">
+              <Textarea 
+                placeholder={`Membalas Pesan ${comment.authorName}...`} 
+                value={replyText} 
+                onChange={(e) => setReplyText(e.target.value)} 
+                className="bg-white border-none min-h-[80px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-8 px-3 font-bold text-[10px]">
+                  Batal
+                </Button>
+                <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-md h-8 px-4 font-bold text-[10px] shadow-sm">
+                  <Send className="h-3 w-3 mr-2" /> Kirim Balasan
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="space-y-4 pt-2">
+          {comment.replies.map((reply: any) => (
+            <CommentItem 
+              key={reply.id} 
+              comment={reply} 
+              depth={depth + 1} 
+              user={user} 
+              postAuthorId={postAuthorId} 
+              onLike={onLike} 
+              onReply={onReply}
+              replyToId={replyToId}
+              setReplyToId={setReplyToId}
+              replyText={replyText}
+              setReplyText={setReplyText}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function NewsDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -129,7 +259,6 @@ export default function NewsDetailPage() {
 
     if (!firestoreComments || firestoreComments.length === 0) return mockComments;
 
-    // Logic to build a nested tree
     const map = new Map();
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
     
@@ -231,101 +360,6 @@ export default function NewsDetailPage() {
     const newLikes = isLiked ? likes.filter(id => id !== user.uid) : [...likes, user.uid];
     const commentRef = doc(db, "posts", params.id as string, "comments", commentId);
     updateDocumentNonBlocking(commentRef, { likes: newLikes });
-  };
-
-  const CommentItem = ({ comment, depth = 0 }: { comment: any, depth?: number }) => {
-    const isPostAuthor = comment.authorId === post.authorId;
-    const likes = Array.isArray(comment.likes) ? comment.likes : [];
-    const isLiked = user && likes.includes(user.uid);
-    const maxDepth = 3; // Limit visual nesting to avoid layout issues
-
-    return (
-      <div className={cn("space-y-3", depth > 0 && "ml-6 md:ml-10 border-l border-primary/10 pl-4")}>
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          className="group flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm"
-        >
-          <Avatar className={cn("h-10 w-10 shadow-sm", depth > 0 && "h-8 w-8")}>
-            <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
-              {comment.authorName[0]}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
-                {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
-                <span className="text-[9px] text-muted-foreground font-medium shrink-0">
-                  {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
-                </span>
-              </div>
-            </div>
-            <BodyText className="text-sm text-foreground/80 mb-4 leading-relaxed break-words">{comment.content}</BodyText>
-            <div className="flex items-center gap-5">
-              <motion.button 
-                whileTap={{ scale: 0.9 }} 
-                onClick={() => handleLikeComment(comment.id, likes)} 
-                className={cn(
-                  "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
-                  isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary"
-                )}
-              >
-                <Heart className={cn("h-4 w-4 transition-all", isLiked && "fill-current")} />
-                <span>{likes.length > 0 ? `${likes.length} Suka` : "Suka"}</span>
-              </motion.button>
-              <motion.button 
-                whileTap={{ scale: 0.9 }} 
-                onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} 
-                className={cn(
-                  "flex items-center gap-1.5 text-[10px] font-bold tracking-tight transition-colors", 
-                  replyToId === comment.id ? "text-primary" : "text-muted-foreground hover:text-primary"
-                )}
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Balas Pesan</span>
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-        
-        <AnimatePresence>
-          {replyToId === comment.id && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }} 
-              animate={{ opacity: 1, height: "auto" }} 
-              exit={{ opacity: 0, height: 0 }} 
-              className="ml-6 md:ml-10 overflow-hidden mt-3"
-            >
-              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10 space-y-3">
-                <Textarea 
-                  placeholder={`Membalas Pesan ${comment.authorName}...`} 
-                  value={replyText} 
-                  onChange={(e) => setReplyText(e.target.value)} 
-                  className="bg-white border-none min-h-[80px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
-                />
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-8 px-3 font-bold text-[10px]">
-                    Batal
-                  </Button>
-                  <Button onClick={() => handlePostComment(comment.id)} size="sm" className="rounded-md h-8 px-4 font-bold text-[10px] shadow-sm">
-                    <Send className="h-3 w-3 mr-2" /> Kirim Balasan
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {comment.replies && comment.replies.length > 0 && (
-          <div className="space-y-4 pt-2">
-            {comment.replies.map((reply: any) => (
-              <CommentItem key={reply.id} comment={reply} depth={depth + 1} />
-            ))}
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -436,7 +470,20 @@ export default function NewsDetailPage() {
                       <MutedText className="font-medium text-xs">Memuat Diskusi...</MutedText>
                     </div>
                   ) : threadedComments.length > 0 ? (
-                    threadedComments.map((comment) => <CommentItem key={comment.id} comment={comment} />)
+                    threadedComments.map((comment) => (
+                      <CommentItem 
+                        key={comment.id} 
+                        comment={comment} 
+                        user={user} 
+                        postAuthorId={post.authorId} 
+                        onLike={handleLikeComment}
+                        onReply={handlePostComment}
+                        replyToId={replyToId}
+                        setReplyToId={setReplyToId}
+                        replyText={replyText}
+                        setReplyText={setReplyText}
+                      />
+                    ))
                   ) : (
                     <div className="py-20 text-center rounded-lg border border-dashed border-border/40">
                       <MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
