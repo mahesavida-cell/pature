@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -25,7 +24,7 @@ export default function Home() {
       category: "Desain",
       author: "Alex Rivers",
       readTime: "5 menit baca",
-      excerpt: "Menjelajahi bagaimana ruang kosong dan tipografi yang jelas menjadi standar untuk sistem informasi modern.",
+      excerpt: "Menjelajahi bagaimana ruang kosong and tipografi yang jelas menjadi standar untuk sistem informasi modern.",
       image: PlaceHolderImages.find(img => img.id === "tech-news")?.imageUrl
     },
     {
@@ -228,7 +227,7 @@ export default function Home() {
                 <div className="relative z-10">
                   <h4 className="font-headline font-bold text-base mb-2">InfoFlow Premium</h4>
                   <p className="text-[10px] text-primary-foreground/70 mb-6 leading-relaxed">
-                    Laporan eksklusif dan tanpa iklan.
+                    Laporan eksklusif and tanpa iklan.
                   </p>
                   <motion.div whileTap={{ scale: 0.98 }}>
                     <Button variant="secondary" className="w-full font-bold text-[10px] h-9 rounded-md">
@@ -243,7 +242,15 @@ export default function Home() {
       </main>
       <footer className="border-t py-12 bg-white/50 mt-20">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6">
-          <Link href="/" className="font-headline text-xl font-bold text-primary">InfoFlow</Link>
+          <Link href="/" className="transition-opacity hover:opacity-80">
+            <Image 
+              src="/pature_news.png" 
+              alt="InfoFlow Logo" 
+              width={120} 
+              height={35} 
+              className="h-7 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all"
+            />
+          </Link>
           <div className="flex gap-6 text-[10px] font-bold text-muted-foreground">
             <Link href="#" className="hover:text-primary">Tentang kami</Link>
             <Link href="#" className="hover:text-primary">Kontak</Link>

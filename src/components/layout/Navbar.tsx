@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -95,8 +94,15 @@ export const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Link href="/" className="font-headline text-2xl font-bold text-primary tracking-tighter">
-            InfoFlow
+          <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+            <Image 
+              src="/pature_news.png" 
+              alt="InfoFlow Logo" 
+              width={140} 
+              height={40} 
+              className="h-8 w-auto object-contain"
+              priority
+            />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             {!isSearchOpen && navLinks.map((link) => (
@@ -132,7 +138,6 @@ export const Navbar = () => {
                     />
                   </motion.div>
 
-                  {/* Dynamic Search Results Dropdown - Solid Background for Readability */}
                   <AnimatePresence>
                     {searchQuery.trim() !== "" && (
                       <motion.div
@@ -216,8 +221,16 @@ export const Navbar = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white/95 backdrop-blur-2xl border-none p-8">
               <SheetHeader className="text-left mb-12">
-                <SheetTitle className="font-headline text-2xl font-bold text-primary">
-                  InfoFlow
+                <SheetTitle>
+                  <Link href="/" onClick={() => setIsOpen(false)}>
+                    <Image 
+                      src="/pature_news.png" 
+                      alt="InfoFlow Logo" 
+                      width={120} 
+                      height={35} 
+                      className="h-8 w-auto object-contain"
+                    />
+                  </Link>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-8">
