@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, ChevronRight, Share2, ChevronLeft } from "lucide-react";
-import { motion } from "framer-motion";
+import { Clock, Bookmark, ChevronRight, Share2, Sun, Cloud, CloudRain, TrendingUp, TrendingDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
@@ -43,6 +43,90 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
+const MarketWeatherBar = () => {
+  const [currentCityIndex, setCurrentCityIndex] = useState(0);
+  
+  const cities = [
+    { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3 w-3" /> },
+    { name: "Surabaya", temp: "33°C", status: "Berawan", icon: <Cloud className="h-3 w-3" /> },
+    { name: "Bandung", temp: "24°C", status: "Hujan", icon: <CloudRain className="h-3 w-3" /> },
+    { name: "Medan", temp: "29°C", status: "Cerah", icon: <Sun className="h-3 w-3" /> },
+  ];
+
+  const stocks = [
+    { symbol: "IHSG", price: "7,245.12", change: "+0.45%", up: true },
+    { symbol: "BBCA", price: "10,125", change: "-0.25%", up: false },
+    { symbol: "BBRI", price: "4,850", change: "+1.20%", up: true },
+    { symbol: "TLKM", price: "3,120", change: "-0.95%", up: false },
+    { symbol: "ASII", price: "5,150", change: "+0.10%", up: true },
+    { symbol: "GOTO", price: "52", change: "0.00%", up: true },
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentCityIndex((prev) => (prev + 1) % cities.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [cities.length]);
+
+  return (
+    <div className="border-b border-primary/5 bg-background/50 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
+        {/* Weather Section (Left) */}
+        <div className="flex items-center gap-3 w-48 shrink-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentCityIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center gap-2"
+            >
+              <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
+              <span className="text-[10px] font-bold text-primary tracking-tight">
+                {cities[currentCityIndex].name} {cities[currentCityIndex].temp}
+              </span>
+              <span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                {cities[currentCityIndex].status}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Stock Ticker (Right) */}
+        <div className="flex-1 relative flex items-center overflow-hidden ml-8">
+          <motion.div
+            animate={{ x: ["0%", "-100%"] }}
+            transition={{
+              duration: 30,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            className="flex items-center gap-12 whitespace-nowrap"
+          >
+            {[...stocks, ...stocks].map((stock, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
+                <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
+                <div className={cn(
+                  "flex items-center gap-0.5 text-[9px] font-bold",
+                  stock.up ? "text-green-600" : "text-red-600"
+                )}>
+                  {stock.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                  {stock.change}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+          {/* Fading Gradients for ticker smooth look */}
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background/50 to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/50 to-transparent z-10" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -233,114 +317,117 @@ export default function Home() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-32 md:pt-48 lg:pt-56 pb-20">
-        {/* Hero & Trending Section */}
-        <section className="mb-24 lg:mb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            <motion.div 
-              className="lg:col-span-8 space-y-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <Link href={`/news/${heroPost.id}`} className="block group">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
-                  <Image 
-                    src={heroPost.image || PlaceHolderImages[0].imageUrl} 
-                    alt="Berita utama"
-                    fill
-                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                    priority
-                  />
-                  <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
-                      Unggulan hari ini
-                    </Badge>
+      <div className="pt-20"> {/* Offset for Navbar */}
+        <MarketWeatherBar />
+        <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-24 lg:pt-32 pb-20">
+          {/* Hero & Trending Section */}
+          <section className="mb-24 lg:mb-32">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              <motion.div 
+                className="lg:col-span-8 space-y-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Link href={`/news/${heroPost.id}`} className="block group">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
+                    <Image 
+                      src={heroPost.image || PlaceHolderImages[0].imageUrl} 
+                      alt="Berita utama"
+                      fill
+                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                      priority
+                    />
+                    <div className="absolute top-6 left-6">
+                      <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
+                        Unggulan hari ini
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <Title className="group-hover:text-primary/80 transition-colors">
+                      {heroPost.title}
+                    </Title>
+                    <BodyText className="line-clamp-2 max-w-3xl">
+                      {heroPost.excerpt}
+                    </BodyText>
+                  </div>
+                </Link>
+                <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
+                    <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
+                  </div>
+                  <div className="flex items-center gap-3 ml-auto">
+                    <BookmarkButton post={heroPost} variant="hero" />
+                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <Title className="group-hover:text-primary/80 transition-colors">
-                    {heroPost.title}
-                  </Title>
-                  <BodyText className="line-clamp-2 max-w-3xl">
-                    {heroPost.excerpt}
-                  </BodyText>
+              </motion.div>
+
+              <div className="lg:col-span-4 space-y-8">
+                <div className="flex items-center justify-between border-b border-primary/5 pb-5">
+                  <Heading level={3} className="text-lg">Trending</Heading>
                 </div>
-              </Link>
-              <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
+                <div className="space-y-8">
+                  {isTrendingLoading ? (
+                    [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
+                  ) : (trendingPosts || []).map((story, idx) => (
+                    <motion.div
+                      key={story.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1, duration: 0.5 }}
+                    >
+                      <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
+                        <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
+                          0{idx + 1}
+                        </span>
+                        <div className="space-y-1.5 flex-1">
+                          <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
+                            {story.category}
+                          </Badge>
+                          <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                            {story.title}
+                          </h4>
+                          <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3 ml-auto">
-                  <BookmarkButton post={heroPost} variant="hero" />
-                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
-                    <Share2 className="h-4 w-4" />
+                <Link href="/latest" className="block">
+                  <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
+                    Lihat berita lainnya <ChevronRight className="h-4 w-4" />
                   </Button>
-                </div>
+                </Link>
               </div>
-            </motion.div>
-
-            <div className="lg:col-span-4 space-y-8">
-              <div className="flex items-center justify-between border-b border-primary/5 pb-5">
-                <Heading level={3} className="text-lg">Trending</Heading>
-              </div>
-              <div className="space-y-8">
-                {isTrendingLoading ? (
-                  [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
-                ) : (trendingPosts || []).map((story, idx) => (
-                  <motion.div
-                    key={story.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.5 }}
-                  >
-                    <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
-                      <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
-                        0{idx + 1}
-                      </span>
-                      <div className="space-y-1.5 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
-                          {story.category}
-                        </Badge>
-                        <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                          {story.title}
-                        </h4>
-                        <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-              <Link href="/latest" className="block">
-                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
-                  Lihat berita lainnya <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <NewsCarousel 
-          posts={curatedPosts || []} 
-          sectionTitle="Pilihan redaksi" 
-          viewAllLink="/editors-choice" 
-          isLoading={isCuratedLoading}
-        />
+          <NewsCarousel 
+            posts={curatedPosts || []} 
+            sectionTitle="Pilihan redaksi" 
+            viewAllLink="/editors-choice" 
+            isLoading={isCuratedLoading}
+          />
 
-        <NewsCarousel 
-          posts={carouselLatestPosts || []} 
-          sectionTitle="Berita terbaru" 
-          viewAllLink="/latest" 
-          isLoading={isLatestLoading}
-        />
+          <NewsCarousel 
+            posts={carouselLatestPosts || []} 
+            sectionTitle="Berita terbaru" 
+            viewAllLink="/latest" 
+            isLoading={isLatestLoading}
+          />
 
-        <NewsCarousel 
-          posts={curatedPosts?.slice().reverse() || []} 
-          sectionTitle="Rekomendasi untuk anda" 
-          viewAllLink="/recommendations" 
-          isLoading={isCuratedLoading}
-        />
-      </main>
+          <NewsCarousel 
+            posts={curatedPosts?.slice().reverse() || []} 
+            sectionTitle="Rekomendasi untuk anda" 
+            viewAllLink="/recommendations" 
+            isLoading={isCuratedLoading}
+          />
+        </main>
+      </div>
       <Footer />
     </div>
   );
