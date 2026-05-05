@@ -9,8 +9,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useAuth, initiateEmailSignUp, initiateEmailSignIn } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AuthPage() {
+  const auth = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAuth = async (type: 'login' | 'register') => {
+    if (!email || !password) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please fill in all fields.",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (type === 'register') {
+        initiateEmailSignUp(auth, email, password);
+        toast({
+          title: "Success",
+          description: "Account created! Welcome to InfoFlow.",
+        });
+      } else {
+        initiateEmailSignIn(auth, email, password);
+        toast({
+          title: "Welcome back",
+          description: "Signed in successfully.",
+        });
+      }
+      router.push("/");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <Navbar />
@@ -22,54 +70,81 @@ export default function AuthPage() {
           className="w-full max-w-md"
         >
           <div className="text-center mb-8 space-y-2">
-            <Heading level={2}>Welcome to InfoFlow</Heading>
-            <BodyText>Connect with the stories that matter most.</BodyText>
+            <Heading level={2}>InfoFlow Reader</Heading>
+            <BodyText>Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
           <Card>
             <CardContent className="pt-6">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger value="login">Login</TabsTrigger>
-                  <TabsTrigger value="register">Register</TabsTrigger>
+                  <TabsTrigger value="login">Masuk</TabsTrigger>
+                  <TabsTrigger value="register">Daftar</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login">
-                  <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="name@example.com" />
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="email@contoh.com" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
-                        <Button variant="link" size="sm" className="h-auto p-0 text-xs">Forgot password?</Button>
-                      </div>
-                      <Input id="password" type="password" />
+                      <Label htmlFor="password">Password</Label>
+                      <Input 
+                        id="password" 
+                        type="password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
                     </div>
-                    <Button className="w-full">Sign In</Button>
-                  </form>
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleAuth('login')}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Memproses..." : "Masuk Sekarang"}
+                    </Button>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="register">
-                  <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-name">Full Name</Label>
-                      <Input id="reg-name" placeholder="John Doe" />
-                    </div>
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="reg-email">Email</Label>
-                      <Input id="reg-email" type="email" placeholder="name@example.com" />
+                      <Input 
+                        id="reg-email" 
+                        type="email" 
+                        placeholder="email@contoh.com" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="reg-password">Password</Label>
-                      <Input id="reg-password" type="password" />
+                      <Input 
+                        id="reg-password" 
+                        type="password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
                     </div>
-                    <Button className="w-full">Create Account</Button>
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleAuth('register')}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Memproses..." : "Daftar Berlangganan"}
+                    </Button>
                     <MutedText className="text-[10px] text-center block pt-2">
-                      By clicking register, you agree to our Terms of Service and Privacy Policy.
+                      Dengan mendaftar, Anda setuju untuk menerima update berita terbaru kami.
                     </MutedText>
-                  </form>
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>
