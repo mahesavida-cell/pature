@@ -41,6 +41,7 @@ import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
   useUser, 
+  useAuth,
   useFirestore, 
   useCollection, 
   useDoc,
@@ -127,7 +128,7 @@ const ShareButton = ({ post }: { post: any }) => {
     navigator.clipboard.writeText(url);
     toast({
       title: "Tautan disalin",
-      description: "Tautan berita telah berhasil disalin ke papan klip Anda.",
+      description: "Tautan berita telah berhasil disalin ke papan klip anda.",
     });
   };
 
@@ -290,7 +291,7 @@ const CommentItem = ({
             <div className="p-4 bg-primary/5 backdrop-blur-sm rounded-lg border border-primary/10 space-y-3 mb-4">
               <div className="relative">
                 <Textarea 
-                  placeholder="Tulis balasan Anda..." 
+                  placeholder="Tulis balasan anda..." 
                   value={replyText} 
                   onChange={(e) => setReplyText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
                   className="bg-transparent border-primary/10 min-h-[90px] rounded-sm text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
@@ -348,7 +349,6 @@ export default function NewsDetailPage() {
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [sanityPost, setSanityPost] = useState<any>(null);
   const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
   const [isLoadingSanity, setIsLoadingSanity] = useState(true);
@@ -358,7 +358,6 @@ export default function NewsDetailPage() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
-    setMounted(true);
     const fetchData = async () => {
       if (!params.id) return;
       try {
@@ -485,7 +484,7 @@ export default function NewsDetailPage() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Masalah koneksi data</AlertTitle>
               <AlertDescription className="text-xs">
-                Gagal memuat berita dari Sanity. Mohon tambahkan domain Anda ke daftar <b>CORS Origins</b> di dashboard Sanity Anda untuk mengaktifkan akses data.
+                Gagal memuat berita dari Sanity. Mohon tambahkan domain anda ke daftar <b>CORS Origins</b> di dashboard Sanity anda untuk mengaktifkan akses data.
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -598,7 +597,7 @@ export default function NewsDetailPage() {
                         </Avatar>
                         <div className="flex-1 space-y-2">
                           <Textarea 
-                            placeholder="Tuliskan pendapat Anda..." 
+                            placeholder="Tuliskan pendapat anda..." 
                             value={commentText} 
                             onChange={(e) => setCommentText(e.target.value.slice(0, MAX_COMMENT_CHARS))} 
                             className="bg-transparent border-primary/10 min-h-[100px] rounded-sm text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20 resize-none px-4 py-3" 
@@ -630,7 +629,7 @@ export default function NewsDetailPage() {
                       </div>
                     ) : threadedComments.length > 0 ? (
                       threadedComments.map((comment) => (
-                        <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />
+                        <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={post?.authorId || ""} onLike={handleLikeComment} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} parentAuthorName={comment.authorName} />
                       ))
                     ) : <div className="py-20 text-center rounded-lg border border-dashed border-border/40 bg-white/20 backdrop-blur-sm"><MutedText className="text-xs opacity-50">Belum ada komentar. Jadilah yang pertama memberikan pendapat!</MutedText></div>}
                   </div>
@@ -668,7 +667,7 @@ export default function NewsDetailPage() {
                 <Card className="bg-primary/95 text-primary-foreground p-8 rounded-lg shadow-md border-none">
                   <div className="text-center">
                     <Heading level={3} className="text-white text-lg mb-2">Buletin berita</Heading>
-                    <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email Anda.</BodyText>
+                    <BodyText className="text-[11px] text-white/70 mb-8 leading-relaxed font-medium">Dapatkan ringkasan berita terpenting setiap hari langsung ke email anda.</BodyText>
                     <Link href="/auth"><Button variant="secondary" className="w-full h-11 rounded-sm font-bold text-[10px] shadow-sm">Langganan sekarang</Button></Link>
                   </div>
                 </Card>

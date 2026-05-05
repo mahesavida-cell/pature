@@ -12,13 +12,6 @@ import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 
 export default function AuthPage() {
@@ -30,9 +23,6 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
-  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -72,17 +62,17 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen flex flex-col overflow-hidden">
+    <div className="bg-background h-screen flex flex-col overflow-hidden">
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 min-h-[500px] lg:max-h-[550px]"
+          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 h-full max-h-[500px]"
         >
           {/* Sisi kiri - branding & info */}
-          <div className="hidden lg:flex flex-col relative bg-primary p-8 text-white">
+          <div className="hidden lg:flex flex-col relative bg-primary p-6 text-white">
             <div className="absolute inset-0 opacity-10">
               <Image 
                 src="https://picsum.photos/seed/patureauth/800/1200" 
@@ -93,64 +83,64 @@ export default function AuthPage() {
               />
             </div>
             <div className="relative z-10 flex flex-col h-full justify-between">
-              <div className="space-y-4">
-                <div className="h-8 w-8 bg-white/10 backdrop-blur-md rounded flex items-center justify-center">
-                  <Newspaper className="h-5 w-5" />
+              <div className="space-y-3">
+                <div className="h-7 w-7 bg-white/10 backdrop-blur-md rounded flex items-center justify-center">
+                  <Newspaper className="h-4 w-4" />
                 </div>
-                <div className="space-y-2">
-                  <h2 className="text-xl font-headline font-bold leading-tight">Kejernihan informasi di genggaman anda</h2>
-                  <p className="text-white/60 text-[11px] leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif ke jurnalisme berkualitas.</p>
+                <div className="space-y-1">
+                  <h2 className="text-lg font-headline font-bold leading-tight">Kejernihan informasi di genggaman anda</h2>
+                  <p className="text-white/60 text-[10px] leading-relaxed max-w-xs">Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif.</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
                   { icon: <CheckCircle2 className="h-3 w-3" />, text: "Akses artikel mendalam tanpa batas" },
                   { icon: <ShieldCheck className="h-3 w-3" />, text: "Pengalaman membaca yang aman dan privat" },
                   { icon: <Newspaper className="h-3 w-3" />, text: "Buletin harian pilihan redaksi" }
                 ].map((item, i) => (
-                  <div key={`benefit-${i}`} className="flex items-center gap-3 text-[10px] font-medium">
+                  <div key={`benefit-${i}`} className="flex items-center gap-2.5 text-[9px] font-medium">
                     <span className="text-white/30">{item.icon}</span>
                     <span>{item.text}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-white/10">
-                <p className="text-[9px] font-bold text-white/30 tracking-[0.2em]">PatureNews Media Group</p>
+              <div className="pt-3 border-t border-white/10">
+                <p className="text-[8px] font-bold text-white/30 tracking-[0.2em]">PatureNews Media Group</p>
               </div>
             </div>
           </div>
 
           {/* Sisi kanan - formulir */}
-          <div className="flex flex-col p-6 sm:p-8 justify-center bg-white relative">
-            <div className="mb-4 lg:hidden text-center">
-              <Heading level={2} className="text-lg font-bold tracking-tight mb-1 text-primary">PatureNews</Heading>
-              <BodyText className="text-[9px] opacity-60 font-bold tracking-widest">Jurnalisme modern dan terpercaya</BodyText>
+          <div className="flex flex-col p-6 sm:p-7 justify-center bg-white relative">
+            <div className="mb-3 lg:hidden text-center">
+              <Heading level={2} className="text-base font-bold tracking-tight mb-1 text-primary">PatureNews</Heading>
+              <BodyText className="text-[8px] opacity-60 font-bold tracking-widest">Jurnalisme modern dan terpercaya</BodyText>
             </div>
 
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4 h-9 bg-primary/5 p-1 rounded-lg">
-                <TabsTrigger value="login" className="text-[11px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="text-[11px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Daftar</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-3 h-8 bg-primary/5 p-1 rounded-lg">
+                <TabsTrigger value="login" className="text-[10px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Masuk</TabsTrigger>
+                <TabsTrigger value="register" className="text-[10px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Daftar</TabsTrigger>
               </TabsList>
               
-              <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none space-y-3">
+              <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
-                  <Label htmlFor="email" className="text-[10px] font-bold opacity-50 px-1">Alamat email</Label>
+                  <Label htmlFor="email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
                     id="email" 
                     type="email" 
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                    className="h-8 border-none bg-primary/5 font-medium text-[11px] rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                   />
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between items-center px-1">
-                    <Label htmlFor="password" className="text-[10px] font-bold opacity-50">Kata sandi</Label>
-                    <button className="text-[10px] font-bold text-primary/60 hover:text-primary transition-colors">Lupa sandi?</button>
+                    <Label htmlFor="password" className="text-[9px] font-bold opacity-50">Kata sandi</Label>
+                    <button className="text-[9px] font-bold text-primary/60 hover:text-primary transition-colors">Lupa sandi?</button>
                   </div>
                   <div className="relative">
                     <Input 
@@ -159,19 +149,19 @@ export default function AuthPage() {
                       placeholder="Masukkan sandi anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                      className="h-8 border-none bg-primary/5 font-medium text-[11px] rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
                     >
-                      {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                      {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                     </button>
                   </div>
                 </div>
                 <Button 
-                  className="w-full h-10 font-bold text-[11px] tracking-tight mt-1 rounded-lg shadow-sm" 
+                  className="w-full h-9 font-bold text-[10px] tracking-tight mt-1 rounded-lg shadow-sm" 
                   onClick={() => handleAuth('login')}
                   disabled={isLoading}
                 >
@@ -179,20 +169,20 @@ export default function AuthPage() {
                 </Button>
               </TabsContent>
 
-              <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none space-y-3">
+              <TabsContent value="register" className="mt-0 focus-visible:outline-none space-y-2">
                 <div className="space-y-1">
-                  <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50 px-1">Alamat email</Label>
+                  <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
                     id="reg-email" 
                     type="email" 
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                    className="h-8 border-none bg-primary/5 font-medium text-[11px] rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-50 px-1">Kata sandi baru</Label>
+                  <Label htmlFor="reg-password" className="text-[9px] font-bold opacity-50 px-1">Kata sandi baru</Label>
                   <div className="relative">
                     <Input 
                       id="reg-password" 
@@ -200,19 +190,19 @@ export default function AuthPage() {
                       placeholder="Buat sandi yang aman"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-9 border-none bg-primary/5 font-medium text-xs rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
+                      className="h-8 border-none bg-primary/5 font-medium text-[11px] rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
                     >
-                      {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                      {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                     </button>
                   </div>
                 </div>
                 <Button 
-                  className="w-full h-10 font-bold text-[11px] tracking-tight mt-1 rounded-lg shadow-sm" 
+                  className="w-full h-9 font-bold text-[10px] tracking-tight mt-1 rounded-lg shadow-sm" 
                   onClick={() => handleAuth('register')}
                   disabled={isLoading}
                 >
@@ -221,18 +211,18 @@ export default function AuthPage() {
               </TabsContent>
             </Tabs>
 
-            <div className="flex items-center my-4 gap-3">
+            <div className="flex items-center my-3 gap-3">
               <div className="h-[1px] flex-1 bg-primary/5" />
-              <span className="text-[10px] font-bold text-muted-foreground/30 whitespace-nowrap tracking-tight">Atau lanjutkan dengan</span>
+              <span className="text-[9px] font-bold text-muted-foreground/30 whitespace-nowrap tracking-tight">Atau lanjutkan dengan</span>
               <div className="h-[1px] flex-1 bg-primary/5" />
             </div>
 
             <Button 
               variant="outline"
-              className="w-full h-10 font-bold text-[10px] flex items-center justify-center gap-2 border-primary/10 bg-white hover:bg-primary/5 hover:text-primary transition-all rounded-lg"
+              className="w-full h-9 font-bold text-[9px] flex items-center justify-center gap-2 border-primary/10 bg-white hover:bg-primary/5 hover:text-primary transition-all rounded-lg"
               onClick={handleGoogleSignIn}
             >
-              <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -241,72 +231,18 @@ export default function AuthPage() {
               <span>Google</span>
             </Button>
 
-            <div className="mt-6 pt-4 flex flex-col items-center gap-1 border-t border-primary/5">
-              <div className="flex gap-4">
-                <button onClick={() => setIsTermsOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan penggunaan</button>
-                <button onClick={() => setIsPrivacyOpen(true)} className="text-[9px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Kebijakan privasi</button>
+            <div className="mt-4 pt-3 flex flex-col items-center gap-0.5 border-t border-primary/5">
+              <div className="flex gap-3">
+                <button className="text-[8px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan</button>
+                <button className="text-[8px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Privasi</button>
               </div>
-              <p className="text-[8px] text-center opacity-30 font-bold leading-relaxed max-w-[200px] tracking-tight mt-1">
-                PatureNews Media Group © 2024. Seluruh hak cipta dilindungi.
+              <p className="text-[7px] text-center opacity-30 font-bold leading-relaxed tracking-tight mt-0.5">
+                PatureNews Media Group © 2024.
               </p>
             </div>
           </div>
         </motion.div>
       </main>
-
-      <Dialog open={isTermsOpen} onOpenChange={setIsTermsOpen}>
-        <DialogContent className="max-w-xl max-h-[70vh] flex flex-col p-0 overflow-hidden border-none bg-white rounded-lg shadow-2xl">
-          <DialogHeader className="p-6 border-b border-primary/5">
-            <DialogTitle className="font-headline font-bold text-lg text-primary">Ketentuan penggunaan</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="flex-1 p-6">
-            <div className="space-y-6 text-sm leading-relaxed text-foreground/70">
-              <section>
-                <h4 className="font-bold text-primary mb-2">1. Penerimaan ketentuan</h4>
-                <p>Dengan mengakses PatureNews, anda setuju untuk terikat oleh ketentuan ini dan semua hukum yang berlaku di wilayah hukum Republik Indonesia.</p>
-              </section>
-              <section>
-                <h4 className="font-bold text-primary mb-2">2. Penggunaan platform</h4>
-                <p>Platform ini disediakan untuk konsumsi informasi pribadi. Penggunaan komersial tanpa izin tertulis dari PatureNews Media Group dilarang keras.</p>
-              </section>
-              <section>
-                <h4 className="font-bold text-primary mb-2">3. Akun dan keamanan</h4>
-                <p>Anda bertanggung jawab penuh atas kerahasiaan kredensial akun anda dan semua aktivitas yang terjadi di bawah akun tersebut.</p>
-              </section>
-            </div>
-          </ScrollArea>
-          <div className="p-4 bg-primary/5 flex justify-end">
-            <Button onClick={() => setIsTermsOpen(false)} size="sm" className="font-bold text-[10px] px-6 rounded-lg">Mengerti</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isPrivacyOpen} onOpenChange={setIsPrivacyOpen}>
-        <DialogContent className="max-w-xl max-h-[70vh] flex flex-col p-0 overflow-hidden border-none bg-white rounded-lg shadow-2xl">
-          <DialogHeader className="p-6 border-b border-primary/5">
-            <DialogTitle className="font-headline font-bold text-lg text-primary">Kebijakan privasi</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="flex-1 p-6">
-            <div className="space-y-6 text-sm leading-relaxed text-foreground/70">
-              <section>
-                <h4 className="font-bold text-primary mb-2">1. Data yang dikumpulkan</h4>
-                <p>Kami mengumpulkan data minimal seperti email dan nama profil untuk personalisasi pengalaman membaca anda di PatureNews.</p>
-              </section>
-              <section>
-                <h4 className="font-bold text-primary mb-2">2. Keamanan data</h4>
-                <p>Data anda disimpan menggunakan infrastruktur Google Firebase dengan standar keamanan enkripsi industri.</p>
-              </section>
-              <section>
-                <h4 className="font-bold text-primary mb-2">3. Hak pengguna</h4>
-                <p>Anda berhak meminta penghapusan data pribadi anda kapan saja melalui pengaturan profil akun.</p>
-              </section>
-            </div>
-          </ScrollArea>
-          <div className="p-4 bg-primary/5 flex justify-end">
-            <Button onClick={() => setIsPrivacyOpen(false)} size="sm" className="font-bold text-[10px] px-6 rounded-lg">Mengerti</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
