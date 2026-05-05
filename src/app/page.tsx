@@ -9,10 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { ArrowRight, Clock, MessageSquare } from "lucide-react";
+import { Clock, MessageSquare, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [isSaved, setIsSaved] = useState(false);
   const heroImage = PlaceHolderImages.find(img => img.id === "hero-news");
   
   const posts = [
@@ -85,8 +88,17 @@ export default function Home() {
                 </BodyText>
                 <div className="flex items-center gap-4 py-2">
                   <Button className="px-8 font-medium">Read Full Article</Button>
-                  <Button variant="ghost" className="gap-2">
-                    Save for later <ArrowRight className="h-4 w-4" />
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className={cn(
+                      "rounded-full transition-all duration-300", 
+                      isSaved && "bg-primary text-primary-foreground border-primary shadow-sm"
+                    )}
+                    onClick={() => setIsSaved(!isSaved)}
+                    title={isSaved ? "Saved" : "Save for later"}
+                  >
+                    <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
                   </Button>
                 </div>
               </div>
