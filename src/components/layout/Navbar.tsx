@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, X } from "lucide-react";
+import { Search, Menu, User, LogOut, X, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,6 +64,11 @@ export const Navbar = () => {
     ).slice(0, 5);
   }, [searchQuery, posts]);
 
+  const popularSearches = useMemo(() => {
+    if (!dynamicCategories) return DEFAULT_TOPICS;
+    return dynamicCategories.map(cat => cat.name).slice(0, 4);
+  }, [dynamicCategories]);
+
   const handleSignOut = async () => {
     await signOut(auth);
     router.push("/");
@@ -77,6 +82,18 @@ export const Navbar = () => {
       setSearchQuery("");
     }
   };
+
+  // Close search suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+        setSearchQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav 
@@ -129,7 +146,7 @@ export const Navbar = () => {
               {isSearchOpen && (
                 <motion.div
                   initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 240, opacity: 1 }}
+                  animate={{ width: 280, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
                   className="mr-3 overflow-hidden"
                 >
@@ -151,6 +168,64 @@ export const Navbar = () => {
             >
               {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             </Button>
+
+            {/* Dynamic Search Suggestions */}
+            <AnimatePresence>
+              {isSearchOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-14 right-0 w-[300px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-2xl p-4 z-[60]"
+                >
+                  {searchQuery.trim() === "" ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 px-1">
+                        <TrendingUp className="h-3.5 w-3.5 text-primary/40" />
+                        <span className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">Pencarian populer</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {popularSearches.map((term, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setSearchQuery(term)}
+                            className="text-[10px] font-bold px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-primary/70 transition-colors"
+                          >
+                            {term}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1 tracking-wider">Hasil pencarian</span>
+                      {searchResults.length > 0 ? (
+                        <div className="space-y-1">
+                          {searchResults.map((result) => (
+                            <Link 
+                              key={result.id}
+                              href={`/news/${result.id}`}
+                              onClick={() => {
+                                setIsSearchOpen(false);
+                                setSearchQuery("");
+                              }}
+                              className="flex flex-col p-2 rounded-lg hover:bg-primary/5 transition-colors group"
+                            >
+                              <span className="text-[11px] font-bold text-primary group-hover:text-primary transition-colors line-clamp-1">{result.title}</span>
+                              <span className="text-[9px] font-medium text-muted-foreground/50">{result.category}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="py-4 text-center">
+                          <span className="text-[10px] font-medium text-muted-foreground/40 italic">Tidak ada hasil ditemukan.</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="hidden md:flex items-center border-l pl-5 border-primary/5 ml-2">
