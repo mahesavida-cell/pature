@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,19 +9,28 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, TrendingUp, ChevronRight } from "lucide-react";
+import { Clock, Bookmark, TrendingUp, ChevronRight, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const [isSaved, setIsSaved] = useState(false);
+  const [isHeroSaved, setIsHeroSaved] = useState(false);
   const heroImage = PlaceHolderImages.find(img => img.id === "hero-news");
   
+  const headlineStories = [
+    { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
+    { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", image: PlaceHolderImages[1].imageUrl },
+    { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", image: PlaceHolderImages[2].imageUrl },
+    { id: "h4", title: "Review lengkap gadget lipat terbaru", category: "Teknologi", readTime: "6 mnt", image: PlaceHolderImages[3].imageUrl },
+    { id: "h5", title: "Arsitektur minimalis untuk rumah sempit", category: "Desain", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
+    { id: "h6", title: "Perjalanan menuju emisi nol bersih", category: "Sains", readTime: "7 mnt", image: PlaceHolderImages[1].imageUrl },
+  ];
+
   const posts = [
     {
       id: "1",
-      title: "Evolusi Desain Digital Minimalis",
+      title: "Evolusi desain digital minimalis",
       category: "Desain",
       author: "Alex Rivers",
       readTime: "5 menit baca",
@@ -29,7 +39,7 @@ export default function Home() {
     },
     {
       id: "2",
-      title: "Arsitektur Berkelanjutan di Lingkungan Perkotaan",
+      title: "Arsitektur berkelanjutan di lingkungan perkotaan",
       category: "Budaya",
       author: "Maya Lin",
       readTime: "8 menit baca",
@@ -38,7 +48,7 @@ export default function Home() {
     },
     {
       id: "3",
-      title: "Masa Depan Pasar Global Terdesentralisasi",
+      title: "Masa depan pasar global terdesentralisasi",
       category: "Bisnis",
       author: "Jordan Lee",
       readTime: "6 menit baca",
@@ -48,77 +58,115 @@ export default function Home() {
   ];
 
   const popularPosts = [
-    { id: "1", title: "Mengapa Tipografi Lebih Penting dari yang Anda Pikirkan", category: "Desain", rank: "01" },
-    { id: "2", title: "Kebangkitan AI dalam Jurnalisme Modern", category: "Teknologi", rank: "02" },
-    { id: "3", title: "10 Prinsip Hidup Berkelanjutan", category: "Budaya", rank: "03" }
+    { id: "1", title: "Mengapa tipografi lebih penting dari yang Anda pikirkan", category: "Desain", rank: "01" },
+    { id: "2", title: "Kebangkitan AI dalam jurnalisme modern", category: "Teknologi", rank: "02" },
+    { id: "3", title: "10 prinsip hidup berkelanjutan", category: "Budaya", rank: "03" }
   ];
 
   return (
     <div className="bg-background min-h-screen pb-10">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32">
-        <section className="mb-12 md:mb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-lg bg-muted group shadow-md"
-            >
-              {heroImage?.imageUrl && (
-                <Image 
-                  src={heroImage.imageUrl} 
-                  alt="Berita utama"
-                  fill
-                  className="object-cover transition-transform duration-700 ease-out hover:scale-105"
-                  priority
-                />
-              )}
-            </motion.div>
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-32 md:pt-40">
+        {/* Rombakan Hero Section: 2 Segmen */}
+        <section className="mb-16 lg:mb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Segmen Kiri: Berita Utama */}
             <motion.div 
-              className="space-y-4 md:space-y-6"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
+              className="lg:col-span-8 space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[10px] shadow-sm">
-                  Unggulan
-                </Badge>
-                <MutedText className="text-[10px] font-bold">Hari ini</MutedText>
-              </div>
-              <Title className="leading-tight text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tighter">
-                Revolusi Senyap Informasi Profesional
-              </Title>
-              <BodyText className="text-base md:text-lg text-foreground/70">
-                Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis.
-              </BodyText>
-              <div className="flex items-center gap-3 pt-2">
-                <Link href="/news/1" className="flex-1 sm:flex-none">
-                  <motion.div whileTap={{ scale: 0.98 }}>
-                    <Button className="w-full sm:px-10 h-11 text-xs font-bold rounded-md shadow-sm">
-                      Baca artikel
-                    </Button>
-                  </motion.div>
-                </Link>
-                <motion.div whileTap={{ scale: 0.9 }}>
+              <Link href="/news/1" className="block group">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted shadow-md mb-6">
+                  {heroImage?.imageUrl && (
+                    <Image 
+                      src={heroImage.imageUrl} 
+                      alt="Berita utama"
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      priority
+                    />
+                  )}
+                  <div className="absolute top-4 left-4">
+                    <Badge variant="secondary" className="px-3 py-1 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary">
+                      Unggulan hari ini
+                    </Badge>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <Title className="leading-tight text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tighter group-hover:text-primary/80 transition-colors">
+                    Revolusi senyap informasi profesional
+                  </Title>
+                  <BodyText className="text-base md:text-lg text-foreground/70 line-clamp-2">
+                    Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.
+                  </BodyText>
+                </div>
+              </Link>
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <Clock className="h-3 w-3" /> 5 menit baca • Alex Rivers
+                </div>
+                <div className="flex items-center gap-2 ml-auto">
                   <Button 
                     variant="outline" 
                     size="icon" 
                     className={cn(
-                      "rounded-full h-11 w-11 transition-all duration-300 shadow-sm", 
-                      isSaved && "bg-primary text-primary-foreground border-primary shadow-sm"
+                      "rounded-full h-10 w-10 transition-all duration-300 shadow-sm border-primary/10", 
+                      isHeroSaved && "bg-primary text-primary-foreground border-primary"
                     )}
-                    onClick={() => setIsSaved(!isSaved)}
+                    onClick={() => setIsHeroSaved(!isHeroSaved)}
                   >
-                    <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
+                    <Bookmark className={cn("h-4 w-4", isHeroSaved && "fill-current")} />
                   </Button>
-                </motion.div>
+                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-primary/10">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </motion.div>
+
+            {/* Segmen Kanan: 6 Headline Pilihan */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="flex items-center gap-3 border-b border-primary/5 pb-4">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <Heading level={3} className="text-base font-headline font-bold">Pilihan redaksi</Heading>
+              </div>
+              <div className="grid grid-cols-1 gap-5">
+                {headlineStories.map((story, idx) => (
+                  <motion.div
+                    key={story.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <Link href={`/news/${story.id}`} className="group flex gap-4 items-start">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted border border-primary/5">
+                        <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <Badge variant="ghost" className="p-0 h-auto text-[9px] font-bold text-accent uppercase tracking-wider hover:bg-transparent">
+                          {story.category}
+                        </Badge>
+                        <h4 className="text-sm font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                          {story.title}
+                        </h4>
+                        <span className="text-[9px] font-bold text-muted-foreground opacity-60">{story.readTime} baca</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-md px-4 py-6 border border-dashed border-primary/10 mt-2">
+                Lihat berita lainnya <ChevronRight className="h-3 w-3" />
+              </Button>
+            </div>
+
           </div>
         </section>
 
+        {/* Bagian bawah tetap seperti semula sesuai instruksi */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
           <section className="lg:col-span-8">
             <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
@@ -181,16 +229,10 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-            <motion.div className="mt-12 flex justify-center" whileTap={{ scale: 0.98 }}>
-              <Button variant="outline" className="w-full sm:w-auto px-10 h-11 font-bold text-[10px] rounded-md shadow-sm">
-                Lihat lebih banyak
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </motion.div>
           </section>
 
           <section className="lg:col-span-4">
-            <div className="sticky top-24 space-y-10">
+            <div className="sticky top-40 space-y-10">
               <div className="flex items-center gap-3 mb-6 border-b border-border/60 pb-4">
                 <TrendingUp className="h-4 w-4 text-primary" />
                 <Heading level={3} className="text-lg font-headline font-bold">Sedang tren</Heading>
