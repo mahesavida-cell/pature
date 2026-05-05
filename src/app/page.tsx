@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -317,117 +316,115 @@ export default function Home() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <div className="pt-20"> {/* Offset for Navbar */}
-        <MarketWeatherBar />
-        <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-24 lg:pt-32 pb-20">
-          {/* Hero & Trending Section */}
-          <section className="mb-24 lg:mb-32">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-              <motion.div 
-                className="lg:col-span-8 space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <Link href={`/news/${heroPost.id}`} className="block group">
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
-                    <Image 
-                      src={heroPost.image || PlaceHolderImages[0].imageUrl} 
-                      alt="Berita utama"
-                      fill
-                      className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-                      priority
-                    />
-                    <div className="absolute top-6 left-6">
-                      <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
-                        Unggulan hari ini
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <Title className="group-hover:text-primary/80 transition-colors">
-                      {heroPost.title}
-                    </Title>
-                    <BodyText className="line-clamp-2 max-w-3xl">
-                      {heroPost.excerpt}
-                    </BodyText>
-                  </div>
-                </Link>
-                <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                    <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
-                  </div>
-                  <div className="flex items-center gap-3 ml-auto">
-                    <BookmarkButton post={heroPost} variant="hero" />
-                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
+      <MarketWeatherBar />
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-24 lg:pt-32 pb-20">
+        {/* Hero & Trending Section */}
+        <section className="mb-24 lg:mb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            <motion.div 
+              className="lg:col-span-8 space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <Link href={`/news/${heroPost.id}`} className="block group">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
+                  <Image 
+                    src={heroPost.image || PlaceHolderImages[0].imageUrl} 
+                    alt="Berita utama"
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                    priority
+                  />
+                  <div className="absolute top-6 left-6">
+                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
+                      Unggulan hari ini
+                    </Badge>
                   </div>
                 </div>
-              </motion.div>
-
-              <div className="lg:col-span-4 space-y-8">
-                <div className="flex items-center justify-between border-b border-primary/5 pb-5">
-                  <Heading level={3} className="text-lg">Trending</Heading>
+                <div className="space-y-4">
+                  <Title className="group-hover:text-primary/80 transition-colors">
+                    {heroPost.title}
+                  </Title>
+                  <BodyText className="line-clamp-2 max-w-3xl">
+                    {heroPost.excerpt}
+                  </BodyText>
                 </div>
-                <div className="space-y-8">
-                  {isTrendingLoading ? (
-                    [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
-                  ) : (trendingPosts || []).map((story, idx) => (
-                    <motion.div
-                      key={story.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1, duration: 0.5 }}
-                    >
-                      <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
-                        <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
-                          0{idx + 1}
-                        </span>
-                        <div className="space-y-1.5 flex-1">
-                          <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
-                            {story.category}
-                          </Badge>
-                          <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                            {story.title}
-                          </h4>
-                          <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
+              </Link>
+              <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
+                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
+                  <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.authorName || heroPost.author}
                 </div>
-                <Link href="/latest" className="block">
-                  <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
-                    Lihat berita lainnya <ChevronRight className="h-4 w-4" />
+                <div className="flex items-center gap-3 ml-auto">
+                  <BookmarkButton post={heroPost} variant="hero" />
+                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
+                    <Share2 className="h-4 w-4" />
                   </Button>
-                </Link>
+                </div>
               </div>
+            </motion.div>
+
+            <div className="lg:col-span-4 space-y-8">
+              <div className="flex items-center justify-between border-b border-primary/5 pb-5">
+                <Heading level={3} className="text-lg">Trending</Heading>
+              </div>
+              <div className="space-y-8">
+                {isTrendingLoading ? (
+                  [1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 w-full bg-primary/5 animate-pulse rounded-lg" />)
+                ) : (trendingPosts || []).map((story, idx) => (
+                  <motion.div
+                    key={story.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  >
+                    <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
+                      <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
+                        0{idx + 1}
+                      </span>
+                      <div className="space-y-1.5 flex-1">
+                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
+                          {story.category}
+                        </Badge>
+                        <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                          {story.title}
+                        </h4>
+                        <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+              <Link href="/latest" className="block">
+                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
+                  Lihat berita lainnya <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <NewsCarousel 
-            posts={curatedPosts || []} 
-            sectionTitle="Pilihan redaksi" 
-            viewAllLink="/editors-choice" 
-            isLoading={isCuratedLoading}
-          />
+        <NewsCarousel 
+          posts={curatedPosts || []} 
+          sectionTitle="Pilihan redaksi" 
+          viewAllLink="/editors-choice" 
+          isLoading={isCuratedLoading}
+        />
 
-          <NewsCarousel 
-            posts={carouselLatestPosts || []} 
-            sectionTitle="Berita terbaru" 
-            viewAllLink="/latest" 
-            isLoading={isLatestLoading}
-          />
+        <NewsCarousel 
+          posts={carouselLatestPosts || []} 
+          sectionTitle="Berita terbaru" 
+          viewAllLink="/latest" 
+          isLoading={isLatestLoading}
+        />
 
-          <NewsCarousel 
-            posts={curatedPosts?.slice().reverse() || []} 
-            sectionTitle="Rekomendasi untuk anda" 
-            viewAllLink="/recommendations" 
-            isLoading={isCuratedLoading}
-          />
-        </main>
-      </div>
+        <NewsCarousel 
+          posts={curatedPosts?.slice().reverse() || []} 
+          sectionTitle="Rekomendasi untuk anda" 
+          viewAllLink="/recommendations" 
+          isLoading={isCuratedLoading}
+        />
+      </main>
       <Footer />
     </div>
   );

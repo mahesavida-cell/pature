@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -41,7 +40,7 @@ export default function LatestNewsPage() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 pt-40 pb-24">
+      <main className="max-w-5xl mx-auto px-4 pt-12 pb-24">
         <div className="space-y-16">
           <div className="space-y-4">
             <Title>Berita terbaru</Title>
@@ -66,9 +65,6 @@ export default function LatestNewsPage() {
                   className="space-y-8"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-primary">
-                      <Calendar className="h-5 w-5" />
-                    </div>
                     <div>
                       <Heading level={3} className="text-xl">Arsip Harian</Heading>
                       <MutedText className="text-[10px] font-bold opacity-40 uppercase tracking-wider">{group.date}</MutedText>

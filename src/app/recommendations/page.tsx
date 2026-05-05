@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, TrendingUp, Filter, Heart, Clock } from "lucide-react";
+import { Sparkles, Filter, Clock } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, limit, orderBy } from "firebase/firestore";
+import { collection, query, limit } from "firebase/firestore";
 
 export default function RecommendationsPage() {
   const db = useFirestore();
@@ -36,7 +35,7 @@ export default function RecommendationsPage() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 pt-40 pb-24">
+      <main className="max-w-7xl mx-auto px-4 pt-12 pb-24">
         <div className="space-y-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-6 max-w-2xl">

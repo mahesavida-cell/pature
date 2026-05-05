@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -9,8 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Clock } from "lucide-react";
-import { PlaceHolderImages } from "@/app/lib/placeholder-images";
+import { ArrowRight, Clock } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, query, where, limit } from "firebase/firestore";
 
@@ -24,7 +22,7 @@ export default function EditorsChoicePage() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 pt-40 pb-24">
+      <main className="max-w-6xl mx-auto px-4 pt-12 pb-24">
         <div className="space-y-16">
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             <Title className="text-5xl">Esei dan kurasi terbaik</Title>
