@@ -145,14 +145,14 @@ export default function Home() {
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted border border-primary/5">
                         <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                       </div>
-                      <div className="space-y-1 flex-1">
-                        <Badge variant="ghost" className="p-0 h-auto text-[9px] font-bold text-accent uppercase tracking-wider hover:bg-transparent">
+                      <div className="space-y-1.5 flex-1">
+                        <Badge variant="secondary" className="px-1.5 py-0 h-auto text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm shadow-none">
                           {story.category}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
                           {story.title}
                         </h4>
-                        <span className="text-[9px] font-bold text-muted-foreground opacity-60">{story.readTime} baca</span>
+                        <span className="text-[9px] font-bold text-muted-foreground opacity-60 block">{story.readTime} baca</span>
                       </div>
                     </Link>
                   </motion.div>
