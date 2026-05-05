@@ -104,8 +104,8 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
             <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 uppercase tracking-widest">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm uppercase tracking-widest text-white">Masuk sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 tracking-widest">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm tracking-widest text-white">Masuk sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -119,7 +119,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
         <Heading level={2}>{sectionTitle}</Heading>
         <Link href={viewAllLink}>
-          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-4 transition-all uppercase">Lihat semua</Button>
+          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-4 transition-all">Lihat semua</Button>
         </Link>
       </div>
       {isLoading ? (
@@ -148,7 +148,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                         />
                         <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide uppercase">
+                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
                             {post.category}
                           </Badge>
                         </div>
@@ -248,7 +248,7 @@ export default function Home() {
                     priority
                   />
                   <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
+                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
                       Unggulan hari ini
                     </Badge>
                   </div>
@@ -294,7 +294,7 @@ export default function Home() {
                         0{idx + 1}
                       </span>
                       <div className="space-y-1.5 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
+                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
                           {story.category}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
@@ -307,7 +307,7 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/latest" className="block">
-                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
+                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
                   Lihat berita lainnya <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>

@@ -88,7 +88,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Nama lengkap</Label>
+                      <Label htmlFor="name" className="text-[9px] font-bold opacity-50 tracking-wider">Nama lengkap</Label>
                       <Input 
                         id="name" 
                         placeholder="Nama Anda" 
@@ -97,7 +97,7 @@ export default function ContactPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Alamat email</Label>
+                      <Label htmlFor="email" className="text-[9px] font-bold opacity-50 tracking-wider">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
@@ -108,7 +108,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Subjek</Label>
+                    <Label htmlFor="subject" className="text-[9px] font-bold opacity-50 tracking-wider">Subjek</Label>
                     <Input 
                       id="subject" 
                       placeholder="Bagaimana kami bisa membantu?" 
@@ -117,7 +117,7 @@ export default function ContactPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-[9px] font-bold opacity-50 uppercase tracking-wider">Pesan</Label>
+                    <Label htmlFor="message" className="text-[9px] font-bold opacity-50 tracking-wider">Pesan</Label>
                     <Textarea 
                       id="message" 
                       placeholder="Tuliskan pesan Anda secara detail..." 

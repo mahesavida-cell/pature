@@ -66,8 +66,8 @@ export default function LatestNewsPage() {
                 >
                   <div className="flex items-center gap-4">
                     <div>
-                      <Heading level={3} className="text-xl">Arsip Harian</Heading>
-                      <MutedText className="text-[10px] font-bold opacity-40 uppercase tracking-wider">{group.date}</MutedText>
+                      <Heading level={3} className="text-xl">Arsip harian</Heading>
+                      <MutedText className="text-[10px] font-bold opacity-40 tracking-wider">{group.date}</MutedText>
                     </div>
                     <Separator className="flex-1 opacity-10" />
                   </div>

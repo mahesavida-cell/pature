@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -126,7 +125,7 @@ export default function SearchPage() {
       <main className="max-w-7xl mx-auto px-4 pt-40 pb-24">
         <div className="space-y-12 mb-20">
           <div className="flex flex-col gap-4">
-            <MutedText className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Hasil pencarian</MutedText>
+            <MutedText className="text-[10px] font-bold opacity-40 tracking-widest">Hasil pencarian</MutedText>
             <Title className="text-4xl md:text-5xl tracking-tighter">
               &ldquo;{queryText}&rdquo;
             </Title>
@@ -220,7 +219,7 @@ export default function SearchPage() {
         {/* Branding & More News */}
         <div className="pt-20 space-y-32">
           <NewsCarousel posts={latestNews} sectionTitle="Berita terbaru" viewAllLink="/latest" />
-          <NewsCarousel posts={recommendedNews} sectionTitle="Rekomendasi untuk Anda" viewAllLink="/recommendations" />
+          <NewsCarousel posts={recommendedNews} sectionTitle="Rekomendasi untuk anda" viewAllLink="/recommendations" />
         </div>
       </main>
       <Footer />

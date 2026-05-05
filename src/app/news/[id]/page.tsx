@@ -63,7 +63,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/popover";
 
 const MAX_COMMENT_CHARS = 1000;
 
