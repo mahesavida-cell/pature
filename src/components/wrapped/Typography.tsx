@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -13,14 +14,14 @@ export const Title = ({ children, className }: TextProps) => (
 );
 
 export const Heading = ({ children, className, level = 2 }: TextProps & { level?: 2 | 3 | 4 }) => {
-  const Tag = `h${level}` as any;
+  const Tag = `h${level}` as "h2" | "h3" | "h4";
   const sizes = {
     2: "text-2xl md:text-3xl lg:text-4xl tracking-tight",
     3: "text-xl md:text-2xl tracking-tight",
     4: "text-lg md:text-xl tracking-tight",
   };
   return (
-    <Tag className={cn("font-headline font-bold text-primary", sizes[level as 2|3|4], className)}>
+    <Tag className={cn("font-headline font-bold text-primary", sizes[level], className)}>
       {children}
     </Tag>
   );

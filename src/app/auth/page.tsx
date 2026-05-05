@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -15,7 +16,7 @@ import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react"
 import Image from "next/image";
 
 /**
- * Halaman autentikasi PatureNews.
+ * Halaman autentikasi PatureNews yang ringkas dan fungsional.
  * Menggunakan komponen Tabs murni ShadCN UI untuk stabilitas maksimal.
  */
 export default function AuthPage() {
@@ -79,7 +80,7 @@ export default function AuthPage() {
             <div className="absolute inset-0 opacity-10">
               <Image 
                 src="https://picsum.photos/seed/patureauth/800/1200" 
-                alt="Latar belakang" 
+                alt="Latar belakang jurnalisme minimalis" 
                 fill 
                 className="object-cover"
                 data-ai-hint="minimalist journalism"

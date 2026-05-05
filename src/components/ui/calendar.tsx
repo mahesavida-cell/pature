@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -11,6 +12,7 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 /**
  * Komponen Calendar yang diperbarui untuk mendukung react-day-picker v9.
+ * Menggunakan Chevron component untuk navigasi.
  */
 function Calendar({
   className,
@@ -57,9 +59,9 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Chevron: ({ orientation, className: chevronClassName, ...chevronProps }) => {
+        Chevron: ({ orientation, className: chevronClassName }) => {
           const Icon = orientation === "left" ? ChevronLeft : ChevronRight
-          return <Icon className={cn("h-4 w-4", chevronClassName)} {...chevronProps} />
+          return <Icon className={cn("h-4 w-4", chevronClassName)} />
         },
       }}
       {...props}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -145,7 +146,9 @@ export const Navbar = () => {
       .then((data) => {
         setDynamicCategories(data || []);
       })
-      .catch(console.error);
+      .catch(() => {
+        // Fallback or silent error for categories
+      });
   }, []);
 
   const handleSignOut = async () => {

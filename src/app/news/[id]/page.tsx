@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -110,7 +111,7 @@ const ShareButton = ({ post }: { post: any }) => {
   const handleNativeShare = async () => {
     try {
       if (typeof navigator !== 'undefined' && 'share' in navigator) {
-        await navigator.share({
+        await (navigator as any).share({
           title: post.title,
           text: post.excerpt || `Baca berita terbaru di PatureNews: ${post.title}`,
           url: url,
@@ -139,7 +140,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  if (isMobile && typeof navigator !== 'undefined' && 'share' in navigator) {
+  if (isMobile && typeof navigator !== 'undefined' && (navigator as any).share) {
     return (
       <Button 
         variant="outline" 
