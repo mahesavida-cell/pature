@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -190,7 +189,7 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
-              alt="PatureNews logo" 
+              alt="Logo PatureNews" 
               width={140} 
               height={40} 
               className="h-7 w-auto sm:h-8 object-contain"

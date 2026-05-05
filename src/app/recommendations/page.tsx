@@ -17,13 +17,12 @@ export default function RecommendationsPage() {
   const db = useFirestore();
   const topics = ["Teknologi", "Desain", "Bisnis", "Budaya", "Sains", "Gaya Hidup", "Lingkungan"];
   
-  // Independent mapping logic for dynamic recommendations
   const recQuery = useMemoFirebase(() => query(collection(db, "posts"), limit(12)), [db]);
   const { data: firestorePosts, isLoading } = useCollection(recQuery);
 
   const sections = [
     {
-      title: "Berdasarkan minat Anda",
+      title: "Berdasarkan minat anda",
       posts: firestorePosts?.slice(0, 3) || []
     },
     {
@@ -39,9 +38,9 @@ export default function RecommendationsPage() {
         <div className="space-y-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-6 max-w-2xl">
-              <Title>Rekomendasi untuk Anda</Title>
+              <Title>Rekomendasi untuk anda</Title>
               <BodyText>
-                Wawasan yang dikurasi secara mandiri berdasarkan algoritma mapping konten InfoFlow untuk menjaga kualitas informasi Anda.
+                Wawasan yang dikurasi secara mandiri berdasarkan algoritma pemetaan konten PatureNews untuk menjaga kualitas informasi anda.
               </BodyText>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -71,7 +70,7 @@ export default function RecommendationsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                     {section.posts.map((post: any, idx: number) => (
                       <motion.div
-                        key={post.id}
+                        key={post.id || `rec-item-${idx}`}
                         initial={{ opacity: 0, scale: 0.98 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -128,7 +127,7 @@ export default function RecommendationsPage() {
             <div className="relative z-10 space-y-6">
               <Heading level={2} className="text-white text-4xl">Ingin topik yang lebih spesifik?</Heading>
               <BodyText className="max-w-2xl mx-auto text-white/70">
-                Sesuaikan preferensi konten Anda di pengaturan profil untuk mendapatkan kurasi berita yang lebih akurat setiap harinya.
+                Sesuaikan preferensi konten anda di pengaturan profil untuk mendapatkan kurasi berita yang lebih akurat setiap harinya.
               </BodyText>
               <div className="flex justify-center pt-4">
                 <Link href="/profile">

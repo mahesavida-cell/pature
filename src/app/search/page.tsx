@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -32,7 +31,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink }: { posts: any[], sect
       <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full">
         <CarouselContent className="-ml-4">
           {posts.map((post, idx) => (
-            <CarouselItem key={post.id || `rec-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={post.id || `rec-news-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
               <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
                 <Link href={`/news/${post.id || post._id}`}>
                   <div className="relative h-56 w-full overflow-hidden bg-muted">
@@ -157,7 +156,7 @@ export default function SearchPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredResults.map((post, idx) => (
                 <motion.div
-                  key={post.id || `res-${idx}`}
+                  key={post.id || `res-search-${idx}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}

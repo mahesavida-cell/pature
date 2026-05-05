@@ -56,16 +56,15 @@ export default function AuthPage() {
       initiateEmailSignUp(auth, email, password);
       toast({
         title: "Sedang memproses",
-        description: "Permintaan pendaftaran Anda sedang dikirim.",
+        description: "Permintaan pendaftaran anda sedang dikirim.",
       });
     } else {
       initiateEmailSignIn(auth, email, password);
       toast({
         title: "Sedang masuk",
-        description: "Mencoba memverifikasi kredensial Anda.",
+        description: "Mencoba memverifikasi kredensial anda.",
       });
     }
-    // Note: Loading state will be naturally resolved by redirection via useEffect
   };
 
   const handleGoogleSignIn = () => {
@@ -87,7 +86,7 @@ export default function AuthPage() {
             <div className="absolute inset-0 opacity-10">
               <Image 
                 src="https://picsum.photos/seed/patureauth/800/1200" 
-                alt="Background" 
+                alt="Latar belakang" 
                 fill 
                 className="object-cover"
                 data-ai-hint="minimalist journalism"
@@ -136,7 +135,7 @@ export default function AuthPage() {
                 <TabsTrigger value="register" className="text-[11px] font-bold tracking-tight rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Daftar</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-3">
+              <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none space-y-3">
                 <div className="space-y-1">
                   <Label htmlFor="email" className="text-[10px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -180,7 +179,7 @@ export default function AuthPage() {
                 </Button>
               </TabsContent>
 
-              <TabsContent value="register" className="mt-0 focus-visible:outline-none space-y-3">
+              <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none space-y-3">
                 <div className="space-y-1">
                   <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50 px-1">Alamat email</Label>
                   <Input 
@@ -255,7 +254,6 @@ export default function AuthPage() {
         </motion.div>
       </main>
 
-      {/* Dialog Ketentuan Penggunaan */}
       <Dialog open={isTermsOpen} onOpenChange={setIsTermsOpen}>
         <DialogContent className="max-w-xl max-h-[70vh] flex flex-col p-0 overflow-hidden border-none bg-white rounded-lg shadow-2xl">
           <DialogHeader className="p-6 border-b border-primary/5">
@@ -283,7 +281,6 @@ export default function AuthPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Kebijakan Privasi */}
       <Dialog open={isPrivacyOpen} onOpenChange={setIsPrivacyOpen}>
         <DialogContent className="max-w-xl max-h-[70vh] flex flex-col p-0 overflow-hidden border-none bg-white rounded-lg shadow-2xl">
           <DialogHeader className="p-6 border-b border-primary/5">
