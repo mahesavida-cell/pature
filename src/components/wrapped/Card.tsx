@@ -11,14 +11,13 @@ interface WrappedCardProps {
 }
 
 /**
- * A professional card wrapper that adds a backdrop blur and a soft border.
- * This approach keeps the original ShadCN component intact while adding
- * a sophisticated glassmorphism layer.
+ * A professional card wrapper with an outline style.
+ * Uses a clear border and subtle backdrop blur to achieve a minimalist look.
  */
 export const Card = ({ children, className, animate = true }: WrappedCardProps) => {
   const content = (
     <BaseCard className={cn(
-      "overflow-hidden border border-white/20 shadow-sm bg-white/40 backdrop-blur-md hover:shadow-md transition-all duration-300 rounded-lg", 
+      "overflow-hidden border-2 border-primary/5 shadow-none bg-background/20 backdrop-blur-sm hover:border-primary/10 transition-all duration-300 rounded-lg", 
       className
     )}>
       {children}

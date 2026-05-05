@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -97,7 +96,7 @@ export default function AuthPage() {
             <BodyText className="text-sm">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
-          <Card className="rounded-lg shadow-md border-none">
+          <Card className="rounded-lg border-2 border-primary/5 shadow-none bg-background/20 backdrop-blur-sm">
             <CardContent className="pt-8">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 p-1 rounded-md">
@@ -177,7 +176,7 @@ export default function AuthPage() {
                   <Separator className="bg-primary/10" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-4 text-muted-foreground/60 font-bold bg-white/10 backdrop-blur-sm rounded-full">Atau masuk dengan</span>
+                  <span className="px-4 text-muted-foreground/60 font-bold bg-background/50 backdrop-blur-sm rounded-full">Atau masuk dengan</span>
                 </div>
               </div>
 
