@@ -84,7 +84,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen flex flex-col">
+    <div className="bg-background min-h-screen flex flex-col font-body">
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-4">
         <motion.div
@@ -93,34 +93,34 @@ export default function AuthPage() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="text-center mb-8 space-y-2">
-            <Heading level={2} className="text-2xl">Pembaca InfoFlow</Heading>
-            <BodyText className="text-sm">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
+          <div className="text-center mb-10 space-y-2">
+            <Heading level={2} className="text-3xl font-bold tracking-tighter">Pembaca InfoFlow</Heading>
+            <BodyText className="text-sm opacity-60">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
-          <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/30 backdrop-blur-md">
-            <CardContent className="pt-8">
+          <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/20 backdrop-blur-md">
+            <CardContent className="pt-8 px-8 pb-10">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/5 p-1 rounded-md">
-                  <TabsTrigger value="login" className="text-xs font-bold py-2 rounded-sm data-[state=active]:shadow-sm">Masuk sekarang</TabsTrigger>
-                  <TabsTrigger value="register" className="text-xs font-bold py-2 rounded-sm data-[state=active]:shadow-sm">Daftar akun</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-10 bg-primary/5 p-1 rounded-md border border-primary/5">
+                  <TabsTrigger value="login" className="text-[10px] font-bold py-2.5 rounded-sm data-[state=active]:shadow-sm uppercase tracking-wider">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register" className="text-[10px] font-bold py-2.5 rounded-sm data-[state=active]:shadow-sm uppercase tracking-wider">Daftar akun</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="login" className="mt-0">
-                  <div className="space-y-4">
+                <TabsContent value="login" className="mt-0 focus-visible:outline-none">
+                  <div className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
+                      <Label htmlFor="email" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Alamat email</Label>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
+                        className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <Label htmlFor="password" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Kata sandi</Label>
                       <div className="relative">
                         <Input 
                           id="password" 
@@ -128,20 +128,20 @@ export default function AuthPage() {
                           placeholder="Masukkan kata sandi"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all pr-10"
+                          className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
                         />
                         <button
                           type="button"
                           tabIndex={-1}
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary transition-colors focus:outline-none p-1.5"
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
+                      className="w-full h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -150,21 +150,21 @@ export default function AuthPage() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="register" className="mt-0">
-                  <div className="space-y-4">
+                <TabsContent value="register" className="mt-0 focus-visible:outline-none">
+                  <div className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-60">Alamat email</Label>
+                      <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Alamat email</Label>
                       <Input 
                         id="reg-email" 
                         type="email" 
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all"
+                        className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-60">Kata sandi</Label>
+                      <Label htmlFor="reg-password" className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Kata sandi</Label>
                       <div className="relative">
                         <Input 
                           id="reg-password" 
@@ -172,20 +172,20 @@ export default function AuthPage() {
                           placeholder="Buat kata sandi baru"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="rounded-md h-11 bg-transparent border-primary/20 focus:border-primary/40 transition-all pr-10"
+                          className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
                         />
                         <button
                           type="button"
                           tabIndex={-1}
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary transition-colors focus:outline-none p-1.5"
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-11 rounded-md font-bold tracking-tight shadow-sm" 
+                      className="w-full h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
@@ -195,21 +195,18 @@ export default function AuthPage() {
                 </TabsContent>
               </Tabs>
 
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator className="bg-primary/10" />
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="px-4 text-muted-foreground/60 font-bold bg-transparent">Atau masuk dengan</span>
-                </div>
+              <div className="flex items-center my-10 gap-4">
+                <div className="h-[1px] flex-1 bg-primary/10" />
+                <span className="text-[10px] font-bold text-muted-foreground/40 whitespace-nowrap uppercase tracking-widest">Atau masuk dengan</span>
+                <div className="h-[1px] flex-1 bg-primary/10" />
               </div>
 
               <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.99 }}>
                 <Button 
-                  className="w-full h-12 rounded-lg font-bold tracking-tight flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white hover:text-primary transition-all duration-300 shadow-sm text-primary"
+                  className="w-full h-12 rounded-md font-bold text-xs flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white transition-all duration-300 shadow-sm text-primary"
                   onClick={handleGoogleSignIn}
                 >
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -231,7 +228,7 @@ export default function AuthPage() {
                 </Button>
               </motion.div>
 
-              <MutedText className="text-[9px] text-center block pt-8 opacity-40">
+              <MutedText className="text-[10px] text-center block pt-10 opacity-30 font-medium">
                 Dengan melanjutkan, Anda setuju untuk menerima update berita terbaru kami.
               </MutedText>
             </CardContent>
