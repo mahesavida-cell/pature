@@ -50,30 +50,9 @@ export default function Home() {
   ];
 
   const popularPosts = [
-    {
-      id: "1",
-      title: "Why Typography Matters More Than You Think",
-      category: "Design",
-      rank: "01"
-    },
-    {
-      id: "2",
-      title: "The Rise of AI in Modern Journalism",
-      category: "Technology",
-      rank: "02"
-    },
-    {
-      id: "3",
-      title: "10 Principles of Sustainable Living",
-      category: "Culture",
-      rank: "03"
-    },
-    {
-      id: "4",
-      title: "Global Economy Projections for 2025",
-      category: "Business",
-      rank: "04"
-    }
+    { id: "1", title: "Why Typography Matters More Than You Think", category: "Design", rank: "01" },
+    { id: "2", title: "The Rise of AI in Modern Journalism", category: "Technology", rank: "02" },
+    { id: "3", title: "10 Principles of Sustainable Living", category: "Culture", rank: "03" }
   ];
 
   return (
@@ -83,129 +62,126 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-12">
         {/* Hero Section */}
         <section className="mb-12 md:mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-2xl bg-muted group shadow-2xl">
-                {heroImage?.imageUrl && (
-                  <Image 
-                    src={heroImage.imageUrl} 
-                    alt="Featured News"
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out hover:scale-105"
-                    priority
-                  />
-                )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-[24px] bg-muted group shadow-xl"
+            >
+              {heroImage?.imageUrl && (
+                <Image 
+                  src={heroImage.imageUrl} 
+                  alt="Featured News"
+                  fill
+                  className="object-cover transition-transform duration-700 ease-out hover:scale-105"
+                  priority
+                />
+              )}
+            </motion.div>
+            
+            <motion.div 
+              className="space-y-4 md:space-y-6"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+            >
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[9px] tracking-widest uppercase shadow-sm">
+                  Featured
+                </Badge>
+                <MutedText className="text-[9px] uppercase tracking-widest font-bold">Today</MutedText>
               </div>
-              <motion.div 
-                className="space-y-4 md:space-y-6"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              >
-                <div className="flex items-center gap-3">
-                  <Badge variant="secondary" className="px-3 py-1 rounded-full border-none font-bold text-[10px] tracking-widest uppercase">
-                    Featured Story
-                  </Badge>
-                  <MutedText className="text-[10px] uppercase tracking-widest font-bold">Oct 28, 2024</MutedText>
-                </div>
-                <Title className="leading-tight text-3xl sm:text-4xl md:text-6xl font-headline tracking-tighter">
-                  The Silent Revolution of Professional Information Flow
-                </Title>
-                <BodyText className="text-lg md:text-xl text-foreground/70">
-                  Discover how InfoFlow is setting a new benchmark for minimalist digital journalism, focusing on clarity and UX.
-                </BodyText>
-                <div className="flex items-center gap-3 py-2">
-                  <Link href="/news/1" className="flex-1 sm:flex-none">
-                    <Button className="w-full sm:px-10 h-12 text-sm font-bold uppercase tracking-widest">
+              <Title className="leading-tight text-3xl sm:text-4xl md:text-6xl font-headline tracking-tighter">
+                The Silent Revolution of Professional Information
+              </Title>
+              <BodyText className="text-base md:text-xl text-foreground/70">
+                Discover how InfoFlow is setting a new benchmark for minimalist digital journalism.
+              </BodyText>
+              <div className="flex items-center gap-3 pt-2">
+                <Link href="/news/1" className="flex-1 sm:flex-none">
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button className="w-full sm:px-10 h-12 text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg">
                       Read Article
                     </Button>
-                  </Link>
+                  </motion.div>
+                </Link>
+                <motion.div whileTap={{ scale: 0.9 }}>
                   <Button 
                     variant="outline" 
                     size="icon" 
                     className={cn(
-                      "rounded-full h-12 w-12 transition-all duration-300", 
+                      "rounded-full h-12 w-12 transition-all duration-300 shadow-sm", 
                       isSaved && "bg-primary text-primary-foreground border-primary shadow-lg"
                     )}
                     onClick={() => setIsSaved(!isSaved)}
                   >
                     <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
                   </Button>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
           {/* Latest Feed */}
           <section className="lg:col-span-8">
-            <motion.div 
-              className="flex items-center justify-between mb-8 border-b border-border/60 pb-4"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <Heading level={2} className="text-2xl md:text-3xl font-headline font-bold">Latest Updates</Heading>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="sm" className="rounded-full px-4 text-xs font-bold uppercase">View All</Button>
-              </div>
-            </motion.div>
+            <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
+              <Heading level={2} className="text-xl md:text-3xl font-headline font-bold">Latest Stories</Heading>
+              <Button variant="ghost" size="sm" className="rounded-full text-[10px] font-bold uppercase">View All</Button>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {posts.map((post, idx) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: idx * 0.1 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Card className="h-full flex flex-col group bg-white/40 hover:bg-white transition-all duration-500 border border-border/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl">
+                  <Card className="h-full flex flex-col group bg-white hover:bg-white/80 transition-all duration-300 border border-border/20 rounded-[20px] overflow-hidden shadow-sm hover:shadow-lg">
                     <Link href={`/news/${post.id}`}>
-                      <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-muted">
+                      <div className="relative h-48 w-full overflow-hidden bg-muted">
                         {post.image && (
                           <Image 
                             src={post.image} 
                             alt={post.title}
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         )}
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/90 backdrop-blur-sm text-primary hover:bg-white text-[9px] font-bold uppercase tracking-wider border-none shadow-sm">
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-white/95 backdrop-blur-sm text-primary hover:bg-white text-[8px] font-bold uppercase tracking-wider border-none shadow-sm px-2">
                             {post.category}
                           </Badge>
                         </div>
                       </div>
                     </Link>
-                    <CardContent className="p-5 md:p-6 flex-1 flex flex-col">
+                    <CardContent className="p-5 flex-1 flex flex-col">
                       <div className="mb-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="h-3 w-3" />
-                            <span className="text-[10px] font-medium">{post.readTime}</span>
-                          </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-[9px] font-bold text-muted-foreground uppercase">{post.readTime}</span>
                         </div>
                         <Link href={`/news/${post.id}`}>
-                          <h3 className="text-xl font-headline font-bold mb-3 hover:text-accent transition-colors leading-tight">
+                          <h3 className="text-lg font-headline font-bold mb-2 group-hover:text-accent transition-colors leading-snug">
                             {post.title}
                           </h3>
                         </Link>
-                        <BodyText className="text-sm line-clamp-2 text-foreground/60 mb-4">
+                        <BodyText className="text-xs line-clamp-2 text-foreground/60">
                           {post.excerpt}
                         </BodyText>
                       </div>
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/40">
-                        <span className="text-xs font-bold text-primary/80 uppercase tracking-wide">{post.author}</span>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                          <Bookmark className="h-4 w-4" />
-                        </Button>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
+                        <span className="text-[10px] font-black text-primary/70 uppercase tracking-widest">{post.author}</span>
+                        <motion.div whileTap={{ scale: 0.8 }}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Bookmark className="h-4 w-4" />
+                          </Button>
+                        </motion.div>
                       </div>
                     </CardContent>
                   </Card>
@@ -215,51 +191,39 @@ export default function Home() {
             
             <motion.div 
               className="mt-12 flex justify-center"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+              whileTap={{ scale: 0.95 }}
             >
-              <Button variant="outline" className="w-full sm:w-auto px-12 h-12 font-bold text-xs uppercase tracking-widest rounded-full group">
-                Load More
-                <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button variant="outline" className="w-full sm:w-auto px-10 h-12 font-bold text-[10px] uppercase tracking-widest rounded-xl shadow-sm">
+                More Articles
+                <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
           </section>
 
-          {/* Popular Section Sidebar */}
           <section className="lg:col-span-4">
-            <div className="sticky top-24 space-y-8">
-              <motion.div 
-                className="flex items-center gap-3 mb-6 border-b border-border/60 pb-4"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-              >
-                <div className="bg-primary/5 p-2 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                </div>
-                <Heading level={3} className="text-xl font-headline font-bold">Popular Now</Heading>
-              </motion.div>
+            <div className="sticky top-24 space-y-10">
+              <div className="flex items-center gap-3 mb-6 border-b border-border/60 pb-4">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <Heading level={3} className="text-lg font-headline font-bold">Trending</Heading>
+              </div>
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {popularPosts.map((post, idx) => (
                   <motion.div 
                     key={post.id} 
-                    className="flex gap-5 group cursor-pointer"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
+                    className="flex gap-4 group cursor-pointer"
+                    whileTap={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    <span className="text-3xl font-headline font-bold text-primary/10 transition-colors group-hover:text-primary/30">
+                    <span className="text-2xl font-headline font-bold text-primary/10 group-hover:text-primary/40 transition-colors">
                       {post.rank}
                     </span>
-                    <div className="space-y-1">
-                      <Badge variant="ghost" className="p-0 text-[9px] tracking-widest font-bold text-accent uppercase hover:bg-transparent">
+                    <div className="space-y-1 flex-1">
+                      <span className="text-[8px] tracking-widest font-black text-accent uppercase">
                         {post.category}
-                      </Badge>
+                      </span>
                       <Link href={`/news/${post.id}`}>
-                        <h4 className="text-base font-headline font-bold leading-tight group-hover:text-accent transition-colors">
+                        <h4 className="text-sm font-headline font-bold leading-tight group-hover:text-accent transition-colors">
                           {post.title}
                         </h4>
                       </Link>
@@ -268,100 +232,37 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Promo Card */}
               <motion.div 
-                className="bg-primary p-8 rounded-2xl text-primary-foreground mt-12 relative overflow-hidden shadow-2xl"
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                className="bg-primary p-8 rounded-[24px] text-primary-foreground mt-8 relative overflow-hidden shadow-xl"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
               >
                 <div className="relative z-10">
-                  <h4 className="font-headline font-bold text-xl mb-3">InfoFlow Premium</h4>
-                  <p className="text-sm text-primary-foreground/70 mb-6 leading-relaxed">
-                    Get exclusive deep-dive reports and an ad-free experience.
+                  <h4 className="font-headline font-bold text-lg mb-2">InfoFlow Premium</h4>
+                  <p className="text-[10px] text-primary-foreground/70 mb-6 leading-relaxed">
+                    Exclusive reports and zero ads.
                   </p>
-                  <Button variant="secondary" className="w-full font-bold text-xs uppercase tracking-widest h-11">
-                    Upgrade Now
-                  </Button>
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button variant="secondary" className="w-full font-bold text-[10px] uppercase tracking-widest h-10 rounded-xl">
+                      Upgrade
+                    </Button>
+                  </motion.div>
                 </div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
               </motion.div>
             </div>
           </section>
         </div>
-
-        {/* Newsletter - optimized for mobile */}
-        <section className="mt-24 md:mt-40 mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="bg-primary/5 border border-primary/10 p-10 md:p-24 rounded-[32px] text-center space-y-8"
-          >
-            <div className="space-y-4">
-              <Heading level={2} className="text-3xl md:text-5xl font-headline tracking-tighter">
-                Stay Ahead of the Curve
-              </Heading>
-              <BodyText className="max-w-xl mx-auto text-lg text-foreground/60">
-                Join 50,000+ professionals who start their day with InfoFlow's curated insights.
-              </BodyText>
-            </div>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto">
-              <input 
-                type="email" 
-                placeholder="Email address" 
-                className="w-full h-14 px-6 rounded-2xl bg-white border border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
-              />
-              <Button className="w-full sm:w-auto h-14 px-10 font-bold uppercase tracking-widest rounded-2xl shadow-lg">
-                Join Now
-              </Button>
-            </div>
-          </motion.div>
-        </section>
       </main>
 
-      <footer className="border-t py-16 bg-white/40">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-          <div className="space-y-4">
-            <Link href="/" className="font-headline text-2xl font-bold text-primary">
-              InfoFlow
-            </Link>
-            <BodyText className="text-sm max-w-xs mx-auto md:mx-0">
-              Redefining digital journalism through minimalist design and deep insights.
-            </BodyText>
-            <MutedText className="block pt-4">© 2024 InfoFlow Media. All rights reserved.</MutedText>
+      <footer className="border-t py-16 bg-white/50 mt-20">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-8">
+          <Link href="/" className="font-headline text-2xl font-bold text-primary">InfoFlow</Link>
+          <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link href="#" className="hover:text-primary">About</Link>
+            <Link href="#" className="hover:text-primary">Contact</Link>
+            <Link href="#" className="hover:text-primary">Privacy</Link>
           </div>
-          
-          <div className="grid grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-accent">Platform</h4>
-              <ul className="space-y-3 text-sm font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">News Feed</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">Features</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">Archive</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-accent">Company</h4>
-              <ul className="space-y-3 text-sm font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">About Us</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors text-muted-foreground">Terms</Link></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <h4 className="text-[10px] uppercase tracking-widest font-bold text-accent">Social</h4>
-            <div className="flex justify-center md:justify-start gap-4">
-              {['Twitter', 'LinkedIn', 'Instagram'].map(social => (
-                <Button key={social} variant="ghost" size="sm" className="h-9 px-4 font-bold text-[10px] uppercase tracking-wider rounded-full border border-border hover:bg-white transition-all">
-                  {social}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <MutedText className="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]">© 2024 InfoFlow Media</MutedText>
         </div>
       </footer>
     </div>
