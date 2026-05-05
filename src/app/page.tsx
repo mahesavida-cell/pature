@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -11,7 +12,7 @@ import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Clock, Bookmark, TrendingUp, ChevronRight, Share2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { 
   useUser, 
@@ -106,6 +107,12 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
 };
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const heroPost = {
     id: "hero-1",
     title: "Revolusi senyap informasi profesional",
@@ -114,13 +121,18 @@ export default function Home() {
     author: "Alex Rivers"
   };
 
-  const headlineStories = [
+  const trendingStories = [
+    { id: "t1", title: "Kebangkitan ekonomi kreatif digital di Asia Tenggara", category: "Bisnis", readTime: "4 mnt" },
+    { id: "t2", title: "Bagaimana remote work mengubah lanskap perkotaan", category: "Budaya", readTime: "5 mnt" },
+    { id: "t3", title: "Inovasi baterai ramah lingkungan untuk masa depan", category: "Sains", readTime: "6 mnt" },
+    { id: "t4", title: "Seni generatif: antara kreativitas dan algoritma", category: "Teknologi", readTime: "4 mnt" },
+    { id: "t5", title: "Minimalisme dalam arsitektur modern", category: "Desain", readTime: "3 mnt" },
+  ];
+
+  const curatedStories = [
     { id: "h1", title: "Terobosan AI dalam diagnosa medis terkini", category: "Sains", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
     { id: "h2", title: "Startup lokal raih pendanaan seri B", category: "Bisnis", readTime: "3 mnt", image: PlaceHolderImages[1].imageUrl },
     { id: "h3", title: "Pameran seni digital di Jakarta", category: "Budaya", readTime: "5 mnt", image: PlaceHolderImages[2].imageUrl },
-    { id: "h4", title: "Review lengkap gadget lipat terbaru", category: "Teknologi", readTime: "6 mnt", image: PlaceHolderImages[3].imageUrl },
-    { id: "h5", title: "Arsitektur minimalis untuk rumah sempit", category: "Desain", readTime: "4 mnt", image: PlaceHolderImages[0].imageUrl },
-    { id: "h6", title: "Perjalanan menuju emisi nol bersih", category: "Sains", readTime: "7 mnt", image: PlaceHolderImages[1].imageUrl },
   ];
 
   const posts = [
@@ -177,14 +189,16 @@ export default function Home() {
     }
   ];
 
+  if (!mounted) return null;
+
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-32 md:pt-48 lg:pt-56">
-        {/* Hero Section */}
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-32 md:pt-48 lg:pt-56 pb-20">
+        {/* Hero & Trending Section */}
         <section className="mb-24 lg:mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            
+            {/* Hero Left */}
             <motion.div 
               className="lg:col-span-8 space-y-8"
               initial={{ opacity: 0, y: 20 }}
@@ -217,7 +231,7 @@ export default function Home() {
                 </div>
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-[0.15em]">
+                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
                   <Clock className="h-3.5 w-3.5" /> {heroPost.readTime} • {heroPost.author}
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
@@ -229,13 +243,14 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* Trending Right */}
             <div className="lg:col-span-4 space-y-8">
               <div className="flex items-center gap-3 border-b border-primary/5 pb-5">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <Heading level={3} className="text-lg">Pilihan redaksi</Heading>
+                <Heading level={3} className="text-lg">Trending</Heading>
               </div>
-              <div className="grid grid-cols-1 gap-8">
-                {headlineStories.map((story, idx) => (
+              <div className="space-y-8">
+                {trendingStories.map((story, idx) => (
                   <motion.div
                     key={story.id}
                     initial={{ opacity: 0, x: 20 }}
@@ -243,33 +258,66 @@ export default function Home() {
                     transition={{ delay: idx * 0.1, duration: 0.5 }}
                   >
                     <Link href={`/news/${story.id}`} className="group flex gap-5 items-start">
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted border border-primary/5 shadow-sm">
-                        <Image 
-                          src={story.image} 
-                          alt={story.title} 
-                          fill 
-                          className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                          data-ai-hint="news coverage"
-                        />
-                      </div>
-                      <div className="space-y-2 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0.5 h-auto text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm shadow-none tracking-tight">
+                      <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">
+                        0{idx + 1}
+                      </span>
+                      <div className="space-y-1.5 flex-1">
+                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
                           {story.category}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
                           {story.title}
                         </h4>
-                        <MutedText className="text-[10px] font-bold block">{story.readTime} baca</MutedText>
+                        <MutedText className="text-[9px] font-bold block">{story.readTime} baca</MutedText>
                       </div>
                     </Link>
                   </motion.div>
                 ))}
               </div>
-              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-wider">
+              <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:bg-primary/5 rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
                 Lihat berita lainnya <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+          </div>
+        </section>
 
+        {/* Pilihan Redaksi Section */}
+        <section className="mb-24 lg:mb-32">
+          <div className="flex items-center gap-3 mb-10 border-b border-primary/5 pb-6">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <Heading level={2}>Pilihan redaksi</Heading>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+            {curatedStories.map((story, idx) => (
+              <motion.div
+                key={story.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.15 }}
+              >
+                <Link href={`/news/${story.id}`} className="group block space-y-4">
+                  <div className="relative aspect-video rounded-xl overflow-hidden border border-primary/5 shadow-sm bg-muted">
+                    <Image 
+                      src={story.image} 
+                      alt={story.title} 
+                      fill 
+                      className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                      data-ai-hint="news coverage"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm tracking-tight">
+                      {story.category}
+                    </Badge>
+                    <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                      {story.title}
+                    </h4>
+                    <MutedText className="text-[10px] font-bold block">{story.readTime} baca</MutedText>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </section>
 
@@ -311,7 +359,7 @@ export default function Home() {
                     <div className="mb-6">
                       <div className="flex items-center gap-2 mb-3">
                         <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-[10px] font-bold text-muted-foreground tracking-widest">{post.readTime}</span>
+                        <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime}</span>
                       </div>
                       <Link href={`/news/${post.id}`}>
                         <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
@@ -323,7 +371,7 @@ export default function Home() {
                       </BodyText>
                     </div>
                     <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-wide">{post.author}</span>
+                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
                       <BookmarkButton post={post} />
                     </div>
                   </CardContent>
@@ -361,13 +409,13 @@ export default function Home() {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm tracking-tighter">
+                    <Badge variant="secondary" className="px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary border-none rounded-sm tracking-tight">
                       {post.category}
                     </Badge>
                     <h4 className="text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}
                     </h4>
-                    <MutedText className="text-[10px] font-bold block tracking-widest">{post.readTime} baca</MutedText>
+                    <MutedText className="text-[10px] font-bold block tracking-tight">{post.readTime} baca</MutedText>
                   </div>
                 </Link>
               </motion.div>
