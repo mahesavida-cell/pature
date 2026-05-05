@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
@@ -201,7 +201,7 @@ export default function NewsDetailPage() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="group flex gap-3 md:gap-4 p-4 rounded-lg bg-white border border-border/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300"
+          className="group flex gap-3 md:gap-4 p-4 rounded-md bg-white border border-border/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300"
         >
           <Avatar className={cn("h-10 w-10 shadow-sm", isReply && "h-8 w-8")}>
             <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">
@@ -256,11 +256,11 @@ export default function NewsDetailPage() {
               className="ml-8 md:ml-10 overflow-hidden mt-3"
             >
               <div className="p-4 bg-primary/5 rounded-md border border-primary/10 space-y-3">
-                <Input 
+                <Textarea 
                   placeholder={`Membalas Pesan ${comment.authorName}...`} 
                   value={replyText} 
                   onChange={(e) => setReplyText(e.target.value)} 
-                  className="bg-white border-none h-10 rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20" 
+                  className="bg-white border-none min-h-[80px] rounded-md text-sm shadow-sm px-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
                 />
                 <div className="flex justify-end gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="rounded-md h-8 px-3 font-bold text-[10px]">
@@ -339,7 +339,7 @@ export default function NewsDetailPage() {
                   </TooltipProvider>
                 </div>
               </div>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg mb-12 shadow-md border border-border/10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md mb-12 shadow-md border border-border/10">
                 {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority />}
               </div>
               <article className="prose prose-neutral max-w-none mb-20">
@@ -354,16 +354,16 @@ export default function NewsDetailPage() {
                   </Badge>
                 </div>
                 {user ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-lg bg-primary/5 border border-primary/10">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-4 mb-14 items-start p-6 rounded-md bg-primary/5 border border-primary/10">
                     <Avatar className="h-10 w-10 shadow-sm border border-white shrink-0">
-                      <AvatarFallback className="bg-primary text-white font-bold text-xs">{user.email?.[0].toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="bg-primary text-white font-bold text-xs">{(user.displayName || user.email || "U")[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-4">
-                      <Input 
+                      <Textarea 
                         placeholder="Tuliskan Pendapat Anda Tentang Artikel Ini..." 
                         value={commentText} 
                         onChange={(e) => setCommentText(e.target.value)} 
-                        className="bg-white border-none h-12 rounded-md text-sm shadow-sm px-6 focus-visible:ring-1 focus-visible:ring-primary/20" 
+                        className="bg-white border-none min-h-[100px] rounded-md text-sm shadow-sm px-6 py-4 focus-visible:ring-1 focus-visible:ring-primary/20 resize-none" 
                       />
                       <div className="flex justify-end">
                         <Button 
@@ -377,7 +377,7 @@ export default function NewsDetailPage() {
                     </div>
                   </motion.div>
                 ) : (
-                  <Card className="bg-primary/5 p-10 rounded-lg text-center mb-14 border border-dashed border-primary/20">
+                  <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
                     <MutedText className="block mb-6 font-medium text-xs opacity-60">Silakan Masuk Terlebih Dahulu Untuk Bergabung Dalam Diskusi Komunitas Kami.</MutedText>
                     <Link href="/auth">
                       <Button className="rounded-md px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button>
@@ -393,7 +393,7 @@ export default function NewsDetailPage() {
                   ) : threadedComments.length > 0 ? (
                     threadedComments.map((comment) => <CommentItem key={comment.id} comment={comment} />)
                   ) : (
-                    <div className="py-20 text-center rounded-lg border-2 border-dashed border-border/40">
+                    <div className="py-20 text-center rounded-md border-2 border-dashed border-border/40">
                       <MutedText className="text-xs opacity-50">Belum Ada Komentar. Jadilah Yang Pertama Memberikan Pendapat!</MutedText>
                     </div>
                   )}
@@ -422,7 +422,7 @@ export default function NewsDetailPage() {
                   ))}
                 </div>
               </div>
-              <Card className="bg-primary text-primary-foreground p-6 rounded-lg shadow-md relative overflow-hidden">
+              <Card className="bg-primary text-primary-foreground p-6 rounded-md shadow-md relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-10">
                   <TrendingUp className="h-24 w-24" />
                 </div>
@@ -446,7 +446,7 @@ export default function NewsDetailPage() {
         </Button>
       </motion.div>
       <AlertDialog open={isLoginDialogOpen} onOpenChange={setIsLoginDialogOpen}>
-        <AlertDialogContent className="rounded-lg p-8 border-none shadow-xl">
+        <AlertDialogContent className="rounded-md p-8 border-none shadow-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl mb-2">Akses Terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm leading-relaxed opacity-70 mb-2">Silakan Masuk Terlebih Dahulu Untuk Menikmati Fitur Diskusi, Memberikan Suka, Atau Menyimpan Artikel Ini Ke Arsip Anda.</AlertDialogDescription>
