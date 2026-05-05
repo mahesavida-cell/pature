@@ -45,12 +45,13 @@ import {
 
 const MarketWeatherBar = () => {
   const [currentCityIndex, setCurrentCityIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState<string>("");
   
   const cities = [
-    { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3 w-3" /> },
-    { name: "Surabaya", temp: "33°C", status: "Berawan", icon: <Cloud className="h-3 w-3" /> },
-    { name: "Bandung", temp: "24°C", status: "Hujan", icon: <CloudRain className="h-3 w-3" /> },
-    { name: "Medan", temp: "29°C", status: "Cerah", icon: <Sun className="h-3 w-3" /> },
+    { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
+    { name: "Surabaya", temp: "33°C", status: "Berawan", icon: <Cloud className="h-3.5 w-3.5" /> },
+    { name: "Bandung", temp: "24°C", status: "Hujan", icon: <CloudRain className="h-3.5 w-3.5" /> },
+    { name: "Medan", temp: "29°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
   ];
 
   const stocks = [
@@ -63,17 +64,43 @@ const MarketWeatherBar = () => {
   ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    // Update time every second
+    const updateTime = () => {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      });
+      setCurrentTime(timeStr);
+    };
+
+    updateTime();
+    const timeTimer = setInterval(updateTime, 1000);
+    
+    // Rotate cities every 5 seconds
+    const cityTimer = setInterval(() => {
       setCurrentCityIndex((prev) => (prev + 1) % cities.length);
     }, 5000);
-    return () => clearInterval(timer);
+
+    return () => {
+      clearInterval(timeTimer);
+      clearInterval(cityTimer);
+    };
   }, [cities.length]);
 
   return (
     <div className="border-b border-primary/5 bg-background/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
-        {/* Weather Section (Left) */}
-        <div className="flex items-center gap-3 w-48 shrink-0">
+        {/* Time & Weather Section (Left) */}
+        <div className="flex items-center gap-4 w-64 shrink-0 border-r border-primary/5 mr-4">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Clock className="h-3 w-3 text-primary/40" />
+            <span className="text-[10px] font-bold text-primary tracking-tight">
+              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
+            </span>
+          </div>
+          
           <AnimatePresence mode="wait">
             <motion.div
               key={currentCityIndex}
@@ -94,17 +121,17 @@ const MarketWeatherBar = () => {
         </div>
 
         {/* Stock Ticker (Right) */}
-        <div className="flex-1 relative flex items-center overflow-hidden ml-8">
+        <div className="flex-1 relative flex items-center overflow-hidden">
           <motion.div
             animate={{ x: ["0%", "-100%"] }}
             transition={{
-              duration: 30,
+              duration: 40,
               ease: "linear",
               repeat: Infinity,
             }}
             className="flex items-center gap-12 whitespace-nowrap"
           >
-            {[...stocks, ...stocks].map((stock, idx) => (
+            {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
                 <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
@@ -317,7 +344,7 @@ export default function Home() {
     <div className="bg-background min-h-screen">
       <Navbar />
       <MarketWeatherBar />
-      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-24 lg:pt-32 pb-20">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-20">
         {/* Hero & Trending Section */}
         <section className="mb-24 lg:mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
