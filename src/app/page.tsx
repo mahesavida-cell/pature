@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, ChevronRight, Share2, Sun, Cloud, CloudRain, TrendingUp, TrendingDown } from "lucide-react";
+import { Clock, Bookmark, ChevronRight, Share2, TrendingUp, TrendingDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -42,117 +42,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-const MarketWeatherBar = () => {
-  const [currentCityIndex, setCurrentCityIndex] = useState(0);
-  const [currentTime, setCurrentTime] = useState<string>("");
-  
-  const cities = [
-    { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
-    { name: "Surabaya", temp: "33°C", status: "Berawan", icon: <Cloud className="h-3.5 w-3.5" /> },
-    { name: "Bandung", temp: "24°C", status: "Hujan", icon: <CloudRain className="h-3.5 w-3.5" /> },
-    { name: "Medan", temp: "29°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
-  ];
-
-  const stocks = [
-    { symbol: "IHSG", price: "7,245.12", change: "+0.45%", up: true },
-    { symbol: "BBCA", price: "10,125", change: "-0.25%", up: false },
-    { symbol: "BBRI", price: "4,850", change: "+1.20%", up: true },
-    { symbol: "TLKM", price: "3,120", change: "-0.95%", up: false },
-    { symbol: "ASII", price: "5,150", change: "+0.10%", up: true },
-    { symbol: "GOTO", price: "52", change: "0.00%", up: true },
-  ];
-
-  useEffect(() => {
-    // Update time every second
-    const updateTime = () => {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('id-ID', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        timeZone: 'Asia/Jakarta'
-      });
-      setCurrentTime(timeStr);
-    };
-
-    updateTime();
-    const timeTimer = setInterval(updateTime, 1000);
-    
-    // Rotate cities every 5 seconds
-    const cityTimer = setInterval(() => {
-      setCurrentCityIndex((prev) => (prev + 1) % cities.length);
-    }, 5000);
-
-    return () => {
-      clearInterval(timeTimer);
-      clearInterval(cityTimer);
-    };
-  }, [cities.length]);
-
-  return (
-    <div className="border-b border-primary/5 bg-background/50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
-        {/* Time & Weather Section (Left) */}
-        <div className="flex items-center gap-4 w-64 shrink-0 border-r border-primary/5 mr-4">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Clock className="h-3 w-3 text-primary/40" />
-            <span className="text-[10px] font-bold text-primary tracking-tight">
-              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
-            </span>
-          </div>
-          
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentCityIndex}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="flex items-center gap-2"
-            >
-              <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-              <span className="text-[10px] font-bold text-primary tracking-tight">
-                {cities[currentCityIndex].name} {cities[currentCityIndex].temp}
-              </span>
-              <span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                {cities[currentCityIndex].status}
-              </span>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Stock Ticker (Right) */}
-        <div className="flex-1 relative flex items-center overflow-hidden">
-          <motion.div
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{
-              duration: 40,
-              ease: "linear",
-              repeat: Infinity,
-            }}
-            className="flex items-center gap-12 whitespace-nowrap"
-          >
-            {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
-                <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
-                <div className={cn(
-                  "flex items-center gap-0.5 text-[9px] font-bold",
-                  stock.up ? "text-green-600" : "text-red-600"
-                )}>
-                  {stock.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                  {stock.change}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-          {/* Fading Gradients for ticker smooth look */}
-          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background/50 to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/50 to-transparent z-10" />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -310,7 +199,6 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  // Journalistic selection for Hero: The single latest post
   const heroQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(1)), [db]);
   const { data: heroData } = useCollection(heroQuery);
   const heroPost = heroData?.[0] || {
@@ -323,12 +211,10 @@ export default function Home() {
     image: PlaceHolderImages[0].imageUrl
   };
 
-  // Latest news excluding the Hero post (journalistic standard)
   const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(7)), [db]);
   const { data: allLatestPosts, isLoading: isLatestLoading } = useCollection(latestQuery);
   const carouselLatestPosts = useMemo(() => {
     if (!allLatestPosts) return [];
-    // Skip the first post because it's already used as the Hero
     return allLatestPosts.slice(1);
   }, [allLatestPosts]);
 
@@ -343,9 +229,7 @@ export default function Home() {
   return (
     <div className="bg-background min-h-screen">
       <Navbar />
-      <MarketWeatherBar />
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-20">
-        {/* Hero & Trending Section */}
         <section className="mb-24 lg:mb-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             <motion.div 

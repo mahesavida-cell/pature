@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, X, TrendingUp } from "lucide-react";
+import { Search, Menu, User, LogOut, X, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +30,111 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
+
+const MarketWeatherBar = () => {
+  const [currentCityIndex, setCurrentCityIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState<string>("");
+  
+  const cities = [
+    { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
+    { name: "Surabaya", temp: "33°C", status: "Berawan", icon: <Cloud className="h-3.5 w-3.5" /> },
+    { name: "Bandung", temp: "24°C", status: "Hujan", icon: <CloudRain className="h-3.5 w-3.5" /> },
+    { name: "Medan", temp: "29°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
+  ];
+
+  const stocks = [
+    { symbol: "IHSG", price: "7,245.12", change: "+0.45%", up: true },
+    { symbol: "BBCA", price: "10,125", change: "-0.25%", up: false },
+    { symbol: "BBRI", price: "4,850", change: "+1.20%", up: true },
+    { symbol: "TLKM", price: "3,120", change: "-0.95%", up: false },
+    { symbol: "ASII", price: "5,150", change: "+0.10%", up: true },
+    { symbol: "GOTO", price: "52", change: "0.00%", up: true },
+  ];
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      });
+      setCurrentTime(timeStr);
+    };
+
+    updateTime();
+    const timeTimer = setInterval(updateTime, 1000);
+    const cityTimer = setInterval(() => {
+      setCurrentCityIndex((prev) => (prev + 1) % cities.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(timeTimer);
+      clearInterval(cityTimer);
+    };
+  }, [cities.length]);
+
+  return (
+    <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
+        <div className="flex items-center gap-4 w-72 shrink-0 border-r border-primary/5 mr-4">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Clock className="h-3 w-3 text-primary/40" />
+            <span className="text-[10px] font-bold text-primary tracking-tight">
+              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
+            </span>
+          </div>
+          
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentCityIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center gap-2"
+            >
+              <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
+              <span className="text-[10px] font-bold text-primary tracking-tight">
+                {cities[currentCityIndex].name} {cities[currentCityIndex].temp}
+              </span>
+              <span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                {cities[currentCityIndex].status}
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="flex-1 relative flex items-center overflow-hidden">
+          <motion.div
+            animate={{ x: ["0%", "-100%"] }}
+            transition={{
+              duration: 40,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            className="flex items-center gap-12 whitespace-nowrap"
+          >
+            {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
+                <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
+                <div className={cn(
+                  "flex items-center gap-0.5 text-[9px] font-bold",
+                  stock.up ? "text-green-600" : "text-red-600"
+                )}>
+                  {stock.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                  {stock.change}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background/50 to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/50 to-transparent z-10" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -104,13 +209,8 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <nav 
-      className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        "bg-background/95 backdrop-blur-2xl border-b border-primary/5 shadow-sm"
-      )}
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between border-b border-primary/5">
         <div className="flex items-center gap-16">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
@@ -309,8 +409,10 @@ export const Navbar = () => {
         </div>
       </div>
 
+      <MarketWeatherBar />
+
       <div 
-        className="border-t border-primary/5 overflow-hidden bg-background/50 backdrop-blur-md" 
+        className="border-b border-primary/5 overflow-hidden bg-background/50 backdrop-blur-md" 
         onMouseLeave={() => setHoveredCategory(null)}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar">
