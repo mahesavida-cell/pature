@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -96,7 +96,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 min-h-[500px] lg:max-h-[600px]"
+          className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 min-h-[500px] lg:max-h-[550px]"
         >
           {/* Sisi kiri - branding & info */}
           <div className="hidden lg:flex flex-col relative bg-primary p-8 text-white">
@@ -152,104 +152,90 @@ export default function AuthPage() {
                 <TabsTrigger value="register" className="text-[10px] font-bold tracking-widest transition-all">Daftar</TabsTrigger>
               </TabsList>
               
-              <AnimatePresence mode="wait">
-                <TabsContent key="login-tab" value="login" className="mt-0 focus-visible:outline-none">
-                  <motion.div 
-                    initial={{ opacity: 0, x: 5 }} 
-                    animate={{ opacity: 1, x: 0 }} 
-                    className="space-y-3"
-                  >
-                    <div className="space-y-1">
-                      <Label htmlFor="email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="nama@contoh.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center px-1">
-                        <Label htmlFor="password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Kata sandi</Label>
-                        <button className="text-[9px] font-bold text-primary/60 hover:text-primary">Lupa sandi?</button>
-                      </div>
-                      <div className="relative">
-                        <Input 
-                          id="password" 
-                          type={showPassword ? "text" : "password"} 
-                          placeholder="Masukkan sandi anda"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
-                        >
-                          {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-                    <Button 
-                      className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
-                      onClick={() => handleAuth('login')}
-                      disabled={isLoading}
+              <TabsContent value="login" className="mt-0 focus-visible:outline-none space-y-3">
+                <div className="space-y-1">
+                  <Label htmlFor="email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="nama@contoh.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center px-1">
+                    <Label htmlFor="password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Kata sandi</Label>
+                    <button className="text-[9px] font-bold text-primary/60 hover:text-primary">Lupa sandi?</button>
+                  </div>
+                  <div className="relative">
+                    <Input 
+                      id="password" 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="Masukkan sandi anda"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
                     >
-                      {isLoading ? "Sedang memproses..." : "Masuk ke akun"}
-                    </Button>
-                  </motion.div>
-                </TabsContent>
+                      {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
+                  onClick={() => handleAuth('login')}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Sedang memproses..." : "Masuk ke akun"}
+                </Button>
+              </TabsContent>
 
-                <TabsContent key="register-tab" value="register" className="mt-0 focus-visible:outline-none">
-                  <motion.div 
-                    initial={{ opacity: 0, x: -5 }} 
-                    animate={{ opacity: 1, x: 0 }} 
-                    className="space-y-3"
-                  >
-                    <div className="space-y-1">
-                      <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
-                      <Input 
-                        id="reg-email" 
-                        type="email" 
-                        placeholder="nama@contoh.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="reg-password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Kata sandi baru</Label>
-                      <div className="relative">
-                        <Input 
-                          id="reg-password" 
-                          type={showPassword ? "text" : "password"} 
-                          placeholder="Buat sandi yang aman"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
-                        >
-                          {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-                    <Button 
-                      className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
-                      onClick={() => handleAuth('register')}
-                      disabled={isLoading}
+              <TabsContent value="register" className="mt-0 focus-visible:outline-none space-y-3">
+                <div className="space-y-1">
+                  <Label htmlFor="reg-email" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Alamat email</Label>
+                  <Input 
+                    id="reg-email" 
+                    type="email" 
+                    placeholder="nama@contoh.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="reg-password" className="text-[9px] font-bold opacity-40 uppercase tracking-widest px-1">Kata sandi baru</Label>
+                  <div className="relative">
+                    <Input 
+                      id="reg-password" 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="Buat sandi yang aman"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-9 border-primary/10 bg-primary/5 border-none font-medium text-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1"
                     >
-                      {isLoading ? "Sedang memproses..." : "Daftar sekarang"}
-                    </Button>
-                  </motion.div>
-                </TabsContent>
-              </AnimatePresence>
+                      {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full h-9 font-bold text-[10px] tracking-widest mt-1" 
+                  onClick={() => handleAuth('register')}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Sedang memproses..." : "Daftar sekarang"}
+                </Button>
+              </TabsContent>
             </Tabs>
 
             <div className="flex items-center my-4 gap-3">
