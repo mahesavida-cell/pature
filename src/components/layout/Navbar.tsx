@@ -247,10 +247,10 @@ export const Navbar = () => {
                 <Link 
                   key={idx} 
                   href="#" 
-                  className="text-[10px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group"
+                  className="text-[10px] font-medium text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body"
                 >
-                  <span className="tracking-widest">{sub}</span>
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary/10 group-hover:bg-primary transition-all" />
+                  <span className="tracking-wide">{sub}</span>
+                  <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all" />
                 </Link>
               ))}
             </motion.div>
