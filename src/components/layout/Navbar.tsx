@@ -83,7 +83,15 @@ export const Navbar = () => {
     }
   };
 
-  // Close search suggestions when clicking outside
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -144,7 +152,8 @@ export const Navbar = () => {
           <div className="relative flex items-center" ref={searchContainerRef}>
             <AnimatePresence>
               {isSearchOpen && (
-                <motion.div
+                <motion.form
+                  onSubmit={handleSearchSubmit}
                   initial={{ width: 0, opacity: 0 }}
                   animate={{ width: 280, opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}
@@ -157,7 +166,7 @@ export const Navbar = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-10 text-xs font-bold bg-primary/5 border-none rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10 transition-all"
                   />
-                </motion.div>
+                </motion.form>
               )}
             </AnimatePresence>
             <Button 
@@ -169,14 +178,13 @@ export const Navbar = () => {
               {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             </Button>
 
-            {/* Dynamic Search Suggestions */}
             <AnimatePresence>
               {isSearchOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-14 right-0 w-[300px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-2xl p-4 z-[60]"
+                  exit={{ opacity: 0, y: 5 }}
+                  className="absolute top-14 right-3 w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-lg p-4 z-[60]"
                 >
                   {searchQuery.trim() === "" ? (
                     <div className="space-y-4">
@@ -198,7 +206,7 @@ export const Navbar = () => {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1 tracking-wider">Hasil pencarian</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1 tracking-wider">Saran pencarian</span>
                       {searchResults.length > 0 ? (
                         <div className="space-y-1">
                           {searchResults.map((result) => (
@@ -218,7 +226,7 @@ export const Navbar = () => {
                         </div>
                       ) : (
                         <div className="py-4 text-center">
-                          <span className="text-[10px] font-medium text-muted-foreground/40 italic">Tidak ada hasil ditemukan.</span>
+                          <span className="text-[10px] font-medium text-muted-foreground/40 italic">Tekan enter untuk mencari...</span>
                         </div>
                       )}
                     </div>
@@ -241,7 +249,7 @@ export const Navbar = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border-primary/5" align="end">
+                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-lg mt-3 border-primary/5" align="end">
                   <DropdownMenuLabel className="px-4 py-3 text-[10px] tracking-[0.2em] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
