@@ -255,8 +255,48 @@ export default function NewsDetailPage() {
 
   const { data: firestoreComments, isLoading: isCommentsLoading } = useCollection(commentsQuery);
 
+  const mockComments = [
+    {
+      id: "mock-1",
+      content: "Analisis Yang Sangat Menarik. Saya Setuju Bahwa Minimalisme Adalah Kunci Untuk Mengurangi Kelelahan Digital Di Era Informasi Yang Begitu Cepat Ini.",
+      authorName: "Dian Pratama",
+      authorId: "user-1",
+      likes: ["user-2", "user-3"],
+      createdAt: { toDate: () => new Date(Date.now() - 3600000) },
+      replies: [
+        {
+          id: "mock-2",
+          content: "Tepat Sekali! Terkadang Kita Lupa Bahwa Desain Yang Baik Adalah Desain Yang Tidak Terlihat Namun Berfungsi Maksimal.",
+          authorName: "Alex Rivers",
+          authorId: "author-alex-1",
+          likes: ["user-1"],
+          createdAt: { toDate: () => new Date(Date.now() - 3000000) },
+          replies: [
+            {
+              id: "mock-3",
+              content: "Betul Pak Alex. Terima Kasih Sudah Berbagi Wawasan Ini Lewat Artikel Anda.",
+              authorName: "Dian Pratama",
+              authorId: "user-1",
+              likes: [],
+              createdAt: { toDate: () => new Date(Date.now() - 2400000) }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "mock-4",
+      content: "Apakah Ada Rekomendasi Buku Untuk Mempelajari Lebih Dalam Tentang Psikologi Tipografi?",
+      authorName: "Rina Wijaya",
+      authorId: "user-4",
+      likes: ["user-1"],
+      createdAt: { toDate: () => new Date(Date.now() - 7200000) },
+      replies: []
+    }
+  ];
+
   const threadedComments = useMemo(() => {
-    if (!firestoreComments || firestoreComments.length === 0) return [];
+    if (!firestoreComments || firestoreComments.length === 0) return mockComments;
 
     const map = new Map();
     firestoreComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
@@ -452,7 +492,7 @@ export default function NewsDetailPage() {
                 <div className="flex items-center gap-3 mb-10">
                   <Heading level={2} className="text-xl">Diskusi Komunitas</Heading>
                   <Badge className="rounded-sm px-3 py-0.5 text-[11px] font-bold bg-primary/10 text-primary border-none">
-                    {firestoreComments?.length || 0}
+                    {firestoreComments?.length || mockComments.length}
                   </Badge>
                 </div>
                 {user ? (
