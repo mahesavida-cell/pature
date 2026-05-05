@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -6,10 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { collection, query, limit, orderBy } from "firebase/firestore";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +28,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { client } from "@/sanity/lib/client";
+import { CATEGORIES_QUERY } from "@/sanity/lib/queries";
 
 const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
 
@@ -140,39 +142,18 @@ export const Navbar = () => {
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(true);
+  const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   
   const { user } = useUser();
   const auth = useAuth();
-  const db = useFirestore();
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const categoriesQuery = useMemoFirebase(() => {
-    if (!db) return null;
-    return query(collection(db, "categories"), orderBy("order", "asc"));
-  }, [db]);
-  const { data: dynamicCategories } = useCollection(categoriesQuery);
-
-  const postsQuery = useMemoFirebase(() => {
-    if (!db) return null;
-    return query(collection(db, "posts"), limit(20));
-  }, [db]);
-  const { data: posts } = useCollection(postsQuery);
-
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim() || !posts) return [];
-    return posts.filter(post => 
-      post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.category?.toLowerCase().includes(searchQuery.toLowerCase())
-    ).slice(0, 5);
-  }, [searchQuery, posts]);
-
-  const popularSearches = useMemo(() => {
-    if (!dynamicCategories) return DEFAULT_TOPICS;
-    return dynamicCategories.map(cat => cat.name).slice(0, 4);
-  }, [dynamicCategories]);
+  useEffect(() => {
+    client.fetch(CATEGORIES_QUERY).then(setDynamicCategories).catch(console.error);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -240,17 +221,17 @@ export const Navbar = () => {
           <div className="hidden lg:flex items-center gap-10">
             {dynamicCategories?.map((cat, idx) => (
               <button 
-                key={cat.id || `cat-${idx}`} 
+                key={cat._id || `cat-${idx}`} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
                   "relative text-[11px] font-bold transition-all pb-2 group",
-                  hoveredCategory?.id === cat.id 
+                  hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
                 )}
               >
-                {cat.name}
-                {hoveredCategory?.id === cat.id && (
+                {cat.title}
+                {hoveredCategory?._id === cat._id && (
                   <motion.div
                     layoutId="activeCategoryUnderline"
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
@@ -291,63 +272,6 @@ export const Navbar = () => {
             >
               {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
             </Button>
-
-            <AnimatePresence>
-              {isSearchOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 5 }}
-                  className="absolute top-14 left-0 w-[240px] sm:w-[280px] bg-white/95 backdrop-blur-xl border border-primary/5 rounded-xl shadow-sm p-4 z-[60]"
-                >
-                  {searchQuery.trim() === "" ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 px-1">
-                        <TrendingUp className="h-3.5 w-3.5 text-primary/40" />
-                        <span className="text-[10px] font-bold text-muted-foreground/60">Pencarian populer</span>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {popularSearches.map((term, idx) => (
-                          <button
-                            key={`popular-${idx}`}
-                            onClick={() => setSearchQuery(term)}
-                            className="text-[10px] font-bold px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-primary/70 transition-colors"
-                          >
-                            {term}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-bold text-muted-foreground/60 px-1">Saran pencarian</span>
-                      {searchResults.length > 0 ? (
-                        <div className="space-y-1">
-                          {searchResults.map((result, idx) => (
-                            <Link 
-                              key={result.id || `result-${idx}`}
-                              href={`/news/${result.id}`}
-                              onClick={() => {
-                                setIsSearchOpen(false);
-                                setSearchQuery("");
-                              }}
-                              className="flex flex-col p-2 rounded-lg hover:bg-primary/5 transition-colors group"
-                            >
-                              <span className="text-[11px] font-bold text-primary transition-colors line-clamp-1">{result.title}</span>
-                              <span className="text-[9px] font-medium text-muted-foreground/50">{result.category}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="py-4 text-center">
-                          <span className="text-[10px] font-medium text-muted-foreground/40 italic">Tekan enter untuk mencari...</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           <div className="flex items-center sm:border-l sm:pl-5 border-primary/5 sm:ml-2">
@@ -385,51 +309,6 @@ export const Navbar = () => {
               </Link>
             )}
           </div>
-
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground lg:hidden h-9 w-9 hover:bg-primary/5 rounded-full transition-all">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[360px] bg-white border-none p-6 sm:p-10 flex flex-col">
-              <SheetHeader className="text-left mb-10">
-                <SheetTitle>
-                  <Link href="/" onClick={() => setIsOpen(false)}>
-                    <Image src="/pature_news.png" alt="logo" width={140} height={40} className="h-8 w-auto object-contain" />
-                  </Link>
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto no-scrollbar py-4">
-                <div className="flex flex-col gap-10">
-                  {dynamicCategories?.map((cat, idx) => (
-                    <div key={cat.id || `sheet-cat-${idx}`} className="space-y-4">
-                      <Link 
-                        href={`/category/${cat.slug}`} 
-                        onClick={() => setIsOpen(false)}
-                        className="text-2xl font-headline font-bold hover:text-primary transition-all block tracking-tight"
-                      >
-                        {cat.name}
-                      </Link>
-                      <div className="pl-5 flex flex-col gap-4 border-l-2 border-primary/5">
-                        {cat.subCategories.map((sub: string, subIdx: number) => (
-                          <span key={`${sub}-${subIdx}`} className="text-[13px] font-bold text-muted-foreground/60 hover:text-primary cursor-pointer transition-all tracking-wide">{sub}</span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  <div className="pt-10 border-t border-primary/5 mt-auto">
-                    <p className="text-[10px] font-bold text-muted-foreground/30 uppercase mb-4">Informasi</p>
-                    <div className="flex flex-col gap-3">
-                      <Link href="/about" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Tentang PatureNews</Link>
-                      <Link href="/contact" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Kontak redaksi</Link>
-                      <Link href="/terms" onClick={() => setIsOpen(false)} className="text-xs font-bold text-muted-foreground/60">Syarat & ketentuan</Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
 
@@ -446,7 +325,7 @@ export const Navbar = () => {
         >
           <AnimatePresence mode="wait">
             <motion.div 
-              key={hoveredCategory ? hoveredCategory.id : "default"}
+              key={hoveredCategory ? hoveredCategory._id : "default"}
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
@@ -454,9 +333,9 @@ export const Navbar = () => {
               className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
             >
               <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40">
-                {hoveredCategory ? `Topik ${hoveredCategory.name.toLowerCase()}:` : "Topik populer:"}
+                {hoveredCategory ? `Topik ${hoveredCategory.title.toLowerCase()}:` : "Topik populer:"}
               </span>
-              {(hoveredCategory ? hoveredCategory.subCategories : DEFAULT_TOPICS).map((sub: string, idx: number) => (
+              {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link 
                   key={`${sub}-${idx}`} 
                   href="#" 
@@ -469,28 +348,6 @@ export const Navbar = () => {
             </motion.div>
           </AnimatePresence>
         </div>
-
-        <AnimatePresence>
-          {showLeftGradient && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10 sm:hidden" 
-            />
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {showRightGradient && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10 sm:hidden" 
-            />
-          )}
-        </AnimatePresence>
       </div>
     </nav>
   );
