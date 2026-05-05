@@ -71,9 +71,22 @@ const CommentItem = ({
   replyText: string;
   setReplyText: (text: string) => void;
 }) => {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isPostAuthor = comment.authorId === postAuthorId;
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
+
+  // Menghindari kesalahan hidrasi dengan memformat waktu hanya di sisi klien
+  const displayTime = mounted 
+    ? (comment.createdAt?.toDate 
+        ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) 
+        : "Baru Saja")
+    : "";
 
   return (
     <div className={cn("space-y-3", depth > 0 && "ml-6 md:ml-10 border-l border-primary/10 pl-4")}>
@@ -94,7 +107,7 @@ const CommentItem = ({
               <span className="text-sm font-bold text-primary truncate">{comment.authorName}</span>
               {isPostAuthor && <Badge className="text-[8px] px-1.5 py-0 font-bold bg-primary text-white border-none">Penulis</Badge>}
               <span className="text-[9px] text-muted-foreground font-medium shrink-0">
-                {comment.createdAt?.toDate ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : "Baru Saja"}
+                {displayTime}
               </span>
             </div>
           </div>

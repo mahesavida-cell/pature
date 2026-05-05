@@ -23,6 +23,11 @@ export default function ProfilePage() {
   const db = useFirestore();
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const userDocRef = useMemoFirebase(() => (user ? doc(db, "users", user.uid) : null), [db, user]);
   const { data: profileData } = useDoc(userDocRef);
@@ -258,7 +263,9 @@ export default function ProfilePage() {
                                 <div className="flex items-center gap-3">
                                   <span className="text-[10px] font-bold opacity-50">{item.category}</span>
                                   <Separator orientation="vertical" className="h-3" />
-                                  <span className="text-[10px] font-bold opacity-30">{new Date(item.viewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                  <span className="text-[10px] font-bold opacity-30">
+                                    {mounted ? new Date(item.viewedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : ""}
+                                  </span>
                                 </div>
                               </div>
                             </div>
