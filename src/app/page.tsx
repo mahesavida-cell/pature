@@ -101,12 +101,12 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl">Akses terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
+            <AlertDialogTitle className="font-headline font-bold text-xl text-primary">Akses terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk sekarang</AlertDialogAction>
+            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 uppercase tracking-widest">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm uppercase tracking-widest text-white">Masuk sekarang</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -120,7 +120,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
         <Heading level={2}>{sectionTitle}</Heading>
         <Link href={viewAllLink}>
-          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-6">Lihat semua</Button>
+          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-4 transition-all uppercase">Lihat semua</Button>
         </Link>
       </div>
       {isLoading ? (
@@ -149,7 +149,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                         />
                         <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide uppercase">
                             {post.category}
                           </Badge>
                         </div>
@@ -182,8 +182,8 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
           </CarouselContent>
           {posts.length > 3 && (
             <div className="hidden lg:block">
-              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2" />
-              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2" />
+              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md" />
+              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md" />
             </div>
           )}
         </Carousel>
@@ -200,24 +200,33 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  // Professional independent mapping from Firestore
-  const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(6)), [db]);
-  const { data: latestPosts, isLoading: isLatestLoading } = useCollection(latestQuery);
-
-  const trendingQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(5)), [db]);
-  const { data: trendingPosts, isLoading: isTrendingLoading } = useCollection(trendingQuery);
-
-  const editorsChoiceQuery = useMemoFirebase(() => query(collection(db, "posts"), where("category", "==", "Media"), limit(4)), [db]);
-  const { data: curatedPosts, isLoading: isCuratedLoading } = useCollection(editorsChoiceQuery);
-
-  const heroPost = latestPosts?.[0] || {
-    id: "hero-1",
+  // Journalistic selection for Hero: The single latest post
+  const heroQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(1)), [db]);
+  const { data: heroData } = useCollection(heroQuery);
+  const heroPost = heroData?.[0] || {
+    id: "hero-placeholder",
     title: "Revolusi senyap informasi profesional",
     category: "Media",
     readTime: "5 menit baca",
     author: "Alex Rivers",
-    excerpt: "Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya."
+    excerpt: "Temukan bagaimana InfoFlow menjadi standar baru untuk jurnalisme digital minimalis yang memprioritaskan kejelasan di atas segalanya.",
+    image: PlaceHolderImages[0].imageUrl
   };
+
+  // Latest news excluding the Hero post (journalistic standard)
+  const latestQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(7)), [db]);
+  const { data: allLatestPosts, isLoading: isLatestLoading } = useCollection(latestQuery);
+  const carouselLatestPosts = useMemo(() => {
+    if (!allLatestPosts) return [];
+    // Skip the first post because it's already used as the Hero
+    return allLatestPosts.slice(1);
+  }, [allLatestPosts]);
+
+  const trendingQuery = useMemoFirebase(() => query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(5)), [db]);
+  const { data: trendingPosts, isLoading: isTrendingLoading } = useCollection(trendingQuery);
+
+  const curatedQuery = useMemoFirebase(() => query(collection(db, "posts"), where("category", "==", "Media"), limit(6)), [db]);
+  const { data: curatedPosts, isLoading: isCuratedLoading } = useCollection(curatedQuery);
 
   if (!mounted) return null;
 
@@ -244,7 +253,7 @@ export default function Home() {
                     priority
                   />
                   <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
+                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">
                       Unggulan hari ini
                     </Badge>
                   </div>
@@ -264,7 +273,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
                   <BookmarkButton post={heroPost} variant="hero" />
-                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5">
+                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
                     <Share2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -290,7 +299,7 @@ export default function Home() {
                         0{idx + 1}
                       </span>
                       <div className="space-y-1.5 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight">
+                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">
                           {story.category}
                         </Badge>
                         <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
@@ -303,7 +312,7 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/latest" className="block">
-                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest">
+                <Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">
                   Lihat berita lainnya <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -319,17 +328,17 @@ export default function Home() {
         />
 
         <NewsCarousel 
-          posts={latestPosts || []} 
+          posts={carouselLatestPosts || []} 
           sectionTitle="Berita terbaru" 
           viewAllLink="/latest" 
           isLoading={isLatestLoading}
         />
 
         <NewsCarousel 
-          posts={latestPosts?.slice().reverse() || []} 
+          posts={curatedPosts?.slice().reverse() || []} 
           sectionTitle="Rekomendasi untuk anda" 
           viewAllLink="/recommendations" 
-          isLoading={isLatestLoading}
+          isLoading={isCuratedLoading}
         />
       </main>
       <Footer />
