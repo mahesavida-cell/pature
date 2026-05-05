@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -7,6 +6,7 @@ import { Card, CardContent } from "@/components/wrapped/Card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import Link from "next/link";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight, Clock, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
