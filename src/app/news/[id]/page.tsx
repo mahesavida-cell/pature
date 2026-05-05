@@ -41,6 +41,26 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Helper function for relative time in Title Case
+const formatRelativeTime = (dateInput: any) => {
+  if (!dateInput) return "Baru Saja";
+  
+  const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return "Baru Saja";
+  
+  const minutes = Math.floor(diffInSeconds / 60);
+  if (minutes < 60) return `${minutes} Menit Yang Lalu`;
+  
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} Jam Yang Lalu`;
+  
+  const days = Math.floor(hours / 24);
+  return `${days} Hari Yang Lalu`;
+};
+
 const CommentItem = ({ 
   comment, 
   depth = 0, 
@@ -76,11 +96,7 @@ const CommentItem = ({
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
 
-  const displayTime = mounted 
-    ? (comment.createdAt?.toDate 
-        ? new Date(comment.createdAt.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) 
-        : "Baru Saja")
-    : "---";
+  const displayTime = mounted ? formatRelativeTime(comment.createdAt) : "---";
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-4 md:ml-8 border-l border-primary/10 pl-4 md:pl-6")}>
@@ -165,7 +181,7 @@ const CommentItem = ({
                   Batal
                 </Button>
                 <Button onClick={() => onReply(comment.id)} size="sm" className="rounded-sm h-8 px-4 font-bold text-[10px] shadow-sm">
-                  <Send className="h-3 w-3 mr-2" /> Kirim Balasan
+                  <Send className="h-3.5 w-3.5 mr-2" /> Kirim Balasan
                 </Button>
               </div>
             </div>
@@ -208,6 +224,7 @@ export default function NewsDetailPage() {
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -294,6 +311,7 @@ export default function NewsDetailPage() {
   }, [firestoreComments]);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
     if (user && db && params.id) {
@@ -343,7 +361,7 @@ export default function NewsDetailPage() {
         });
       }
     } catch (err) {
-      // User cancelled or silent error
+      // User cancelled
     }
   };
 
@@ -374,10 +392,10 @@ export default function NewsDetailPage() {
   };
 
   const popularStories = [
-    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam" },
-    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam" },
-    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari" },
-    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam" }
+    { id: "1", title: "Psikologi Tipografi Dalam Desain", category: "Desain", timeAgo: "2 Jam Yang Lalu" },
+    { id: "2", title: "Masa Depan AI Di Media", category: "Teknologi", timeAgo: "4 Jam Yang Lalu" },
+    { id: "3", title: "Arsitektur Kota Hijau", category: "Budaya", timeAgo: "1 Hari Yang Lalu" },
+    { id: "4", title: "Strategi Ekonomi Digital", category: "Bisnis", timeAgo: "6 Jam Yang Lalu" }
   ];
 
   return (
@@ -410,7 +428,8 @@ export default function NewsDetailPage() {
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all"
+                      title="Bagikan Berita"
+                      className="rounded-full h-9 w-9 border-border/40 hover:bg-primary/5 hover:text-primary transition-all shadow-sm"
                       onClick={handleShare}
                     >
                       <Share2 className="h-4 w-4" />
@@ -418,7 +437,8 @@ export default function NewsDetailPage() {
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      className={cn("rounded-full h-9 w-9 transition-all border-border/40", isSaved && 'bg-primary text-primary-foreground border-primary shadow-sm')} 
+                      title="Simpan Berita"
+                      className={cn("rounded-full h-9 w-9 transition-all border-border/40 shadow-sm", isSaved && 'bg-primary text-primary-foreground border-primary')} 
                       onClick={handleToggleBookmark}
                     >
                       <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
@@ -464,7 +484,7 @@ export default function NewsDetailPage() {
                 ) : (
                   <Card className="bg-primary/5 p-10 rounded-md text-center mb-14 border border-dashed border-primary/20">
                     <MutedText className="block mb-6 font-medium text-xs">Masuk Untuk Bergabung Dalam Diskusi.</MutedText>
-                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11">Masuk Sekarang</Button></Link>
+                    <Link href="/auth"><Button className="rounded-sm px-12 font-bold h-11 shadow-sm">Masuk Sekarang</Button></Link>
                   </Card>
                 )}
                 <div className="space-y-8">
@@ -528,7 +548,7 @@ export default function NewsDetailPage() {
             <AlertDialogTitle className="font-headline font-bold text-xl">Akses Terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm opacity-70">Silakan Masuk Terlebih Dahulu Untuk Berpartisipasi Dalam Diskusi.</AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11">Masuk Sekarang</AlertDialogAction></AlertDialogFooter>
+          <AlertDialogFooter className="mt-8"><AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11">Batal</AlertDialogCancel><AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm">Masuk Sekarang</AlertDialogAction></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>

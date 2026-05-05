@@ -18,6 +18,22 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Sparkles } from "lucide-react";
 
+// Helper function for relative time
+const formatRelativeTime = (dateInput: any) => {
+  if (!dateInput) return "Baru Saja";
+  const date = new Date(dateInput);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return "Baru Saja";
+  const minutes = Math.floor(diffInSeconds / 60);
+  if (minutes < 60) return `${minutes} Menit Yang Lalu`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} Jam Yang Lalu`;
+  const days = Math.floor(hours / 24);
+  return `${days} Hari Yang Lalu`;
+};
+
 export default function ProfilePage() {
   const { user } = useUser();
   const db = useFirestore();
@@ -90,7 +106,7 @@ export default function ProfilePage() {
             </div>
             <Heading level={2} className="mb-2 text-xl">Akses Terbatas</Heading>
             <BodyText className="mb-8 text-sm">Silakan Masuk Untuk Mengakses Profil.</BodyText>
-            <Link href="/auth"><Button className="rounded-md px-10 h-11 font-bold tracking-tight">Masuk Sekarang</Button></Link>
+            <Link href="/auth"><Button className="rounded-md px-10 h-11 font-bold tracking-tight shadow-sm">Masuk Sekarang</Button></Link>
           </motion.div>
         </main>
       </div>
@@ -206,7 +222,7 @@ export default function ProfilePage() {
                                 <div className="flex items-center gap-3">
                                   <span className="text-[10px] font-bold opacity-50">{item.category}</span>
                                   <Separator orientation="vertical" className="h-3" />
-                                  <span className="text-[10px] font-bold opacity-30">{mounted ? new Date(item.viewedAt).toLocaleDateString('id-ID') : ""}</span>
+                                  <span className="text-[10px] font-bold opacity-30">{mounted ? formatRelativeTime(item.viewedAt) : "---"}</span>
                                 </div>
                               </div>
                             </div>
