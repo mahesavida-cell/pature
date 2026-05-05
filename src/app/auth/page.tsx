@@ -85,28 +85,28 @@ export default function AuthPage() {
   return (
     <div className="bg-background min-h-screen flex flex-col font-body">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main className="flex-1 flex items-center justify-center p-4 py-8 sm:py-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="text-center mb-10 space-y-2">
-            <Heading level={2} className="text-3xl font-bold tracking-tighter">Pembaca InfoFlow</Heading>
-            <BodyText className="text-sm opacity-60">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
+          <div className="text-center mb-8 sm:mb-10 space-y-2 px-2">
+            <Heading level={2} className="text-2xl sm:text-3xl font-bold tracking-tighter">Pembaca InfoFlow</Heading>
+            <BodyText className="text-xs sm:text-sm opacity-60">Dapatkan berita terbaru langsung di genggaman Anda.</BodyText>
           </div>
 
           <Card className="rounded-lg border-2 border-primary/10 shadow-none bg-background/20 backdrop-blur-md">
-            <CardContent className="pt-8 px-8 pb-10">
+            <CardContent className="pt-6 px-6 pb-8 sm:pt-8 sm:px-8 sm:pb-10">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-10 bg-primary/5 p-1 rounded-md">
-                  <TabsTrigger value="login" className="text-xs font-bold py-2 transition-all">Masuk sekarang</TabsTrigger>
-                  <TabsTrigger value="register" className="text-xs font-bold py-2 transition-all">Daftar akun</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-8 sm:mb-10 bg-primary/5 p-1 rounded-md">
+                  <TabsTrigger value="login" className="text-[10px] sm:text-xs font-bold py-2 transition-all">Masuk sekarang</TabsTrigger>
+                  <TabsTrigger value="register" className="text-[10px] sm:text-xs font-bold py-2 transition-all">Daftar akun</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login" className="mt-0 focus-visible:outline-none">
-                  <div className="space-y-5">
+                  <div className="space-y-4 sm:space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-[10px] font-bold opacity-50">Alamat email</Label>
                       <Input 
@@ -115,7 +115,7 @@ export default function AuthPage() {
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
+                        className="rounded-md h-11 sm:h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
                       />
                     </div>
                     <div className="space-y-2">
@@ -127,7 +127,7 @@ export default function AuthPage() {
                           placeholder="Masukkan kata sandi"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
+                          className="rounded-md h-11 sm:h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
                         />
                         <button
                           type="button"
@@ -140,7 +140,7 @@ export default function AuthPage() {
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
+                      className="w-full h-11 sm:h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
                       onClick={() => handleAuth('login')}
                       disabled={isLoading}
                     >
@@ -150,7 +150,7 @@ export default function AuthPage() {
                 </TabsContent>
 
                 <TabsContent value="register" className="mt-0 focus-visible:outline-none">
-                  <div className="space-y-5">
+                  <div className="space-y-4 sm:space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="reg-email" className="text-[10px] font-bold opacity-50">Alamat email</Label>
                       <Input 
@@ -159,7 +159,7 @@ export default function AuthPage() {
                         placeholder="email@contoh.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
+                        className="rounded-md h-11 sm:h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium"
                       />
                     </div>
                     <div className="space-y-2">
@@ -171,7 +171,7 @@ export default function AuthPage() {
                           placeholder="Buat kata sandi baru"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="rounded-md h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
+                          className="rounded-md h-11 sm:h-12 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all pr-12 font-medium"
                         />
                         <button
                           type="button"
@@ -184,7 +184,7 @@ export default function AuthPage() {
                       </div>
                     </div>
                     <Button 
-                      className="w-full h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
+                      className="w-full h-11 sm:h-12 rounded-md font-bold text-xs shadow-sm mt-2" 
                       onClick={() => handleAuth('register')}
                       disabled={isLoading}
                     >
@@ -194,7 +194,7 @@ export default function AuthPage() {
                 </TabsContent>
               </Tabs>
 
-              <div className="flex items-center my-10 gap-4">
+              <div className="flex items-center my-8 sm:my-10 gap-4">
                 <div className="h-[1px] flex-1 bg-primary/10" />
                 <span className="text-[10px] font-bold text-muted-foreground/40 whitespace-nowrap">Atau masuk dengan</span>
                 <div className="h-[1px] flex-1 bg-primary/10" />
@@ -202,10 +202,10 @@ export default function AuthPage() {
 
               <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.99 }}>
                 <Button 
-                  className="w-full h-12 rounded-md font-bold text-xs flex items-center justify-center gap-4 border border-primary/10 bg-white/60 hover:bg-white transition-all duration-300 shadow-sm text-primary group"
+                  className="w-full h-11 sm:h-12 rounded-md font-bold text-[10px] sm:text-xs flex items-center justify-center gap-3 sm:gap-4 border border-primary/10 bg-white/60 hover:bg-white transition-all duration-300 shadow-sm text-primary group"
                   onClick={handleGoogleSignIn}
                 >
-                  <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -227,7 +227,7 @@ export default function AuthPage() {
                 </Button>
               </motion.div>
 
-              <div className="mt-10 space-y-4">
+              <div className="mt-8 sm:mt-10 space-y-4">
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 pt-6 border-t border-primary/5">
                   <button className="text-[10px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Ketentuan penggunaan</button>
                   <button className="text-[10px] font-bold text-muted-foreground/50 hover:text-primary transition-colors">Kebijakan privasi</button>
