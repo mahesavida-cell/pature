@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -82,7 +81,7 @@ const MarketWeatherBar = () => {
 
   return (
     <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-10 flex items-center justify-between">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-8 h-10 flex items-center justify-between">
         <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
@@ -122,8 +121,8 @@ const MarketWeatherBar = () => {
           >
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={`stock-${idx}`} className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">{stock.symbol}</span>
-                <span className="text-[10px] font-medium text-muted-foreground tracking-tight">{stock.price}</span>
+                <span className="text-[10px] font-bold text-primary uppercase tracking-tighter font-headline">{stock.symbol}</span>
+                <span className="text-[10px] font-medium text-muted-foreground tracking-tight font-body">{stock.price}</span>
                 <div className={cn(
                   "flex items-center gap-0.5 text-[9px] font-bold",
                   stock.up ? "text-green-600" : "text-red-600"
@@ -159,7 +158,6 @@ export const Navbar = () => {
   const params = useParams();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Determine active slug for underline effect and contextual sub-header
   const activeSlug = params?.slug as string;
 
   useEffect(() => {
@@ -210,8 +208,6 @@ export const Navbar = () => {
     }
   };
 
-  // Logic for displaying sub-categories in the sub-header
-  // Priority order: Hovered Menu > Active Category > Default Beranda Topics
   const currentNavContext = hoveredCategory || activeCategory;
   const subCategoriesToDisplay = currentNavContext?.subCategories || DEFAULT_TOPICS;
   const subLabel = currentNavContext 
@@ -219,8 +215,8 @@ export const Navbar = () => {
     : "Topik populer:";
 
   return (
-    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full bg-background border-b border-primary/5">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
@@ -237,8 +233,6 @@ export const Navbar = () => {
             {dynamicCategories?.map((cat) => {
               const isActive = activeSlug === cat.slug;
               const isHovered = hoveredCategory?._id === cat._id;
-              // Show underline if it is the active category and NO menu is being hovered
-              // OR if it's currently being hovered
               const showUnderline = isHovered || (isActive && !hoveredCategory);
 
               return (
@@ -247,7 +241,7 @@ export const Navbar = () => {
                   key={cat._id} 
                   onMouseEnter={() => setHoveredCategory(cat)}
                   className={cn(
-                    "relative text-[14px] font-medium transition-all py-5 tracking-normal antialiased",
+                    "relative text-[14px] font-medium transition-all py-5 tracking-tight font-headline antialiased",
                     (isActive || isHovered) 
                       ? "text-primary" 
                       : "text-muted-foreground/60 hover:text-primary"
@@ -296,31 +290,11 @@ export const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={formatCasing("Cari berita atau topik...", 'sentence')}
-                    className="pl-10 h-10 bg-white border-none shadow-none text-xs font-semibold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
+                    className="pl-10 h-10 bg-white border-none shadow-none text-xs font-semibold rounded-lg font-body focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
               </form>
-              <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
-                {!searchQuery && (
-                  <div className="px-4 py-2 space-y-4">
-                    <TypographyMuted className="block px-1 font-bold opacity-40">Berita trending</TypographyMuted>
-                    <div className="grid gap-4">
-                      {trending.map((post) => (
-                        <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
-                          <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0">
-                            <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <TypographySmall className="text-primary/60 mb-0.5 font-bold tracking-normal text-[9px]">{post.categories?.[0] || "Berita"}</TypographySmall>
-                            <TypographySmall className="font-body font-semibold leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </PopoverContent>
           </Popover>
 
@@ -331,29 +305,29 @@ export const Navbar = () => {
                   <button className="outline-none rounded-full transition-all group p-0.5">
                     <Avatar size="sm" className="border border-primary/5 group-hover:border-primary/20 transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
-                      <AvatarFallback className="bg-primary text-white text-[10px] font-bold tracking-tight uppercase">
+                      <AvatarFallback className="bg-primary text-white text-[10px] font-bold tracking-tight uppercase font-headline">
                         {(user.displayName || user.email || "U")[0]}
                       </AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal font-headline">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold hover:bg-primary/5 transition-all tracking-tight">
+                    <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold font-body hover:bg-primary/5 transition-all tracking-tight">
                       <User className="h-4 w-4 text-muted-foreground/60" /> <span>{formatCasing("Halaman profil", 'sentence')}</span>
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-semibold hover:bg-destructive/5 transition-all tracking-tight">
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-semibold font-body hover:bg-destructive/5 transition-all tracking-tight">
                     <LogOut className="h-4 w-4" /> <span>{formatCasing("Keluar dari akun", 'sentence')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-normal">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-normal font-headline">
                   Masuk
                 </Button>
               </Link>
@@ -363,8 +337,8 @@ export const Navbar = () => {
       </div>
       <MarketWeatherBar />
       <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
-          {mounted ? (
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
+          {mounted && (
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentNavContext ? currentNavContext._id : "default"} 
@@ -374,7 +348,7 @@ export const Navbar = () => {
                 transition={{ duration: 0.3 }} 
                 className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
               >
-                <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased">
+                <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased font-headline">
                   {subLabel}
                 </span>
                 {subCategoriesToDisplay.map((sub: string, idx: number) => (
@@ -390,12 +364,6 @@ export const Navbar = () => {
                 ))}
               </motion.div>
             </AnimatePresence>
-          ) : (
-            <div className="h-full flex items-center gap-10 opacity-20">
-              {DEFAULT_TOPICS.slice(0, 5).map((topic, i) => (
-                <div key={i} className="text-[13px] font-normal">{topic}</div>
-              ))}
-            </div>
           )}
         </div>
       </div>

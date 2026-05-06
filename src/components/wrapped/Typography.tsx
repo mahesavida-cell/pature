@@ -13,15 +13,15 @@ interface TypographyProps {
 
 /**
  * PatureNews Typography Library (Professional Reference System)
- * Optimized for hierarchy, rhythm, and clarity.
- * Implements font-synthesis: weight none and optimizeLegibility.
+ * Kiblat: Antarmuka Halaman Auth & Desain Minimalis Modern.
+ * Menggunakan Space Grotesk untuk Headline dan Inter untuk Body.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h1
     id={id}
     className={cn(
-      "scroll-m-20 font-headline text-3xl md:text-4xl font-semibold leading-[1.15] tracking-[-0.02em] text-primary antialiased",
+      "scroll-m-20 font-headline text-3xl md:text-5xl font-semibold leading-[1.1] tracking-[-0.03em] text-primary antialiased",
       className
     )}
     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
@@ -34,7 +34,7 @@ export const TypographyH2 = ({ children, className, id, casing = 'sentence' }: T
   <h2
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-tight text-primary mt-8 mb-3 antialiased",
+      "scroll-m-20 font-headline text-2xl md:text-3xl font-semibold leading-[1.2] tracking-[-0.02em] text-primary mt-8 mb-4 antialiased",
       className
     )}
     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
@@ -47,7 +47,7 @@ export const TypographyH3 = ({ children, className, id, casing = 'sentence' }: T
   <h3
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-tight text-primary mt-6 mb-2 antialiased",
+      "scroll-m-20 font-headline text-xl font-semibold leading-[1.3] tracking-tight text-primary mt-6 mb-3 antialiased",
       className
     )}
     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
@@ -60,7 +60,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
   <h4
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-tight text-primary mt-4 mb-2 antialiased",
+      "scroll-m-20 font-headline text-lg font-semibold leading-[1.4] tracking-tight text-primary mt-4 mb-2 antialiased",
       className
     )}
     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
@@ -72,7 +72,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
 export const TypographyP = ({ children, className }: TypographyProps) => (
   <p
     className={cn(
-      "font-body text-[18px] font-normal leading-[1.75] tracking-normal text-foreground/90 max-w-[65ch] mb-5 antialiased",
+      "font-body text-[16px] md:text-[18px] font-normal leading-[1.65] tracking-normal text-foreground/80 max-w-[65ch] mb-5 antialiased",
       className
     )}
     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
@@ -84,7 +84,7 @@ export const TypographyP = ({ children, className }: TypographyProps) => (
 export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
   <blockquote
     className={cn(
-      "mt-6 border-l-2 border-primary/10 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6 antialiased",
+      "mt-8 border-l-2 border-primary/20 pl-8 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-8 antialiased",
       className
     )}
     style={{ fontSynthesis: 'none' }}
@@ -94,7 +94,7 @@ export const TypographyBlockquote = ({ children, className }: TypographyProps) =
 );
 
 export const TypographyList = ({ children, className }: TypographyProps) => (
-  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body font-normal text-[18px] leading-[1.75] tracking-normal mb-6 antialiased", className)} style={{ fontSynthesis: 'none' }}>
+  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body font-normal text-[16px] md:text-[18px] leading-[1.65] tracking-normal mb-6 antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {children}
   </ul>
 );
@@ -111,7 +111,7 @@ export const TypographyInlineCode = ({ children, className }: TypographyProps) =
 );
 
 export const TypographyLead = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-xl font-normal text-muted-foreground font-body leading-relaxed tracking-tight mb-8 antialiased", className)} style={{ fontSynthesis: 'none' }}>
+  <p className={cn("text-xl md:text-2xl font-normal text-muted-foreground font-body leading-tight tracking-tight mb-8 antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {children}
   </p>
 );
@@ -136,13 +136,12 @@ export const TypographyMuted = ({ children, className, casing = 'sentence' }: Ty
 
 /**
  * TypographyLabel (Module Template)
- * Reference: label-module__CX73KW__label
- * Implements precise editorial styling for form labels.
+ * Kiblat: Styling input label pada form Auth.
  */
 export const TypographyLabel = ({ children, className, casing = 'none' }: TypographyProps) => (
   <label
     className={cn(
-      "block text-[13px] text-[#4D4D4D] font-body capitalize mb-2 antialiased cursor-text leading-normal",
+      "block text-[13px] text-[#4D4D4D] font-body font-medium mb-2 antialiased cursor-text leading-normal",
       className
     )}
     style={{ 
