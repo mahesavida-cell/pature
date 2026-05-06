@@ -45,7 +45,7 @@ export const Footer = () => {
             </div>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted casing="upper">Kategori</TypographyMuted>
+            <TypographyMuted>Kategori</TypographyMuted>
             <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item, 'sentence')}</Link></li>
@@ -53,7 +53,7 @@ export const Footer = () => {
             </ul>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted casing="upper">Dukungan</TypographyMuted>
+            <TypographyMuted>Dukungan</TypographyMuted>
             <ul className="space-y-2">
               {supportLinks.map((item) => (
                 <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item.name, 'sentence')}</Link></li>
@@ -61,7 +61,7 @@ export const Footer = () => {
             </ul>
           </div>
           <div className="lg:col-span-3 space-y-6">
-            <TypographyMuted casing="upper">Hubungi kami</TypographyMuted>
+            <TypographyMuted>Hubungi kami</TypographyMuted>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
@@ -69,16 +69,16 @@ export const Footer = () => {
                 </div>
                 <span className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">redaksi@paturenews.com</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic tracking-wide">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
+              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-normal italic tracking-wide">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
             </div>
           </div>
         </div>
         <Separator className="opacity-5 mx-auto" />
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          <span className="text-[10px] font-bold text-muted-foreground/40 tracking-wider">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
+          <span className="text-[10px] font-bold text-muted-foreground/40 tracking-normal">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
           <div className="flex items-center gap-10">
-            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-widest uppercase">Aksesibilitas</Link>
-            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-widest uppercase">Peta situs</Link>
+            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-normal">Aksesibilitas</Link>
+            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-normal">Peta situs</Link>
           </div>
         </div>
       </div>

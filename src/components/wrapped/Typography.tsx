@@ -14,6 +14,7 @@ interface TypographyProps {
 /**
  * PatureNews Typography Library (Professional Reference System)
  * Optimized for hierarchy, rhythm, and clarity.
+ * Focus: Elimination of excessive uppercase, unified weights.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
@@ -23,6 +24,7 @@ export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: T
       "scroll-m-20 font-headline text-3xl md:text-4xl font-semibold leading-[1.15] tracking-[-0.02em] text-primary",
       className
     )}
+    style={{ fontSynthesis: 'weight none' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h1>
@@ -32,9 +34,10 @@ export const TypographyH2 = ({ children, className, id, casing = 'sentence' }: T
   <h2
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-[-0.01em] text-primary mt-8 mb-3",
+      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-tight text-primary mt-8 mb-3",
       className
     )}
+    style={{ fontSynthesis: 'weight none' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h2>
@@ -44,9 +47,10 @@ export const TypographyH3 = ({ children, className, id, casing = 'sentence' }: T
   <h3
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-[-0.01em] text-primary mt-6 mb-2",
+      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-tight text-primary mt-6 mb-2",
       className
     )}
+    style={{ fontSynthesis: 'weight none' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h3>
@@ -56,9 +60,10 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
   <h4
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-[-0.01em] text-primary mt-4 mb-2",
+      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-tight text-primary mt-4 mb-2",
       className
     )}
+    style={{ fontSynthesis: 'weight none' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h4>
@@ -67,7 +72,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
 export const TypographyP = ({ children, className }: TypographyProps) => (
   <p
     className={cn(
-      "font-body text-[18px] font-normal leading-[1.75] tracking-[0.01em] text-foreground/90 max-w-[65ch] mb-5",
+      "font-body text-[18px] font-normal leading-[1.75] tracking-normal text-foreground/90 max-w-[65ch] mb-5",
       className
     )}
   >
@@ -78,7 +83,7 @@ export const TypographyP = ({ children, className }: TypographyProps) => (
 export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
   <blockquote
     className={cn(
-      "mt-6 border-l-2 border-primary/20 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6",
+      "mt-6 border-l-2 border-primary/10 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6",
       className
     )}
   >
@@ -110,7 +115,7 @@ export const TypographyLead = ({ children, className }: TypographyProps) => (
 );
 
 export const TypographyLarge = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <div className={cn("text-lg font-semibold font-body text-primary tracking-[-0.01em] leading-normal", className)}>
+  <div className={cn("text-lg font-semibold font-body text-primary tracking-tight leading-normal", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </div>
 );
@@ -122,7 +127,7 @@ export const TypographySmall = ({ children, className, casing = 'sentence' }: Ty
 );
 
 export const TypographyMuted = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <p className={cn("text-sm font-normal text-muted-foreground tracking-wide font-body leading-relaxed", className)}>
+  <p className={cn("text-sm font-normal text-muted-foreground tracking-normal font-body leading-relaxed", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
 );

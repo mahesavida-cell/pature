@@ -222,7 +222,7 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-semibold transition-all py-5 tracking-widest",
+                  "relative text-[11px] font-semibold transition-all py-5 tracking-normal",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -277,7 +277,7 @@ export const Navbar = () => {
               <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
                 {!searchQuery && (
                   <div className="px-4 py-2 space-y-4">
-                    <TypographyMuted className="tracking-widest block px-1 uppercase text-[10px] font-bold opacity-40">Berita trending</TypographyMuted>
+                    <TypographyMuted className="block px-1 font-bold opacity-40">Berita trending</TypographyMuted>
                     <div className="grid gap-4">
                       {trending.map((post) => (
                         <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
@@ -285,7 +285,7 @@ export const Navbar = () => {
                             <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <TypographySmall className="text-primary/60 mb-0.5 font-bold uppercase tracking-wider text-[9px]">{post.categories?.[0] || "Berita"}</TypographySmall>
+                            <TypographySmall className="text-primary/60 mb-0.5 font-bold tracking-normal text-[9px]">{post.categories?.[0] || "Berita"}</TypographySmall>
                             <TypographySmall className="font-body font-semibold leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
                           </div>
                         </Link>
@@ -311,7 +311,7 @@ export const Navbar = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-widest uppercase">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold hover:bg-primary/5 transition-all tracking-tight">
@@ -326,7 +326,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-widest uppercase">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-normal">
                   Masuk
                 </Button>
               </Link>
@@ -340,7 +340,7 @@ export const Navbar = () => {
           {mounted ? (
             <AnimatePresence mode="wait">
               <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
-                <TypographyMuted className="hidden sm:inline text-muted-foreground mr-4 opacity-40 uppercase text-[9px] font-bold tracking-widest">
+                <TypographyMuted className="hidden sm:inline text-muted-foreground mr-4 opacity-40 text-[9px] font-bold tracking-normal">
                   {hoveredCategory ? `Topik ${hoveredCategory.title}:` : "Topik populer:"}
                 </TypographyMuted>
                 {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (

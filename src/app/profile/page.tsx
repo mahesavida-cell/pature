@@ -93,7 +93,7 @@ export default function ProfilePage() {
           <TypographyP className="text-sm">Silakan masuk untuk mengakses profil Anda.</TypographyP>
         </div>
         <Link href="/auth">
-          <Button className="px-12 h-11 font-bold text-[10px] uppercase tracking-widest">Masuk sekarang</Button>
+          <Button className="px-12 h-11 font-bold text-[10px] tracking-normal">Masuk sekarang</Button>
         </Link>
       </div>
     );
@@ -124,16 +124,16 @@ export default function ProfilePage() {
             <div className="flex justify-around items-center pt-8 border-t border-primary/5">
               <div className="text-center space-y-1">
                 <TypographyH3 className="border-none pb-0 leading-none">{bookmarks?.length || 0}</TypographyH3>
-                <TypographyMuted className="text-[10px] uppercase tracking-widest opacity-40">Arsip</TypographyMuted>
+                <TypographyMuted className="text-[10px] opacity-40">Arsip</TypographyMuted>
               </div>
               <Separator orientation="vertical" className="h-10 opacity-10" />
               <div className="text-center space-y-1">
                 <TypographyH3 className="border-none pb-0 leading-none">{history?.length || 0}</TypographyH3>
-                <TypographyMuted className="text-[9px] uppercase tracking-widest opacity-40">Dibaca</TypographyMuted>
+                <TypographyMuted className="text-[10px] opacity-40">Dibaca</TypographyMuted>
               </div>
             </div>
 
-            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive font-bold text-[10px] uppercase tracking-widest">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive font-bold text-[10px] tracking-normal">
               <LogOut className="h-4 w-4 mr-2" /> Keluar dari akun
             </Button>
           </CardContent>
@@ -152,7 +152,7 @@ export default function ProfilePage() {
               <TabsTrigger 
                 key={tab.id}
                 value={tab.id} 
-                className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[11px] font-semibold tracking-wide shadow-none transition-all"
+                className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[11px] font-semibold tracking-normal shadow-none transition-all"
               >
                 {tab.label}
               </TabsTrigger>
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                     <CardContent className="p-8 lg:p-12 space-y-10">
                       <div className="space-y-8">
                         <div className="space-y-2.5">
-                          <Label className="px-1"><TypographyMuted className="text-[10px] uppercase tracking-widest opacity-50">Nama tampilan</TypographyMuted></Label>
+                          <Label className="px-1"><TypographyMuted className="text-[10px] opacity-50">Nama tampilan</TypographyMuted></Label>
                           <Input 
                             value={displayName} 
                             onChange={(e) => setDisplayName(e.target.value)} 
@@ -176,7 +176,7 @@ export default function ProfilePage() {
                           />
                         </div>
                         <div className="space-y-2.5">
-                          <Label className="px-1"><TypographyMuted className="text-[10px] uppercase tracking-widest opacity-50">Biodata singkat</TypographyMuted></Label>
+                          <Label className="px-1"><TypographyMuted className="text-[10px] opacity-50">Biodata singkat</TypographyMuted></Label>
                           <Textarea 
                             value={bio} 
                             onChange={(e) => setBio(e.target.value)} 
@@ -185,7 +185,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] uppercase tracking-widest" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] tracking-normal" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>
@@ -201,10 +201,10 @@ export default function ProfilePage() {
                     <Card key={item.id} className="rounded-xl border-primary/5 bg-white/60 h-full hover:border-primary/20 transition-all">
                       <CardContent className="p-8 flex flex-col justify-between h-full space-y-6">
                         <div className="space-y-4">
-                          <Badge variant="secondary" className="text-[8px] px-2 py-0.5 font-bold bg-primary/5 text-primary tracking-widest uppercase border-none">{item.category}</Badge>
+                          <Badge variant="secondary" className="text-[8px] px-2 py-0.5 font-bold bg-primary/5 text-primary tracking-normal border-none">{item.category}</Badge>
                           <TypographyLarge className="leading-tight text-lg">{item.title}</TypographyLarge>
                         </div>
-                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-widest uppercase">
+                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-normal">
                           Baca sekarang <ChevronRight className="h-4 w-4" />
                         </Link>
                       </CardContent>
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                   {(!bookmarks || bookmarks.length === 0) && (
                     <div className="col-span-full py-24 text-center border-2 border-dashed border-primary/5 rounded-xl space-y-4">
                       <BookmarkIcon className="h-8 w-8 mx-auto text-primary/10" />
-                      <TypographyMuted className="text-[10px] uppercase tracking-widest italic opacity-30">Belum ada berita diarsipkan.</TypographyMuted>
+                      <TypographyMuted className="text-[10px] italic opacity-30">Belum ada berita diarsipkan.</TypographyMuted>
                     </div>
                   )}
                 </motion.div>
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                           <div className="min-w-0 space-y-1">
                             <TypographyLarge className="text-base line-clamp-1 group-hover:text-primary transition-colors">{item.title}</TypographyLarge>
                             <div className="flex items-center gap-4">
-                              <TypographySmall className="text-[10px] opacity-40 uppercase tracking-widest">{item.category}</TypographySmall>
+                              <TypographySmall className="text-[10px] opacity-40">{item.category}</TypographySmall>
                               <Separator orientation="vertical" className="h-3 opacity-10" />
                               <ReleaseDate date={item.viewedAt} className="text-[10px] font-bold opacity-30 italic" />
                             </div>
@@ -246,7 +246,7 @@ export default function ProfilePage() {
                   {(!history || history.length === 0) && (
                     <div className="py-24 text-center border-2 border-dashed border-primary/5 rounded-xl space-y-4">
                       <LayoutDashboard className="h-8 w-8 mx-auto text-primary/10" />
-                      <TypographyMuted className="text-[10px] uppercase tracking-widest italic opacity-30">Riwayat bacaan masih kosong.</TypographyMuted>
+                      <TypographyMuted className="text-[10px] italic opacity-30">Riwayat bacaan masih kosong.</TypographyMuted>
                     </div>
                   )}
                 </motion.div>
