@@ -93,7 +93,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
         variant="outline" 
         size="icon" 
         className={cn(
-          "rounded-full transition-all border-primary/10 shadow-sm bg-white/40 backdrop-blur-md", 
+          "rounded-full transition-all border-primary/10 shadow-none bg-white/40 backdrop-blur-md", 
           buttonSize,
           isSaved && "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
         )}
@@ -103,13 +103,13 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
       </Button>
       
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent className="rounded-lg p-8 bg-white/90 backdrop-blur-xl border-none">
+        <AlertDialogContent className="rounded-lg p-8 bg-white/95 backdrop-blur-xl border-none shadow-none">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-headline font-bold text-xl text-primary">Akses terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-sm tracking-widest text-white">Masuk sekarang</AlertDialogAction>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-none tracking-widest text-white">Masuk sekarang</AlertDialogAction>
             <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 tracking-widest">Batal</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -147,7 +147,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                   transition={{ delay: idx * 0.1 }}
                   className="h-full"
                 >
-                  <Card className="h-full flex flex-col group/card hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
+                  <Card className="h-full flex flex-col group/card hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                     <Link href={`/news/${post.slug}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
                         <Image 
@@ -157,7 +157,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                           className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                         />
                         <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-none px-3 py-1 tracking-wide">
                             {post.categories?.[0] || "Berita"}
                           </Badge>
                         </div>
@@ -190,8 +190,8 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
           </CarouselContent>
           {posts.length > 3 && (
             <div className="hidden lg:block">
-              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md" />
-              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md" />
+              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md shadow-none" />
+              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md shadow-none" />
             </div>
           )}
         </Carousel>
@@ -248,7 +248,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-20">
         {hasError && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-            <Alert variant="destructive" className="bg-red-50 border-red-200">
+            <Alert variant="destructive" className="bg-red-50 border-red-200 shadow-none">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Masalah koneksi data</AlertTitle>
               <AlertDescription className="text-xs">
@@ -272,7 +272,7 @@ export default function Home() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
                 <Link href={`/news/${heroPost.slug}`} className="block group">
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-sm mb-8 border border-primary/5">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-none mb-8 border border-primary/5">
                     <Image 
                       src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} 
                       alt="Berita utama"
@@ -281,7 +281,7 @@ export default function Home() {
                       priority
                     />
                     <div className="absolute top-6 left-6">
-                      <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-sm bg-white/95 backdrop-blur-md text-primary tracking-wider">
+                      <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-none bg-white/95 backdrop-blur-md text-primary tracking-wider">
                         Unggulan hari ini
                       </Badge>
                     </div>
@@ -301,7 +301,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-3 ml-auto">
                     <BookmarkButton post={heroPost} variant="hero" />
-                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40">
+                    <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40 shadow-none">
                       <Share2 className="h-4 w-4" />
                     </Button>
                   </div>

@@ -78,7 +78,7 @@ const ShareButton = ({ post }: { post: any }) => {
 
   if (canShare) {
     return (
-      <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40" onClick={handleShare}>
+      <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none" onClick={handleShare}>
         <Share2 className="h-4 w-4" />
       </Button>
     );
@@ -87,11 +87,11 @@ const ShareButton = ({ post }: { post: any }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40">
+        <Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none">
           <Share2 className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-56 p-2 rounded-lg bg-white/90 backdrop-blur-xl border-primary/5">
+      <PopoverContent align="end" className="w-56 p-2 rounded-lg bg-white/90 backdrop-blur-xl border border-primary/5 shadow-none">
         <div className="grid gap-1">
           <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(post.title + " " + url)}`)} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-medium transition-colors">
             <MessageSquare className="h-4 w-4 text-green-600" /> WhatsApp
@@ -113,7 +113,7 @@ const CommentItem = ({
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-6 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
-      <div className="flex gap-4 p-4 rounded-lg bg-white/40 border border-primary/10 shadow-sm">
+      <div className="flex gap-4 p-4 rounded-lg bg-white/40 border border-primary/10 shadow-none">
         <Avatar className="h-8 w-8">
           <AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">{comment.authorName?.[0] || "A"}</AvatarFallback>
         </Avatar>
@@ -136,10 +136,10 @@ const CommentItem = ({
       
       {replyToId === comment.id && (
         <div className="ml-6 space-y-3">
-          <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value.slice(0, 500))} className="bg-white/60 min-h-[80px] text-sm" placeholder="Tulis balasan..." />
+          <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value.slice(0, 500))} className="bg-white/60 min-h-[80px] text-sm shadow-none" placeholder="Tulis balasan..." />
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={() => setReplyToId(null)} className="h-8 text-[10px] font-bold">Batal</Button>
-            <Button size="sm" onClick={() => onReply(comment.id)} className="h-8 text-[10px] font-bold">Kirim</Button>
+            <Button size="sm" onClick={() => onReply(comment.id)} className="h-8 text-[10px] font-bold shadow-none">Kirim</Button>
           </div>
         </div>
       )}
@@ -252,7 +252,7 @@ export default function NewsDetailPage() {
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin opacity-20" /></div>;
-  if (!sanityPost) return <div className="min-h-screen flex flex-col items-center justify-center gap-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button>Kembali ke beranda</Button></Link></div>;
+  if (!sanityPost) return <div className="min-h-screen flex flex-col items-center justify-center gap-4"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button shadow-none>Kembali ke beranda</Button></Link></div>;
 
   return (
     <div className="bg-background min-h-screen pb-10">
@@ -266,7 +266,7 @@ export default function NewsDetailPage() {
             </Link>
             
             <header className="space-y-4 mb-10">
-              <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none uppercase">{sanityPost.categories?.[0] || "Berita"}</Badge>
+              <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none shadow-none uppercase">{sanityPost.categories?.[0] || "Berita"}</Badge>
               <Title className="text-3xl md:text-5xl">{sanityPost.title}</Title>
               <div className="flex items-center justify-between pt-6 border-t border-primary/5">
                 <div className="flex items-center gap-3">
@@ -280,14 +280,14 @@ export default function NewsDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <ShareButton post={sanityPost} />
-                  <Button variant="outline" size="icon" className={cn("rounded-full h-9 w-9 border-primary/10 bg-white/40", isSaved && "bg-primary text-white border-primary")} onClick={handleToggleBookmark}>
+                  <Button variant="outline" size="icon" className={cn("rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none", isSaved && "bg-primary text-white border-primary")} onClick={handleToggleBookmark}>
                     <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
                   </Button>
                 </div>
               </div>
             </header>
 
-            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 mb-12 shadow-sm">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 mb-12 shadow-none">
               <Image src={sanityPost.mainImage ? urlFor(sanityPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={sanityPost.title} fill className="object-cover" priority />
             </div>
 
@@ -298,18 +298,18 @@ export default function NewsDetailPage() {
             <section id="comments" className="mb-24 pt-16 border-t border-primary/5">
               <div className="flex items-center gap-3 mb-10">
                 <Heading level={2} className="text-xl">Diskusi komunitas</Heading>
-                <Badge className="bg-primary/5 text-primary border-none">{firestoreComments?.length || 0}</Badge>
+                <Badge className="bg-primary/5 text-primary border-none shadow-none">{firestoreComments?.length || 0}</Badge>
               </div>
 
               {user ? (
-                <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4">
-                  <Textarea placeholder="Tulis pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5" />
-                  <div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest shadow-lg">Kirim komentar</Button></div>
+                <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4 shadow-none">
+                  <Textarea placeholder="Tulis pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5 shadow-none" />
+                  <div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest shadow-none">Kirim komentar</Button></div>
                 </div>
               ) : (
-                <Card className="p-10 text-center bg-white/40 border-dashed border-primary/20 mb-12">
+                <Card className="p-10 text-center bg-white/40 border-dashed border-primary/20 mb-12 shadow-none">
                   <MutedText className="block mb-6 uppercase tracking-widest text-[10px] font-bold">Masuk untuk bergabung dalam diskusi</MutedText>
-                  <Link href="/auth"><Button className="px-10 h-11 font-bold text-[10px] uppercase tracking-widest shadow-lg">Masuk sekarang</Button></Link>
+                  <Link href="/auth"><Button className="px-10 h-11 font-bold text-[10px] uppercase tracking-widest shadow-none">Masuk sekarang</Button></Link>
                 </Card>
               )}
 
@@ -334,7 +334,7 @@ export default function NewsDetailPage() {
               <div className="space-y-6">
                 {trendingPosts.map((trend: any) => (
                   <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
-                    <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5 shadow-inner">
+                    <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5 shadow-none">
                       <Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" />
                     </div>
                     <div className="flex flex-col justify-center min-w-0">

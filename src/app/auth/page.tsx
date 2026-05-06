@@ -59,7 +59,7 @@ export default function AuthPage() {
     <div className="bg-background h-screen flex flex-col overflow-hidden">
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-primary/5 h-full max-h-[520px]">
+        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-none border border-primary/5 h-full max-h-[520px]">
           {/* Sisi kiri - branding & info */}
           <div className="hidden lg:flex flex-col relative bg-primary p-8 text-white">
             <div className="absolute inset-0 opacity-10">
@@ -100,9 +100,9 @@ export default function AuthPage() {
           {/* Sisi kanan - formulir murni ShadCN */}
           <div className="flex flex-col p-8 sm:p-10 justify-center bg-white relative">
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg">
-                <TabsTrigger value="login" className="text-xs font-bold tracking-tight py-2">Masuk</TabsTrigger>
-                <TabsTrigger value="register" className="text-xs font-bold tracking-tight py-2">Daftar</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg shadow-none">
+                <TabsTrigger value="login" className="text-xs font-bold tracking-tight py-2 shadow-none">Masuk</TabsTrigger>
+                <TabsTrigger value="register" className="text-xs font-bold tracking-tight py-2 shadow-none">Daftar</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="space-y-4 outline-none">
@@ -114,7 +114,7 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
+                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg shadow-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -126,7 +126,7 @@ export default function AuthPage() {
                       placeholder="Masukkan kata sandi Anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
+                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg shadow-none"
                     />
                     <button
                       type="button"
@@ -138,7 +138,7 @@ export default function AuthPage() {
                   </div>
                 </div>
                 <Button 
-                  className="w-full h-11 font-bold text-xs tracking-tight rounded-lg shadow-sm" 
+                  className="w-full h-11 font-bold text-xs tracking-tight rounded-lg shadow-none" 
                   onClick={() => handleAuth('login')}
                   disabled={isLoading}
                 >
@@ -155,7 +155,7 @@ export default function AuthPage() {
                     placeholder="nama@contoh.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
+                    className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg shadow-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -167,7 +167,7 @@ export default function AuthPage() {
                       placeholder="Buat kata sandi yang aman"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg"
+                      className="h-10 border-none bg-primary/5 font-medium text-xs rounded-lg shadow-none"
                     />
                     <button
                       type="button"
@@ -179,7 +179,7 @@ export default function AuthPage() {
                   </div>
                 </div>
                 <Button 
-                  className="w-full h-11 font-bold text-xs tracking-tight rounded-lg shadow-sm" 
+                  className="w-full h-11 font-bold text-xs tracking-tight rounded-lg shadow-none" 
                   onClick={() => handleAuth('register')}
                   disabled={isLoading}
                 >
@@ -196,7 +196,7 @@ export default function AuthPage() {
 
             <Button 
               variant="outline"
-              className="w-full h-11 font-bold text-xs flex items-center justify-center gap-2 border-primary/10 bg-white hover:bg-primary/5 hover:text-primary transition-all rounded-lg"
+              className="w-full h-11 font-bold text-xs flex items-center justify-center gap-2 border border-primary/10 bg-white hover:bg-primary/5 hover:text-primary transition-all rounded-lg shadow-none"
               onClick={handleGoogleSignIn}
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">

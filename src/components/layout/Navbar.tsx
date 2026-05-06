@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -198,8 +197,8 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between border-b border-primary/5">
+    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5 shadow-none">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
@@ -253,7 +252,7 @@ export const Navbar = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent 
-              className="w-screen sm:w-[400px] p-0 border-primary/5 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl mt-3 overflow-hidden" 
+              className="w-screen sm:w-[400px] p-0 border border-primary/5 bg-white/95 backdrop-blur-xl shadow-none rounded-xl mt-3 overflow-hidden" 
               align="end"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
@@ -265,7 +264,7 @@ export const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Cari berita atau topik..." 
-                    className="pl-10 h-11 bg-white border-none shadow-sm text-xs font-bold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
+                    className="pl-10 h-11 bg-white border-none shadow-none text-xs font-bold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
@@ -283,7 +282,7 @@ export const Navbar = () => {
                           onClick={() => setIsSearchOpen(false)}
                           className="flex gap-4 group/item items-center"
                         >
-                          <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-sm">
+                          <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-none">
                             <Image 
                               src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
                               alt={post.title}
@@ -330,7 +329,7 @@ export const Navbar = () => {
                             onClick={() => setIsSearchOpen(false)}
                             className="flex gap-4 group/item items-center"
                           >
-                            <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-sm">
+                            <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-none">
                               <Image 
                                 src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
                                 alt={post.title}
@@ -362,7 +361,7 @@ export const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full transition-all group">
-                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/5 group-hover:border-primary/20 group-hover:shadow-sm transition-all duration-300">
+                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/5 group-hover:border-primary/20 group-hover:shadow-none transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
                         {(user.displayName || user.email || "U")[0]}
@@ -370,7 +369,7 @@ export const Navbar = () => {
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-lg mt-3 border-primary/5" align="end">
+                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-none mt-3 border border-primary/5" align="end">
                   <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
@@ -386,7 +385,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all">
+                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none">
                   Masuk
                 </Button>
               </Link>

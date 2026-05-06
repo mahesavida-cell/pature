@@ -51,7 +51,7 @@ function SearchResultsContent() {
       </div>
 
       {!isLoading && filteredResults.length === 0 ? (
-        <div className="py-24 px-10 rounded-3xl border-2 border-dashed border-primary/10 flex flex-col items-center text-center space-y-8 bg-white/10 backdrop-blur-sm">
+        <div className="py-24 px-10 rounded-3xl border-2 border-dashed border-primary/10 flex flex-col items-center text-center space-y-8 bg-white/10 backdrop-blur-sm shadow-none">
           <div className="h-20 w-20 rounded-full bg-primary/5 flex items-center justify-center text-primary/20">
             <SearchIcon className="h-10 w-10" />
           </div>
@@ -71,7 +71,7 @@ function SearchResultsContent() {
             </Button>
             <Button 
               onClick={() => router.push('/')}
-              className="rounded-full px-8 h-12 font-bold text-[11px] tracking-widest shadow-lg"
+              className="rounded-full px-8 h-12 font-bold text-[11px] tracking-widest shadow-none"
             >
               Lihat berita lainnya
             </Button>
@@ -86,7 +86,7 @@ function SearchResultsContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
             >
-              <Card className="h-full flex flex-col group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40">
+              <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                 <Link href={`/news/${post.id}`}>
                   <div className="relative h-56 w-full overflow-hidden bg-muted">
                     <Image 
@@ -96,7 +96,7 @@ function SearchResultsContent() {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-md px-3 py-1 tracking-wide">
+                      <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-none px-3 py-1 tracking-wide">
                         {post.category}
                       </Badge>
                     </div>

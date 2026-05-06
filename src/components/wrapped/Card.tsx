@@ -12,12 +12,12 @@ interface WrappedCardProps {
 
 /**
  * A professional card wrapper with a clean outline style.
- * Uses a clear border and subtle backdrop blur to achieve a minimalist look.
+ * Minimalist design focusing on borders rather than shadows.
  */
 export const Card = ({ children, className, animate = true }: WrappedCardProps) => {
   const content = (
     <BaseCard className={cn(
-      "overflow-hidden border-2 border-primary/10 shadow-none bg-background/20 backdrop-blur-md hover:border-primary/20 transition-all duration-300 rounded-lg", 
+      "overflow-hidden border border-primary/10 shadow-none bg-background/20 backdrop-blur-md hover:border-primary/20 transition-all duration-300 rounded-lg", 
       className
     )}>
       {children}
