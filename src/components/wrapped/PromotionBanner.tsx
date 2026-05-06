@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -112,7 +111,7 @@ export const PromotionBanner = () => {
         </div>
 
         <Link href="/auth">
-          <Button size="sm" className="h-10 px-10 rounded-full bg-primary text-white text-[11px] font-bold tracking-widest hover:scale-[1.03] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 gap-3 shrink-0 uppercase border-none">
+          <Button size="sm" className="h-10 px-10 rounded-full bg-primary text-white text-[11px] font-bold tracking-widest hover:scale-[1.03] active:scale-[0.98] transition-all shadow-none gap-3 shrink-0 uppercase border-none">
             {formatCasing("Daftar sekarang", 'none')}
             <ArrowRight className="h-4 w-4" />
           </Button>
