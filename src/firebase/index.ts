@@ -6,7 +6,7 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 /**
- * Inisialisasi Firebase yang kuat untuk lingkungan Client dan SSR/Build.
+ * Robust Firebase initialization for Client and SSR/Build environments.
  */
 export function initializeFirebase() {
   const config = {
@@ -18,15 +18,15 @@ export function initializeFirebase() {
 
   let app: FirebaseApp;
   
-  // Pastikan inisialisasi aman di server side
   if (typeof window === 'undefined') {
+    // Server-side or Build-time initialization
     if (!getApps().length) {
       app = initializeApp(config);
     } else {
       app = getApp();
     }
   } else {
-    // Client side
+    // Client-side initialization
     if (!getApps().length) {
       app = initializeApp(config);
     } else {

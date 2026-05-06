@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -17,6 +16,7 @@ export default function EditorsChoicePage() {
   const db = useFirestore();
 
   const editorsQuery = useMemoFirebase(() => {
+    // Guard: Prevent calling collection() with null db during build
     if (!db) return null;
     return query(collection(db, "posts"), where("category", "==", "Media"), limit(12));
   }, [db]);
