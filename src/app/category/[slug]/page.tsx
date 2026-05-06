@@ -149,13 +149,24 @@ export default function CategoryPage() {
   }, [slug, topic]);
 
   const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
-  const archivedPosts = useMemo(() => posts.slice(5), [posts]);
+
+  const groupedByTopic = useMemo(() => {
+    if (!category?.subCategories || !posts) return [];
+    
+    return category.subCategories.map((topicName: string) => {
+      const filtered = posts.filter(post => 
+        post.title.toLowerCase().includes(topicName.toLowerCase()) || 
+        (post.excerpt && post.excerpt.toLowerCase().includes(topicName.toLowerCase()))
+      );
+      return { name: topicName, posts: filtered };
+    }).filter((group: any) => group.posts.length > 0);
+  }, [category, posts]);
 
   if (isLoading) {
     return (
       <Container className="py-20 text-center flex flex-col items-center gap-4">
         <RefreshCw className="h-8 w-8 animate-spin opacity-20 text-primary" />
-        <TypographyMuted className="text-xs">Memuat arsip berita...</TypographyMuted>
+        <TypographyMuted className="text-xs" casing="sentence">Memuat arsip berita...</TypographyMuted>
       </Container>
     );
   }
@@ -174,26 +185,26 @@ export default function CategoryPage() {
 
   return (
     <Container className="space-y-6 pt-2">
-      {/* Title Section */}
-      <header className="pt-0">
+      {/* Title Section - Rapat ke header */}
+      <header className="pt-2">
         <div className="max-w-4xl">
           <TypographyMuted className="mb-1" casing="sentence">Arsip kategori</TypographyMuted>
           <div className="flex items-baseline gap-4 mb-2">
             <Title className="text-2xl md:text-3xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
-              <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold">
+              <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold shadow-none">
                 Topik: {topic}
               </Badge>
             )}
           </div>
-          <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl">
+          <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl" casing="sentence">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
           </TypographyMuted>
         </div>
       </header>
 
-      {/* Hero & Trending Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-0">
+      {/* Hero & Trending Section - Jarak rapat dan profesional */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-2">
         {/* Left: Hero Carousel */}
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
@@ -291,14 +302,77 @@ export default function CategoryPage() {
         </div>
       </div>
 
+      {/* Deep Topic Exploration - Slider Horizontal */}
+      <div className="pt-8 space-y-12">
+        {groupedByTopic.length > 0 && groupedByTopic.map((group: any, groupIdx: number) => (
+          <section key={`topic-group-${groupIdx}`} className="space-y-4">
+            <div className="flex items-center justify-between border-b border-primary/5 pb-2">
+              <TypographyLabel className="m-0 mt-0" casing="sentence">Topik {group.name}</TypographyLabel>
+              <Link 
+                href={`/category/${slug}?topic=${encodeURIComponent(group.name)}`} 
+                className="text-[11px] font-bold text-primary/40 hover:text-primary transition-all tracking-tight uppercase"
+              >
+                Lihat Semua
+              </Link>
+            </div>
+            
+            <Carousel 
+              opts={{ align: "start", loop: false }} 
+              className="w-full relative group"
+            >
+              <CarouselContent className="-ml-4">
+                {group.posts.map((post: any, idx: number) => (
+                  <CarouselItem key={`topic-post-${post._id}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                    <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                      <Link href={`/news/${post.slug}`}>
+                        <div className="relative h-48 w-full overflow-hidden bg-muted">
+                          <Image 
+                            src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
+                            alt={post.title}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                          />
+                        </div>
+                      </Link>
+                      <CardContent className="p-5 flex-1 flex flex-col">
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-3 w-3 text-muted-foreground/50" />
+                            <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                          </div>
+                          <Link href={`/news/${post.slug}`}>
+                            <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover/card:text-primary transition-colors line-clamp-2">
+                              {post.title}
+                            </h3>
+                          </Link>
+                        </div>
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                          <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {group.posts.length > 3 && (
+                <div className="hidden lg:block">
+                  <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
+                  <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
+                </div>
+              )}
+            </Carousel>
+          </section>
+        ))}
+      </div>
+
       {/* Archives Grid */}
-      <div className="pt-4 pb-20">
+      <div className="pt-8 pb-20">
         <div className="flex items-center justify-between border-b border-primary/5 pb-2 mb-6">
           <Heading level={3} className="text-lg m-0 mt-0" casing="sentence">Arsip berita</Heading>
         </div>
-        {archivedPosts.length > 0 ? (
+        {posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {archivedPosts.map((post, idx) => (
+            {posts.slice(5).map((post, idx) => (
               <motion.div
                 key={post._id}
                 initial={{ opacity: 0, y: 15 }}

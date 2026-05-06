@@ -61,11 +61,12 @@ export const POSTS_BY_CATEGORY_QUERY = defineQuery(`*[_type == "post" && referen
 export const CATEGORY_DETAIL_QUERY = defineQuery(`*[_type == "category" && slug.current == $slug][0] {
   _id,
   title,
-  description
+  description,
+  subCategories
 }`);
 
 /**
- * Query untuk berita trending (terpopuler) yang ditampilkan di sidebar.
+ * Query berita trending (terpopuler) yang ditampilkan di sidebar.
  */
 export const TRENDING_POSTS_QUERY = defineQuery(`*[_type == "post" && isTrending == true && defined(slug.current)] | order(publishedAt desc) [0...5] {
   _id,
