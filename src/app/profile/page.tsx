@@ -20,6 +20,10 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 
+/**
+ * Halaman Profil Pengguna PatureNews.
+ * Mengadopsi standar desain profesional dengan fokus pada modularitas dan ritme visual.
+ */
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
@@ -110,7 +114,7 @@ export default function ProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
-                <TypographyH3 className="!mt-0">{displayName}</TypographyH3>
+                <TypographyH3 className="!mt-0 font-semibold">{displayName}</TypographyH3>
                 <TypographyMuted className="text-xs opacity-40">{user.email}</TypographyMuted>
               </div>
               <Badge variant="secondary" className="px-4 py-1 rounded-full bg-primary/5 text-primary border-none shadow-none text-[9px] font-bold tracking-wider">
@@ -120,17 +124,17 @@ export default function ProfilePage() {
 
             <div className="flex justify-around items-center pt-8 border-t border-primary/5">
               <div className="text-center space-y-1">
-                <TypographyH3 className="border-none pb-0 leading-none !mt-0">{bookmarks?.length || 0}</TypographyH3>
+                <TypographyH3 className="border-none pb-0 leading-none !mt-0 font-semibold">{bookmarks?.length || 0}</TypographyH3>
                 <TypographyMuted className="text-[10px] font-bold opacity-40 tracking-wider">Arsip</TypographyMuted>
               </div>
               <Separator orientation="vertical" className="h-10 opacity-10" />
               <div className="text-center space-y-1">
-                <TypographyH3 className="border-none pb-0 leading-none !mt-0">{history?.length || 0}</TypographyH3>
+                <TypographyH3 className="border-none pb-0 leading-none !mt-0 font-semibold">{history?.length || 0}</TypographyH3>
                 <TypographyMuted className="text-[10px] font-bold opacity-40 tracking-wider">Dibaca</TypographyMuted>
               </div>
             </div>
 
-            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive h-10 text-[14px] font-medium">
               <LogOut className="h-4 w-4 mr-2" /> Keluar dari akun
             </Button>
           </CardContent>
@@ -180,7 +184,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-11 text-[14px] font-medium" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>
@@ -199,7 +203,7 @@ export default function ProfilePage() {
                           <Badge variant="secondary" className="text-[8px] px-2 py-0.5 font-bold bg-primary/5 text-primary tracking-wider border-none shadow-none">
                             {item.category}
                           </Badge>
-                          <TypographyLarge className="leading-tight text-lg">{item.title}</TypographyLarge>
+                          <TypographyLarge className="leading-tight text-lg font-semibold">{item.title}</TypographyLarge>
                         </div>
                         <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-widest uppercase">
                           Baca sekarang <ChevronRight className="h-4 w-4" />
@@ -228,7 +232,7 @@ export default function ProfilePage() {
                             <Clock className="h-6 w-6" />
                           </div>
                           <div className="min-w-0 space-y-1">
-                            <TypographyLarge className="text-base line-clamp-1 group-hover:text-primary transition-colors">{item.title}</TypographyLarge>
+                            <TypographyLarge className="text-base line-clamp-1 group-hover:text-primary transition-colors font-semibold">{item.title}</TypographyLarge>
                             <div className="flex items-center gap-4">
                               <TypographySmall className="text-[10px] font-bold opacity-40 tracking-wider">{item.category}</TypographySmall>
                               <Separator orientation="vertical" className="h-3 opacity-10" />

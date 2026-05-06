@@ -12,6 +12,10 @@ import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react"
 import Image from "next/image";
 import { formatCasing } from "@/lib/casing";
 
+/**
+ * Halaman Autentikasi PatureNews.
+ * Mengadopsi standar desain profesional dengan fokus pada kejernihan dan ritme visual.
+ */
 export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -44,8 +48,8 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden border border-primary/5 min-h-[520px] shadow-2xl">
-      <div className="hidden lg:flex flex-col relative bg-primary p-8 text-white">
+    <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 bg-white rounded-xl overflow-hidden border border-primary/5 min-h-[520px] shadow-2xl">
+      <div className="hidden lg:flex lg:col-span-5 flex-col relative bg-primary p-8 text-white">
         <div className="absolute inset-0 opacity-10">
           <Image src="https://picsum.photos/seed/patureauth/800/1200" alt="Latar belakang jurnalisme" fill className="object-cover" data-ai-hint="minimalist journalism" />
         </div>
@@ -62,18 +66,21 @@ export default function AuthPage() {
               { icon: <CheckCircle2 className="h-4 w-4" />, text: "Akses artikel mendalam tanpa batas" },
               { icon: <ShieldCheck className="h-4 w-4" />, text: "Pengalaman membaca yang aman dan privat" }
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-xs font-bold tracking-tight"><span className="text-white/30">{item.icon}</span><span className="text-white/90">{formatCasing(item.text, 'sentence')}</span></div>
+              <div key={i} className="flex items-center gap-3 text-xs font-semibold tracking-tight">
+                <span className="text-white/30">{item.icon}</span>
+                <span className="text-white/90">{formatCasing(item.text, 'sentence')}</span>
+              </div>
             ))}
           </div>
         </div>
       </div>
-      <div className="flex flex-col p-8 sm:p-10 justify-center bg-white">
+      <div className="flex flex-col lg:col-span-7 p-8 sm:p-10 justify-center bg-white">
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg shadow-none">
-            <TabsTrigger value="login" className="py-2">Masuk</TabsTrigger>
-            <TabsTrigger value="register" className="py-2">Daftar</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary/5 p-1 rounded-lg shadow-none border-none">
+            <TabsTrigger value="login" className="py-2.5 text-[13px] font-semibold">Masuk</TabsTrigger>
+            <TabsTrigger value="register" className="py-2.5 text-[13px] font-semibold">Daftar</TabsTrigger>
           </TabsList>
-          <TabsContent value="login" className="space-y-4 outline-none">
+          <TabsContent value="login" className="space-y-6 outline-none">
             <div className="space-y-2">
               <TypographyLabel>Alamat email</TypographyLabel>
               <Input id="email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -85,9 +92,9 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-11" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
+            <Button className="w-full h-12 text-base font-medium shadow-none" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
           </TabsContent>
-          <TabsContent value="register" className="space-y-4 outline-none">
+          <TabsContent value="register" className="space-y-6 outline-none">
             <div className="space-y-2">
               <TypographyLabel>Alamat email</TypographyLabel>
               <Input id="reg-email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -99,11 +106,23 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-11" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
+            <Button className="w-full h-12 text-base font-medium shadow-none" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
           </TabsContent>
         </Tabs>
-        <div className="flex items-center my-6 gap-3"><div className="h-[1px] flex-1 bg-primary/5" /><span className="text-[11px] font-medium text-muted-foreground/30">Atau</span><div className="h-[1px] flex-1 bg-primary/5" /></div>
-        <Button variant="outline" className="w-full h-11" onClick={handleGoogleSignIn}>Google</Button>
+        <div className="flex items-center my-8 gap-3">
+          <div className="h-[1px] flex-1 bg-primary/5" />
+          <span className="text-[11px] font-medium text-muted-foreground/30 tracking-widest">ATAU</span>
+          <div className="h-[1px] flex-1 bg-primary/5" />
+        </div>
+        
+        <Button 
+          variant="outline" 
+          onClick={handleGoogleSignIn}
+          className="w-full h-12 bg-white text-[#171717] rounded-lg shadow-[0_0_0_1px_rgb(235,235,235)] border-none text-base font-medium transition-all hover:bg-primary/5 hover:shadow-[0_0_0_1px_rgb(23,23,23)]"
+          style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+        >
+          Masuk dengan Google
+        </Button>
       </div>
     </div>
   );
