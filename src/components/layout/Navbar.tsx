@@ -113,7 +113,7 @@ const MarketWeatherBar = () => {
           >
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={`stock-${idx}`} className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-primary">{stock.symbol}</span>
+                <span className="text-[10px] font-bold text-primary uppercase">{stock.symbol}</span>
                 <span className="text-[10px] font-medium text-muted-foreground">{stock.price}</span>
                 <div className={cn(
                   "flex items-center gap-0.5 text-[9px] font-bold",
@@ -218,7 +218,7 @@ export const Navbar = () => {
                     : "text-muted-foreground/60 hover:text-primary"
                 )}
               >
-                {formatCasing(cat.title, 'upper')}
+                {formatCasing(cat.title, 'sentence')}
                 {hoveredCategory?._id === cat._id && (
                   <motion.div
                     layoutId="activeCategoryUnderline"
@@ -267,7 +267,7 @@ export const Navbar = () => {
               <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
                 {!searchQuery && (
                   <div className="px-4 py-2 space-y-4">
-                    <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block px-1">BERITA TRENDING</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block px-1">Berita trending</span>
                     <div className="grid gap-4">
                       {trending.map((post) => (
                         <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
@@ -275,7 +275,7 @@ export const Navbar = () => {
                             <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'upper')}</span>
+                            <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'sentence')}</span>
                             <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{formatCasing(post.title, 'sentence')}</h4>
                           </div>
                         </Link>
@@ -286,9 +286,9 @@ export const Navbar = () => {
                 {searchQuery && (
                   <div className="px-4 py-2 space-y-4">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block">HASIL PENCARIAN</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block">Hasil pencarian</span>
                       {!isSearching && suggestions.length > 0 && (
-                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 tracking-tighter">LIHAT SEMUA <ArrowRight className="h-3 w-3" /></Link>
+                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 tracking-tighter">Lihat semua <ArrowRight className="h-3 w-3" /></Link>
                       )}
                     </div>
                     {isSearching ? (
@@ -301,7 +301,7 @@ export const Navbar = () => {
                               <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'upper')}</span>
+                              <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'sentence')}</span>
                               <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{formatCasing(post.title, 'sentence')}</h4>
                             </div>
                           </Link>
@@ -323,14 +323,14 @@ export const Navbar = () => {
                   <button className="outline-none rounded-full transition-all group">
                     <Avatar size="default" className="border border-primary/5 group-hover:border-primary/20 transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
+                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
                         {(user.displayName || user.email || "U")[0]}
                       </AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-none mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-widest">PUSAT AKUN</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-widest">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all">
@@ -358,7 +358,7 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
-              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest">{hoveredCategory ? formatCasing(`TOPIK ${hoveredCategory.title}:`, 'upper') : "TOPIK POPULER:"}</span>
+              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest">{hoveredCategory ? formatCasing(`Topik ${hoveredCategory.title}:`, 'sentence') : "Topik populer:"}</span>
               {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
                 <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
                   <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>

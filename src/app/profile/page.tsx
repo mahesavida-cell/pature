@@ -98,26 +98,26 @@ export default function ProfilePage() {
             <div className="relative inline-block mb-6">
               <Avatar size="lg" className="border border-white shadow-none">
                 <AvatarImage src={user.photoURL || ""} />
-                <AvatarFallback className="bg-primary text-white text-3xl font-bold uppercase">
+                <AvatarFallback className="bg-primary text-white text-3xl font-bold">
                   {(displayName || user.email || "U")[0]}
                 </AvatarFallback>
               </Avatar>
             </div>
             <Heading level={2} className="mb-1 text-2xl">{displayName}</Heading>
-            <MutedText className="block mb-6 font-bold text-[10px] opacity-40 uppercase tracking-widest">{user.email}</MutedText>
-            <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[9px] font-bold mb-8 bg-primary/5 text-primary border-none shadow-none uppercase">Anggota aktif</Badge>
+            <MutedText className="block mb-6 font-bold text-[10px] opacity-40 tracking-widest">{user.email}</MutedText>
+            <Badge variant="secondary" className="px-6 py-1.5 rounded-full text-[9px] font-bold mb-8 bg-primary/5 text-primary border-none shadow-none">Anggota aktif</Badge>
             <div className="flex justify-around items-center pt-8 border-t border-primary/5">
               <div className="text-center">
                 <span className="block text-xl font-headline font-bold text-primary">{bookmarks?.length || 0}</span>
-                <MutedText className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Arsip</MutedText>
+                <MutedText className="text-[10px] font-bold opacity-40 tracking-widest">Arsip</MutedText>
               </div>
               <Separator orientation="vertical" className="h-8 opacity-40" />
               <div className="text-center">
                 <span className="block text-xl font-headline font-bold text-primary">{history?.length || 0}</span>
-                <MutedText className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Dibaca</MutedText>
+                <MutedText className="text-[10px] font-bold opacity-40 tracking-widest">Dibaca</MutedText>
               </div>
             </div>
-            <Button variant="ghost" onClick={handleSignOut} className="w-full mt-10 text-[10px] font-bold tracking-widest text-destructive hover:bg-destructive/5 uppercase">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full mt-10 text-[10px] font-bold tracking-widest text-destructive hover:bg-destructive/5">
               <LogOut className="h-4 w-4 mr-2" /> Keluar dari akun
             </Button>
           </CardContent>
@@ -126,9 +126,9 @@ export default function ProfilePage() {
       <section className="lg:col-span-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-transparent border-b border-primary/5 rounded-none w-full justify-start h-auto p-0 mb-6 space-x-12 shadow-none">
-            <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest uppercase shadow-none">Editor akun</TabsTrigger>
-            <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest uppercase shadow-none">Berita diarsipkan</TabsTrigger>
-            <TabsTrigger value="history" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest uppercase shadow-none">Riwayat bacaan</TabsTrigger>
+            <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest shadow-none">Editor akun</TabsTrigger>
+            <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest shadow-none">Berita diarsipkan</TabsTrigger>
+            <TabsTrigger value="history" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[10px] font-bold tracking-widest shadow-none">Riwayat bacaan</TabsTrigger>
           </TabsList>
           <AnimatePresence mode="wait">
             {activeTab === "editor" && (
@@ -137,14 +137,14 @@ export default function ProfilePage() {
                   <Card className="rounded-xl p-10 bg-white/60 backdrop-blur-md border border-primary/5 shadow-none">
                     <div className="space-y-8">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Nama tampilan</Label>
+                        <Label className="text-[10px] font-bold opacity-40 tracking-widest">Nama tampilan</Label>
                         <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-12 bg-white/40 border-primary/5 shadow-none text-sm font-bold" />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">Biodata singkat</Label>
+                        <Label className="text-[10px] font-bold opacity-40 tracking-widest">Biodata singkat</Label>
                         <Input value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tulis sesuatu tentang Anda..." className="h-12 bg-white/40 border-primary/5 shadow-none text-sm font-bold" />
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[11px] tracking-widest uppercase" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[11px] tracking-widest" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </div>
@@ -159,16 +159,16 @@ export default function ProfilePage() {
                     <Card key={item.id} className="rounded-xl border border-primary/5 shadow-none bg-white/60 h-full">
                       <CardContent className="p-7 flex flex-col justify-between h-full">
                         <div>
-                          <Badge variant="secondary" className="text-[8px] font-bold mb-4 bg-primary/5 text-primary uppercase tracking-widest">{item.category}</Badge>
+                          <Badge variant="secondary" className="text-[8px] font-bold mb-4 bg-primary/5 text-primary tracking-widest">{item.category}</Badge>
                           <h3 className="mb-6 text-base font-headline font-bold leading-tight">{item.title}</h3>
                         </div>
-                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 transition-colors uppercase tracking-widest">
+                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 transition-colors tracking-widest">
                           Baca sekarang <ChevronRight className="h-4 w-4" />
                         </Link>
                       </CardContent>
                     </Card>
                   ))}
-                  {(!bookmarks || bookmarks.length === 0) && <div className="col-span-full py-20 text-center opacity-30 uppercase text-[10px] font-bold tracking-widest italic">Belum ada berita diarsipkan.</div>}
+                  {(!bookmarks || bookmarks.length === 0) && <div className="col-span-full py-20 text-center opacity-30 text-[10px] font-bold tracking-widest italic">Belum ada berita diarsipkan.</div>}
                 </motion.div>
               </TabsContent>
             )}
@@ -185,7 +185,7 @@ export default function ProfilePage() {
                           <div className="min-w-0">
                             <h4 className="text-base font-headline font-bold mb-1 line-clamp-1">{item.title}</h4>
                             <div className="flex items-center gap-4">
-                              <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">{item.category}</span>
+                              <span className="text-[10px] font-bold opacity-30 tracking-widest">{item.category}</span>
                               <Separator orientation="vertical" className="h-3 opacity-20" />
                               <ReleaseDate date={item.viewedAt} className="text-[10px] font-bold opacity-30 italic" />
                             </div>
@@ -195,7 +195,7 @@ export default function ProfilePage() {
                       </div>
                     </Link>
                   ))}
-                  {(!history || history.length === 0) && <div className="py-20 text-center opacity-30 uppercase text-[10px] font-bold tracking-widest italic">Riwayat bacaan masih kosong.</div>}
+                  {(!history || history.length === 0) && <div className="py-20 text-center opacity-30 text-[10px] font-bold tracking-widest italic">Riwayat bacaan masih kosong.</div>}
                 </div>
               </TabsContent>
             )}

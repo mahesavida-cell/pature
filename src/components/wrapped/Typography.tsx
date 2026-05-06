@@ -12,8 +12,8 @@ interface TypographyProps {
 }
 
 /**
- * PatureNews Typography Library (v2.0)
- * Sekarang mendukung sistem casing otomatis (Sentence case, Title Case, UPPERCASE).
+ * PatureNews Typography Library (v2.1)
+ * Optimized casing defaults for a cleaner, professional editorial feel.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
@@ -121,8 +121,8 @@ export const TypographySmall = ({ children, className, casing = 'sentence' }: Ty
   </small>
 );
 
-export const TypographyMuted = ({ children, className, casing = 'upper' }: TypographyProps) => (
-  <p className={cn("text-[10px] font-bold text-muted-foreground/60 tracking-[0.05em] font-body", className)}>
+export const TypographyMuted = ({ children, className, casing = 'sentence' }: TypographyProps) => (
+  <p className={cn("text-[10px] font-bold text-muted-foreground/60 tracking-[0.02em] font-body", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
 );
