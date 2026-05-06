@@ -69,7 +69,7 @@ export default function CategoryPage() {
 
   // Split posts for Hero Carousel and Trending
   const heroPosts = useMemo(() => posts.slice(0, 5), [posts]);
-  const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]); // Top 5 trending within category
+  const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]); 
   const archivedPosts = useMemo(() => posts.slice(5), [posts]);
 
   if (isLoading) {
@@ -99,7 +99,7 @@ export default function CategoryPage() {
       {/* Title Section - Tight spacing and moderated size */}
       <Section className="pt-4 pb-12">
         <div className="max-w-4xl space-y-3">
-          <MutedText className="text-[10px] font-bold opacity-40 tracking-widest uppercase" casing="upper">Arsip kategori</MutedText>
+          <MutedText className="text-[10px] font-bold opacity-40 tracking-widest uppercase" casing="sentence">Arsip kategori</MutedText>
           <div className="flex items-end gap-4">
             <Title className="text-3xl md:text-4xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
@@ -120,7 +120,7 @@ export default function CategoryPage() {
           {/* Left: Hero Carousel */}
           <div className="lg:col-span-8 space-y-6">
             <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-2">
-              <Heading level={4} className="m-0 text-sm font-bold uppercase tracking-wider opacity-40">Unggulan</Heading>
+              <Heading level={4} className="m-0 text-sm font-bold tracking-wider opacity-40">Unggulan</Heading>
             </div>
             {heroPosts.length > 0 ? (
               <Carousel opts={{ loop: true }} className="w-full relative group">
@@ -169,7 +169,7 @@ export default function CategoryPage() {
           {/* Right: Trending List */}
           <div className="lg:col-span-4 space-y-8">
             <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-2">
-              <Heading level={4} className="m-0 text-sm font-bold uppercase tracking-wider opacity-40">Terpopuler</Heading>
+              <Heading level={4} className="m-0 text-sm font-bold tracking-wider opacity-40">Terpopuler</Heading>
             </div>
             <RevealGroup className="space-y-8">
               {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
@@ -200,7 +200,7 @@ export default function CategoryPage() {
       {/* Archives Grid */}
       <Section className="pt-0 pb-24">
         <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-10">
-          <Heading level={3} className="text-xl m-0">Arsip Berita</Heading>
+          <Heading level={3} className="text-xl m-0">Arsip berita</Heading>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
           {archivedPosts.length > 0 ? (
