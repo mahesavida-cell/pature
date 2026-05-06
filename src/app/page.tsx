@@ -9,7 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Clock, Bookmark, ChevronRight, Share2, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { Reveal, RevealGroup, RevealItem, FadeIn } from "@/components/wrapped/Motion";
+import { Container, Section } from "@/components/wrapped/Layout";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { 
@@ -119,7 +120,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
 
 const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: any[], sectionTitle: string, viewAllLink: string, isLoading?: boolean }) => {
   return (
-    <section className="mb-24 lg:mb-32">
+    <Section className="mb-12">
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
         <Heading level={2}>{sectionTitle}</Heading>
         <Link href={viewAllLink}>
@@ -139,7 +140,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
           <CarouselContent className="-ml-4">
             {posts.map((post, idx) => (
               <CarouselItem key={post._id || `carousel-item-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="h-full">
+                <Reveal delay={idx * 0.05} className="h-full">
                   <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                     <Link href={`/news/${post.slug}`}>
                       <div className="relative h-56 w-full overflow-hidden bg-muted">
@@ -166,7 +167,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </Reveal>
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -178,7 +179,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
           )}
         </Carousel>
       )}
-    </section>
+    </Section>
   );
 };
 
@@ -212,23 +213,23 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="space-y-16">
+    <Container>
       {hasError && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+        <FadeIn className="mb-12">
           <Alert variant="destructive" className="bg-red-50 border-red-200 shadow-none">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Masalah koneksi data</AlertTitle>
             <AlertDescription className="text-xs">Gagal memuat berita dari Sanity. Mohon tambahkan domain anda ke daftar <b>CORS Origins</b> di dashboard Sanity anda.</AlertDescription>
           </Alert>
-        </motion.div>
+        </FadeIn>
       )}
 
       {isSanityLoading ? (
-        <section className="mb-24 lg:mb-32"><div className="aspect-[16/9] w-full bg-primary/5 animate-pulse rounded-xl" /></section>
+        <Section className="mb-12"><div className="aspect-[16/9] w-full bg-primary/5 animate-pulse rounded-xl" /></Section>
       ) : heroPost ? (
-        <section className="mb-24 lg:mb-32">
+        <Section className="mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            <motion.div className="lg:col-span-8 space-y-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
+            <Reveal className="lg:col-span-8 space-y-8">
               <Link href={`/news/${heroPost.slug}`} className="block group">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-none mb-8 border border-primary/5">
                   <Image src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt="Berita utama" fill className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105" priority />
@@ -250,12 +251,12 @@ export default function Home() {
                   <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40 shadow-none"><Share2 className="h-4 w-4" /></Button>
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
             <div className="lg:col-span-4 space-y-8">
               <div className="flex items-center justify-between border-b border-primary/5 pb-5"><Heading level={3} className="text-lg">Trending</Heading></div>
-              <div className="space-y-8">
+              <RevealGroup className="space-y-8">
                 {trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
-                  <motion.div key={story._id || `trending-${idx}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1, duration: 0.5 }}>
+                  <RevealItem key={story._id || `trending-${idx}`}>
                     <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
                       <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
                       <div className="space-y-1.5 flex-1">
@@ -264,17 +265,17 @@ export default function Home() {
                         <ReleaseDate date={story.publishedAt} className="text-[9px] font-bold block" />
                       </div>
                     </Link>
-                  </motion.div>
+                  </RevealItem>
                 )) : <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>}
-              </div>
+              </RevealGroup>
               <Link href="/latest" className="block"><Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">Lihat berita lainnya <ChevronRight className="h-4 w-4" /></Button></Link>
             </div>
           </div>
-        </section>
+        </Section>
       ) : <div className="py-32 text-center"><Heading level={2}>Selamat datang di PatureNews</Heading><BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini.</BodyText></div>}
 
       <NewsCarousel posts={curatedPosts} sectionTitle="Pilihan redaksi" viewAllLink="/editors-choice" isLoading={isSanityLoading} />
       <NewsCarousel posts={latestPosts} sectionTitle="Berita terbaru" viewAllLink="/latest" isLoading={isSanityLoading} />
-    </div>
+    </Container>
   );
 }
