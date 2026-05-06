@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -222,7 +223,7 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-semibold transition-all py-5 tracking-normal",
+                  "relative text-[14px] font-semibold transition-all py-5 tracking-normal antialiased",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -340,12 +341,24 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           {mounted ? (
             <AnimatePresence mode="wait">
-              <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
+              <motion.div 
+                key={hoveredCategory ? hoveredCategory._id : "default"} 
+                initial={{ opacity: 0, y: -5 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: 5 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
+              >
                 <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased">
                   {hoveredCategory ? `Topik ${hoveredCategory.title}:` : "Topik populer:"}
                 </span>
                 {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                  <Link key={`${sub}-${idx}`} href="#" className="text-[14px] font-normal text-[#171717]/70 hover:text-[#171717] leading-[20px] transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}>
+                  <Link 
+                    key={`${sub}-${idx}`} 
+                    href="#" 
+                    className="text-[14px] font-normal text-[#171717]/70 hover:text-[#171717] leading-[20px] transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
+                    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                  >
                     <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
                     <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
                   </Link>
