@@ -25,7 +25,7 @@ export const PromotionBanner = () => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-[140px] sm:min-h-[64px] mb-10 rounded-xl overflow-hidden border border-primary/10 shadow-2xl shadow-primary/5 group">
+    <div className="relative w-full min-h-[140px] sm:h-16 flex items-center mb-10 sm:mb-12 rounded-xl overflow-hidden border border-primary/10 shadow-2xl shadow-primary/5 group mt-2">
       {/* Advanced Animated Background Layer */}
       <div className="absolute inset-0 overflow-hidden bg-white">
         {/* Dynamic Color Blobs */}
@@ -62,7 +62,7 @@ export const PromotionBanner = () => {
         <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
       </div>
 
-      <div className="relative z-10 h-full flex flex-col sm:flex-row items-center justify-between px-6 sm:px-8 gap-6 py-6 sm:py-0">
+      <div className="relative z-10 w-full flex flex-col sm:flex-row items-center justify-between px-6 sm:px-8 gap-6 sm:gap-0 py-6 sm:py-0">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 min-w-0 w-full sm:w-auto">
           <div className="hidden md:flex h-10 w-10 rounded-xl bg-white/60 backdrop-blur-md border border-white/50 items-center justify-center text-primary shadow-sm shrink-0">
             <motion.div
