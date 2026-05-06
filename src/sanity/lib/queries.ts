@@ -100,3 +100,18 @@ export const SEARCH_SUGGESTIONS_QUERY = defineQuery(`*[_type == "post" && (title
   publishedAt,
   "categories": categories[]->title
 }`);
+
+/**
+ * Query hasil pencarian lengkap untuk halaman search.
+ */
+export const SEARCH_PAGE_QUERY = defineQuery(`*[_type == "post" && (title match $searchTerm || excerpt match $searchTerm || categories[]->title match $searchTerm)] | order(publishedAt desc) [0...20] {
+  _id,
+  title,
+  "slug": slug.current,
+  author,
+  mainImage,
+  publishedAt,
+  readTime,
+  excerpt,
+  "categories": categories[]->title
+}`);

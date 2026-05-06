@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, Sparkles } from "lucide-react";
+import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -297,6 +298,39 @@ export const Navbar = () => {
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
               </form>
+              <AnimatePresence>
+                {suggestions.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-h-[300px] overflow-y-auto p-2"
+                  >
+                    <div className="px-3 py-2 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Saran berita</div>
+                    {suggestions.map((post) => (
+                      <Link 
+                        key={post._id} 
+                        href={`/news/${post.slug}`}
+                        onClick={() => setIsSearchOpen(false)}
+                        className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors group"
+                      >
+                        <div className="relative h-10 w-10 shrink-0 rounded-md overflow-hidden bg-muted">
+                          <Image 
+                            src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[11px] font-bold text-primary truncate leading-tight group-hover:text-primary transition-colors">{post.title}</div>
+                          <div className="text-[9px] font-medium text-muted-foreground/60 truncate uppercase">{post.categories?.[0] || "Berita"}</div>
+                        </div>
+                        <ArrowRight className="h-3 w-3 text-primary/20 group-hover:text-primary transition-all group-hover:translate-x-1" />
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </PopoverContent>
           </Popover>
 
