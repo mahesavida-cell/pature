@@ -30,12 +30,12 @@ import { client } from "@/sanity/lib/client";
 import { CATEGORIES_QUERY, SEARCH_SUGGESTIONS_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 
-// Definisi topik default untuk mencegah ReferenceError
 const DEFAULT_TOPICS = ["Berita utama", "Politik", "Ekonomi", "Internasional", "Teknologi", "Olahraga", "Gaya hidup", "Kesehatan"];
 
 const MarketWeatherBar = () => {
   const [currentCityIndex, setCurrentCityIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [mounted, setMounted] = useState(false);
   
   const cities = [
     { name: "Jakarta", temp: "31°C", status: "Cerah", icon: <Sun className="h-3.5 w-3.5" /> },
@@ -53,6 +53,7 @@ const MarketWeatherBar = () => {
   ];
 
   useEffect(() => {
+    setMounted(true);
     const updateTime = () => {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('id-ID', { 
@@ -74,6 +75,8 @@ const MarketWeatherBar = () => {
       clearInterval(cityTimer);
     };
   }, []);
+
+  if (!mounted) return <div className="h-10 border-b border-primary/5 bg-background/30" />;
 
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
@@ -143,6 +146,7 @@ export const Navbar = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [trending, setTrending] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const { user } = useUser();
   const auth = useAuth();
@@ -150,6 +154,7 @@ export const Navbar = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setMounted(true);
     Promise.all([
       client.fetch(CATEGORIES_QUERY),
       client.fetch(TRENDING_POSTS_QUERY)
@@ -357,17 +362,25 @@ export const Navbar = () => {
       <MarketWeatherBar />
       <div className="border-b border-primary/5 bg-background/50 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
-          <AnimatePresence mode="wait">
-            <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
-              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest uppercase">{hoveredCategory ? formatCasing(`Topik ${hoveredCategory.title}:`, 'sentence') : "Topik populer:"}</span>
-              {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
-                  <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
-                  <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
-                </Link>
+          {mounted ? (
+            <AnimatePresence mode="wait">
+              <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
+                <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest uppercase">{hoveredCategory ? formatCasing(`Topik ${hoveredCategory.title}:`, 'sentence') : "Topik populer:"}</span>
+                {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
+                  <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
+                    <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
+                    <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
+                  </Link>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <div className="h-full flex items-center gap-10 opacity-20">
+              {DEFAULT_TOPICS.slice(0, 5).map((topic, i) => (
+                <div key={i} className="text-[11px] font-bold">{topic}</div>
               ))}
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
     </nav>
