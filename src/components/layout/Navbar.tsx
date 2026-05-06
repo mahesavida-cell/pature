@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { formatCasing } from "@/lib/casing";
@@ -156,7 +156,11 @@ export const Navbar = () => {
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const params = useParams();
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Determine active slug for underline effect
+  const activeSlug = params?.slug as string;
 
   useEffect(() => {
     setMounted(true);
@@ -218,29 +222,36 @@ export const Navbar = () => {
           </Link>
           
           <div className="hidden lg:flex items-center gap-8">
-            {dynamicCategories?.map((cat) => (
-              <Link 
-                href={`/category/${cat.slug}`}
-                key={cat._id} 
-                onMouseEnter={() => setHoveredCategory(cat)}
-                className={cn(
-                  "relative text-[14px] font-medium transition-all py-5 tracking-normal antialiased",
-                  hoveredCategory?._id === cat._id 
-                    ? "text-primary" 
-                    : "text-muted-foreground/60 hover:text-primary"
-                )}
-                style={{ fontSynthesis: 'none' }}
-              >
-                {formatCasing(cat.title, 'sentence')}
-                {hoveredCategory?._id === cat._id && (
-                  <motion.div
-                    layoutId="activeCategoryUnderline"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                  />
-                )}
-              </Link>
-            ))}
+            {dynamicCategories?.map((cat) => {
+              const isActive = activeSlug === cat.slug;
+              const isHovered = hoveredCategory?._id === cat._id;
+              // Show underline if hovered OR if it's the active category and NO menu is being hovered
+              const showUnderline = isHovered || (isActive && !hoveredCategory);
+
+              return (
+                <Link 
+                  href={`/category/${cat.slug}`}
+                  key={cat._id} 
+                  onMouseEnter={() => setHoveredCategory(cat)}
+                  className={cn(
+                    "relative text-[14px] font-medium transition-all py-5 tracking-normal antialiased",
+                    (isActive || isHovered) 
+                      ? "text-primary" 
+                      : "text-muted-foreground/60 hover:text-primary"
+                  )}
+                  style={{ fontSynthesis: 'none' }}
+                >
+                  {formatCasing(cat.title, 'sentence')}
+                  {showUnderline && (
+                    <motion.div
+                      layoutId="activeCategoryUnderline"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
