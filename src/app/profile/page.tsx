@@ -91,7 +91,7 @@ export default function ProfilePage() {
           <TypographyP className="text-sm">Silakan masuk untuk mengakses profil Anda.</TypographyP>
         </div>
         <Link href="/auth">
-          <Button className="px-12 h-11 font-bold text-[10px] tracking-widest">Masuk sekarang</Button>
+          <Button className="px-12 h-11 font-bold text-[10px] tracking-widest shadow-none">Masuk sekarang</Button>
         </Link>
       </div>
     );
@@ -162,22 +162,22 @@ export default function ProfilePage() {
                   <Card className="rounded-xl border-primary/5 bg-white/60 backdrop-blur-md">
                     <CardContent className="p-8 lg:p-12 space-y-10">
                       <div className="space-y-8">
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                           <TypographyLabel>Nama tampilan</TypographyLabel>
                           <Input 
                             value={displayName} 
                             onChange={(e) => setDisplayName(e.target.value)} 
-                            className="h-12 text-base font-semibold border-primary/10 bg-white/50 tracking-tight" 
+                            className="h-12 text-base font-semibold border-primary/10 bg-white/50 tracking-tight shadow-none" 
                             placeholder="Nama Anda..."
                           />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                           <TypographyLabel>Biodata singkat</TypographyLabel>
                           <Textarea 
                             value={bio} 
                             onChange={(e) => setBio(e.target.value)} 
                             placeholder="Tulis sesuatu tentang Anda..." 
-                            className="min-h-[120px] text-base font-semibold border-primary/10 bg-white/50 leading-relaxed tracking-tight" 
+                            className="min-h-[120px] text-base font-semibold border-primary/10 bg-white/50 leading-relaxed tracking-tight shadow-none" 
                           />
                         </div>
                       </div>
