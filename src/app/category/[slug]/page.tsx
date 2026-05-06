@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, ArrowRight, RefreshCw } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import { formatCasing } from "@/lib/casing";
@@ -96,31 +96,31 @@ export default function CategoryPage() {
 
   return (
     <Container>
-      {/* Title Section - Tight spacing and moderated size */}
-      <Section className="pt-4 pb-12">
-        <div className="max-w-4xl space-y-3">
-          <MutedText className="text-[10px] font-bold opacity-40 tracking-widest uppercase" casing="sentence">Arsip kategori</MutedText>
-          <div className="flex items-end gap-4">
+      {/* Title Section - Extremely tight spacing to header */}
+      <Section className="pt-2 pb-8">
+        <div className="max-w-4xl space-y-2">
+          <MutedText className="text-[10px] font-bold opacity-40 tracking-widest" casing="sentence">Arsip kategori</MutedText>
+          <div className="flex items-baseline gap-4">
             <Title className="text-3xl md:text-4xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
-              <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold mb-1">
+              <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold">
                 Topik: {topic}
               </Badge>
             )}
           </div>
-          <BodyText className="text-lg opacity-60 leading-relaxed max-w-2xl">
+          <BodyText className="text-lg opacity-60 leading-relaxed max-w-2xl !mt-2">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
           </BodyText>
         </div>
       </Section>
 
-      {/* Hero & Trending Section */}
-      <Section className="py-0 mb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      {/* Hero & Trending Section - Reduced margin top */}
+      <Section className="py-0 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Left: Hero Carousel */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-2">
-              <Heading level={4} className="m-0 text-sm font-bold tracking-wider opacity-40">Unggulan</Heading>
+          <div className="lg:col-span-8 space-y-4">
+            <div className="flex items-center justify-between border-b border-primary/5 pb-3">
+              <Heading level={4} className="m-0 text-xs font-bold tracking-wider opacity-40" casing="sentence">Unggulan</Heading>
             </div>
             {heroPosts.length > 0 ? (
               <Carousel opts={{ loop: true }} className="w-full relative group">
@@ -137,16 +137,16 @@ export default function CategoryPage() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
                           <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                            <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-4 uppercase">
-                              {post.categories?.[0] || category.title}
+                            <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-4">
+                              {formatCasing(post.categories?.[0] || category.title, 'sentence')}
                             </Badge>
                             <h2 className="text-2xl md:text-3xl font-headline font-semibold leading-tight mb-4 group-hero:text-white/90 transition-colors">
                               {post.title}
                             </h2>
                             <div className="flex items-center gap-4 text-[10px] font-bold text-white/60">
-                              <ReleaseDate date={post.publishedAt} className="uppercase tracking-widest" />
+                              <ReleaseDate date={post.publishedAt} className="tracking-widest" />
                               <span>•</span>
-                              <span className="uppercase tracking-widest">{post.author || "Redaksi"}</span>
+                              <span className="tracking-widest">{post.author || "Redaksi"}</span>
                             </div>
                           </div>
                         </div>
@@ -167,20 +167,20 @@ export default function CategoryPage() {
           </div>
 
           {/* Right: Trending List */}
-          <div className="lg:col-span-4 space-y-8">
-            <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-2">
-              <Heading level={4} className="m-0 text-sm font-bold tracking-wider opacity-40">Terpopuler</Heading>
+          <div className="lg:col-span-4 space-y-4">
+            <div className="flex items-center justify-between border-b border-primary/5 pb-3">
+              <Heading level={4} className="m-0 text-xs font-bold tracking-wider opacity-40" casing="sentence">Terpopuler</Heading>
             </div>
-            <RevealGroup className="space-y-8">
+            <RevealGroup className="space-y-6 pt-2">
               {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
                 <RevealItem key={`trending-${post._id}`}>
                   <Link href={`/news/${post.slug}`} className="group flex gap-5 items-start">
                     <span className="text-4xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
-                    <div className="space-y-1.5 flex-1">
+                    <div className="space-y-1 flex-1">
                       <h4 className="font-body font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
                         {post.title}
                       </h4>
-                      <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold block opacity-40 uppercase tracking-widest" />
+                      <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold block opacity-40 tracking-widest" />
                     </div>
                   </Link>
                 </RevealItem>
@@ -189,7 +189,7 @@ export default function CategoryPage() {
               )}
             </RevealGroup>
             
-            <Link href="/latest" className="group mt-8 flex items-center justify-center p-6 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[12px] font-bold text-primary/60 hover:text-primary uppercase tracking-widest">
+            <Link href="/latest" className="group mt-6 flex items-center justify-center p-5 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[11px] font-bold text-primary/60 hover:text-primary tracking-widest">
               <span>Arsip berita terbaru</span>
               <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
@@ -198,11 +198,11 @@ export default function CategoryPage() {
       </Section>
 
       {/* Archives Grid */}
-      <Section className="pt-0 pb-24">
-        <div className="flex items-center justify-between border-b border-primary/5 pb-4 mb-10">
-          <Heading level={3} className="text-xl m-0">Arsip berita</Heading>
+      <Section className="pt-0 pb-20">
+        <div className="flex items-center justify-between border-b border-primary/5 pb-3 mb-8">
+          <Heading level={3} className="text-xl m-0" casing="sentence">Arsip berita</Heading>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {archivedPosts.length > 0 ? (
             archivedPosts.map((post, idx) => (
               <motion.div
@@ -213,7 +213,7 @@ export default function CategoryPage() {
               >
                 <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                   <Link href={`/news/${post.slug}`}>
-                    <div className="relative h-56 w-full overflow-hidden bg-muted">
+                    <div className="relative h-52 w-full overflow-hidden bg-muted">
                       <Image 
                         src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
                         alt={post.title}
@@ -222,23 +222,23 @@ export default function CategoryPage() {
                       />
                     </div>
                   </Link>
-                  <CardContent className="p-7 flex-1 flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
+                  <CardContent className="p-6 flex-1 flex flex-col">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-2.5">
                         <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight uppercase" />
+                        <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                       </div>
                       <Link href={`/news/${post.slug}`}>
                         <h3 className="font-body font-medium text-lg leading-snug tracking-[-0.01em] group-hover:text-primary transition-colors line-clamp-2">
                           {post.title}
                         </h3>
                       </Link>
-                      <BodyText className="text-sm line-clamp-3 opacity-60 mt-3 !mb-0">
+                      <BodyText className="text-sm line-clamp-2 opacity-60 mt-2.5 !mb-0">
                         {post.excerpt}
                       </BodyText>
                     </div>
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight uppercase">{post.author || "Redaksi"}</span>
+                    <div className="flex items-center justify-between mt-auto pt-5 border-t border-primary/5">
+                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
                       <Link href={`/news/${post.slug}`}>
                         <ArrowRight className="h-4 w-4 text-primary hover:translate-x-1 transition-transform" />
                       </Link>
@@ -248,8 +248,8 @@ export default function CategoryPage() {
               </motion.div>
             ))
           ) : (
-            <div className="col-span-full py-20 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
-              <MutedText className="text-xs font-bold opacity-30 tracking-widest uppercase">Lihat berita terbaru lainnya</MutedText>
+            <div className="col-span-full py-16 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
+              <MutedText className="text-xs font-bold opacity-30 tracking-widest">Lihat berita terbaru lainnya</MutedText>
             </div>
           )}
         </div>
