@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, updateDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase";
+import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, updateDocumentNonBlocking, setDocumentNonBlocking, useAuth } from "@/firebase";
 import { collection, doc, query, orderBy, limit } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
@@ -18,7 +18,6 @@ import Link from "next/link";
 import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Sparkles, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { signOut } from "firebase/auth";
-import { useAuth } from "@/firebase";
 import { useRouter } from "next/navigation";
 
 const formatRelativeTime = (dateInput: any) => {
@@ -29,11 +28,11 @@ const formatRelativeTime = (dateInput: any) => {
 
   if (diffInSeconds < 60) return "baru saja";
   const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} menit yang lalu`;
+  if (minutes < 60) return `${minutes} menit lalu`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam yang lalu`;
+  if (hours < 24) return `${hours} jam lalu`;
   const days = Math.floor(hours / 24);
-  return `${days} hari yang lalu`;
+  return `${days} hari lalu`;
 };
 
 export default function ProfilePage() {
@@ -47,6 +46,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [mounted, setMounted] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [activeTab, setActiveTab] = useState("editor");
 
   useEffect(() => {
     setMounted(true);
@@ -118,8 +118,8 @@ export default function ProfilePage() {
       .sort(([, a], [, b]) => b - a)[0]?.[0];
     if (!favoriteCategory) return [];
     return [
-      { id: "rec-1", title: `Masa depan ${favoriteCategory} di era digital`, category: favoriteCategory },
-      { id: "rec-2", title: `Wawasan mendalam seputar tren ${favoriteCategory}`, category: favoriteCategory }
+      { id: "rec-1", title: `Masa depan ${favoriteCategory.toLowerCase()} di era digital`, category: favoriteCategory },
+      { id: "rec-2", title: `Wawasan mendalam seputar tren ${favoriteCategory.toLowerCase()}`, category: favoriteCategory }
     ];
   }, [history]);
 
@@ -197,7 +197,7 @@ export default function ProfilePage() {
           </aside>
 
           <section className="lg:col-span-8">
-            <Tabs defaultValue="editor" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="bg-transparent border-b border-primary/5 rounded-none w-full justify-start h-auto p-0 mb-10 space-x-12">
                 <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-[10px] font-bold tracking-widest transition-all">Editor akun</TabsTrigger>
                 <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-[10px] font-bold tracking-widest transition-all">Berita diarsipkan</TabsTrigger>
@@ -205,74 +205,80 @@ export default function ProfilePage() {
               </TabsList>
               
               <AnimatePresence mode="wait">
-                <TabsContent value="editor" className="mt-0">
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                    <Card className="rounded-xl p-10 bg-white/60 backdrop-blur-md border border-primary/5">
-                      <div className="space-y-8">
-                        <div className="space-y-2">
-                          <Label htmlFor="displayName" className="text-[10px] font-bold opacity-40 tracking-wider">Nama lengkap tampilan</Label>
-                          <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-12 rounded-lg bg-white/40 border-primary/5 shadow-none text-sm font-bold px-5 focus-visible:ring-1" />
+                {activeTab === "editor" && (
+                  <TabsContent key="editor-tab" value="editor" className="mt-0">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+                      <Card className="rounded-xl p-10 bg-white/60 backdrop-blur-md border border-primary/5">
+                        <div className="space-y-8">
+                          <div className="space-y-2">
+                            <Label htmlFor="displayName" className="text-[10px] font-bold opacity-40 tracking-wider">Nama lengkap tampilan</Label>
+                            <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-12 rounded-lg bg-white/40 border-primary/5 shadow-none text-sm font-bold px-5 focus-visible:ring-1" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="bio" className="text-[10px] font-bold opacity-40 tracking-wider">Biodata singkat</Label>
+                            <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tuliskan sesuatu tentang diri Anda..." className="h-12 rounded-lg bg-white/40 border-primary/5 shadow-none text-sm font-bold px-5 focus-visible:ring-1" />
+                          </div>
+                          <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[11px] tracking-widest shadow-lg" disabled={isUpdating}>
+                            {isUpdating ? "Sedang menyimpan..." : "Simpan perubahan profil"}
+                          </Button>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="bio" className="text-[10px] font-bold opacity-40 tracking-wider">Biodata singkat</Label>
-                          <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tuliskan sesuatu tentang diri Anda..." className="h-12 rounded-lg bg-white/40 border-primary/5 shadow-none text-sm font-bold px-5 focus-visible:ring-1" />
-                        </div>
-                        <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[11px] tracking-widest shadow-lg" disabled={isUpdating}>
-                          {isUpdating ? "Sedang menyimpan..." : "Simpan perubahan profil"}
-                        </Button>
-                      </div>
-                    </Card>
-                  </motion.div>
-                </TabsContent>
+                      </Card>
+                    </motion.div>
+                  </TabsContent>
+                )}
                 
-                <TabsContent value="archived" className="mt-0">
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {isBookmarksLoading ? (
-                      <div className="col-span-full py-24 text-center"><div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" /></div>
-                    ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
-                      <motion.div key={item.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
-                        <Card className="rounded-xl border-none shadow-sm hover:shadow-md transition-all group h-full bg-white/60 backdrop-blur-md border border-primary/5">
-                          <CardContent className="p-7 flex flex-col justify-between h-full">
-                            <div>
-                              <Badge variant="secondary" className="text-[8px] font-bold mb-4 bg-primary/5 text-primary border-none uppercase tracking-wider">{item.category}</Badge>
-                              <h3 className="mb-6 text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
-                            </div>
-                            <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 group/link transition-colors tracking-tight">
-                              Baca sekarang <ChevronRight className="h-4 w-4 transition-transform group/link:translate-x-1" />
-                            </Link>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    )) : <div className="col-span-full py-24 text-center border-2 border-dashed border-primary/5 rounded-xl bg-white/20 backdrop-blur-sm"><MutedText className="text-[11px] font-bold opacity-30">Belum ada berita yang diarsipkan.</MutedText></div>}
-                  </motion.div>
-                </TabsContent>
+                {activeTab === "archived" && (
+                  <TabsContent key="archived-tab" value="archived" className="mt-0">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {isBookmarksLoading ? (
+                        <div className="col-span-full py-24 text-center"><div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" /></div>
+                      ) : bookmarks && bookmarks.length > 0 ? bookmarks.map((item, idx) => (
+                        <motion.div key={item.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
+                          <Card className="rounded-xl border-none shadow-sm hover:shadow-md transition-all group h-full bg-white/60 backdrop-blur-md border border-primary/5">
+                            <CardContent className="p-7 flex flex-col justify-between h-full">
+                              <div>
+                                <Badge variant="secondary" className="text-[8px] font-bold mb-4 bg-primary/5 text-primary border-none uppercase tracking-wider">{item.category}</Badge>
+                                <h3 className="mb-6 text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
+                              </div>
+                              <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 group/link transition-colors tracking-tight">
+                                Baca sekarang <ChevronRight className="h-4 w-4 transition-transform group/link:translate-x-1" />
+                              </Link>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      )) : <div className="col-span-full py-24 text-center border-2 border-dashed border-primary/5 rounded-xl bg-white/20 backdrop-blur-sm"><MutedText className="text-[11px] font-bold opacity-30">Belum ada berita yang diarsipkan.</MutedText></div>}
+                    </motion.div>
+                  </TabsContent>
+                )}
                 
-                <TabsContent value="history" className="mt-0">
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                    {isHistoryLoading ? (
-                      <div className="py-24 text-center"><div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" /></div>
-                    ) : history && history.length > 0 ? history.map((item, idx) => (
-                      <motion.div key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
-                        <Link href={`/news/${item.postId}`}>
-                          <div className="flex items-center justify-between p-7 rounded-xl hover:bg-white/80 hover:shadow-md transition-all group bg-white/40 backdrop-blur-xl border border-primary/5">
-                            <div className="flex items-center gap-6">
-                              <div className="h-10 w-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary/40 shadow-inner shrink-0"><LayoutDashboard className="h-5 w-5" /></div>
-                              <div className="min-w-0">
-                                <h4 className="text-base font-headline font-bold group-hover:text-primary transition-colors mb-1 line-clamp-1">{item.title}</h4>
-                                <div className="flex items-center gap-4">
-                                  <span className="text-[10px] font-bold opacity-30 uppercase tracking-wider">{item.category}</span>
-                                  <Separator orientation="vertical" className="h-3 opacity-20" />
-                                  <span className="text-[10px] font-bold opacity-30 italic">{mounted ? formatRelativeTime(item.viewedAt) : "---"}</span>
+                {activeTab === "history" && (
+                  <TabsContent key="history-tab" value="history" className="mt-0">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+                      {isHistoryLoading ? (
+                        <div className="py-24 text-center"><div className="h-8 w-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" /></div>
+                      ) : history && history.length > 0 ? history.map((item, idx) => (
+                        <motion.div key={item.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
+                          <Link href={`/news/${item.postId}`}>
+                            <div className="flex items-center justify-between p-7 rounded-xl hover:bg-white/80 hover:shadow-md transition-all group bg-white/40 backdrop-blur-xl border border-primary/5">
+                              <div className="flex items-center gap-6">
+                                <div className="h-10 w-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary/40 shadow-inner shrink-0"><LayoutDashboard className="h-5 w-5" /></div>
+                                <div className="min-w-0">
+                                  <h4 className="text-base font-headline font-bold group-hover:text-primary transition-colors mb-1 line-clamp-1">{item.title}</h4>
+                                  <div className="flex items-center gap-4">
+                                    <span className="text-[10px] font-bold opacity-30 uppercase tracking-wider">{item.category}</span>
+                                    <Separator orientation="vertical" className="h-3 opacity-20" />
+                                    <span className="text-[10px] font-bold opacity-30 italic">{mounted ? formatRelativeTime(item.viewedAt) : "---"}</span>
+                                  </div>
                                 </div>
                               </div>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1 shrink-0" />
                             </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1 shrink-0" />
-                          </div>
-                        </Link>
-                      </motion.div>
-                    )) : <div className="py-24 text-center border-2 border-dashed border-primary/5 rounded-xl bg-white/20 backdrop-blur-sm"><MutedText className="text-[11px] font-bold opacity-30">Riwayat bacaan Anda masih kosong.</MutedText></div>}
-                  </motion.div>
-                </TabsContent>
+                          </Link>
+                        </motion.div>
+                      )) : <div className="py-24 text-center border-2 border-dashed border-primary/5 rounded-xl bg-white/20 backdrop-blur-sm"><MutedText className="text-[11px] font-bold opacity-30">Riwayat bacaan Anda masih kosong.</MutedText></div>}
+                    </motion.div>
+                  </TabsContent>
+                )}
               </AnimatePresence>
             </Tabs>
           </section>
