@@ -100,7 +100,7 @@ export default function ProfilePage() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
       <aside className="lg:col-span-4">
-        <Card className="rounded-xl border-primary/5 bg-white/40 backdrop-blur-xl">
+        <Card className="rounded-xl border-primary/5 bg-white/40 backdrop-blur-xl shadow-none">
           <CardContent className="p-10 text-center space-y-8">
             <div className="space-y-4">
               <Avatar size="lg" className="mx-auto border-2 border-white shadow-none h-24 w-24">
@@ -110,7 +110,7 @@ export default function ProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
-                <TypographyH3>{displayName}</TypographyH3>
+                <TypographyH3 className="!mt-0">{displayName}</TypographyH3>
                 <TypographyMuted className="text-xs opacity-40">{user.email}</TypographyMuted>
               </div>
               <Badge variant="secondary" className="px-4 py-1 rounded-full bg-primary/5 text-primary border-none shadow-none text-[9px] font-bold tracking-wider">
@@ -120,12 +120,12 @@ export default function ProfilePage() {
 
             <div className="flex justify-around items-center pt-8 border-t border-primary/5">
               <div className="text-center space-y-1">
-                <TypographyH3 className="border-none pb-0 leading-none">{bookmarks?.length || 0}</TypographyH3>
+                <TypographyH3 className="border-none pb-0 leading-none !mt-0">{bookmarks?.length || 0}</TypographyH3>
                 <TypographyMuted className="text-[10px] font-bold opacity-40 tracking-wider">Arsip</TypographyMuted>
               </div>
               <Separator orientation="vertical" className="h-10 opacity-10" />
               <div className="text-center space-y-1">
-                <TypographyH3 className="border-none pb-0 leading-none">{history?.length || 0}</TypographyH3>
+                <TypographyH3 className="border-none pb-0 leading-none !mt-0">{history?.length || 0}</TypographyH3>
                 <TypographyMuted className="text-[10px] font-bold opacity-40 tracking-wider">Dibaca</TypographyMuted>
               </div>
             </div>
@@ -148,7 +148,8 @@ export default function ProfilePage() {
               <TabsTrigger 
                 key={tab.id}
                 value={tab.id} 
-                className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[11px] font-bold tracking-wider shadow-none transition-all"
+                className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 py-4 text-[13px] text-[#4D4D4D] font-body capitalize shadow-none transition-all"
+                style={{ fontSynthesis: 'none' }}
               >
                 {tab.label}
               </TabsTrigger>
@@ -157,12 +158,12 @@ export default function ProfilePage() {
 
           <AnimatePresence mode="wait">
             {activeTab === "editor" && (
-              <TabsContent key="editor" value="editor" className="mt-0 focus-visible:ring-0">
+              <TabsContent key="editor" value="editor" className="mt-0 focus-visible:ring-0 outline-none">
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                  <Card className="rounded-xl border-primary/5 bg-white/60 backdrop-blur-md">
+                  <Card className="rounded-xl border-primary/5 bg-white/60 backdrop-blur-md shadow-none">
                     <CardContent className="p-8 lg:p-12 space-y-10">
                       <div className="space-y-8">
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           <TypographyLabel>Nama tampilan</TypographyLabel>
                           <Input 
                             value={displayName} 
@@ -171,7 +172,7 @@ export default function ProfilePage() {
                             placeholder="Nama Anda..."
                           />
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           <TypographyLabel>Biodata singkat</TypographyLabel>
                           <Textarea 
                             value={bio} 
@@ -181,7 +182,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] tracking-widest shadow-md" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] tracking-widest shadow-md uppercase" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>
@@ -191,16 +192,18 @@ export default function ProfilePage() {
             )}
 
             {activeTab === "archived" && (
-              <TabsContent key="archived" value="archived" className="mt-0 focus-visible:ring-0">
+              <TabsContent key="archived" value="archived" className="mt-0 focus-visible:ring-0 outline-none">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {bookmarks?.map((item) => (
-                    <Card key={item.id} className="rounded-xl border-primary/5 bg-white/60 h-full hover:border-primary/20 transition-all shadow-sm">
+                    <Card key={item.id} className="rounded-xl border-primary/5 bg-white/60 h-full hover:border-primary/20 transition-all shadow-none">
                       <CardContent className="p-8 flex flex-col justify-between h-full space-y-6">
                         <div className="space-y-4">
-                          <Badge variant="secondary" className="text-[8px] px-2 py-0.5 font-bold bg-primary/5 text-primary tracking-wider border-none">{item.category}</Badge>
+                          <Badge variant="secondary" className="text-[8px] px-2 py-0.5 font-bold bg-primary/5 text-primary tracking-wider border-none shadow-none">
+                            {item.category}
+                          </Badge>
                           <TypographyLarge className="leading-tight text-lg">{item.title}</TypographyLarge>
                         </div>
-                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-widest">
+                        <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors tracking-widest uppercase">
                           Baca sekarang <ChevronRight className="h-4 w-4" />
                         </Link>
                       </CardContent>
@@ -217,7 +220,7 @@ export default function ProfilePage() {
             )}
 
             {activeTab === "history" && (
-              <TabsContent key="history" value="history" className="mt-0 focus-visible:ring-0">
+              <TabsContent key="history" value="history" className="mt-0 focus-visible:ring-0 outline-none">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                   {history?.map((item) => (
                     <Link key={item.id} href={`/news/${item.postId}`}>
