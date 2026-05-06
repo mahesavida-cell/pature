@@ -1,11 +1,12 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, X, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, ArrowRight } from "lucide-react";
+import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -48,7 +49,6 @@ const MarketWeatherBar = () => {
     { symbol: "BBRI", price: "4,850", change: "+1.20%", up: true },
     { symbol: "TLKM", price: "3,120", change: "-0.95%", up: false },
     { symbol: "ASII", price: "5,150", change: "+0.10%", up: true },
-    { symbol: "GOTO", price: "52", change: "0.00%", up: true },
   ];
 
   useEffect(() => {
@@ -76,12 +76,12 @@ const MarketWeatherBar = () => {
 
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-10 flex items-center justify-between overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between overflow-hidden">
         <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <span className="text-[10px] font-bold text-primary tracking-tight">
-              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
+              {currentTime || "--:--"} <span className="text-[9px] opacity-40 uppercase">Wib</span>
             </span>
           </div>
           
@@ -148,7 +148,6 @@ export const Navbar = () => {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Load categories and initial trending
   useEffect(() => {
     Promise.all([
       client.fetch(CATEGORIES_QUERY),
@@ -159,15 +158,11 @@ export const Navbar = () => {
     });
   }, []);
 
-  // Debounce logic
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 300);
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch suggestions
   useEffect(() => {
     if (debouncedQuery.trim().length > 0) {
       setIsSearching(true);
@@ -197,8 +192,8 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5 shadow-none">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
@@ -217,7 +212,7 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-bold transition-all pb-2 group",
+                  "relative text-[11px] font-bold transition-all pb-2 group uppercase tracking-widest",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -242,7 +237,7 @@ export const Navbar = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-9 w-9 sm:h-11 sm:w-11 rounded-full transition-all"
+                className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-10 w-10 rounded-full transition-all"
                 onClick={() => {
                   setIsSearchOpen(true);
                   setTimeout(() => searchInputRef.current?.focus(), 100);
@@ -269,26 +264,15 @@ export const Navbar = () => {
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
               </form>
-              
               <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
                 {!searchQuery && (
                   <div className="px-4 py-2 space-y-4">
                     <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block px-1">Berita trending</span>
                     <div className="grid gap-4">
                       {trending.map((post) => (
-                        <Link 
-                          key={post._id} 
-                          href={`/news/${post.slug}`}
-                          onClick={() => setIsSearchOpen(false)}
-                          className="flex gap-4 group/item items-center"
-                        >
+                        <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
                           <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-none">
-                            <Image 
-                              src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
-                              alt={post.title}
-                              fill
-                              className="object-cover group-hover/item:scale-110 transition-transform duration-500"
-                            />
+                            <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
@@ -299,43 +283,22 @@ export const Navbar = () => {
                     </div>
                   </div>
                 )}
-
                 {searchQuery && (
                   <div className="px-4 py-2 space-y-4">
                     <div className="flex items-center justify-between px-1">
                       <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block">Hasil pencarian</span>
                       {!isSearching && suggestions.length > 0 && (
-                        <Link 
-                          href={`/search?q=${searchQuery}`} 
-                          onClick={() => setIsSearchOpen(false)}
-                          className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1"
-                        >
-                          Lihat semua <ArrowRight className="h-3 w-3" />
-                        </Link>
+                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 uppercase tracking-tighter">Lihat semua <ArrowRight className="h-3 w-3" /></Link>
                       )}
                     </div>
-
                     {isSearching ? (
-                      <div className="py-10 flex flex-col items-center justify-center gap-3 opacity-30">
-                        <RefreshCw className="h-6 w-6 animate-spin" />
-                        <span className="text-[10px] font-bold">Mencari...</span>
-                      </div>
+                      <div className="py-10 flex flex-col items-center justify-center gap-3 opacity-30"><RefreshCw className="h-6 w-6 animate-spin" /><span className="text-[10px] font-bold">Mencari...</span></div>
                     ) : suggestions.length > 0 ? (
                       <div className="grid gap-4">
                         {suggestions.map((post) => (
-                          <Link 
-                            key={post._id} 
-                            href={`/news/${post.slug}`}
-                            onClick={() => setIsSearchOpen(false)}
-                            className="flex gap-4 group/item items-center"
-                          >
+                          <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
                             <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-none">
-                              <Image 
-                                src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
-                                alt={post.title}
-                                fill
-                                className="object-cover group-hover/item:scale-110 transition-transform duration-500"
-                              />
+                              <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="flex flex-col min-w-0">
                               <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
@@ -345,10 +308,7 @@ export const Navbar = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="py-10 text-center space-y-2 opacity-30">
-                        <p className="text-[11px] font-bold">Tidak ditemukan hasil untuk "{searchQuery}"</p>
-                        <p className="text-[9px]">Coba gunakan kata kunci lain.</p>
-                      </div>
+                      <div className="py-10 text-center space-y-2 opacity-30"><p className="text-[11px] font-bold">Tidak ditemukan hasil untuk "{searchQuery}"</p><p className="text-[9px]">Coba gunakan kata kunci lain.</p></div>
                     )}
                   </div>
                 )}
@@ -360,8 +320,8 @@ export const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full transition-all group">
-                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/5 group-hover:border-primary/20 group-hover:shadow-none transition-all duration-300">
+                  <button className="outline-none rounded-full transition-all group">
+                    <Avatar size="default" className="border border-primary/5 group-hover:border-primary/20 transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
                         {(user.displayName || user.email || "U")[0]}
@@ -370,7 +330,7 @@ export const Navbar = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-none mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all">
@@ -379,13 +339,13 @@ export const Navbar = () => {
                   </Link>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-bold hover:bg-destructive/5 transition-all">
-                    <LogOut className="h-4 w-4" /> <span>Keluar sekarang</span>
+                    <LogOut className="h-4 w-4" /> <span>Keluar dari akun</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none uppercase tracking-widest">
                   Masuk
                 </Button>
               </Link>
@@ -393,34 +353,14 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
-
       <MarketWeatherBar />
-
-      <div 
-        className="border-b border-primary/5 bg-background/50 backdrop-blur-md relative" 
-        onMouseLeave={() => setHoveredCategory(null)}
-      >
-        <div 
-          className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth"
-        >
+      <div className="border-b border-primary/5 bg-background/50 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           <AnimatePresence mode="wait">
-            <motion.div 
-              key={hoveredCategory ? hoveredCategory._id : "default"}
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
-            >
-              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40">
-                {hoveredCategory ? `Topik ${hoveredCategory.title.toLowerCase()}:` : "Topik populer:"}
-              </span>
+            <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
+              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 uppercase tracking-widest">{hoveredCategory ? `Topik ${hoveredCategory.title.toLowerCase()}:` : "Topik populer:"}</span>
               {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                <Link 
-                  key={`${sub}-${idx}`} 
-                  href="#" 
-                  className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2"
-                >
+                <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 uppercase tracking-tighter">
                   <span className="whitespace-nowrap">{sub}</span>
                   <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                 </Link>

@@ -23,19 +23,12 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white/40 border-t mt-32 pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <footer className="bg-white/40 border-t mt-20 pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-20">
-          {/* Brand and Mission */}
           <div className="lg:col-span-5 space-y-4">
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
-              <Image 
-                src="/pature_news.png" 
-                alt="PatureNews Logo" 
-                width={160} 
-                height={45} 
-                className="h-9 w-auto object-contain"
-              />
+              <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-9 w-auto object-contain" />
             </Link>
             <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium mt-2">
               PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
@@ -47,44 +40,28 @@ export const Footer = () => {
                 { icon: <Facebook className="h-5 w-5" />, href: "#" },
                 { icon: <Linkedin className="h-5 w-5" />, href: "#" }
               ].map((social, idx) => (
-                <Link key={idx} href={social.href} className="hover:text-primary transition-all transform hover:-translate-y-0.5">
-                  {social.icon}
-                </Link>
+                <Link key={idx} href={social.href} className="hover:text-primary transition-all transform hover:-translate-y-0.5">{social.icon}</Link>
               ))}
             </div>
           </div>
-
-          {/* Quick Links / Categories */}
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Kategori</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Kategori</Heading>
             <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all">
-                    {item}
-                  </Link>
-                </li>
+                <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-tighter">{item}</Link></li>
               ))}
             </ul>
           </div>
-
-          {/* Company / Support */}
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Dukungan</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Dukungan</Heading>
             <ul className="space-y-2">
               {supportLinks.map((item) => (
-                <li key={item.name}>
-                  <Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all">
-                    {item.name}
-                  </Link>
-                </li>
+                <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-tighter">{item.name}</Link></li>
               ))}
             </ul>
           </div>
-
-          {/* Contact */}
           <div className="lg:col-span-3 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest">Hubungi kami</Heading>
+            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Hubungi kami</Heading>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
@@ -92,19 +69,13 @@ export const Footer = () => {
                 </div>
                 <span className="text-[11px] font-bold text-muted-foreground/80">redaksi@paturenews.com</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic">
-                Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.
-              </p>
+              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
             </div>
           </div>
         </div>
-
         <Separator className="opacity-5 mx-auto" />
-        
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          <span className="text-[10px] font-bold text-muted-foreground/40">
-            © 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.
-          </span>
+          <span className="text-[10px] font-bold text-muted-foreground/40">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
           <div className="flex items-center gap-10">
             <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>
             <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Peta situs</Link>
