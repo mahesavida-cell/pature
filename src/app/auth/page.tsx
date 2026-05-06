@@ -3,6 +3,7 @@
 import { TypographyLabel, TypographyMuted } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { useAuth, initiateEmailSignUp, initiateEmailSignIn, initiateGoogleSignIn, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,12 +34,18 @@ export default function AuthPage() {
       toast({ variant: "destructive", title: "Kesalahan input", description: "Mohon isi semua bidang yang tersedia." });
       return;
     }
+    
+    if (mode === 'register' && !agreed) {
+      toast({ variant: "destructive", title: "Persetujuan diperlukan", description: "Anda harus menyetujui ketentuan layanan kami." });
+      return;
+    }
+
     setIsLoading(true);
     if (auth) {
       if (mode === 'register') initiateEmailSignUp(auth, email, password);
       else initiateEmailSignIn(auth, email, password);
     }
-    setTimeout(() => setIsLoading(false), 800);
+    setTimeout(() => setIsLoading(false), 1200);
   };
 
   const handleGoogleSignIn = () => {
@@ -63,10 +71,10 @@ export default function AuthPage() {
               <Newspaper className="h-6 w-6" />
             </div>
             <div className="space-y-3">
-              <h2 className="text-2xl font-headline font-semibold leading-tight text-white">
+              <h2 className="text-2xl font-headline font-semibold leading-tight text-white" style={{ fontSynthesis: 'none' }}>
                 {formatCasing("Kejernihan informasi di genggaman Anda", 'sentence')}
               </h2>
-              <p className="text-white/60 text-sm leading-relaxed max-w-xs">
+              <p className="text-white/60 text-sm leading-relaxed max-w-xs font-body">
                 {formatCasing("Bergabunglah dengan komunitas pembaca PatureNews untuk mendapatkan akses eksklusif.", 'sentence')}
               </p>
             </div>
@@ -76,7 +84,7 @@ export default function AuthPage() {
               { icon: <CheckCircle2 className="h-4 w-4" />, text: "Akses artikel mendalam tanpa batas" },
               { icon: <ShieldCheck className="h-4 w-4" />, text: "Pengalaman membaca yang aman dan privat" }
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-xs font-medium tracking-tight">
+              <div key={i} className="flex items-center gap-3 text-xs font-medium tracking-tight font-body">
                 <span className="text-white/30">{item.icon}</span>
                 <span className="text-white/90">{formatCasing(item.text, 'sentence')}</span>
               </div>
@@ -88,7 +96,7 @@ export default function AuthPage() {
       {/* Form Section */}
       <div className="flex flex-col lg:col-span-7 p-8 sm:p-12 justify-center bg-white">
         <div className="mb-10">
-          <h1 className="text-2xl font-body font-semibold text-primary mb-2">
+          <h1 className="text-2xl font-body font-semibold text-primary mb-2" style={{ fontSynthesis: 'none' }}>
             {mode === 'login' ? 'Selamat datang kembali' : 'Buat akun baru'}
           </h1>
           <TypographyMuted>
@@ -128,9 +136,27 @@ export default function AuthPage() {
             </div>
           </div>
 
+          {mode === 'register' && (
+            <div className="flex items-start gap-3 mt-4">
+              <Checkbox 
+                id="terms" 
+                checked={agreed}
+                onCheckedChange={(checked) => setAgreed(checked as boolean)}
+                className="mt-0.5"
+              />
+              <label 
+                htmlFor="terms" 
+                className="text-[12px] leading-tight text-muted-foreground font-body cursor-pointer select-none"
+                style={{ fontSynthesis: 'none' }}
+              >
+                Saya menyetujui <span className="underline underline-offset-2">Ketentuan Layanan</span> dan <span className="underline underline-offset-2">Kebijakan Privasi</span> PatureNews.
+              </label>
+            </div>
+          )}
+
           <Button 
             size="lg" 
-            className="w-full h-12 shadow-sm" 
+            className="w-full shadow-sm" 
             onClick={handleAuth} 
             disabled={isLoading}
           >
@@ -139,26 +165,30 @@ export default function AuthPage() {
 
           <div className="flex items-center my-8 gap-3">
             <div className="h-[1px] flex-1 bg-primary/5" />
-            <span className="text-[11px] font-bold text-muted-foreground/30 tracking-widest uppercase">ATAU</span>
+            <span className="text-[10px] font-bold text-muted-foreground/30 tracking-widest">ATAU</span>
             <div className="h-[1px] flex-1 bg-primary/5" />
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <Button 
               variant="outline" 
               onClick={handleGoogleSignIn}
-              className="w-full h-12 bg-[#f4f4f4] text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/5"
+              className="w-full bg-[#f4f4f4] text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/5"
             >
               Masuk dengan Google
             </Button>
 
-            <Button 
-              variant="ghost" 
-              onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-              className="w-full h-12 text-[#4D4D4D] text-sm font-medium hover:bg-primary/5 transition-all"
-            >
-              {mode === 'login' ? 'Daftarkan email' : 'Sudah punya akun? Masuk'}
-            </Button>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground font-body" style={{ fontSynthesis: 'none' }}>
+                {mode === 'login' ? 'Belum punya akun? ' : 'Sudah punya akun? '}
+                <button 
+                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                  className="text-primary font-medium underline underline-offset-4 hover:opacity-80 transition-opacity"
+                >
+                  {mode === 'login' ? 'Daftar' : 'Masuk'}
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
