@@ -2,8 +2,9 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Standardized Input Component (Professional Geist Module)
- * Implements height 40px, radius 6px, and 14px font size.
+ * Input Component - Vercel Standard
+ * Height: 40px, Radius: 6px, Font: 14px
+ * Border: 1px solid with focus ring
  */
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -11,11 +12,10 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-[6px] border-none bg-white px-3 py-2 text-[14px] ring-offset-background transition-all file:border-0 file:bg-transparent file:text-sm file:font-semibold file:text-foreground placeholder:text-muted-foreground/40 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_0_0_1px_rgba(0,0,0,0.08)]",
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}
-        style={{ fontSynthesis: 'none' }}
         {...props}
       />
     )

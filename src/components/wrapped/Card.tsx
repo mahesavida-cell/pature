@@ -11,13 +11,15 @@ interface WrappedCardProps {
 }
 
 /**
- * A professional card wrapper with a clean outline style.
- * Minimalist design focusing on borders rather than shadows.
+ * Professional Card - Vercel Standard
+ * Border: 1px subtle border
+ * Radius: 8px (md)
+ * Hover: Subtle border darkening
  */
 export const Card = ({ children, className, animate = true }: WrappedCardProps) => {
   const content = (
     <BaseCard className={cn(
-      "overflow-hidden border border-primary/10 shadow-none bg-background/20 backdrop-blur-md hover:border-primary/20 transition-all duration-300 rounded-lg", 
+      "overflow-hidden border border-border bg-card hover:border-border/80 transition-colors duration-200 rounded-lg", 
       className
     )}>
       {children}
@@ -28,10 +30,10 @@ export const Card = ({ children, className, animate = true }: WrappedCardProps) 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {content}
     </motion.div>

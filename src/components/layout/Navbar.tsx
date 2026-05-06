@@ -90,33 +90,33 @@ const MarketWeatherBar = () => {
     };
   }, []);
 
-  if (!mounted) return <div className="h-10 border-b border-primary/5 bg-background" />;
+  if (!mounted) return <div className="h-10 border-b border-border bg-background" />;
 
   return (
-    <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md">
+    <div className="border-b border-border bg-secondary/50">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
-        <div className="flex items-center gap-3 sm:gap-4 w-32 sm:w-80 shrink-0 border-r border-primary/5 mr-3 sm:mr-4">
+        <div className="flex items-center gap-3 sm:gap-4 w-32 sm:w-72 shrink-0 border-r border-border mr-3 sm:mr-4">
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <Clock className="h-3 w-3 text-primary/40" />
-            <TypographySmall className="font-semibold text-primary">
-              {currentTime || "--:--"} <span className="text-[9px] font-normal opacity-40">WIB</span>
-            </TypographySmall>
+            <Clock className="h-3 w-3 text-muted-foreground" />
+            <span className="text-xs font-medium text-foreground">
+              {currentTime || "--:--"} <span className="text-muted-foreground">WIB</span>
+            </span>
           </div>
           
           <div className="relative flex-1">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCityIndex}
-                initial={{ opacity: 0, y: 5 }}
+                initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2 }}
                 className="flex items-center gap-2"
               >
-                <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-                <TypographySmall className="font-semibold text-primary truncate leading-normal text-[10px] sm:text-sm">
-                  {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
-                </TypographySmall>
+                <span className="text-muted-foreground">{cities[currentCityIndex].icon}</span>
+                <span className="text-xs font-medium text-foreground truncate">
+                  {cities[currentCityIndex].name} {cities[currentCityIndex].temp}
+                </span>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -130,24 +130,24 @@ const MarketWeatherBar = () => {
               ease: "linear",
               repeat: Infinity,
             }}
-            className="flex items-center gap-8 sm:gap-12 whitespace-nowrap"
+            className="flex items-center gap-6 sm:gap-8 whitespace-nowrap"
           >
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={`stock-${idx}`} className="flex items-center gap-2">
-                <span className="text-[9px] sm:text-[10px] font-bold text-primary uppercase tracking-tighter font-headline">{stock.symbol}</span>
-                <span className="text-[9px] sm:text-[10px] font-medium text-muted-foreground tracking-tight font-body">{stock.price}</span>
+                <span className="text-xs font-semibold text-foreground">{stock.symbol}</span>
+                <span className="text-xs text-muted-foreground">{stock.price}</span>
                 <div className={cn(
-                  "flex items-center gap-0.5 text-[8px] sm:text-[9px] font-bold",
-                  stock.up ? "text-green-600" : "text-red-600"
+                  "flex items-center gap-0.5 text-xs font-medium",
+                  stock.up ? "text-green-600" : "text-red-500"
                 )}>
-                  {stock.up ? <TrendingUp className="h-2 sm:h-2.5 w-2 sm:w-2.5" /> : <TrendingDown className="h-2 sm:h-2.5 w-2 sm:w-2.5" />}
+                  {stock.up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                   {stock.change}
                 </div>
               </div>
             ))}
           </motion.div>
-          <div className="absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-white/40 to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-white/40 to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-secondary/50 to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-secondary/50 to-transparent z-10" />
         </div>
       </div>
     </div>
@@ -229,7 +229,7 @@ export const Navbar = () => {
     : "Navigasi berita:";
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background border-b border-primary/5">
+    <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-4 sm:gap-12">
           {/* Mobile Menu Trigger */}
@@ -427,51 +427,44 @@ export const Navbar = () => {
             </PopoverContent>
           </Popover>
 
-          <div className="flex items-center sm:border-l sm:pl-5 border-primary/5 sm:ml-2">
+          <div className="flex items-center sm:border-l sm:pl-4 border-border sm:ml-2">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="outline-none rounded-full transition-all group p-0.5">
-                    <Avatar size="sm" className="border border-primary/5 group-hover:border-primary/20 transition-all duration-300 h-8 w-8 sm:h-10 sm:w-10">
+                  <button className="outline-none rounded-full transition-colors group">
+                    <Avatar className="border border-border group-hover:border-foreground/20 transition-colors h-8 w-8 sm:h-9 sm:w-9">
                       <AvatarImage src={user.photoURL || ""} />
-                      <AvatarFallback className="bg-primary text-white text-[10px] font-bold tracking-tight uppercase font-headline">
-                        {(user.displayName || user.email || "U")[0]}
+                      <AvatarFallback className="bg-secondary text-foreground text-xs font-medium">
+                        {(user.displayName || user.email || "U")[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal font-headline">{formatCasing("Pusat akun", 'sentence')}</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-primary/5 mx-2" />
+                <DropdownMenuContent className="w-56 rounded-lg p-1.5 bg-background shadow-floating mt-2 border border-border" align="end">
+                  <DropdownMenuLabel className="px-3 py-2 text-xs text-muted-foreground font-medium">
+                    {formatCasing("Pusat akun", 'sentence')}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-border mx-1" />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold font-body hover:bg-primary/5 transition-all tracking-tight">
-                      <User className="h-4 w-4 text-muted-foreground/60" /> <span>{formatCasing("Halaman profil", 'sentence')}</span>
+                    <DropdownMenuItem className="rounded-md cursor-pointer py-2.5 px-3 gap-3 text-sm font-medium hover:bg-secondary transition-colors">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span>{formatCasing("Halaman profil", 'sentence')}</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuSeparator className="bg-primary/5 mx-2" />
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-semibold font-body hover:bg-destructive/5 transition-all tracking-tight">
-                    <LogOut className="h-4 w-4" /> <span>{formatCasing("Keluar dari akun", 'sentence')}</span>
+                  <DropdownMenuSeparator className="bg-border mx-1" />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut} 
+                    className="rounded-md cursor-pointer py-2.5 px-3 gap-3 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>{formatCasing("Keluar dari akun", 'sentence')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="group font-bold text-[9px] sm:text-[10px] px-4 sm:px-8 h-8 sm:h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-normal font-headline flex items-center gap-2">
-                  <motion.div
-                    animate={{ 
-                      scale: [1, 1.15, 1],
-                      rotate: [0, 5, -5, 0]
-                    }}
-                    transition={{ 
-                      duration: 2.5, 
-                      repeat: Infinity, 
-                      ease: "easeInOut" 
-                    }}
-                    className="text-primary group-hover:text-white"
-                  >
-                    <Sparkles className="h-3 sm:h-3.5 w-3 sm:w-3.5" />
-                  </motion.div>
-                  {formatCasing("Subscribe", 'sentence')}
+                <Button size="sm" className="h-8 sm:h-9 px-3 sm:px-4 text-sm font-medium">
+                  {formatCasing("Masuk", 'sentence')}
                 </Button>
               </Link>
             )}
@@ -480,21 +473,21 @@ export const Navbar = () => {
       </div>
       <MarketWeatherBar />
       
-      {/* Interactive Sub-Header Slide Section */}
-      <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md relative overflow-hidden" onMouseLeave={() => setHoveredCategory(null)}>
+      {/* Interactive Sub-Header */}
+      <div className="border-b border-border bg-background relative overflow-hidden" onMouseLeave={() => setHoveredCategory(null)}>
         <div className="max-w-[1200px] mx-auto relative">
-          <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-4 sm:px-6 lg:px-8 h-12">
+          <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-4 sm:px-6 lg:px-8 h-11">
             {mounted && (
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={currentNavContext ? currentNavContext._id : "default"} 
-                  initial={{ opacity: 0, x: -10 }} 
+                  initial={{ opacity: 0, x: -8 }} 
                   animate={{ opacity: 1, x: 0 }} 
-                  exit={{ opacity: 0, x: 10 }} 
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} 
-                  className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-16"
+                  exit={{ opacity: 0, x: 8 }} 
+                  transition={{ duration: 0.3, ease: "easeOut" }} 
+                  className="flex items-center gap-6 sm:gap-8 whitespace-nowrap pr-12"
                 >
-                  <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased font-headline">
+                  <span className="hidden sm:inline text-xs font-medium text-muted-foreground mr-2">
                     {subLabel}
                   </span>
                   
@@ -503,11 +496,9 @@ export const Navbar = () => {
                       <Link 
                         key={`${sub}-${idx}`} 
                         href={`/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}`} 
-                        className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
-                        style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
                       >
-                        <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
-                        <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
+                        {formatCasing(sub, 'sentence')}
                       </Link>
                     ))
                   ) : (
@@ -515,12 +506,10 @@ export const Navbar = () => {
                       <Link 
                         key={`${topic.name}-${idx}`} 
                         href={topic.href} 
-                        className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
-                        style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 py-2"
                       >
-                        {topic.name === "Membership" && <Crown className="h-3 w-3 text-amber-500 fill-amber-500/20" />}
-                        <span className="whitespace-nowrap">{formatCasing(topic.name, 'sentence')}</span>
-                        <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
+                        {topic.name === "Membership" && <Crown className="h-3.5 w-3.5 text-amber-500" />}
+                        {formatCasing(topic.name, 'sentence')}
                       </Link>
                     ))
                   )}
@@ -529,7 +518,7 @@ export const Navbar = () => {
             )}
           </div>
           
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
         </div>
       </div>
     </nav>

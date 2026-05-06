@@ -90,7 +90,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
     }
   };
 
-  const buttonSize = variant === "hero" ? "h-11 w-11" : "h-9 w-9";
+  const buttonSize = variant === "hero" ? "h-9 w-9" : "h-8 w-8";
 
   return (
     <>
@@ -98,7 +98,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
         variant="outline" 
         size="icon" 
         className={cn(
-          "rounded-full transition-all border-primary/10 shadow-none bg-white/40 backdrop-blur-md", 
+          "rounded-md transition-colors", 
           buttonSize,
           isSaved && "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
         )}
@@ -108,14 +108,18 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
       </Button>
       
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent className="rounded-lg p-8 bg-white/95 backdrop-blur-xl border-none shadow-none">
+        <AlertDialogContent className="rounded-lg p-6 sm:p-8 max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-semibold text-xl text-primary">Akses terbatas</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
+            <AlertDialogTitle className="text-lg font-semibold">Akses terbatas</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground">
+              Silakan masuk terlebih dahulu untuk mengarsipkan berita.
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8">
-            <AlertDialogAction onClick={() => router.push('/auth')} className="rounded-sm font-bold text-[10px] bg-primary h-11 shadow-none tracking-widest text-white uppercase">Masuk sekarang</AlertDialogAction>
-            <AlertDialogCancel className="rounded-sm font-bold text-[10px] h-11 tracking-widest uppercase">Batal</AlertDialogCancel>
+          <AlertDialogFooter className="mt-6 gap-2">
+            <AlertDialogCancel className="h-10">Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/auth')} className="h-10">
+              Masuk sekarang
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -125,50 +129,50 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
 
 const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: any[], sectionTitle: string, viewAllLink: string, isLoading?: boolean }) => {
   return (
-    <Section className="mb-12">
-      <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
-        <TypographyH2 className="m-0">{sectionTitle}</TypographyH2>
-        <Link href={viewAllLink} className="group flex items-center gap-2 text-[14px] font-medium text-primary hover:underline underline-offset-4 transition-all">
+    <Section className="py-12 sm:py-16">
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
+        <TypographyH2 className="m-0 text-xl sm:text-2xl">{sectionTitle}</TypographyH2>
+        <Link href={viewAllLink} className="group flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/70 transition-colors">
           <span>{formatCasing("Lihat semua", 'sentence')}</span>
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       </div>
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => <div key={i} className="aspect-[3/4] rounded-xl bg-primary/5 animate-pulse" />)}
+          {[1, 2, 3].map(i => <div key={i} className="aspect-[4/5] rounded-lg bg-secondary animate-pulse" />)}
         </div>
       ) : posts.length === 0 ? (
-        <div className="py-20 text-center bg-primary/5 rounded-xl border border-dashed border-primary/10">
-          <MutedText className="text-xs font-medium opacity-40">Belum ada konten untuk bagian ini.</MutedText>
+        <div className="py-16 text-center bg-secondary rounded-lg border border-dashed border-border">
+          <MutedText className="text-sm">Belum ada konten untuk bagian ini.</MutedText>
         </div>
       ) : (
-        <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative group">
+        <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative">
           <CarouselContent className="-ml-4">
             {posts.map((post, idx) => (
               <CarouselItem key={post._id || `carousel-item-${idx}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <Reveal delay={idx * 0.05} className="h-full">
-                  <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                  <Card className="h-full flex flex-col group/card overflow-hidden">
                     <Link href={`/news/${post.slug}`}>
-                      <div className="relative h-56 w-full overflow-hidden bg-muted">
-                        <Image src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[idx % PlaceHolderImages.length].imageUrl} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover/card:scale-105" />
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-none px-3 py-1 tracking-wide uppercase">{post.categories?.[0] || "Berita"}</Badge>
+                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
+                        <Image src={post.mainImage ? urlFor(post.mainImage).url() : PlaceHolderImages[idx % PlaceHolderImages.length].imageUrl} alt={post.title} fill className="object-cover transition-transform duration-300 group-hover/card:scale-105" />
+                        <div className="absolute top-3 left-3">
+                          <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium">{post.categories?.[0] || "Berita"}</Badge>
                         </div>
                       </div>
                     </Link>
-                    <CardContent className="p-7 flex-1 flex flex-col">
-                      <div className="mb-6">
+                    <CardContent className="p-5 flex-1 flex flex-col">
+                      <div className="flex-1">
                         <div className="flex items-center gap-2 mb-3">
-                          <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                          <ReleaseDate date={post.publishedAt} className="text-[10px] font-medium text-muted-foreground tracking-tight" />
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          <ReleaseDate date={post.publishedAt} className="text-xs text-muted-foreground" />
                         </div>
                         <Link href={`/news/${post.slug}`}>
-                          <h3 className="font-body font-medium text-lg leading-snug tracking-[-0.01em] group-hover/card:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                          <h3 className="font-semibold text-base leading-snug group-hover/card:text-foreground/70 transition-colors line-clamp-2">{post.title}</h3>
                         </Link>
-                        <TypographyP className="text-sm line-clamp-3 opacity-60 mt-3 !mb-0">{post.excerpt}</TypographyP>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mt-2">{post.excerpt}</p>
                       </div>
-                      <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
-                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi PatureNews"}</span>
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+                        <span className="text-xs font-medium text-muted-foreground">{post.author || "Redaksi PatureNews"}</span>
                         <BookmarkButton post={post} />
                       </div>
                     </CardContent>
@@ -179,8 +183,8 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
           </CarouselContent>
           {posts.length > 3 && (
             <div className="hidden lg:block">
-              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md shadow-none" />
-              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 backdrop-blur-md shadow-none" />
+              <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10" />
+              <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10" />
             </div>
           )}
         </Carousel>
@@ -233,59 +237,69 @@ export default function Home() {
       )}
 
       {isSanityLoading ? (
-        <Section className="mb-12"><div className="aspect-[16/9] w-full bg-primary/5 animate-pulse rounded-xl" /></Section>
+        <Section className="py-8"><div className="aspect-[16/9] w-full bg-secondary animate-pulse rounded-lg" /></Section>
       ) : heroPost ? (
-        <Section className="mb-12 pt-0">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            <Reveal className="lg:col-span-8 space-y-8">
+        <Section className="py-8 sm:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <Reveal className="lg:col-span-8">
               <Link href={`/news/${heroPost.slug}`} className="block group">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted shadow-none mb-8 border border-primary/5">
-                  <Image src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt="Berita utama" fill className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105" priority />
-                  <div className="absolute top-6 left-6">
-                    <Badge variant="secondary" className="px-4 py-1.5 rounded-sm border-none font-bold text-[10px] shadow-none bg-white/95 backdrop-blur-md text-primary tracking-wider uppercase">Unggulan hari ini</Badge>
+                <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-secondary mb-6">
+                  <Image src={heroPost.mainImage ? urlFor(heroPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt="Berita utama" fill className="object-cover transition-transform duration-500 group-hover:scale-[1.02]" priority />
+                  <div className="absolute top-4 left-4">
+                    <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium px-3 py-1">Unggulan</Badge>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <TypographyH1 className="group-hover:text-primary/80 transition-colors">{heroPost.title}</TypographyH1>
-                  <TypographyP className="line-clamp-2 max-w-3xl opacity-70">
+                <div className="space-y-3">
+                  <TypographyH1 className="text-2xl sm:text-3xl lg:text-4xl group-hover:text-foreground/70 transition-colors">{heroPost.title}</TypographyH1>
+                  <p className="text-base sm:text-lg text-muted-foreground line-clamp-2 max-w-2xl">
                     {heroPost.excerpt}
-                  </TypographyP>
+                  </p>
                 </div>
               </Link>
-              <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
-                <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                  <Clock className="h-3.5 w-3.5" /> <ReleaseDate date={heroPost.publishedAt} /> • {heroPost.author || "Redaksi PatureNews"}
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <ReleaseDate date={heroPost.publishedAt} />
+                  <span>•</span>
+                  <span>{heroPost.author || "Redaksi PatureNews"}</span>
                 </div>
-                <div className="flex items-center gap-3 ml-auto">
+                <div className="flex items-center gap-2">
                   <BookmarkButton post={heroPost} variant="hero" />
-                  <Button variant="outline" size="icon" className="rounded-full h-11 w-11 border-primary/10 hover:bg-primary/5 bg-white/40 shadow-none"><Share2 className="h-4 w-4" /></Button>
+                  <Button variant="outline" size="icon" className="rounded-md h-9 w-9"><Share2 className="h-4 w-4" /></Button>
                 </div>
               </div>
             </Reveal>
-            <div className="lg:col-span-4 space-y-8">
-              <div className="flex items-center justify-between border-b border-primary/5 pb-5"><TypographyH3 className="text-lg">Trending</TypographyH3></div>
-              <RevealGroup className="space-y-8">
+            <div className="lg:col-span-4 flex flex-col gap-6">
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <TypographyH3 className="text-lg m-0">Trending</TypographyH3>
+              </div>
+              <RevealGroup className="flex flex-col gap-5">
                 {trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
                   <RevealItem key={story._id || `trending-${idx}`}>
-                    <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
-                      <span className="text-4xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
-                      <div className="space-y-1.5 flex-1">
-                        <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">{story.categories?.[0] || "Berita"}</Badge>
-                        <h4 className="font-body font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">{story.title}</h4>
-                        <ReleaseDate date={story.publishedAt} className="text-[9px] font-medium block opacity-40" />
+                    <Link href={`/news/${story.slug}`} className="group flex gap-4 items-start">
+                      <span className="text-3xl font-headline font-semibold text-muted-foreground/30 group-hover:text-muted-foreground/50 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
+                      <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                        <Badge variant="secondary" className="w-fit text-xs">{story.categories?.[0] || "Berita"}</Badge>
+                        <h4 className="font-medium text-sm leading-snug group-hover:text-foreground/70 transition-colors line-clamp-2">{story.title}</h4>
+                        <ReleaseDate date={story.publishedAt} className="text-xs text-muted-foreground" />
                       </div>
                     </Link>
                   </RevealItem>
-                )) : <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>}
+                )) : <MutedText>Belum ada berita trending.</MutedText>}
               </RevealGroup>
-              <Link href="/latest" className="group mt-4 flex items-center justify-center p-8 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[14px] font-semibold text-primary/60 hover:text-primary">
-                <span className="hover:underline underline-offset-4">{formatCasing("Lihat berita lainnya", 'sentence')}</span>
-                <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              <Link href="/latest" className="group flex items-center justify-center p-6 border border-dashed border-border rounded-lg hover:bg-secondary transition-colors text-sm font-medium text-muted-foreground hover:text-foreground">
+                <span>{formatCasing("Lihat berita lainnya", 'sentence')}</span>
+                <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-200 group-hover:translate-x-0.5" />
               </Link>
             </div>
           </div>
         </Section>
-      ) : <div className="py-32 text-center"><TypographyH2>Selamat datang di PatureNews</TypographyH2><BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini.</BodyText></div>}
+      ) : (
+        <div className="py-24 text-center">
+          <TypographyH2>Selamat datang di PatureNews</TypographyH2>
+          <BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini.</BodyText>
+        </div>
+      )}
 
       <NewsCarousel posts={curatedPosts} sectionTitle="Pilihan redaksi" viewAllLink="/editors-choice" isLoading={isSanityLoading} />
       <NewsCarousel posts={latestPosts} sectionTitle="Berita terbaru" viewAllLink="/latest" isLoading={isSanityLoading} />

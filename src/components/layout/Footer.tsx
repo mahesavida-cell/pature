@@ -35,73 +35,100 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white/40 border-t mt-12 sm:mt-20 pt-16 sm:pt-20 pb-12 sm:pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 sm:gap-16 lg:gap-24 mb-16 sm:mb-20">
-          <div className="lg:col-span-5 space-y-4">
-            <Link href="/" className="inline-block transition-opacity hover:opacity-80">
-              <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-8 sm:h-9 w-auto object-contain" />
+    <footer className="border-t border-border bg-background mt-16 sm:mt-24">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-16">
+          {/* Brand Column */}
+          <div className="lg:col-span-5 flex flex-col gap-5">
+            <Link href="/" className="inline-block transition-opacity hover:opacity-70">
+              <Image src="/pature_news.png" alt="PatureNews Logo" width={140} height={40} className="h-7 w-auto object-contain" />
             </Link>
-            <BodyText className="text-sm max-w-md mt-2 leading-relaxed tracking-normal opacity-70">
-              PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
+            <BodyText className="text-sm text-muted-foreground max-w-sm leading-relaxed">
+              PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis.
             </BodyText>
-            <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
+            <div className="flex items-center gap-4 pt-2">
               {[
-                { icon: <XIcon />, href: "#" },
-                { icon: <Instagram className="h-5 w-5" />, href: "#" },
-                { icon: <Facebook className="h-5 w-5" />, href: "#" },
-                { icon: <Linkedin className="h-5 w-5" />, href: "#" }
+                { icon: <XIcon />, href: "#", label: "Twitter" },
+                { icon: <Instagram className="h-4 w-4" />, href: "#", label: "Instagram" },
+                { icon: <Facebook className="h-4 w-4" />, href: "#", label: "Facebook" },
+                { icon: <Linkedin className="h-4 w-4" />, href: "#", label: "LinkedIn" }
               ].map((social, idx) => (
-                <Link key={idx} href={social.href} className="hover:text-primary transition-all transform hover:-translate-y-0.5">{social.icon}</Link>
+                <Link 
+                  key={idx} 
+                  href={social.href} 
+                  aria-label={social.label}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {social.icon}
+                </Link>
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 lg:col-span-4 gap-8">
-            <div className="space-y-6">
-              <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Kategori</TypographyMuted>
-              <ul className="space-y-2">
+          
+          {/* Links Columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:col-span-7 gap-8">
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-semibold text-foreground">Kategori</h4>
+              <ul className="flex flex-col gap-3">
                 {categories.length > 0 ? categories.slice(0, 5).map((cat) => (
                   <li key={cat._id}>
                     <Link 
                       href={`/category/${cat.slug}`} 
-                      className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {formatCasing(cat.title, 'sentence')}
                     </Link>
                   </li>
                 )) : (
-                  <li className="text-[10px] opacity-30 italic">Memuat kategori...</li>
+                  <li className="text-sm text-muted-foreground">Memuat...</li>
                 )}
               </ul>
             </div>
-            <div className="space-y-6">
-              <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Dukungan</TypographyMuted>
-              <ul className="space-y-2">
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-semibold text-foreground">Dukungan</h4>
+              <ul className="flex flex-col gap-3">
                 {supportLinks.map((item) => (
-                  <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight">{formatCasing(item.name, 'sentence')}</Link></li>
+                  <li key={item.name}>
+                    <Link 
+                      href={item.href} 
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {formatCasing(item.name, 'sentence')}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
-          </div>
-          <div className="lg:col-span-3 space-y-6">
-            <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Hubungi kami</TypographyMuted>
-            <div className="space-y-5">
-              <div className="flex items-center gap-3 group">
-                <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                  <Mail className="h-4 w-4" />
+            <div className="flex flex-col gap-4 col-span-2 sm:col-span-1">
+              <h4 className="text-sm font-semibold text-foreground">Kontak</h4>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-md bg-secondary flex items-center justify-center text-muted-foreground">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">redaksi@paturenews.com</span>
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">redaksi@paturenews.com</span>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Tim redaksi kami siap mendengar aspirasi Anda.
+                </p>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-normal italic tracking-wide">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
             </div>
           </div>
         </div>
-        <Separator className="opacity-5 mx-auto" />
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          <span className="text-[10px] font-bold text-muted-foreground/40 tracking-normal">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
-          <div className="flex items-center gap-6 sm:gap-10">
-            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>
-            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Peta situs</Link>
+        
+        {/* Bottom Bar */}
+        <Separator className="my-8" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} PatureNews. Seluruh hak cipta dilindungi.
+          </span>
+          <div className="flex items-center gap-6">
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Aksesibilitas
+            </Link>
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Peta situs
+            </Link>
           </div>
         </div>
       </div>
