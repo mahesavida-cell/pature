@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -11,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, RefreshCw } from "lucide-react";
+import { Clock, ArrowRight, RefreshCw, Inbox } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import { formatCasing } from "@/lib/casing";
@@ -24,6 +25,19 @@ import {
 } from "@/components/ui/carousel";
 import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
 import Autoplay from "embla-carousel-autoplay";
+
+const AnimatedEmptyState = ({ message }: { message: string }) => (
+  <div className="flex flex-col items-center justify-center py-12 gap-4 w-full h-full">
+    <motion.div
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      className="opacity-20"
+    >
+      <Inbox className="h-10 w-10 text-primary" />
+    </motion.div>
+    <TypographyMuted className="text-xs">{message}</TypographyMuted>
+  </div>
+);
 
 export default function CategoryPage() {
   const params = useParams();
@@ -94,9 +108,9 @@ export default function CategoryPage() {
   }
 
   return (
-    <Container className="space-y-6">
-      {/* Title Section - Extremely tight spacing to header */}
-      <header className="pt-2">
+    <Container className="space-y-6 pt-2">
+      {/* Title Section */}
+      <header className="pt-0">
         <div className="max-w-4xl">
           <TypographyLabel className="mb-1" casing="sentence">Arsip kategori</TypographyLabel>
           <div className="flex items-baseline gap-4 mb-2">
@@ -113,9 +127,9 @@ export default function CategoryPage() {
         </div>
       </header>
 
-      {/* Hero & Trending Section - Compact grid */}
+      {/* Hero & Trending Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-0">
-        {/* Left: Hero Carousel (Synchronized with Trending) */}
+        {/* Left: Hero Carousel */}
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
             <TypographyLabel className="m-0 mt-0" casing="sentence">Unggulan</TypographyLabel>
@@ -162,34 +176,38 @@ export default function CategoryPage() {
               </div>
             </Carousel>
           ) : (
-            <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10 flex items-center justify-center">
-              <TypographyMuted className="text-xs">Belum ada berita unggulan saat ini.</TypographyMuted>
+            <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10">
+              <AnimatedEmptyState message="Belum ada berita unggulan saat ini." />
             </div>
           )}
         </div>
 
-        {/* Right: Trending List (Synchronized with Hero) */}
+        {/* Right: Trending List */}
         <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
             <TypographyLabel className="m-0 mt-0" casing="sentence">Terpopuler</TypographyLabel>
           </div>
-          <RevealGroup className="space-y-5 pt-1">
-            {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
-              <RevealItem key={`trending-${post._id}`}>
-                <Link href={`/news/${post.slug}`} className="group flex gap-4 items-start">
-                  <span className="text-2xl md:text-3xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
-                  <div className="space-y-1 flex-1">
-                    <h4 className="font-body font-medium text-[13px] leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
-                      {post.title}
-                    </h4>
-                    <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold block opacity-40 tracking-widest" />
-                  </div>
-                </Link>
-              </RevealItem>
-            )) : (
-              <TypographyMuted className="text-xs">Belum ada berita terpopuler hari ini.</TypographyMuted>
+          <div className="pt-1">
+            {trendingPosts.length > 0 ? (
+              <RevealGroup className="space-y-5">
+                {trendingPosts.map((post, idx) => (
+                  <RevealItem key={`trending-${post._id}`}>
+                    <Link href={`/news/${post.slug}`} className="group flex gap-4 items-start">
+                      <span className="text-2xl md:text-3xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="font-body font-medium text-[13px] leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
+                          {post.title}
+                        </h4>
+                        <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold block opacity-40 tracking-widest" />
+                      </div>
+                    </Link>
+                  </RevealItem>
+                ))}
+              </RevealGroup>
+            ) : (
+              <AnimatedEmptyState message="Belum ada berita terpopuler." />
             )}
-          </RevealGroup>
+          </div>
           
           <Link href="/latest" className="group mt-4 flex items-center justify-center p-3 border border-dashed border-primary/10 rounded-lg hover:bg-primary/5 transition-all text-[11px] font-bold text-primary/60 hover:text-primary tracking-widest">
             <span>Arsip berita terbaru</span>
@@ -203,9 +221,9 @@ export default function CategoryPage() {
         <div className="flex items-center justify-between border-b border-primary/5 pb-2 mb-6">
           <Heading level={3} className="text-lg m-0 mt-0" casing="sentence">Arsip berita</Heading>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {archivedPosts.length > 0 ? (
-            archivedPosts.map((post, idx) => (
+        {archivedPosts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {archivedPosts.map((post, idx) => (
               <motion.div
                 key={post._id}
                 initial={{ opacity: 0, y: 15 }}
@@ -244,13 +262,13 @@ export default function CategoryPage() {
                   </CardContent>
                 </Card>
               </motion.div>
-            ))
-          ) : (
-            <div className="col-span-full py-16 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
-              <TypographyMuted className="text-xs">Eksplorasi berita terbaru lainnya di halaman utama.</TypographyMuted>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-16 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
+            <AnimatedEmptyState message="Eksplorasi berita terbaru lainnya di halaman utama." />
+          </div>
+        )}
       </div>
     </Container>
   );
