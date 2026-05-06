@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -260,14 +259,14 @@ export const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-9 w-9 sm:h-11 sm:w-11 rounded-full p-0 hover:ring-2 hover:ring-primary/5 transition-all">
-                    <Avatar className="h-9 w-9 sm:h-11 sm:w-11 border border-primary/5">
+                  <button className="outline-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-full transition-all group">
+                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/5 group-hover:border-primary/20 group-hover:shadow-sm transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
                       <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold uppercase">
                         {(user.displayName || user.email || "U")[0]}
                       </AvatarFallback>
                     </Avatar>
-                  </Button>
+                  </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-lg mt-3 border-primary/5" align="end">
                   <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold">Pusat akun</DropdownMenuLabel>
