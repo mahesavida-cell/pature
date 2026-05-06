@@ -112,11 +112,11 @@ export const PromotionBanner = () => {
 
         <div className="flex items-center gap-6">
           <Link href="/membership" className="group/link flex items-center gap-1.5 text-[11px] font-bold text-primary/60 hover:text-primary transition-colors tracking-tight">
-            <span>Pelajari selengkapnya</span>
-            <div className="relative overflow-hidden">
-              <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" />
-              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-primary scale-x-0 group-hover/link:scale-x-100 transition-transform origin-left duration-300" />
+            <div className="relative">
+              <span>Pelajari selengkapnya</span>
+              <div className="absolute -bottom-0.5 left-0 w-full h-[1px] bg-primary/40 origin-left scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300" />
             </div>
+            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" />
           </Link>
 
           <Link href="/auth">

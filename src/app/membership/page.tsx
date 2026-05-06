@@ -1,15 +1,12 @@
 "use client";
 
 import { Container, Section } from "@/components/wrapped/Layout";
-import { TypographyH1, TypographyH2, TypographyH3, TypographyP, TypographyLead, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { TypographyH1, TypographyH2, TypographyH3, TypographyP, TypographyLead, MutedText } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Sparkles, ShieldCheck, Zap, Globe, MessageSquare, Bookmark, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { formatCasing } from "@/lib/casing";
-
-const MotionCard = motion(Card);
 
 export default function MembershipPage() {
   const { scrollYProgress } = useScroll();
@@ -50,7 +47,6 @@ export default function MembershipPage() {
           style={{ y: backgroundY }}
           className="absolute inset-0 overflow-hidden"
         >
-          {/* Dynamic Mesh Blobs */}
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1.1, 1],
@@ -68,7 +64,6 @@ export default function MembershipPage() {
             className="absolute top-1/2 -right-1/4 w-full h-full bg-rose-50/30 blur-[100px] rounded-full"
           />
           
-          {/* Tech Grid Pattern */}
           <div className="absolute inset-0 opacity-[0.03]" style={{ 
             backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`,
             backgroundSize: '40px 40px'
@@ -119,32 +114,33 @@ export default function MembershipPage() {
         <Section className="py-24">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, idx) => (
-              <MotionCard
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1, duration: 0.6 }}
-                className="group relative overflow-hidden bg-white/40 backdrop-blur-xl border-primary/5 hover:border-primary/20 transition-all duration-500"
               >
-                <CardContent className="p-10 space-y-6">
-                  <div className={`h-14 w-14 rounded-2xl ${feature.color} flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                <Card className="group relative overflow-hidden bg-white/40 backdrop-blur-xl border-primary/5 hover:border-primary/20 transition-all duration-500 h-full animate-none">
+                  <CardContent className="p-10 space-y-6">
+                    <div className={`h-14 w-14 rounded-2xl ${feature.color} flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                      {feature.icon}
+                    </div>
+                    <div className="space-y-3">
+                      <TypographyH3 className="text-2xl m-0">{feature.title}</TypographyH3>
+                      <TypographyP className="text-foreground/70 leading-relaxed m-0">
+                        {feature.desc}
+                      </TypographyP>
+                    </div>
+                    <div className="pt-4 flex items-center gap-2 text-[10px] font-bold text-primary/40 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      Selengkapnya <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </CardContent>
+                  <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 transition-transform duration-700 group-hover:scale-[2] group-hover:rotate-0">
                     {feature.icon}
                   </div>
-                  <div className="space-y-3">
-                    <TypographyH3 className="text-2xl m-0">{feature.title}</TypographyH3>
-                    <TypographyP className="text-foreground/70 leading-relaxed m-0">
-                      {feature.desc}
-                    </TypographyP>
-                  </div>
-                  <div className="pt-4 flex items-center gap-2 text-[10px] font-bold text-primary/40 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    Selengkapnya <ArrowRight className="h-3 w-3" />
-                  </div>
-                </CardContent>
-                <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 transition-transform duration-700 group-hover:scale-[2] group-hover:rotate-0">
-                  {feature.icon}
-                </div>
-              </MotionCard>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </Section>
