@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Clock, Bookmark, ChevronRight, Share2, AlertCircle } from "lucide-react";
+import { Clock, Bookmark, ChevronRight, Share2, AlertCircle, ArrowRight } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem, FadeIn } from "@/components/wrapped/Motion";
 import { Container, Section } from "@/components/wrapped/Layout";
 import { useState, useEffect, useMemo } from "react";
@@ -45,6 +45,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { formatCasing } from "@/lib/casing";
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -121,9 +122,10 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
   return (
     <Section className="mb-12">
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
-        <TypographyH2>{sectionTitle}</TypographyH2>
-        <Link href={viewAllLink}>
-          <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-4 transition-all uppercase">Lihat semua</Button>
+        <TypographyH2 className="m-0">{sectionTitle}</TypographyH2>
+        <Link href={viewAllLink} className="group flex items-center gap-2 text-[14px] font-medium text-primary hover:underline underline-offset-4 transition-all">
+          <span>{formatCasing("Lihat semua", 'sentence')}</span>
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       </div>
       {isLoading ? (
@@ -269,7 +271,10 @@ export default function Home() {
                   </RevealItem>
                 )) : <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>}
               </RevealGroup>
-              <Link href="/latest" className="block"><Button variant="ghost" className="w-full justify-between text-[10px] font-bold hover:underline rounded-lg px-5 py-7 border border-dashed border-primary/20 mt-4 tracking-widest uppercase">Lihat berita lainnya <ChevronRight className="h-4 w-4" /></Button></Link>
+              <Link href="/latest" className="group mt-4 flex items-center justify-center p-8 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[14px] font-semibold text-primary/60 hover:text-primary">
+                <span className="hover:underline underline-offset-4">{formatCasing("Lihat berita lainnya", 'sentence')}</span>
+                <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </Section>
