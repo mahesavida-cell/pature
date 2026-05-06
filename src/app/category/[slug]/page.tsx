@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { POSTS_BY_CATEGORY_QUERY, CATEGORY_DETAIL_QUERY } from "@/sanity/lib/queries";
 import { Container } from "@/components/wrapped/Layout";
-import { Title, Heading, BodyText, MutedText, TypographyMuted } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -75,7 +75,7 @@ export default function CategoryPage() {
     return (
       <Container className="py-20 text-center flex flex-col items-center gap-4">
         <RefreshCw className="h-8 w-8 animate-spin opacity-20" />
-        <MutedText className="text-xs opacity-40">Memuat arsip berita...</MutedText>
+        <TypographyMuted className="text-xs">Memuat arsip berita...</TypographyMuted>
       </Container>
     );
   }
@@ -98,7 +98,7 @@ export default function CategoryPage() {
       {/* Title Section - Extremely tight spacing to header */}
       <header className="pt-2">
         <div className="max-w-4xl">
-          <MutedText className="text-[13px] text-[#4D4D4D] font-medium mb-1 block" casing="sentence">Arsip kategori</MutedText>
+          <TypographyLabel className="mb-1" casing="sentence">Arsip kategori</TypographyLabel>
           <div className="flex items-baseline gap-4 mb-2">
             <Title className="text-2xl md:text-3xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
@@ -118,7 +118,7 @@ export default function CategoryPage() {
         {/* Left: Hero Carousel (Synchronized with Trending) */}
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <Heading level={4} className="m-0 text-[13px] text-[#4D4D4D] font-medium font-body mt-0" casing="sentence">Unggulan</Heading>
+            <TypographyLabel className="m-0 mt-0" casing="sentence">Unggulan</TypographyLabel>
           </div>
           {trendingPosts.length > 0 ? (
             <Carousel 
@@ -163,7 +163,7 @@ export default function CategoryPage() {
             </Carousel>
           ) : (
             <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10 flex items-center justify-center">
-              <MutedText className="text-xs font-bold opacity-30">Belum ada berita unggulan</MutedText>
+              <TypographyMuted className="text-xs">Belum ada berita unggulan saat ini.</TypographyMuted>
             </div>
           )}
         </div>
@@ -171,7 +171,7 @@ export default function CategoryPage() {
         {/* Right: Trending List (Synchronized with Hero) */}
         <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <Heading level={4} className="m-0 text-[13px] text-[#4D4D4D] font-medium font-body mt-0" casing="sentence">Terpopuler</Heading>
+            <TypographyLabel className="m-0 mt-0" casing="sentence">Terpopuler</TypographyLabel>
           </div>
           <RevealGroup className="space-y-5 pt-1">
             {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
@@ -187,7 +187,7 @@ export default function CategoryPage() {
                 </Link>
               </RevealItem>
             )) : (
-              <MutedText className="text-xs italic opacity-40">Belum ada berita populer.</MutedText>
+              <TypographyMuted className="text-xs">Belum ada berita terpopuler hari ini.</TypographyMuted>
             )}
           </RevealGroup>
           
@@ -247,7 +247,7 @@ export default function CategoryPage() {
             ))
           ) : (
             <div className="col-span-full py-16 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
-              <MutedText className="text-xs font-bold opacity-30 tracking-widest">Lihat berita terbaru lainnya</MutedText>
+              <TypographyMuted className="text-xs">Eksplorasi berita terbaru lainnya di halaman utama.</TypographyMuted>
             </div>
           )}
         </div>
