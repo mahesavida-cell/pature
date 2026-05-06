@@ -14,16 +14,17 @@ interface TypographyProps {
 /**
  * PatureNews Typography Library (Professional Reference System)
  * Optimized for hierarchy, rhythm, and clarity.
+ * Implements font-synthesis: weight none and optimizeLegibility.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h1
     id={id}
     className={cn(
-      "scroll-m-20 font-headline text-3xl md:text-4xl font-semibold leading-[1.15] tracking-[-0.02em] text-primary",
+      "scroll-m-20 font-headline text-3xl md:text-4xl font-semibold leading-[1.15] tracking-[-0.02em] text-primary antialiased",
       className
     )}
-    style={{ fontSynthesis: 'none' }}
+    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h1>
@@ -33,10 +34,10 @@ export const TypographyH2 = ({ children, className, id, casing = 'sentence' }: T
   <h2
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-tight text-primary mt-8 mb-3",
+      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-tight text-primary mt-8 mb-3 antialiased",
       className
     )}
-    style={{ fontSynthesis: 'none' }}
+    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h2>
@@ -46,10 +47,10 @@ export const TypographyH3 = ({ children, className, id, casing = 'sentence' }: T
   <h3
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-tight text-primary mt-6 mb-2",
+      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-tight text-primary mt-6 mb-2 antialiased",
       className
     )}
-    style={{ fontSynthesis: 'none' }}
+    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h3>
@@ -59,10 +60,10 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
   <h4
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-tight text-primary mt-4 mb-2",
+      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-tight text-primary mt-4 mb-2 antialiased",
       className
     )}
-    style={{ fontSynthesis: 'none' }}
+    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
   >
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h4>
@@ -71,9 +72,10 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
 export const TypographyP = ({ children, className }: TypographyProps) => (
   <p
     className={cn(
-      "font-body text-[18px] font-normal leading-[1.75] tracking-normal text-foreground/90 max-w-[65ch] mb-5",
+      "font-body text-[18px] font-normal leading-[1.75] tracking-normal text-foreground/90 max-w-[65ch] mb-5 antialiased",
       className
     )}
+    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
   >
     {children}
   </p>
@@ -82,16 +84,17 @@ export const TypographyP = ({ children, className }: TypographyProps) => (
 export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
   <blockquote
     className={cn(
-      "mt-6 border-l-2 border-primary/10 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6",
+      "mt-6 border-l-2 border-primary/10 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6 antialiased",
       className
     )}
+    style={{ fontSynthesis: 'none' }}
   >
     {children}
   </blockquote>
 );
 
 export const TypographyList = ({ children, className }: TypographyProps) => (
-  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body font-normal text-[18px] leading-[1.75] tracking-normal mb-6", className)}>
+  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body font-normal text-[18px] leading-[1.75] tracking-normal mb-6 antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {children}
   </ul>
 );
@@ -108,25 +111,25 @@ export const TypographyInlineCode = ({ children, className }: TypographyProps) =
 );
 
 export const TypographyLead = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-xl font-normal text-muted-foreground font-body leading-relaxed tracking-tight mb-8", className)}>
+  <p className={cn("text-xl font-normal text-muted-foreground font-body leading-relaxed tracking-tight mb-8 antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {children}
   </p>
 );
 
 export const TypographyLarge = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <div className={cn("text-lg font-semibold font-body text-primary tracking-tight leading-normal", className)}>
+  <div className={cn("text-lg font-semibold font-body text-primary tracking-tight leading-normal antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </div>
 );
 
 export const TypographySmall = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <small className={cn("text-sm font-normal leading-normal font-body tracking-normal", className)}>
+  <small className={cn("text-sm font-normal leading-normal font-body tracking-normal antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </small>
 );
 
 export const TypographyMuted = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <p className={cn("text-sm font-normal text-muted-foreground tracking-normal font-body leading-relaxed", className)}>
+  <p className={cn("text-sm font-normal text-muted-foreground tracking-normal font-body leading-relaxed antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
 );
@@ -170,7 +173,7 @@ export const Heading = ({ children, className, level = 2, casing = 'sentence' }:
 };
 
 export const BodyText = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-base font-normal leading-relaxed text-foreground/80 font-body tracking-normal", className)}>
+  <p className={cn("text-base font-normal leading-relaxed text-foreground/80 font-body tracking-normal antialiased", className)} style={{ fontSynthesis: 'none' }}>
     {children}
   </p>
 );
