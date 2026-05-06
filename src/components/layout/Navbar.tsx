@@ -85,7 +85,7 @@ const MarketWeatherBar = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <span className="text-[10px] font-bold text-primary tracking-tight">
-              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
+              {currentTime || "--:--"} <span className="text-[9px] font-normal opacity-40">WIB</span>
             </span>
           </div>
           
@@ -118,7 +118,7 @@ const MarketWeatherBar = () => {
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={`stock-${idx}`} className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">{stock.symbol}</span>
-                <span className="text-[10px] font-medium text-muted-foreground tracking-tight">{stock.price}</span>
+                <span className="text-[10px] font-normal text-muted-foreground tracking-tight">{stock.price}</span>
                 <div className={cn(
                   "flex items-center gap-0.5 text-[9px] font-bold",
                   stock.up ? "text-green-600" : "text-red-600"
@@ -218,7 +218,7 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-bold transition-all pb-2 group tracking-widest",
+                  "relative text-[11px] font-semibold transition-all pb-2 group tracking-widest",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -314,7 +314,7 @@ export const Navbar = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="py-10 text-center space-y-2 opacity-30"><p className="text-[11px] font-bold tracking-tight">Tidak ditemukan hasil untuk "{searchQuery}"</p><p className="text-[9px] tracking-wide">Coba gunakan kata kunci lain.</p></div>
+                      <div className="py-10 text-center space-y-2 opacity-30"><p className="text-[11px] font-bold tracking-tight">Tidak ditemukan hasil untuk "{searchQuery}"</p><p className="text-[9px] font-normal tracking-wide">Coba gunakan kata kunci lain.</p></div>
                     )}
                   </div>
                 )}
@@ -367,7 +367,7 @@ export const Navbar = () => {
               <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
                 <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest uppercase">{hoveredCategory ? formatCasing(`Topik ${hoveredCategory.title}:`, 'sentence') : "Topik populer:"}</span>
                 {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                  <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
+                  <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
                     <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
                     <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                   </Link>

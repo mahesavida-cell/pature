@@ -12,8 +12,8 @@ interface TypographyProps {
 }
 
 /**
- * PatureNews Typography Library (v3.0)
- * Integrated Tracking Handler: Standardizing character spacing for a high-end editorial feel.
+ * PatureNews Typography Library (v4.0)
+ * Standardized Weight Handler: Only using Thin (300), Regular (400), Semi-bold (600), and Bold (700).
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
@@ -67,7 +67,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
 export const TypographyP = ({ children, className }: TypographyProps) => (
   <p
     className={cn(
-      "font-body text-[18px] leading-7 [&:not(:first-child)]:mt-6 text-foreground/85 max-w-[65ch] tracking-normal",
+      "font-body text-[18px] font-normal leading-7 [&:not(:first-child)]:mt-6 text-foreground/85 max-w-[65ch] tracking-normal",
       className
     )}
   >
@@ -78,7 +78,7 @@ export const TypographyP = ({ children, className }: TypographyProps) => (
 export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
   <blockquote
     className={cn(
-      "mt-6 border-l-4 border-primary/20 pl-6 italic text-xl text-foreground/70 font-body tracking-tight",
+      "mt-6 border-l-4 border-primary/20 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-tight",
       className
     )}
   >
@@ -87,7 +87,7 @@ export const TypographyBlockquote = ({ children, className }: TypographyProps) =
 );
 
 export const TypographyList = ({ children, className }: TypographyProps) => (
-  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body text-[18px] tracking-normal", className)}>
+  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body font-normal text-[18px] tracking-normal", className)}>
     {children}
   </ul>
 );
@@ -104,7 +104,7 @@ export const TypographyInlineCode = ({ children, className }: TypographyProps) =
 );
 
 export const TypographyLead = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-xl text-muted-foreground font-body leading-relaxed tracking-tight", className)}>
+  <p className={cn("text-xl font-normal text-muted-foreground font-body leading-relaxed tracking-tight", className)}>
     {children}
   </p>
 );
@@ -116,7 +116,7 @@ export const TypographyLarge = ({ children, className, casing = 'sentence' }: Ty
 );
 
 export const TypographySmall = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <small className={cn("text-sm font-medium leading-none font-body tracking-tight", className)}>
+  <small className={cn("text-sm font-normal leading-none font-body tracking-tight", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </small>
 );
@@ -144,7 +144,7 @@ export const Heading = ({ children, className, level = 2, casing = 'sentence' }:
 };
 
 export const BodyText = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-base leading-relaxed text-foreground/70 font-body tracking-normal", className)}>
+  <p className={cn("text-base font-normal leading-relaxed text-foreground/70 font-body tracking-normal", className)}>
     {children}
   </p>
 );
