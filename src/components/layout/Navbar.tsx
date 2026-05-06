@@ -6,7 +6,7 @@ import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, Clou
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter, useParams } from "next/navigation";
@@ -159,7 +159,7 @@ export const Navbar = () => {
   const params = useParams();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Determine active slug for underline effect
+  // Determine active slug for underline effect and contextual sub-header
   const activeSlug = params?.slug as string;
 
   useEffect(() => {
@@ -192,6 +192,10 @@ export const Navbar = () => {
     }
   }, [debouncedQuery]);
 
+  const activeCategory = useMemo(() => 
+    dynamicCategories.find(cat => cat.slug === activeSlug),
+  [dynamicCategories, activeSlug]);
+
   const handleSignOut = async () => {
     await signOut(auth);
     router.push("/");
@@ -205,6 +209,14 @@ export const Navbar = () => {
       setSearchQuery("");
     }
   };
+
+  // Logic for displaying sub-categories in the sub-header
+  // Priority order: Hovered Menu > Active Category > Default Beranda Topics
+  const currentNavContext = hoveredCategory || activeCategory;
+  const subCategoriesToDisplay = currentNavContext?.subCategories || DEFAULT_TOPICS;
+  const subLabel = currentNavContext 
+    ? `Topik ${currentNavContext.title}:` 
+    : "Topik populer:";
 
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5">
@@ -225,7 +237,8 @@ export const Navbar = () => {
             {dynamicCategories?.map((cat) => {
               const isActive = activeSlug === cat.slug;
               const isHovered = hoveredCategory?._id === cat._id;
-              // Show underline if hovered OR if it's the active category and NO menu is being hovered
+              // Show underline if it is the active category and NO menu is being hovered
+              // OR if it's currently being hovered
               const showUnderline = isHovered || (isActive && !hoveredCategory);
 
               return (
@@ -354,7 +367,7 @@ export const Navbar = () => {
           {mounted ? (
             <AnimatePresence mode="wait">
               <motion.div 
-                key={hoveredCategory ? hoveredCategory._id : "default"} 
+                key={currentNavContext ? currentNavContext._id : "default"} 
                 initial={{ opacity: 0, y: -5 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: 5 }} 
@@ -362,12 +375,12 @@ export const Navbar = () => {
                 className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
               >
                 <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased">
-                  {hoveredCategory ? `Topik ${hoveredCategory.title}:` : "Topik populer:"}
+                  {subLabel}
                 </span>
-                {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
+                {subCategoriesToDisplay.map((sub: string, idx: number) => (
                   <Link 
                     key={`${sub}-${idx}`} 
-                    href={hoveredCategory ? `/category/${hoveredCategory.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
+                    href={currentNavContext ? `/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
                     className="text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
                     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
                   >
