@@ -223,7 +223,7 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[14px] font-semibold transition-all py-5 tracking-normal antialiased",
+                  "relative text-[14px] font-medium transition-all py-5 tracking-normal antialiased",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -356,7 +356,7 @@ export const Navbar = () => {
                   <Link 
                     key={`${sub}-${idx}`} 
                     href="#" 
-                    className="text-[14px] font-normal text-[#171717]/70 hover:text-[#171717] leading-[20px] transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
+                    className="text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
                     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
                   >
                     <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
@@ -368,7 +368,7 @@ export const Navbar = () => {
           ) : (
             <div className="h-full flex items-center gap-10 opacity-20">
               {DEFAULT_TOPICS.slice(0, 5).map((topic, i) => (
-                <div key={i} className="text-[14px] font-normal">{topic}</div>
+                <div key={i} className="text-[13px] font-normal">{topic}</div>
               ))}
             </div>
           )}
