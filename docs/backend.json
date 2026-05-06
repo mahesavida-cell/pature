@@ -4,80 +4,71 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile information within the InfoFlow application. This entity stores metadata about authenticated users, distinguishing between content creators and readers, and is separate from authentication credentials managed by an external system.",
+      "description": "Represents a user's profile information within the InfoFlow application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserProfile entity. This typically corresponds to the user's ID from the authentication system."
-        },
-        "email": {
-          "type": "string",
-          "description": "The email address associated with the user profile. Used for identification purposes, not for direct authentication.",
-          "format": "email"
-        },
-        "displayName": {
-          "type": "string",
-          "description": "The public name displayed for the user on the platform."
-        },
-        "role": {
-          "type": "string",
-          "description": "The role assigned to the user, indicating their permissions and capabilities within the application (e.g., 'creator' for managing content, 'reader' for consuming content)."
-        },
-        "bio": {
-          "type": "string",
-          "description": "A short biographical description provided by the user, often displayed on their profile."
-        },
-        "profileImageUrl": {
-          "type": "string",
-          "description": "URL to the user's profile picture or avatar.",
-          "format": "uri"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the user profile was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the user profile was last updated.",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string" },
+        "bio": { "type": "string" },
+        "profileImageUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "email",
-        "displayName",
-        "role",
-        "createdAt",
-        "updatedAt"
-      ]
+      "required": ["id", "email", "displayName", "createdAt", "updatedAt"]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "savedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "History": {
+      "title": "History",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "viewedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Comment": {
+      "title": "Comment",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "parentId": { "type": "string" },
+        "likes": { "type": "array", "items": { "type": "string" } }
+      }
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["password", "google", "anonymous"]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/userProfiles/{userId}",
-        "definition": {
-          "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Stores individual user profiles, where the document ID matches the authenticated user's UID. Access is typically restricted to the owner of the profile (`request.auth.uid == userId`) for write operations, and can be extended for read based on user roles. Includes denormalized 'role' field for authorization independence (DBAC).",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique ID of the user, corresponding to `request.auth.uid`."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore structure for InfoFlow is designed with a strong emphasis on Authorization Independence and adherence to DBAC principles. Given that news articles and media posts are managed by Sanity.io, Firestore primarily handles user-specific data, specifically the `UserProfile` entity. The core of the design revolves around a single top-level collection: `userProfiles`.Each document within `/userProfiles/{userId}` stores a single user's profile information, where the document ID (`userId`) directly corresponds to the authenticated user's unique ID (`request.auth.uid`). This direct mapping is critical for achieving **Authorization Independence**. Security rules can evaluate access by simply comparing `request.auth.uid` to the `userId` wildcard in the path, eliminating the need for expensive and complex `get()` calls to check parent document permissions or external authorization contexts. The `UserProfile` document itself contains the `role` field (e.g., 'creator', 'reader'), which is a denormalized authorization context for DBAC. This allows role-based access checks to be performed directly on the document being accessed, or on the requesting user's own profile, without requiring hierarchical lookups. This design ensures atomic operations and simplifies rule debugging considerably.The structure supports **QAPs (Query/Access Patterns)** through several mechanisms:1.  **Individual Profile Access:** For reading or updating a user's own profile (`/userProfiles/{request.auth.uid}`), it's a direct, highly efficient `get` operation. Rules can be as simple as `allow read, update: if request.auth.uid == userId;`.2.  **Listing Profiles (Controlled):** If a 'creator' needs to see a list of other creators, or an 'admin' needs to list all users, a query like `db.collection('userProfiles').where('role', '==', 'creator')` is supported. Security rules for `list` operations would check the `role` field of the requesting user (which is readily available in their own `userProfile` document) to determine if they have the necessary permission to perform such a list. This ensures that rules are not filters but rather guards, preventing unauthorized queries from being executed. For example, `allow list: if request.auth.uid != null && get(/databases/$(database)/documents/userProfiles/$(request.auth.uid)).data.role == 'admin';`.The **Structural Segregation** principle is applied by having `userProfiles` as a dedicated collection for user profiles, ensuring all documents within it share the same security posture (e.g., owner-read/write, others-read-only/no-access, role-based listing). This homogeneous security posture simplifies Firestore rules by preventing mixed security requirements within a single collection.The `role` field within the `UserProfile` serves as the primary mechanism for **DBAC (Database Access Control)**, where roles are explicitly stored in the database. This aligns with the mandate to avoid custom claims for authorization logic."
+    "/userProfiles/{userId}": {
+      "schema": { "$ref": "#/backend/entities/UserProfile" },
+      "description": "Stores individual user profiles."
+    },
+    "/userProfiles/{userId}/bookmarks/{postId}": {
+      "schema": { "$ref": "#/backend/entities/Bookmark" },
+      "description": "User's bookmarked posts."
+    },
+    "/userProfiles/{userId}/history/{postId}": {
+      "schema": { "$ref": "#/backend/entities/History" },
+      "description": "User's reading history."
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/backend/entities/Comment" },
+      "description": "Comments on a post."
+    }
   }
 }

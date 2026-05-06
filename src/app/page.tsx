@@ -55,7 +55,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
 
   const postId = post?._id || post?.id;
   const bookmarkRef = useMemoFirebase(() => 
-    user && db && postId ? doc(db, "users", user.uid, "bookmarks", postId) : null, 
+    user && db && postId ? doc(db, "userProfiles", user.uid, "bookmarks", postId) : null, 
     [db, user, postId]
   );
   const { data: bookmarkData } = useDoc(bookmarkRef);

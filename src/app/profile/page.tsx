@@ -52,17 +52,17 @@ export default function ProfilePage() {
     setMounted(true);
   }, []);
 
-  const userDocRef = useMemoFirebase(() => (user && db ? doc(db, "users", user.uid) : null), [db, user]);
+  const userDocRef = useMemoFirebase(() => (user && db ? doc(db, "userProfiles", user.uid) : null), [db, user]);
   const { data: profileData } = useDoc(userDocRef);
 
   const bookmarksQuery = useMemoFirebase(() => 
-    user && db ? query(collection(db, "users", user.uid, "bookmarks"), orderBy("savedAt", "desc")) : null, 
+    user && db ? query(collection(db, "userProfiles", user.uid, "bookmarks"), orderBy("savedAt", "desc")) : null, 
     [db, user]
   );
   const { data: bookmarks, isLoading: isBookmarksLoading } = useCollection(bookmarksQuery);
 
   const historyQuery = useMemoFirebase(() => 
-    user && db ? query(collection(db, "users", user.uid, "history"), orderBy("viewedAt", "desc"), limit(10)) : null, 
+    user && db ? query(collection(db, "userProfiles", user.uid, "history"), orderBy("viewedAt", "desc"), limit(10)) : null, 
     [db, user]
   );
   const { data: history, isLoading: isHistoryLoading } = useCollection(historyQuery);
@@ -85,15 +85,14 @@ export default function ProfilePage() {
       bio,
       updatedAt: new Date().toISOString(),
       email: user.email,
-      authId: user.uid
+      id: user.uid
     };
 
     if (profileData) {
-      updateDocumentNonBlocking(doc(db, "users", user.uid), updateData);
+      updateDocumentNonBlocking(doc(db, "userProfiles", user.uid), updateData);
     } else {
-      setDocumentNonBlocking(doc(db, "users", user.uid), {
+      setDocumentNonBlocking(doc(db, "userProfiles", user.uid), {
         ...updateData,
-        id: user.uid,
         createdAt: new Date().toISOString()
       }, { merge: true });
     }
@@ -239,7 +238,7 @@ export default function ProfilePage() {
                               <h3 className="mb-6 text-base font-headline font-bold leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
                             </div>
                             <Link href={`/news/${item.postId}`} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mt-4 group/link transition-colors tracking-tight">
-                              Baca sekarang <ChevronRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                              Baca sekarang <ChevronRight className="h-4 w-4 transition-transform group/link:translate-x-1" />
                             </Link>
                           </CardContent>
                         </Card>

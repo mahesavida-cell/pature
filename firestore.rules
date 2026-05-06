@@ -2,73 +2,46 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * INFOFLOW SECURITY RULES - PROTOTYPING PHASE
-     *
-     * CORE PHILOSOPHY:
-     * This ruleset implements a strict User-Ownership model centered around the 'UserProfile' entity.
-     * The primary objective is to ensure that users can only manage their own profile data while 
-     * providing administrative overrides for listing and system-wide visibility.
-     *
-     * DATA STRUCTURE:
-     * - /userProfiles/{userId}: The primary collection where {userId} matches the request.auth.uid.
-     *
-     * KEY SECURITY DECISIONS:
-     * 1. Authorization Independence: By using the UID as the Document ID in /userProfiles, 
-     *    we avoid costly cross-document lookups for basic ownership verification.
-     * 2. Role-Based Access Control (RBAC): The 'role' field is stored directly on the user's 
-     *    profile document. While this is a prototyping phase, the logic is prepared for 
-     *    admin-level listing capabilities.
-     * 3. Identity Consistency: Rules enforce that the 'id' field within the document 
-     *    always matches the document ID and the authenticated user's UID upon creation.
-     * 4. Flexible Schema: In this prototyping mode, only relational integrity fields (like 'id')
-     *    are validated. Other data fields are permitted regardless of type to allow for rapid iteration.
-     *
-     * DENORMALIZATION FOR AUTHORIZATION:
-     * - The user's role is denormalized directly into the UserProfile document to enable
-     *   Database Access Control (DBAC) without relying on custom auth claims.
-     */
-
-    // --- GLOBAL HELPER FUNCTIONS ---
-
-    /** Checks if the requester is authenticated. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** Checks if the requester's UID matches the provided userId. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** Checks if the requester is the owner of an existing document. */
     function isExistingOwner(userId) {
       return resource != null && isOwner(userId);
     }
 
-    /** Retrieves the role of the currently authenticated user. */
     function getRole() {
       return get(/databases/$(database)/documents/userProfiles/$(request.auth.uid)).data.role;
     }
 
-    // --- COLLECTION RULES ---
-
-    /**
-     * @description Rules for managing individual user profiles.
-     * @path /userProfiles/{userId}
-     * @allow (get) If the user is the owner or an admin.
-     * @allow (list) If the user has an 'admin' role.
-     * @allow (create) If the user's UID matches the path and the data's internal ID.
-     * @allow (update/delete) If the user is the owner of the existing document.
-     * @deny (write) If the UID in the data is changed or doesn't match the requester.
-     * @principle Enforces strict ownership and identity consistency for user data.
-     */
     match /userProfiles/{userId} {
       allow get: if isOwner(userId) || (isSignedIn() && getRole() == 'admin');
       allow list: if isSignedIn() && getRole() == 'admin';
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
+
+      match /bookmarks/{postId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /history/{postId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /posts/{postId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.authorId;
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isSignedIn();
     }
 
   }

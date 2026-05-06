@@ -209,7 +209,7 @@ export default function NewsDetailPage() {
 
   useEffect(() => {
     if (user && db && params?.id && sanityPost) {
-      const historyRef = doc(db, "users", user.uid, "history", params.id as string);
+      const historyRef = doc(db, "userProfiles", user.uid, "history", params.id as string);
       setDocumentNonBlocking(historyRef, {
         postId: params.id,
         title: sanityPost.title,
@@ -219,7 +219,7 @@ export default function NewsDetailPage() {
     }
   }, [user, db, params?.id, sanityPost]);
 
-  const bookmarkRef = useMemoFirebase(() => (user && db && params?.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, [db, user, params?.id]);
+  const bookmarkRef = useMemoFirebase(() => (user && db && params?.id) ? doc(db, "userProfiles", user.uid, "bookmarks", params.id as string) : null, [db, user, params?.id]);
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
