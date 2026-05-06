@@ -2,44 +2,41 @@
 
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore'
 
-/**
- * Inisialisasi Firebase yang tangguh untuk lingkungan Klien, SSR, dan Build.
- */
+// IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
-  const config = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || firebaseConfig.apiKey,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || firebaseConfig.projectId,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || firebaseConfig.appId,
-  };
-
-  // Cek apakah konfigurasi minimal tersedia
-  const isConfigValid = config.apiKey && config.projectId && config.apiKey !== 'dummy-key';
-
-  let app: FirebaseApp;
-  
-  try {
-    if (!getApps().length) {
-      // Jika konfigurasi tidak valid saat build, gunakan dummy agar tidak crash
-      app = initializeApp(isConfigValid ? config : firebaseConfig);
-    } else {
-      app = getApp();
+  if (!getApps().length) {
+    // Important! initializeApp() is called without any arguments because Firebase App Hosting
+    // integrates with the initializeApp() function to provide the environment variables needed to
+    // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
+    // without arguments.
+    let firebaseApp;
+    try {
+      // Attempt to initialize via Firebase App Hosting environment variables
+      firebaseApp = initializeApp();
+    } catch (e) {
+      // Only warn in production because it's normal to use the firebaseConfig to initialize
+      // during development
+      if (process.env.NODE_ENV === "production") {
+        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+      }
+      firebaseApp = initializeApp(firebaseConfig);
     }
-  } catch (e) {
-    // Fallback terakhir untuk mencegah build failure
-    app = initializeApp(firebaseConfig);
+
+    return getSdks(firebaseApp);
   }
 
-  const auth = getAuth(app);
-  const firestore = getFirestore(app);
+  // If already initialized, return the SDKs with the already initialized App
+  return getSdks(getApp());
+}
 
+export function getSdks(firebaseApp: FirebaseApp) {
   return {
-    firebaseApp: app,
-    auth,
-    firestore
+    firebaseApp,
+    auth: getAuth(firebaseApp),
+    firestore: getFirestore(firebaseApp)
   };
 }
 
