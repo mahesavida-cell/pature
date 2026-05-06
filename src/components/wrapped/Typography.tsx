@@ -10,6 +10,7 @@ interface TypographyProps {
 /**
  * PatureNews Typography Library
  * Pustaka komponen terpusat untuk konsistensi tipografi editorial.
+ * Didesain stabil untuk mencegah hydration mismatch.
  */
 
 export const TypographyH1 = ({ children, className, id }: TypographyProps) => (
@@ -125,6 +126,7 @@ export const TypographyMuted = ({ children, className }: TypographyProps) => (
 
 // Backward compatibility aliases for existing components
 export const Title = TypographyH1;
+
 export const Heading = ({ children, className, level = 2 }: TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) => {
   const components = {
     1: TypographyH1,
@@ -137,9 +139,11 @@ export const Heading = ({ children, className, level = 2 }: TypographyProps & { 
   const Component = components[level] || TypographyH2;
   return <Component className={className}>{children}</Component>;
 };
+
 export const BodyText = ({ children, className }: TypographyProps) => (
   <p className={cn("text-base leading-relaxed text-foreground/70 font-body", className)}>
     {children}
   </p>
 );
+
 export const MutedText = TypographyMuted;

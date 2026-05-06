@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
@@ -8,14 +7,19 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Clock } from "lucide-react";
+import { Clock, RefreshCw } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy, limit } from "firebase/firestore";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 
 export default function LatestNewsPage() {
   const db = useFirestore();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const latestQuery = useMemoFirebase(() => {
     if (!db) return null;
@@ -27,14 +31,48 @@ export default function LatestNewsPage() {
   const groupedPosts = useMemo(() => {
     if (!firestorePosts) return [];
     const groups: Record<string, any[]> = {};
+    
     firestorePosts.forEach(post => {
-      const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date();
-      const dateString = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+      // Menggunakan format UTC yang stabil untuk pengelompokan di server/klien
+      let dateString = "Lainnya";
+      try {
+        const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
+        if (!isNaN(date.getTime())) {
+          dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+      } catch (e) {
+        // Fallback jika tanggal tidak valid
+      }
+      
       if (!groups[dateString]) groups[dateString] = [];
       groups[dateString].push(post);
     });
     return Object.entries(groups).map(([date, posts]) => ({ date, posts }));
   }, [firestorePosts]);
+
+  const formatDateLabel = (isoDate: string) => {
+    if (isoDate === "Lainnya") return isoDate;
+    try {
+      const date = new Date(isoDate);
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch (e) {
+      return isoDate;
+    }
+  };
+
+  if (!hasMounted) {
+    return (
+      <div className="space-y-16">
+        <div className="space-y-4">
+          <Title>Berita terbaru</Title>
+          <BodyText className="max-w-2xl">Menyiapkan aliran informasi terkini...</BodyText>
+        </div>
+        <div className="py-20 flex justify-center">
+          <RefreshCw className="h-8 w-8 animate-spin opacity-10" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-16">
@@ -44,7 +82,9 @@ export default function LatestNewsPage() {
       </div>
 
       {isLoading ? (
-        <div className="space-y-12">{[1, 2].map(i => <div key={i} className="h-64 bg-primary/5 animate-pulse rounded-xl" />)}</div>
+        <div className="space-y-12">
+          {[1, 2].map(i => <div key={i} className="h-64 bg-primary/5 animate-pulse rounded-xl" />)}
+        </div>
       ) : (
         <div className="space-y-20">
           {groupedPosts.map((group, idx) => (
@@ -52,7 +92,9 @@ export default function LatestNewsPage() {
               <div className="flex items-center gap-4">
                 <div>
                   <Heading level={3} className="text-xl">Arsip harian</Heading>
-                  <MutedText className="text-[10px] font-bold opacity-40 tracking-wider uppercase">{group.date}</MutedText>
+                  <MutedText className="text-[10px] font-bold opacity-40 tracking-wider uppercase">
+                    {formatDateLabel(group.date)}
+                  </MutedText>
                 </div>
                 <Separator className="flex-1 opacity-10" />
               </div>
