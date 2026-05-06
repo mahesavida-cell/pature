@@ -7,6 +7,9 @@ import { TypographyMuted, BodyText } from "@/components/wrapped/Typography";
 import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatCasing } from "@/lib/casing";
+import { useState, useEffect } from "react";
+import { client } from "@/sanity/lib/client";
+import { CATEGORIES_QUERY } from "@/sanity/lib/queries";
 
 const XIcon = () => (
   <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -15,6 +18,14 @@ const XIcon = () => (
 );
 
 export const Footer = () => {
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    client.fetch(CATEGORIES_QUERY).then((data) => {
+      setCategories(data || []);
+    });
+  }, []);
+
   const supportLinks = [
     { name: "Tentang kami", href: "/about" },
     { name: "Kontak redaksi", href: "/contact" },
@@ -49,9 +60,18 @@ export const Footer = () => {
             <div className="space-y-6">
               <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Kategori</TypographyMuted>
               <ul className="space-y-2">
-                {["Teknologi", "Desain", "Bisnis", "Budaya", "Sains"].map((item) => (
-                  <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight">{formatCasing(item, 'sentence')}</Link></li>
-                ))}
+                {categories.length > 0 ? categories.slice(0, 5).map((cat) => (
+                  <li key={cat._id}>
+                    <Link 
+                      href={`/category/${cat.slug}`} 
+                      className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight"
+                    >
+                      {formatCasing(cat.title, 'sentence')}
+                    </Link>
+                  </li>
+                )) : (
+                  <li className="text-[10px] opacity-30 italic">Memuat kategori...</li>
+                )}
               </ul>
             </div>
             <div className="space-y-6">

@@ -39,7 +39,12 @@ import { CATEGORIES_QUERY, SEARCH_SUGGESTIONS_QUERY, TRENDING_POSTS_QUERY } from
 import { urlFor } from "@/sanity/lib/image";
 import { TypographySmall, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
 
-const DEFAULT_TOPICS = ["Berita utama", "Politik", "Ekonomi", "Internasional", "Teknologi", "Olahraga", "Gaya hidup", "Kesehatan"];
+const HOME_TOPICS = [
+  { name: "Berita terpopuler", href: "/recommendations" },
+  { name: "Berita terbaru", href: "/latest" },
+  { name: "Pilihan redaksi", href: "/editors-choice" },
+  { name: "Membership", href: "/membership" }
+];
 
 const MarketWeatherBar = () => {
   const [currentCityIndex, setCurrentCityIndex] = useState(0);
@@ -157,7 +162,6 @@ export const Navbar = () => {
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [trending, setTrending] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [mounted, setMounted] = useState(false);
   
@@ -174,9 +178,8 @@ export const Navbar = () => {
     Promise.all([
       client.fetch(CATEGORIES_QUERY),
       client.fetch(TRENDING_POSTS_QUERY)
-    ]).then(([cats, trends]) => {
+    ]).then(([cats]) => {
       setDynamicCategories(cats || []);
-      setTrending(trends || []);
     });
   }, []);
 
@@ -221,10 +224,9 @@ export const Navbar = () => {
   };
 
   const currentNavContext = hoveredCategory || activeCategory;
-  const subCategoriesToDisplay = currentNavContext?.subCategories || DEFAULT_TOPICS;
   const subLabel = currentNavContext 
     ? `Topik ${currentNavContext.title}:` 
-    : "Topik populer:";
+    : "Navigasi berita:";
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background border-b border-primary/5">
@@ -492,17 +494,32 @@ export const Navbar = () => {
                   <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased font-headline">
                     {subLabel}
                   </span>
-                  {subCategoriesToDisplay.map((sub: string, idx: number) => (
-                    <Link 
-                      key={`${sub}-${idx}`} 
-                      href={currentNavContext ? `/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
-                      className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
-                      style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
-                    >
-                      <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
-                      <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
-                    </Link>
-                  ))}
+                  
+                  {currentNavContext ? (
+                    currentNavContext.subCategories?.map((sub: string, idx: number) => (
+                      <Link 
+                        key={`${sub}-${idx}`} 
+                        href={`/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}`} 
+                        className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
+                        style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                      >
+                        <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
+                        <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
+                      </Link>
+                    ))
+                  ) : (
+                    HOME_TOPICS.map((topic, idx) => (
+                      <Link 
+                        key={`${topic.name}-${idx}`} 
+                        href={topic.href} 
+                        className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
+                        style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                      >
+                        <span className="whitespace-nowrap">{formatCasing(topic.name, 'sentence')}</span>
+                        <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
+                      </Link>
+                    ))
+                  )}
                 </motion.div>
               </AnimatePresence>
             )}
