@@ -38,6 +38,11 @@ export default function CreatePost() {
       return;
     }
 
+    if (!db) {
+      toast({ variant: "destructive", title: "Masalah sistem", description: "Layanan database belum siap. Mohon tunggu sejenak." });
+      return;
+    }
+
     if (!title || !content || !category) {
       toast({ variant: "destructive", title: "Data tidak lengkap", description: "Mohon lengkapi judul, kategori, dan konten utama." });
       return;

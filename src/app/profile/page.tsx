@@ -84,8 +84,10 @@ export default function ProfilePage() {
   };
 
   const handleSignOut = async () => { 
-    await signOut(auth); 
-    router.push("/"); 
+    if (auth) {
+      await signOut(auth); 
+      router.push("/"); 
+    }
   };
 
   if (!mounted || isUserLoading) {

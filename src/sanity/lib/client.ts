@@ -11,5 +11,4 @@ export const client = createClient({
   apiVersion: "2024-01-01",
   useCdn: true, 
   perspective: 'published',
-  staleTime: 60 * 1000, 
 })
