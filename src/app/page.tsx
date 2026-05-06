@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Title, Heading, BodyText, MutedText, TypographyH1, TypographyH2, TypographyH3, TypographyP, TypographyMuted, TypographyLarge, TypographySmall } from "@/components/wrapped/Typography";
@@ -46,6 +47,7 @@ import {
 } from "@/components/ui/carousel";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { formatCasing } from "@/lib/casing";
+import { PromotionBanner } from "@/components/wrapped/PromotionBanner";
 
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
@@ -215,6 +217,8 @@ export default function Home() {
 
   return (
     <Container>
+      <PromotionBanner />
+      
       {hasError && (
         <FadeIn className="mb-12">
           <Alert variant="destructive" className="bg-red-50 border-red-200 shadow-none">
@@ -228,7 +232,7 @@ export default function Home() {
       {isSanityLoading ? (
         <Section className="mb-12"><div className="aspect-[16/9] w-full bg-primary/5 animate-pulse rounded-xl" /></Section>
       ) : heroPost ? (
-        <Section className="mb-12">
+        <Section className="mb-12 pt-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             <Reveal className="lg:col-span-8 space-y-8">
               <Link href={`/news/${heroPost.slug}`} className="block group">
