@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, ArrowRight } from "lucide-react";
+import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -219,7 +219,8 @@ export const Navbar = () => {
           
           <div className="hidden lg:flex items-center gap-8">
             {dynamicCategories?.map((cat) => (
-              <button 
+              <Link 
+                href={`/category/${cat.slug}`}
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
@@ -238,7 +239,7 @@ export const Navbar = () => {
                     transition={{ type: "spring", stiffness: 350, damping: 25 }}
                   />
                 )}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
@@ -355,7 +356,7 @@ export const Navbar = () => {
                 {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
                   <Link 
                     key={`${sub}-${idx}`} 
-                    href="#" 
+                    href={hoveredCategory ? `/category/${hoveredCategory.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
                     className="text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
                     style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
                   >

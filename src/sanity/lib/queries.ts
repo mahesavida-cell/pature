@@ -41,6 +41,30 @@ export const POST_DETAIL_QUERY = defineQuery(`*[_type == "post" && slug.current 
 }`);
 
 /**
+ * Query untuk mengambil artikel berdasarkan kategori slug.
+ */
+export const POSTS_BY_CATEGORY_QUERY = defineQuery(`*[_type == "post" && references(*[_type == "category" && slug.current == $slug]._id)] | order(publishedAt desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  author,
+  mainImage,
+  publishedAt,
+  readTime,
+  excerpt,
+  "categories": categories[]->title
+}`);
+
+/**
+ * Query untuk mengambil detail kategori berdasarkan slug.
+ */
+export const CATEGORY_DETAIL_QUERY = defineQuery(`*[_type == "category" && slug.current == $slug][0] {
+  _id,
+  title,
+  description
+}`);
+
+/**
  * Query untuk berita trending (terpopuler) yang ditampilkan di sidebar.
  */
 export const TRENDING_POSTS_QUERY = defineQuery(`*[_type == "post" && isTrending == true && defined(slug.current)] | order(publishedAt desc) [0...5] {
