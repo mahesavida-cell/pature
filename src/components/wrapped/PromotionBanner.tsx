@@ -21,60 +21,88 @@ export const PromotionBanner = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % benefits.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="relative w-full h-20 sm:h-16 mb-8 rounded-xl overflow-hidden border border-primary/5 shadow-sm group">
-      {/* Animated Mesh Background - Pure Code */}
-      <div className="absolute inset-0 bg-white opacity-90 z-0" />
-      <div className="absolute inset-0 overflow-hidden z-[-1]">
+    <div className="relative w-full h-24 sm:h-16 mb-10 rounded-xl overflow-hidden border border-primary/10 shadow-2xl shadow-primary/5 group">
+      {/* Advanced Animated Background Layer - Pure Code */}
+      <div className="absolute inset-0 overflow-hidden bg-white">
+        {/* Dynamic Color Blobs */}
         <motion.div 
           animate={{ 
+            scale: [1, 1.4, 1.2, 1],
+            x: [0, 60, -30, 0],
+            y: [0, -40, 20, 0],
+            rotate: [0, 120, 240, 360]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-1/2 -left-1/4 w-full h-[200%] bg-blue-400/20 blur-[90px] rounded-full mix-blend-multiply"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1.3, 1, 1.5, 1.3],
+            x: [0, -70, 40, 0],
+            y: [0, 60, -30, 0],
+            rotate: [360, 240, 120, 0]
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-1/2 -right-1/4 w-full h-[200%] bg-purple-500/20 blur-[90px] rounded-full mix-blend-multiply"
+        />
+        <motion.div 
+          animate={{ 
+            opacity: [0.3, 0.6, 0.3],
             scale: [1, 1.2, 1],
-            x: [0, 30, 0],
-            y: [0, 20, 0],
           }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-1/2 -left-1/4 w-full h-[200%] bg-blue-400/20 blur-[60px] rounded-full"
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 bg-gradient-to-tr from-indigo-100/40 via-transparent to-rose-100/40"
         />
+
+        {/* Moving Tech Pattern Layer */}
         <motion.div 
           animate={{ 
-            scale: [1.2, 1, 1.2],
-            x: [0, -40, 0],
-            y: [0, -30, 0],
+            backgroundPosition: ["0px 0px", "40px 40px"] 
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-1/2 -right-1/4 w-full h-[200%] bg-purple-400/20 blur-[60px] rounded-full"
-        />
-        <motion.div 
-          animate={{ 
-            opacity: [0.1, 0.3, 0.1],
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 opacity-[0.05]"
+          style={{ 
+            backgroundImage: `radial-gradient(circle, currentColor 1.2px, transparent 1.2px)`,
+            backgroundSize: '24px 24px',
+            color: '#000'
           }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 bg-gradient-to-r from-orange-100/30 via-transparent to-teal-100/30"
         />
+
+        {/* Subtle Grain Texture */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        
+        {/* Soft Glass Surface */}
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />
       </div>
 
-      <div className="relative z-10 h-full flex flex-col sm:flex-row items-center justify-between px-6 gap-3">
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="hidden md:flex h-8 w-8 rounded-lg bg-primary/5 items-center justify-center text-primary/40">
-            <Sparkles className="h-4 w-4 animate-pulse" />
+      <div className="relative z-10 h-full flex flex-col sm:flex-row items-center justify-between px-8 gap-4">
+        <div className="flex items-center gap-5 min-w-0">
+          <div className="hidden md:flex h-10 w-10 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 items-center justify-center text-primary shadow-sm">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            >
+              <Sparkles className="h-5 w-5 opacity-70" />
+            </motion.div>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 overflow-hidden">
-            <span className="text-[11px] font-bold text-primary/40 uppercase tracking-widest whitespace-nowrap">
-              {formatCasing("Privilese anggota:", 'upper')}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-5 overflow-hidden">
+            <span className="text-[10px] font-bold text-primary/30 uppercase tracking-[0.3em] whitespace-nowrap antialiased">
+              {formatCasing("Keanggotaan", 'upper')}
             </span>
-            <div className="h-5 flex items-center">
+            <div className="h-6 flex items-center">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={index}
-                  initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
+                  initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
                   animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                  exit={{ opacity: 0, filter: "blur(8px)", y: -10 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[13px] sm:text-[14px] font-medium text-primary/80 truncate"
+                  exit={{ opacity: 0, filter: "blur(12px)", y: -15 }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-[14px] sm:text-[15px] font-medium text-primary tracking-tight truncate leading-none"
                 >
                   {formatCasing(benefits[index], 'sentence')}
                 </motion.span>
@@ -84,9 +112,9 @@ export const PromotionBanner = () => {
         </div>
 
         <Link href="/auth">
-          <Button size="sm" className="h-9 px-6 rounded-full bg-primary text-white text-[11px] font-bold tracking-tight hover:scale-105 transition-all shadow-lg shadow-primary/10 gap-2 shrink-0">
-            {formatCasing("Daftar sekarang", 'sentence')}
-            <ArrowRight className="h-3.5 w-3.5" />
+          <Button size="sm" className="h-10 px-10 rounded-full bg-primary text-white text-[11px] font-bold tracking-widest hover:scale-[1.03] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 gap-3 shrink-0 uppercase border-none">
+            {formatCasing("Daftar sekarang", 'none')}
+            <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>
