@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Standardized Button Component (Professional Geist Module)
- * Implements 14px font size, 500 weight, 20px line-height.
+ * Professional Button Component (Geist Standard)
+ * Implements 8px radius, 500 weight, and precision metrics.
  * Enforces font-synthesis: none for sharp rendering.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-[14px] font-medium leading-[20px] ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 antialiased select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[8px] text-[14px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 antialiased select-none transform active:scale-[0.98]",
   {
     variants: {
       variant: {
@@ -18,16 +18,16 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm",
+          "bg-background text-foreground hover:bg-secondary shadow-[0_0_0_1px_rgba(0,0,0,0.08)]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-secondary text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-12 rounded-md px-8", // Updated to 48px height for large
+        default: "h-10 px-4",
+        sm: "h-9 rounded-md px-3 text-[13px]",
+        lg: "h-[48px] px-6 text-[16px]",
         icon: "h-10 w-10",
       },
     },

@@ -20,10 +20,6 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 
-/**
- * Halaman Profil Pengguna PatureNews.
- * Mengadopsi standar desain profesional dengan fokus pada modularitas dan ritme visual.
- */
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
@@ -95,7 +91,7 @@ export default function ProfilePage() {
           <TypographyP className="text-sm">Silakan masuk untuk mengakses profil Anda.</TypographyP>
         </div>
         <Link href="/auth">
-          <Button className="px-12">Masuk sekarang</Button>
+          <Button size="lg" className="px-12">Masuk sekarang</Button>
         </Link>
       </div>
     );
@@ -184,7 +180,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-11 text-[14px] font-medium" disabled={isUpdating}>
+                      <Button size="lg" onClick={handleUpdateProfile} className="w-full" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>

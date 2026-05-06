@@ -4,42 +4,52 @@
 
 @layer base {
   :root {
-    /* Design Tokens - Based on Professional Reference */
+    /* Geist Design System Tokens */
     --geist-space: 4px;
     --geist-space-2x: 8px;
     --geist-space-3x: 12px;
     --geist-space-4x: 16px;
     --geist-space-6x: 24px;
     --geist-space-8x: 32px;
+    --geist-space-10x: 40px;
+    --geist-space-16x: 64px;
     --geist-space-gap: 24px;
     --geist-page-width: 1200px;
-    --geist-radius: 8px;
+    --geist-radius: 6px;
+    --geist-marketing-radius: 8px;
 
-    /* Professional Shadow System */
-    --ds-shadow-border: 0 0 0 1px rgba(0,0,0,0.08);
+    /* Shadow System */
+    --ds-shadow-border-base: 0 0 0 1px rgba(0,0,0,0.08);
     --ds-shadow-small: 0px 2px 4px rgba(0,0,0,0.05);
+    --ds-shadow-border: var(--ds-shadow-border-base), var(--ds-shadow-small);
 
     /* Theme Colors */
     --background: 0 0% 100%;
-    --foreground: 205 19% 26%;
+    --foreground: 205 19% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 205 19% 26%;
+    --card-foreground: 205 19% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 205 19% 26%;
-    --primary: 205 19% 26%;
-    --primary-foreground: 0 0% 98%;
+    --popover-foreground: 205 19% 9%;
+    --primary: 205 19% 9%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
-    --secondary-foreground: 205 19% 26%;
+    --secondary-foreground: 205 19% 9%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
-    --accent: 205 19% 26%;
+    --accent: 205 19% 9%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 92%;
     --input: 0 0% 92%;
-    --ring: 205 19% 26%;
-    --radius: 0.5rem;
+    --ring: 205 19% 9%;
+    --radius: 8px;
+
+    /* Geist Specific Colors */
+    --ds-gray-100: #fafafa;
+    --ds-gray-200: #eaeaea;
+    --ds-gray-400: #999;
+    --ds-gray-1000: #000;
   }
 }
 
@@ -54,9 +64,11 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     line-height: 1.6;
+    font-feature-settings: "liga" 1;
   }
   h1, h2, h3, h4 {
     @apply font-headline font-semibold tracking-tight text-primary;
+    font-synthesis: none;
   }
 }
 
@@ -68,7 +80,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .prose-measure {
-    max-width: 65ch;
+  .shadow-border {
+    box-shadow: var(--ds-shadow-border);
   }
 }

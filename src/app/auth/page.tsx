@@ -12,10 +12,6 @@ import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react"
 import Image from "next/image";
 import { formatCasing } from "@/lib/casing";
 
-/**
- * Halaman Autentikasi PatureNews.
- * Mengadopsi standar desain profesional dengan fokus pada kejernihan dan ritme visual.
- */
 export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -76,9 +72,9 @@ export default function AuthPage() {
       </div>
       <div className="flex flex-col lg:col-span-7 p-8 sm:p-10 justify-center bg-white">
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary/5 p-1 rounded-lg shadow-none border-none">
-            <TabsTrigger value="login" className="py-2.5 text-[13px] font-semibold">Masuk</TabsTrigger>
-            <TabsTrigger value="register" className="py-2.5 text-[13px] font-semibold">Daftar</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary/5 p-1 rounded-lg">
+            <TabsTrigger value="login" className="py-2.5 text-[13px] font-medium">Masuk</TabsTrigger>
+            <TabsTrigger value="register" className="py-2.5 text-[13px] font-medium">Daftar</TabsTrigger>
           </TabsList>
           <TabsContent value="login" className="space-y-6 outline-none">
             <div className="space-y-2">
@@ -92,7 +88,7 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-12 text-base font-medium shadow-none" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
+            <Button size="lg" className="w-full" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
           </TabsContent>
           <TabsContent value="register" className="space-y-6 outline-none">
             <div className="space-y-2">
@@ -106,7 +102,7 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-12 text-base font-medium shadow-none" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
+            <Button size="lg" className="w-full" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
           </TabsContent>
         </Tabs>
         <div className="flex items-center my-8 gap-3">
@@ -118,7 +114,7 @@ export default function AuthPage() {
         <Button 
           variant="outline" 
           onClick={handleGoogleSignIn}
-          className="w-full h-12 bg-white text-[#171717] rounded-lg shadow-[0_0_0_1px_rgb(235,235,235)] border-none text-base font-medium transition-all hover:bg-primary/5 hover:shadow-[0_0_0_1px_rgb(23,23,23)]"
+          className="w-full h-[48px] bg-[#f4f4f4] text-[#171717] rounded-[8px] shadow-[0_0_0_1px_rgb(235,235,235)] border-none text-[16px] font-medium transition-all hover:bg-black/5"
           style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
         >
           Masuk dengan Google
