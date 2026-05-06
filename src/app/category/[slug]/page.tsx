@@ -6,7 +6,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { POSTS_BY_CATEGORY_QUERY, CATEGORY_DETAIL_QUERY, CATEGORIES_QUERY } from "@/sanity/lib/queries";
 import { Container } from "@/components/wrapped/Layout";
-import { Title, Heading, BodyText, MutedText, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
+import { Title, Heading, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Clock, ArrowRight, RefreshCw, Inbox, ChevronDown, Home } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Clock, ArrowRight, RefreshCw, Inbox, ChevronDown, Home, Calendar, Type, TrendingUp, ArrowUp, ArrowDown } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import { formatCasing } from "@/lib/casing";
@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/carousel";
 import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
 import Autoplay from "embla-carousel-autoplay";
+import { cn } from "@/lib/utils";
 
 const AnimatedEmptyState = ({ 
   message, 
@@ -106,13 +107,20 @@ const AnimatedEmptyState = ({
 export default function CategoryPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const slug = params?.slug as string;
-  const topic = searchParams.get("topic");
+  const activeTopic = searchParams.get("topic");
   
   const [category, setCategory] = useState<any>(null);
   const [allCategories, setAllCategories] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Sorting states
+  const [sortBy, setSortBy] = useState<'time' | 'year' | 'popularity' | 'alphabet'>('time');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedLetter, setSelectedLetter] = useState<string>("");
 
   useEffect(() => {
     if (!slug) return;
@@ -127,17 +135,8 @@ export default function CategoryPage() {
         ]);
         
         setCategory(catData);
+        setPosts(postsData || []);
         setAllCategories(allCats || []);
-        
-        if (topic) {
-          const filtered = (postsData || []).filter((post: any) => 
-            post.title.toLowerCase().includes(topic.toLowerCase()) || 
-            post.excerpt.toLowerCase().includes(topic.toLowerCase())
-          );
-          setPosts(filtered);
-        } else {
-          setPosts(postsData || []);
-        }
       } catch (error) {
         console.error("Failed to fetch category data:", error);
       } finally {
@@ -146,18 +145,73 @@ export default function CategoryPage() {
     };
 
     fetchData();
-  }, [slug, topic]);
+  }, [slug]);
 
+  // Derived data
   const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
+  
+  const availableYears = useMemo(() => {
+    const years = posts.map(p => new Date(p.publishedAt).getFullYear().toString());
+    return Array.from(new Set(years)).sort((a, b) => b.localeCompare(a));
+  }, [posts]);
+
+  const availableLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  const filteredAndSortedPosts = useMemo(() => {
+    let result = [...posts];
+
+    // Filter by topic if active
+    if (activeTopic) {
+      result = result.filter(post => 
+        post.title.toLowerCase().includes(activeTopic.toLowerCase()) || 
+        (post.excerpt && post.excerpt.toLowerCase().includes(activeTopic.toLowerCase()))
+      );
+    }
+
+    // Filter by year if chosen
+    if (sortBy === 'year' && selectedYear) {
+      result = result.filter(p => new Date(p.publishedAt).getFullYear().toString() === selectedYear);
+    }
+
+    // Filter by alphabet if chosen
+    if (sortBy === 'alphabet' && selectedLetter) {
+      result = result.filter(p => p.title.startsWith(selectedLetter));
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      if (sortBy === 'time') {
+        const dateA = new Date(a.publishedAt).getTime();
+        const dateB = new Date(b.publishedAt).getTime();
+        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      }
+      if (sortBy === 'alphabet') {
+        return sortOrder === 'desc' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title);
+      }
+      if (sortBy === 'popularity') {
+        // Mock popularity for now
+        return sortOrder === 'desc' ? b.title.length - a.title.length : a.title.length - b.title.length;
+      }
+      return 0;
+    });
+
+    return result;
+  }, [posts, activeTopic, sortBy, sortOrder, selectedYear, selectedLetter]);
 
   const groupedByTopic = useMemo(() => {
     if (!category?.subCategories || !posts) return [];
     
+    // Filter posts from last 7 days for sliders
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
     return category.subCategories.map((topicName: string) => {
-      const filtered = posts.filter(post => 
-        post.title.toLowerCase().includes(topicName.toLowerCase()) || 
-        (post.excerpt && post.excerpt.toLowerCase().includes(topicName.toLowerCase()))
-      );
+      const filtered = posts.filter(post => {
+        const isMatch = post.title.toLowerCase().includes(topicName.toLowerCase()) || 
+          (post.excerpt && post.excerpt.toLowerCase().includes(topicName.toLowerCase()));
+        const isRecent = new Date(post.publishedAt) >= sevenDaysAgo;
+        return isMatch && isRecent;
+      });
       return { name: topicName, posts: filtered };
     }).filter((group: any) => group.posts.length > 0);
   }, [category, posts]);
@@ -183,33 +237,167 @@ export default function CategoryPage() {
     );
   }
 
+  // Topic View
+  if (activeTopic) {
+    return (
+      <Container className="space-y-8 pt-6">
+        <header className="space-y-2">
+          <Link href={`/category/${slug}`} className="text-[10px] font-bold text-primary/40 hover:text-primary transition-all flex items-center gap-2 uppercase tracking-tight">
+            <Home className="h-3 w-3" /> Kembali ke {category.title}
+          </Link>
+          <Title className="text-3xl">{formatCasing(activeTopic, 'sentence')}</Title>
+          <TypographyMuted casing="sentence">Eksplorasi mendalam untuk topik {activeTopic.toLowerCase()}.</TypographyMuted>
+        </header>
+
+        {/* Sorting Tools */}
+        <div className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-white/40 border border-primary/5 backdrop-blur-sm">
+          <div className="flex flex-col gap-2">
+            <TypographyLabel className="m-0" casing="sentence">Urutkan berdasarkan</TypographyLabel>
+            <div className="flex flex-wrap items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-white border-primary/10 gap-2 text-[12px] font-medium shadow-none">
+                    {sortBy === 'time' && <Clock className="h-3.5 w-3.5" />}
+                    {sortBy === 'year' && <Calendar className="h-3.5 w-3.5" />}
+                    {sortBy === 'alphabet' && <Type className="h-3.5 w-3.5" />}
+                    {sortBy === 'popularity' && <TrendingUp className="h-3.5 w-3.5" />}
+                    {sortBy === 'time' ? "Waktu upload" : sortBy === 'year' ? "Tahun" : sortBy === 'alphabet' ? "A-Z" : "Popularitas"}
+                    <ChevronDown className="h-3 w-3 opacity-40" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 p-2 rounded-xl bg-white/95 backdrop-blur-xl shadow-2xl border-primary/5">
+                  <DropdownMenuItem onClick={() => setSortBy('time')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                    <Clock className="h-3.5 w-3.5" /> Waktu upload
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSortBy('year')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                    <Calendar className="h-3.5 w-3.5" /> Tahun
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSortBy('alphabet')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                    <Type className="h-3.5 w-3.5" /> A-Z
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSortBy('popularity')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                    <TrendingUp className="h-3.5 w-3.5" /> Popularitas
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {sortBy === 'year' && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-none">
+                      {selectedYear || "Pilih tahun"} <ChevronDown className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-32 p-2 rounded-xl bg-white shadow-2xl border-primary/5">
+                    {availableYears.map(year => (
+                      <DropdownMenuItem key={year} onClick={() => setSelectedYear(year)} className="rounded-lg text-xs">
+                        {year}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {sortBy === 'alphabet' && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-none">
+                      {selectedLetter || "Huruf"} <ChevronDown className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-48 grid grid-cols-4 p-2 gap-1 rounded-xl bg-white shadow-2xl border-primary/5">
+                    {availableLetters.map(letter => (
+                      <DropdownMenuItem key={letter} onClick={() => setSelectedLetter(letter)} className="rounded-lg justify-center text-xs h-8">
+                        {letter}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-9 w-9 rounded-lg bg-primary/5 text-primary"
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              >
+                {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Results */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+          <AnimatePresence mode="popLayout">
+            {filteredAndSortedPosts.length > 0 ? (
+              filteredAndSortedPosts.map((post, idx) => (
+                <motion.div
+                  key={post._id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                    <Link href={`/news/${post.slug}`}>
+                      <div className="relative h-48 w-full overflow-hidden bg-muted">
+                        <Image 
+                          src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                    </Link>
+                    <CardContent className="p-5 flex-1 flex flex-col">
+                      <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock className="h-3 w-3 text-muted-foreground/50" />
+                          <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                        </div>
+                        <Link href={`/news/${post.slug}`}>
+                          <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                            {post.title}
+                          </h3>
+                        </Link>
+                      </div>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                        <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
+                        <ArrowRight className="h-3 w-3 text-primary" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full">
+                <AnimatedEmptyState message="Tidak ada berita yang sesuai dengan kriteria sortir Anda." />
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+      </Container>
+    );
+  }
+
+  // Category View
   return (
     <Container className="space-y-6 pt-2">
-      {/* Title Section - Rapat ke header */}
       <header className="pt-2">
         <div className="max-w-4xl">
           <TypographyMuted className="mb-1" casing="sentence">Arsip kategori</TypographyMuted>
-          <div className="flex items-baseline gap-4 mb-2">
-            <Title className="text-2xl md:text-3xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
-            {topic && (
-              <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold shadow-none">
-                Topik: {topic}
-              </Badge>
-            )}
-          </div>
+          <Title className="text-2xl md:text-3xl leading-none mb-2">{formatCasing(category.title, 'sentence')}</Title>
           <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl" casing="sentence">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
           </TypographyMuted>
         </div>
       </header>
 
-      {/* Hero & Trending Section - Jarak rapat dan profesional */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-2">
         {/* Left: Hero Carousel */}
         <div className="lg:col-span-8 space-y-4">
-          <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <TypographyLabel className="m-0 mt-0" casing="sentence">Unggulan</TypographyLabel>
-          </div>
+          <TypographyLabel className="m-0 mt-0" casing="sentence">Unggulan</TypographyLabel>
           {trendingPosts.length > 0 ? (
             <Carousel 
               opts={{ loop: true }} 
@@ -232,7 +420,7 @@ export default function CategoryPage() {
                           <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-3">
                             {formatCasing(post.categories?.[0] || category.title, 'sentence')}
                           </Badge>
-                          <h2 className="text-xl md:text-2xl font-headline font-semibold leading-tight mb-2 group-hero:text-white/90 transition-colors">
+                          <h2 className="text-xl md:text-2xl font-headline font-semibold leading-tight mb-2">
                             {post.title}
                           </h2>
                           <div className="flex items-center gap-4 text-[10px] font-bold text-white/60">
@@ -253,20 +441,14 @@ export default function CategoryPage() {
             </Carousel>
           ) : (
             <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10">
-              <AnimatedEmptyState 
-                message="Belum ada berita unggulan saat ini." 
-                allCategories={allCategories}
-                currentSlug={slug}
-              />
+              <AnimatedEmptyState message="Belum ada berita unggulan saat ini." />
             </div>
           )}
         </div>
 
         {/* Right: Trending List */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <TypographyLabel className="m-0 mt-0" casing="sentence">Terpopuler</TypographyLabel>
-          </div>
+          <TypographyLabel className="m-0 mt-0" casing="sentence">Terpopuler</TypographyLabel>
           <div className="pt-1">
             {trendingPosts.length > 0 ? (
               <RevealGroup className="space-y-5">
@@ -286,133 +468,73 @@ export default function CategoryPage() {
               </RevealGroup>
             ) : (
               <div className="py-20">
-                <AnimatedEmptyState 
-                  message="Belum ada berita terpopuler." 
-                  allCategories={allCategories}
-                  currentSlug={slug}
-                />
+                <AnimatedEmptyState message="Belum ada berita terpopuler." />
               </div>
             )}
           </div>
-          
-          <Link href="/latest" className="group mt-4 flex items-center justify-center p-3 border border-dashed border-primary/10 rounded-lg hover:bg-primary/5 transition-all text-[11px] font-bold text-primary/60 hover:text-primary tracking-widest">
-            <span>Arsip berita terbaru</span>
-            <ArrowRight className="h-3 w-3 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
         </div>
       </div>
 
-      {/* Deep Topic Exploration - Slider Horizontal */}
+      {/* Dynamic Sub-category Sliders */}
       <div className="pt-8 space-y-12">
-        {groupedByTopic.length > 0 && groupedByTopic.map((group: any, groupIdx: number) => (
-          <section key={`topic-group-${groupIdx}`} className="space-y-4">
-            <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-              <TypographyLabel className="m-0 mt-0" casing="sentence">Topik {group.name}</TypographyLabel>
-              <Link 
-                href={`/category/${slug}?topic=${encodeURIComponent(group.name)}`} 
-                className="text-[11px] font-bold text-primary/40 hover:text-primary transition-all tracking-tight uppercase"
+        {groupedByTopic.length > 0 ? (
+          groupedByTopic.map((group: any, groupIdx: number) => (
+            <section key={`topic-group-${groupIdx}`} className="space-y-4">
+              <div className="flex items-center justify-between border-b border-primary/5 pb-2">
+                <TypographyLabel className="m-0 mt-0" casing="sentence">Topik {group.name}</TypographyLabel>
+                <Link 
+                  href={`/category/${slug}?topic=${encodeURIComponent(group.name)}`} 
+                  className="text-[11px] font-bold text-primary/40 hover:text-primary transition-all tracking-tight uppercase"
+                >
+                  Lihat Semua
+                </Link>
+              </div>
+              
+              <Carousel 
+                opts={{ align: "start", loop: false }} 
+                className="w-full relative group"
               >
-                Lihat Semua
-              </Link>
-            </div>
-            
-            <Carousel 
-              opts={{ align: "start", loop: false }} 
-              className="w-full relative group"
-            >
-              <CarouselContent className="-ml-4">
-                {group.posts.map((post: any, idx: number) => (
-                  <CarouselItem key={`topic-post-${post._id}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                    <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
-                      <Link href={`/news/${post.slug}`}>
-                        <div className="relative h-48 w-full overflow-hidden bg-muted">
-                          <Image 
-                            src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
-                            alt={post.title}
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover/card:scale-105"
-                          />
-                        </div>
-                      </Link>
-                      <CardContent className="p-5 flex-1 flex flex-col">
-                        <div className="mb-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Clock className="h-3 w-3 text-muted-foreground/50" />
-                            <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                <CarouselContent className="-ml-4">
+                  {group.posts.map((post: any, idx: number) => (
+                    <CarouselItem key={`topic-post-${post._id}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                      <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                        <Link href={`/news/${post.slug}`}>
+                          <div className="relative h-48 w-full overflow-hidden bg-muted">
+                            <Image 
+                              src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
+                              alt={post.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                            />
                           </div>
-                          <Link href={`/news/${post.slug}`}>
-                            <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover/card:text-primary transition-colors line-clamp-2">
-                              {post.title}
-                            </h3>
-                          </Link>
-                        </div>
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                          <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              {group.posts.length > 3 && (
+                        </Link>
+                        <CardContent className="p-5 flex-1 flex flex-col">
+                          <div className="mb-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="h-3 w-3 text-muted-foreground/50" />
+                              <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                            </div>
+                            <Link href={`/news/${post.slug}`}>
+                              <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover/card:text-primary transition-colors line-clamp-2">
+                                {post.title}
+                              </h3>
+                            </Link>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                            <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
                 <div className="hidden lg:block">
                   <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
                   <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
                 </div>
-              )}
-            </Carousel>
-          </section>
-        ))}
-      </div>
-
-      {/* Archives Grid */}
-      <div className="pt-8 pb-20">
-        <div className="flex items-center justify-between border-b border-primary/5 pb-2 mb-6">
-          <Heading level={3} className="text-lg m-0 mt-0" casing="sentence">Arsip berita</Heading>
-        </div>
-        {posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.slice(5).map((post, idx) => (
-              <motion.div
-                key={post._id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-              >
-                <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
-                  <Link href={`/news/${post.slug}`}>
-                    <div className="relative h-48 w-full overflow-hidden bg-muted">
-                      <Image 
-                        src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                  </Link>
-                  <CardContent className="p-5 flex-1 flex flex-col">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="h-3 w-3 text-muted-foreground/50" />
-                        <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
-                      </div>
-                      <Link href={`/news/${post.slug}`}>
-                        <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                      </Link>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                      <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
-                      <Link href={`/news/${post.slug}`}>
-                        <ArrowRight className="h-3 w-3 text-primary hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+              </Carousel>
+            </section>
+          ))
         ) : (
           <div className="py-20 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
             <AnimatedEmptyState 
@@ -422,6 +544,53 @@ export default function CategoryPage() {
             />
           </div>
         )}
+      </div>
+
+      {/* Remaining Archives Grid */}
+      <div className="pt-8 pb-20">
+        <TypographyLabel className="mb-6" casing="sentence">Arsip berita lainnya</TypographyLabel>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.slice(5).map((post, idx) => (
+            <motion.div
+              key={post._id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                <Link href={`/news/${post.slug}`}>
+                  <div className="relative h-48 w-full overflow-hidden bg-muted">
+                    <Image 
+                      src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                </Link>
+                <CardContent className="p-5 flex-1 flex flex-col">
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-3 w-3 text-muted-foreground/50" />
+                      <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                    </div>
+                    <Link href={`/news/${post.slug}`}>
+                      <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                    </Link>
+                  </div>
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                    <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
+                    <Link href={`/news/${post.slug}`}>
+                      <ArrowRight className="h-3 w-3 text-primary hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </Container>
   );
