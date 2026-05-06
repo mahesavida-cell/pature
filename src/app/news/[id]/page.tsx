@@ -151,15 +151,15 @@ export default function NewsDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8">
           <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mb-8 group uppercase tracking-widest"><ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed</Link>
-          <header className="space-y-4 mb-10">
-            <TypographyMuted>{sanityPost.categories?.[0] || "Berita"}</TypographyMuted>
-            <TypographyH1 className="text-3xl md:text-5xl">{sanityPost.title}</TypographyH1>
+          <header className="mb-10">
+            <TypographyMuted className="mb-4">{sanityPost.categories?.[0] || "Berita"}</TypographyMuted>
+            <TypographyH1 className="mb-4">{sanityPost.title}</TypographyH1>
             <div className="flex items-center justify-between pt-6 border-t border-primary/5">
               <div className="flex items-center gap-3">
                 <Avatar size="lg"><AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">{sanityPost.author?.[0] || "A"}</AvatarFallback></Avatar>
                 <div>
                   <span className="block font-bold text-xs text-primary">{sanityPost.author}</span>
-                  <ReleaseDate date={sanityPost.publishedAt} className="text-[10px] font-bold opacity-60 uppercase tracking-wider" />
+                  <ReleaseDate date={sanityPost.publishedAt} className="text-[10px] font-medium opacity-60 uppercase tracking-wider" />
                 </div>
               </div>
               <div className="flex items-center gap-2"><ShareButton post={sanityPost} /><Button variant="outline" size="icon" className={cn("rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none", isSaved && "bg-primary text-white border-primary")} onClick={handleToggleBookmark}><Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} /></Button></div>
@@ -171,22 +171,20 @@ export default function NewsDetailPage() {
           </div>
 
           <article className="max-w-[65ch] mb-16">
-            <div className="space-y-0">
-              <PortableText 
-                value={sanityPost.body} 
-                components={{
-                  block: {
-                    normal: ({children}) => <TypographyP>{children}</TypographyP>,
-                    h2: ({children}) => <TypographyH2 className="mt-12 mb-6">{children}</TypographyH2>,
-                    h3: ({children}) => <TypographyH3 className="mt-10 mb-4">{children}</TypographyH3>,
-                    blockquote: ({children}) => <TypographyBlockquote>{children}</TypographyBlockquote>
-                  },
-                  list: {
-                    bullet: ({children}) => <TypographyList>{children}</TypographyList>
-                  }
-                }}
-              />
-            </div>
+            <PortableText 
+              value={sanityPost.body} 
+              components={{
+                block: {
+                  normal: ({children}) => <TypographyP>{children}</TypographyP>,
+                  h2: ({children}) => <TypographyH2 className="mt-8 mb-3">{children}</TypographyH2>,
+                  h3: ({children}) => <TypographyH3 className="mt-8 mb-3">{children}</TypographyH3>,
+                  blockquote: ({children}) => <TypographyBlockquote>{children}</TypographyBlockquote>
+                },
+                list: {
+                  bullet: ({children}) => <TypographyList>{children}</TypographyList>
+                }
+              }}
+            />
           </article>
 
           <section id="comments" className="mb-24 pt-16 border-t border-primary/5">
@@ -208,7 +206,7 @@ export default function NewsDetailPage() {
               {trendingPosts.map((trend: any) => (
                 <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
                   <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5"><Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" /></div>
-                  <div className="flex flex-col justify-center min-w-0"><TypographyMuted className="text-[8px] mb-1">{trend.categories?.[0] || "Berita"}</TypographyMuted><h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4></div>
+                  <div className="flex flex-col justify-center min-w-0"><TypographyMuted className="text-[11px] mb-1" casing="upper">{trend.categories?.[0] || "Berita"}</TypographyMuted><h4 className="font-body font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">{trend.title}</h4></div>
                 </Link>
               ))}
             </div>

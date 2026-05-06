@@ -85,7 +85,7 @@ const MarketWeatherBar = () => {
         <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
-            <TypographySmall className="font-bold text-primary">
+            <TypographySmall className="font-semibold text-primary">
               {currentTime || "--:--"} <span className="text-[9px] font-normal opacity-40">WIB</span>
             </TypographySmall>
           </div>
@@ -99,7 +99,7 @@ const MarketWeatherBar = () => {
               className="flex items-center gap-2"
             >
               <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-              <TypographySmall className="font-bold text-primary truncate">
+              <TypographySmall className="font-semibold text-primary truncate">
                 {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
               </TypographySmall>
             </motion.div>
@@ -119,7 +119,7 @@ const MarketWeatherBar = () => {
             {[...stocks, ...stocks, ...stocks].map((stock, idx) => (
               <div key={`stock-${idx}`} className="flex items-center gap-2">
                 <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">{stock.symbol}</span>
-                <span className="text-[10px] font-normal text-muted-foreground tracking-tight">{stock.price}</span>
+                <span className="text-[10px] font-medium text-muted-foreground tracking-tight">{stock.price}</span>
                 <div className={cn(
                   "flex items-center gap-0.5 text-[9px] font-bold",
                   stock.up ? "text-green-600" : "text-red-600"
@@ -266,7 +266,7 @@ export const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={formatCasing("Cari berita atau topik...", 'sentence')}
-                    className="pl-10 h-11 bg-white border-none shadow-none text-xs font-bold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
+                    className="pl-10 h-11 bg-white border-none shadow-none text-xs font-semibold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
@@ -282,8 +282,8 @@ export const Navbar = () => {
                             <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <TypographySmall className="text-primary/60 mb-0.5 font-bold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
-                            <TypographySmall className="font-headline font-bold leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
+                            <TypographySmall className="text-primary/60 mb-0.5 font-semibold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
+                            <TypographySmall className="font-body font-medium leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
                           </div>
                         </Link>
                       ))}
@@ -308,14 +308,14 @@ export const Navbar = () => {
                               <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <TypographySmall className="text-primary/60 mb-0.5 font-bold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
-                              <TypographySmall className="font-headline font-bold leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
+                              <TypographySmall className="text-primary/60 mb-0.5 font-semibold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
+                              <TypographySmall className="font-body font-medium leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
                             </div>
                           </Link>
                         ))}
                       </div>
                     ) : (
-                      <div className="py-10 text-center space-y-2 opacity-30"><TypographySmall className="font-bold">Tidak ditemukan hasil untuk "{searchQuery}"</TypographySmall><TypographySmall className="font-normal opacity-60">Coba gunakan kata kunci lain.</TypographySmall></div>
+                      <div className="py-10 text-center space-y-2 opacity-30"><TypographySmall className="font-semibold">Tidak ditemukan hasil untuk "{searchQuery}"</TypographySmall><TypographySmall className="font-normal opacity-60">Coba gunakan kata kunci lain.</TypographySmall></div>
                     )}
                   </div>
                 )}

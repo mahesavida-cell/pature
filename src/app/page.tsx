@@ -1,7 +1,6 @@
-
 "use client";
 
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText, TypographyH1, TypographyH2, TypographyH3, TypographyP, TypographyMuted, TypographyLarge, TypographySmall } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -105,7 +104,7 @@ const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <AlertDialogContent className="rounded-lg p-8 bg-white/95 backdrop-blur-xl border-none shadow-none">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline font-bold text-xl text-primary">Akses terbatas</AlertDialogTitle>
+            <AlertDialogTitle className="font-headline font-semibold text-xl text-primary">Akses terbatas</AlertDialogTitle>
             <AlertDialogDescription className="text-sm opacity-70 text-foreground">Silakan masuk terlebih dahulu untuk mengarsipkan berita.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8">
@@ -122,7 +121,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
   return (
     <Section className="mb-12">
       <div className="flex items-center justify-between mb-8 border-b border-primary/5 pb-6">
-        <Heading level={2}>{sectionTitle}</Heading>
+        <TypographyH2>{sectionTitle}</TypographyH2>
         <Link href={viewAllLink}>
           <Button variant="ghost" className="text-[10px] font-bold tracking-widest hover:underline px-4 transition-all uppercase">Lihat semua</Button>
         </Link>
@@ -133,7 +132,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
         </div>
       ) : posts.length === 0 ? (
         <div className="py-20 text-center bg-primary/5 rounded-xl border border-dashed border-primary/10">
-          <MutedText className="text-xs font-bold opacity-40">Belum ada konten untuk bagian ini.</MutedText>
+          <MutedText className="text-xs font-medium opacity-40">Belum ada konten untuk bagian ini.</MutedText>
         </div>
       ) : (
         <Carousel opts={{ align: "start", loop: posts.length > 3 }} className="w-full relative group">
@@ -154,12 +153,12 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                       <div className="mb-6">
                         <div className="flex items-center gap-2 mb-3">
                           <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                          <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
+                          <ReleaseDate date={post.publishedAt} className="text-[10px] font-medium text-muted-foreground tracking-tight" />
                         </div>
                         <Link href={`/news/${post.slug}`}>
-                          <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">{post.title}</h3>
+                          <h3 className="font-body font-medium text-lg leading-snug tracking-[-0.01em] group-hover/card:text-primary transition-colors line-clamp-2">{post.title}</h3>
                         </Link>
-                        <BodyText className="text-sm line-clamp-3 opacity-60">{post.excerpt}</BodyText>
+                        <TypographyP className="text-sm line-clamp-3 opacity-60 mt-3 !mb-0">{post.excerpt}</TypographyP>
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-6 border-t border-primary/5">
                         <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi PatureNews"}</span>
@@ -238,8 +237,10 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <Title className="group-hover:text-primary/80 transition-colors">{heroPost.title}</Title>
-                  <BodyText className="line-clamp-2 max-w-3xl">{heroPost.excerpt}</BodyText>
+                  <TypographyH1 className="group-hover:text-primary/80 transition-colors">{heroPost.title}</TypographyH1>
+                  <TypographyP className="line-clamp-2 max-w-3xl opacity-70">
+                    {heroPost.excerpt}
+                  </TypographyP>
                 </div>
               </Link>
               <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
@@ -253,16 +254,16 @@ export default function Home() {
               </div>
             </Reveal>
             <div className="lg:col-span-4 space-y-8">
-              <div className="flex items-center justify-between border-b border-primary/5 pb-5"><Heading level={3} className="text-lg">Trending</Heading></div>
+              <div className="flex items-center justify-between border-b border-primary/5 pb-5"><TypographyH3 className="text-lg">Trending</TypographyH3></div>
               <RevealGroup className="space-y-8">
                 {trendingPosts.length > 0 ? trendingPosts.map((story, idx) => (
                   <RevealItem key={story._id || `trending-${idx}`}>
                     <Link href={`/news/${story.slug}`} className="group flex gap-5 items-start">
-                      <span className="text-4xl font-headline font-bold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
+                      <span className="text-4xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
                       <div className="space-y-1.5 flex-1">
                         <Badge variant="secondary" className="px-2 py-0 h-auto text-[8px] font-bold bg-primary/5 text-primary border-none rounded-sm shadow-none tracking-tight uppercase">{story.categories?.[0] || "Berita"}</Badge>
-                        <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">{story.title}</h4>
-                        <ReleaseDate date={story.publishedAt} className="text-[9px] font-bold block" />
+                        <h4 className="font-body font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">{story.title}</h4>
+                        <ReleaseDate date={story.publishedAt} className="text-[9px] font-medium block opacity-40" />
                       </div>
                     </Link>
                   </RevealItem>
@@ -272,7 +273,7 @@ export default function Home() {
             </div>
           </div>
         </Section>
-      ) : <div className="py-32 text-center"><Heading level={2}>Selamat datang di PatureNews</Heading><BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini.</BodyText></div>}
+      ) : <div className="py-32 text-center"><TypographyH2>Selamat datang di PatureNews</TypographyH2><BodyText className="mt-4">Belum ada berita yang diterbitkan hari ini.</BodyText></div>}
 
       <NewsCarousel posts={curatedPosts} sectionTitle="Pilihan redaksi" viewAllLink="/editors-choice" isLoading={isSanityLoading} />
       <NewsCarousel posts={latestPosts} sectionTitle="Berita terbaru" viewAllLink="/latest" isLoading={isSanityLoading} />

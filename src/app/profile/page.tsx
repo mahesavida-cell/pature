@@ -93,7 +93,7 @@ export default function ProfilePage() {
           <TypographyP className="text-sm">Silakan masuk untuk mengakses profil Anda.</TypographyP>
         </div>
         <Link href="/auth">
-          <Button className="px-12 h-11">Masuk sekarang</Button>
+          <Button className="px-12 h-11 font-bold text-[10px] uppercase tracking-widest">Masuk sekarang</Button>
         </Link>
       </div>
     );
@@ -124,7 +124,7 @@ export default function ProfilePage() {
             <div className="flex justify-around items-center pt-8 border-t border-primary/5">
               <div className="text-center space-y-1">
                 <TypographyH3 className="border-none pb-0 leading-none">{bookmarks?.length || 0}</TypographyH3>
-                <TypographyMuted className="text-[9px] uppercase tracking-widest opacity-40">Arsip</TypographyMuted>
+                <TypographyMuted className="text-[10px] uppercase tracking-widest opacity-40">Arsip</TypographyMuted>
               </div>
               <Separator orientation="vertical" className="h-10 opacity-10" />
               <div className="text-center space-y-1">
@@ -133,7 +133,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive font-bold text-[10px] uppercase tracking-widest">
               <LogOut className="h-4 w-4 mr-2" /> Keluar dari akun
             </Button>
           </CardContent>
@@ -171,7 +171,7 @@ export default function ProfilePage() {
                           <Input 
                             value={displayName} 
                             onChange={(e) => setDisplayName(e.target.value)} 
-                            className="h-12 text-base font-semibold border-primary/10 bg-white/50" 
+                            className="h-12 text-base font-semibold border-primary/10 bg-white/50 tracking-tight" 
                             placeholder="Nama Anda..."
                           />
                         </div>
@@ -181,11 +181,11 @@ export default function ProfilePage() {
                             value={bio} 
                             onChange={(e) => setBio(e.target.value)} 
                             placeholder="Tulis sesuatu tentang Anda..." 
-                            className="min-h-[120px] text-base font-semibold border-primary/10 bg-white/50 leading-relaxed" 
+                            className="min-h-[120px] text-base font-semibold border-primary/10 bg-white/50 leading-relaxed tracking-tight" 
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold tracking-widest" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] uppercase tracking-widest" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>
