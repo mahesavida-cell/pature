@@ -1,19 +1,22 @@
+'use client';
+
 import { cn } from "@/lib/utils";
 import React from "react";
+import { formatCasing, type CasingType } from "@/lib/casing";
 
 interface TypographyProps {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  casing?: CasingType;
 }
 
 /**
- * PatureNews Typography Library
- * Pustaka komponen terpusat untuk konsistensi tipografi editorial.
- * Didesain stabil untuk mencegah hydration mismatch.
+ * PatureNews Typography Library (v2.0)
+ * Sekarang mendukung sistem casing otomatis (Sentence case, Title Case, UPPERCASE).
  */
 
-export const TypographyH1 = ({ children, className, id }: TypographyProps) => (
+export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h1
     id={id}
     className={cn(
@@ -21,11 +24,11 @@ export const TypographyH1 = ({ children, className, id }: TypographyProps) => (
       className
     )}
   >
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h1>
 );
 
-export const TypographyH2 = ({ children, className, id }: TypographyProps) => (
+export const TypographyH2 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h2
     id={id}
     className={cn(
@@ -33,11 +36,11 @@ export const TypographyH2 = ({ children, className, id }: TypographyProps) => (
       className
     )}
   >
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h2>
 );
 
-export const TypographyH3 = ({ children, className, id }: TypographyProps) => (
+export const TypographyH3 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h3
     id={id}
     className={cn(
@@ -45,11 +48,11 @@ export const TypographyH3 = ({ children, className, id }: TypographyProps) => (
       className
     )}
   >
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h3>
 );
 
-export const TypographyH4 = ({ children, className, id }: TypographyProps) => (
+export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
   <h4
     id={id}
     className={cn(
@@ -57,7 +60,7 @@ export const TypographyH4 = ({ children, className, id }: TypographyProps) => (
       className
     )}
   >
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </h4>
 );
 
@@ -106,28 +109,28 @@ export const TypographyLead = ({ children, className }: TypographyProps) => (
   </p>
 );
 
-export const TypographyLarge = ({ children, className }: TypographyProps) => (
+export const TypographyLarge = ({ children, className, casing = 'sentence' }: TypographyProps) => (
   <div className={cn("text-lg font-semibold font-headline text-primary", className)}>
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </div>
 );
 
-export const TypographySmall = ({ children, className }: TypographyProps) => (
+export const TypographySmall = ({ children, className, casing = 'sentence' }: TypographyProps) => (
   <small className={cn("text-sm font-medium leading-none font-body", className)}>
-    {children}
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </small>
 );
 
-export const TypographyMuted = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.05em] font-body", className)}>
-    {children}
+export const TypographyMuted = ({ children, className, casing = 'upper' }: TypographyProps) => (
+  <p className={cn("text-[10px] font-bold text-muted-foreground/60 tracking-[0.05em] font-body", className)}>
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
 );
 
-// Backward compatibility aliases for existing components
+// Backward compatibility aliases
 export const Title = TypographyH1;
 
-export const Heading = ({ children, className, level = 2 }: TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) => {
+export const Heading = ({ children, className, level = 2, casing = 'sentence' }: TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) => {
   const components = {
     1: TypographyH1,
     2: TypographyH2,
@@ -136,8 +139,8 @@ export const Heading = ({ children, className, level = 2 }: TypographyProps & { 
     5: TypographyLarge,
     6: TypographySmall,
   };
-  const Component = components[level] || TypographyH2;
-  return <Component className={className}>{children}</Component>;
+  const Component = (components[level] || TypographyH2) as any;
+  return <Component className={className} casing={casing}>{children}</Component>;
 };
 
 export const BodyText = ({ children, className }: TypographyProps) => (

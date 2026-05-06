@@ -1,11 +1,11 @@
-
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { Heading } from "@/components/wrapped/Typography";
+import { TypographyH4, TypographyMuted, BodyText } from "@/components/wrapped/Typography";
 import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { formatCasing } from "@/lib/casing";
 
 const XIcon = () => (
   <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -30,9 +30,9 @@ export const Footer = () => {
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
               <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-9 w-auto object-contain" />
             </Link>
-            <p className="text-sm max-w-md leading-relaxed text-muted-foreground/60 font-medium mt-2">
+            <BodyText className="text-sm max-w-md mt-2">
               PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
-            </p>
+            </BodyText>
             <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
               {[
                 { icon: <XIcon />, href: "#" },
@@ -45,23 +45,23 @@ export const Footer = () => {
             </div>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Kategori</Heading>
+            <TypographyMuted>KATEGORI</TypographyMuted>
             <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
-                <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-tighter">{item}</Link></li>
+                <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item, 'sentence')}</Link></li>
               ))}
             </ul>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Dukungan</Heading>
+            <TypographyMuted>DUKUNGAN</TypographyMuted>
             <ul className="space-y-2">
               {supportLinks.map((item) => (
-                <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all uppercase tracking-tighter">{item.name}</Link></li>
+                <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item.name, 'sentence')}</Link></li>
               ))}
             </ul>
           </div>
           <div className="lg:col-span-3 space-y-6">
-            <Heading level={4} className="text-xs font-bold opacity-40 tracking-widest uppercase">Hubungi kami</Heading>
+            <TypographyMuted>HUBUNGI KAMI</TypographyMuted>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">

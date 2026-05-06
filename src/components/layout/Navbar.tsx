@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { formatCasing } from "@/lib/casing";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,7 +81,7 @@ const MarketWeatherBar = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <span className="text-[10px] font-bold text-primary tracking-tight">
-              {currentTime || "--:--"} <span className="text-[9px] opacity-40 uppercase">Wib</span>
+              {currentTime || "--:--"} <span className="text-[9px] opacity-40">WIB</span>
             </span>
           </div>
           
@@ -212,13 +212,13 @@ export const Navbar = () => {
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-bold transition-all pb-2 group uppercase tracking-widest",
+                  "relative text-[11px] font-bold transition-all pb-2 group tracking-widest",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
                 )}
               >
-                {cat.title}
+                {formatCasing(cat.title, 'upper')}
                 {hoveredCategory?._id === cat._id && (
                   <motion.div
                     layoutId="activeCategoryUnderline"
@@ -267,7 +267,7 @@ export const Navbar = () => {
               <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
                 {!searchQuery && (
                   <div className="px-4 py-2 space-y-4">
-                    <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block px-1">Berita trending</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block px-1">BERITA TRENDING</span>
                     <div className="grid gap-4">
                       {trending.map((post) => (
                         <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
@@ -275,8 +275,8 @@ export const Navbar = () => {
                             <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
-                            <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{post.title}</h4>
+                            <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'upper')}</span>
+                            <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{formatCasing(post.title, 'sentence')}</h4>
                           </div>
                         </Link>
                       ))}
@@ -286,9 +286,9 @@ export const Navbar = () => {
                 {searchQuery && (
                   <div className="px-4 py-2 space-y-4">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block">Hasil pencarian</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/50 tracking-widest block">HASIL PENCARIAN</span>
                       {!isSearching && suggestions.length > 0 && (
-                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 uppercase tracking-tighter">Lihat semua <ArrowRight className="h-3 w-3" /></Link>
+                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 tracking-tighter">LIHAT SEMUA <ArrowRight className="h-3 w-3" /></Link>
                       )}
                     </div>
                     {isSearching ? (
@@ -301,8 +301,8 @@ export const Navbar = () => {
                               <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
-                              <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{post.title}</h4>
+                              <span className="text-[9px] font-bold text-primary/60 mb-0.5">{formatCasing(post.categories?.[0] || "Berita", 'upper')}</span>
+                              <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{formatCasing(post.title, 'sentence')}</h4>
                             </div>
                           </Link>
                         ))}
@@ -330,7 +330,7 @@ export const Navbar = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-none mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-widest">PUSAT AKUN</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all">
@@ -345,7 +345,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none uppercase tracking-widest">
+                <Button size="sm" variant="outline" className="font-bold text-[10px] px-8 h-10 rounded-lg bg-primary/5 border-none hover:bg-primary hover:text-white transition-all shadow-none tracking-widest">
                   Masuk
                 </Button>
               </Link>
@@ -358,10 +358,10 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
-              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 uppercase tracking-widest">{hoveredCategory ? `Topik ${hoveredCategory.title.toLowerCase()}:` : "Topik populer:"}</span>
+              <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-widest">{hoveredCategory ? formatCasing(`TOPIK ${hoveredCategory.title}:`, 'upper') : "TOPIK POPULER:"}</span>
               {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 uppercase tracking-tighter">
-                  <span className="whitespace-nowrap">{sub}</span>
+                <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
+                  <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
                   <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                 </Link>
               ))}
