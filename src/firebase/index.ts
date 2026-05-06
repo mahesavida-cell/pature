@@ -13,37 +13,40 @@ import {
 
 /**
  * Global cache to store initialized Firebase services.
- * This prevents re-initialization errors during HMR or multiple component mounts.
+ * Mencegah re-inisialisasi ganda yang sering menyebabkan crash pada Next.js HMR.
  */
-let cachedSdks: { firebaseApp: FirebaseApp | null; auth: Auth | null; firestore: Firestore | null } | null = null;
+let cachedSdks: { firebaseApp: FirebaseApp | null; auth: Auth | null; firestore: Firestore | null } = {
+  firebaseApp: null,
+  auth: null,
+  firestore: null
+};
 
 /**
  * Initializes or retrieves existing Firebase services in a safe, singleton manner.
- * Handles the "initializeFirestore() has already been called" constraint in Next.js.
+ * Didesain khusus untuk Spark Plan: Fokus pada eksekusi Client-Side.
  */
 export function initializeFirebase() {
-  // Support for SSR: Return null instances if called on the server
+  // SSR Guard: Jangan pernah menjalankan inisialisasi di server
   if (typeof window === 'undefined') {
     return { firebaseApp: null, auth: null, firestore: null };
   }
 
-  // Return cached instances if already initialized in this module execution
-  if (cachedSdks && cachedSdks.firebaseApp) return cachedSdks;
+  // Kembalikan cache jika sudah pernah diinisialisasi dalam sesi ini
+  if (cachedSdks.firebaseApp) return cachedSdks;
 
   try {
-    // Next.js App Router protection: check if an app already exists in the global registry
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
     let firestore: Firestore;
     try {
-      // Attempt to initialize Firestore with persistent offline cache.
+      // Inisialisasi dengan Persistence untuk akses offline (Zero-Collusion)
       firestore = initializeFirestore(app, {
         localCache: persistentLocalCache({
           tabManager: persistentMultipleTabManager()
         })
       });
     } catch (e: any) {
-      // Fallback: get the existing instance if initialization failed (e.g. already initialized)
+      // Fallback jika instansi sudah ada
       firestore = getFirestore(app);
     }
 
@@ -52,12 +55,12 @@ export function initializeFirebase() {
       auth: getAuth(app),
       firestore: firestore
     };
+    
+    return cachedSdks;
   } catch (err) {
-    console.error("Firebase Initialization Error:", err);
+    // Silent fail untuk menjaga stabilitas rendering utama
     return { firebaseApp: null, auth: null, firestore: null };
   }
-
-  return cachedSdks;
 }
 
 export * from './provider';

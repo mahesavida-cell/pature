@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Share2, ArrowLeft, Bookmark, TrendingUp, Heart, MessageSquare, Copy, RefreshCw } from "lucide-react";
+import { Share2, ArrowLeft, Bookmark, TrendingUp, Heart, MessageSquare, Copy, RefreshCw, AlertCircle } from "lucide-react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -136,6 +136,7 @@ export default function NewsDetailPage() {
   const [sanityPost, setSanityPost] = useState<any>(null);
   const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -143,25 +144,33 @@ export default function NewsDetailPage() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Sinkronisasi Cross-Stack: Fetching & Data Bridge
   useEffect(() => {
     const initPage = async () => {
       if (!params?.id) return;
       setIsLoading(true);
+      setFetchError(false);
       
-      const [editorial, trending] = await Promise.all([
-        fetchEditorialContent(params.id as string),
-        client.fetch(TRENDING_POSTS_QUERY)
-      ]);
+      try {
+        const [editorial, trending] = await Promise.all([
+          fetchEditorialContent(params.id as string),
+          client.fetch(TRENDING_POSTS_QUERY)
+        ]);
 
-      setSanityPost(editorial.data);
-      setTrendingPosts(trending || []);
-      setIsLoading(false);
+        if (!editorial.data) {
+          setFetchError(true);
+        } else {
+          setSanityPost(editorial.data);
+        }
+        setTrendingPosts(trending || []);
+      } catch (err) {
+        setFetchError(true);
+      } finally {
+        setIsLoading(false);
+      }
     };
     initPage();
   }, [params?.id]);
 
-  // Sinkronisasi Interaksi: Riwayat Bacaan
   useEffect(() => {
     if (user && db && params?.id && sanityPost) {
       const metadata = createSyncMetadata(sanityPost);
@@ -248,7 +257,23 @@ export default function NewsDetailPage() {
   };
 
   if (isLoading) return <div className="min-h-[400px] flex items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin opacity-20" /></div>;
-  if (!sanityPost) return <div className="text-center py-20"><TypographyH2>Berita tidak ditemukan</TypographyH2><Link href="/"><Button className="mt-6 uppercase tracking-widest">Kembali ke beranda</Button></Link></div>;
+
+  if (fetchError || !sanityPost) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 space-y-6">
+        <div className="h-16 w-16 bg-primary/5 rounded-full flex items-center justify-center text-primary/40">
+          <AlertCircle className="h-8 w-8" />
+        </div>
+        <div className="space-y-2">
+          <TypographyH2 className="m-0">Berita tidak ditemukan</TypographyH2>
+          <TypographyP className="text-sm opacity-60">Maaf, artikel yang Anda cari mungkin telah dihapus atau dipindahkan.</TypographyP>
+        </div>
+        <Link href="/">
+          <Button variant="outline" className="h-11 px-8 rounded-full font-bold text-[10px] tracking-widest uppercase">Kembali ke beranda</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">

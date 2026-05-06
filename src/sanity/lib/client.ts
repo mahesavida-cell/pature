@@ -1,20 +1,15 @@
 import { createClient } from 'next-sanity'
 
 /**
- * Konfigurasi Sanity Client untuk PatureNews.
- * Menggunakan useCdn: true untuk performa maksimal dan stabilitas akses publik.
- * Dilengkapi dengan kebijakan revalidasi data terpusat untuk Vercel Sustainability.
+ * Konfigurasi Sanity Client Teroptimasi (Public-Facing).
+ * Peran: Editorial truth provider.
+ * Strategi: useCdn=true untuk efisiensi biaya Spark plan & performa Edge.
  */
 export const client = createClient({
   projectId: "owl5t2fh",
   dataset: "production",
   apiVersion: "2024-01-01",
   useCdn: true, 
-  /**
-   * Caching Policy:
-   * Menjamin data tetap segar dengan revalidasi setiap 60 detik.
-   * perspective: 'published' memastikan Vercel Edge hanya mengambil data yang sudah diverifikasi.
-   */
   perspective: 'published',
   staleTime: 60 * 1000, 
 })
