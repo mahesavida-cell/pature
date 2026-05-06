@@ -10,15 +10,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, updateDocumentNonBlocking, setDocumentNonBlocking, useAuth } from "@/firebase";
-import { collection, doc, query, orderBy, limit } from "firebase/firestore";
+import { collection, doc, query, orderBy, limit, clearIndexedDbPersistence } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, LayoutDashboard, LogOut, ChevronRight, RefreshCw, Bookmark as BookmarkIcon, Clock } from "lucide-react";
+import { User, LayoutDashboard, LogOut, ChevronRight, RefreshCw, Bookmark as BookmarkIcon, Clock, Database, Trash2, ShieldAlert } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
+import { formatCasing } from "@/lib/casing";
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -29,6 +30,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const [activeTab, setActiveTab] = useState("editor");
   const [mounted, setMounted] = useState(false);
 
@@ -65,6 +67,20 @@ export default function ProfilePage() {
     }
     toast({ title: "Profil diperbarui", description: "Perubahan berhasil disimpan." });
     setTimeout(() => setIsUpdating(false), 500);
+  };
+
+  const handleClearCache = async () => {
+    if (!db) return;
+    setIsClearing(true);
+    try {
+      await clearIndexedDbPersistence(db);
+      toast({ title: "Pembersihan berhasil", description: "Cache berita lokal telah dihapus. Aplikasi akan memuat data segar." });
+      window.location.reload();
+    } catch (error) {
+      toast({ variant: "destructive", title: "Gagal membersihkan", description: "Terjadi kendala teknis saat membersihkan cache." });
+    } finally {
+      setIsClearing(false);
+    }
   };
 
   const handleSignOut = async () => { 
@@ -143,7 +159,8 @@ export default function ProfilePage() {
             {[
               { id: "editor", label: "Editor akun" },
               { id: "archived", label: "Berita diarsipkan" },
-              { id: "history", label: "Riwayat bacaan" }
+              { id: "history", label: "Riwayat bacaan" },
+              { id: "data", label: "Manajemen data" }
             ].map((tab) => (
               <TabsTrigger 
                 key={tab.id}
@@ -246,6 +263,66 @@ export default function ProfilePage() {
                       <TypographyMuted className="text-[10px] font-bold opacity-30 tracking-widest">Riwayat bacaan kosong</TypographyMuted>
                     </div>
                   )}
+                </motion.div>
+              </TabsContent>
+            )}
+
+            {activeTab === "data" && (
+              <TabsContent key="data" value="data" className="mt-0 focus-visible:ring-0 outline-none">
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                  <Card className="rounded-xl border-primary/5 bg-white/60 backdrop-blur-md shadow-none">
+                    <CardContent className="p-8 lg:p-12 space-y-12">
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4 text-primary">
+                          <Database className="h-5 w-5" />
+                          <TypographyH3 className="m-0">{formatCasing("Kebijakan cache & akses offline", 'sentence')}</TypographyH3>
+                        </div>
+                        <TypographyP className="text-sm opacity-70">
+                          {formatCasing("PatureNews menyimpan sebagian data berita secara lokal untuk memungkinkan pembaca mengakses arsip favorit saat luring. Anda memiliki kendali penuh atas data yang tersimpan di perangkat ini.", 'sentence')}
+                        </TypographyP>
+                      </div>
+
+                      <div className="space-y-8">
+                        <div className="p-6 rounded-xl border border-destructive/10 bg-destructive/5 space-y-4">
+                          <div className="flex items-center gap-3 text-destructive">
+                            <ShieldAlert className="h-4 w-4" />
+                            <span className="text-xs font-bold uppercase tracking-wider">{formatCasing("Zona pembersihan", 'sentence')}</span>
+                          </div>
+                          <div className="space-y-2">
+                            <TypographyLarge className="text-base">{formatCasing("Segarkan penyimpanan lokal", 'sentence')}</TypographyLarge>
+                            <TypographyMuted className="text-xs">
+                              {formatCasing("Tindakan ini akan menghapus cache berita lokal dan memaksa aplikasi untuk memuat ulang informasi terbaru dari server. Bookmark dan profil tetap aman di cloud.", 'sentence')}
+                            </TypographyMuted>
+                          </div>
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            className="h-10 px-6 gap-2 font-bold text-[11px] uppercase tracking-widest shadow-none"
+                            onClick={handleClearCache}
+                            disabled={isClearing}
+                          >
+                            {isClearing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                            {formatCasing("Bersihkan cache sekarang", 'sentence')}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="pt-8 border-t border-primary/5">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <TypographySmall className="font-bold opacity-40">{formatCasing("Status sinkronisasi", 'sentence')}</TypographySmall>
+                            <TypographyLarge className="text-sm text-green-600 flex items-center gap-2">
+                              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                              {formatCasing("Cloud terhubung", 'sentence')}
+                            </TypographyLarge>
+                          </div>
+                          <TypographyMuted className="text-[10px] font-bold text-right">
+                            {formatCasing("V1.2 - Hybrid Persistence Enabled", 'upper')}
+                          </TypographyMuted>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               </TabsContent>
             )}
