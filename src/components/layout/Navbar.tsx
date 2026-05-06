@@ -81,8 +81,8 @@ const MarketWeatherBar = () => {
 
   return (
     <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between overflow-hidden">
-        <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
+        <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4 overflow-visible">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <TypographySmall className="font-semibold text-primary">
@@ -90,20 +90,23 @@ const MarketWeatherBar = () => {
             </TypographySmall>
           </div>
           
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentCityIndex}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="flex items-center gap-2"
-            >
-              <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-              <TypographySmall className="font-semibold text-primary truncate">
-                {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
-              </TypographySmall>
-            </motion.div>
-          </AnimatePresence>
+          <div className="relative flex-1">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentCityIndex}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-2"
+              >
+                <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
+                <TypographySmall className="font-semibold text-primary truncate">
+                  {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
+                </TypographySmall>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="flex-1 relative flex items-center overflow-hidden">
@@ -176,7 +179,7 @@ export const Navbar = () => {
       client.fetch(SEARCH_SUGGESTIONS_QUERY, { searchTerm: `*${debouncedQuery}*` })
         .then((data) => {
           setSuggestions(data || []);
-          setIsSearching(false);
+          setIsSearching(false)
         })
         .catch(() => setIsSearching(false));
     } else {

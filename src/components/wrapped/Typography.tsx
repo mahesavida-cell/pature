@@ -111,19 +111,19 @@ export const TypographyLead = ({ children, className }: TypographyProps) => (
 );
 
 export const TypographyLarge = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <div className={cn("text-lg font-medium font-body text-primary tracking-[-0.01em]", className)}>
+  <div className={cn("text-lg font-medium font-body text-primary tracking-[-0.01em] leading-normal", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </div>
 );
 
 export const TypographySmall = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <small className={cn("text-sm font-normal leading-none font-body tracking-tight", className)}>
+  <small className={cn("text-sm font-normal leading-normal font-body tracking-tight", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </small>
 );
 
 export const TypographyMuted = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <p className={cn("text-sm font-normal text-muted-foreground tracking-wide font-body", className)}>
+  <p className={cn("text-sm font-normal text-muted-foreground tracking-wide font-body leading-relaxed", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
 );
