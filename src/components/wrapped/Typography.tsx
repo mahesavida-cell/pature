@@ -1,88 +1,145 @@
-
 import { cn } from "@/lib/utils";
 import React from "react";
 
-interface TextProps {
+interface TypographyProps {
   children: React.ReactNode;
   className?: string;
+  id?: string;
 }
 
 /**
- * Hero Title: Digunakan untuk berita utama atau headline halaman.
- * Ukuran: 32px (mobile) hingga 60px (desktop)
+ * PatureNews Typography Library
+ * Pustaka komponen terpusat untuk konsistensi tipografi editorial.
  */
-export const Title = ({ children, className }: TextProps) => (
-  <h1 className={cn(
-    "text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-headline font-bold text-primary",
-    "tracking-[-0.02em] leading-[1.15]",
-    className
-  )}>
+
+export const TypographyH1 = ({ children, className, id }: TypographyProps) => (
+  <h1
+    id={id}
+    className={cn(
+      "scroll-m-20 font-headline text-4xl font-bold tracking-tight lg:text-6xl text-primary leading-[1.1]",
+      className
+    )}
+  >
     {children}
   </h1>
 );
 
-type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+export const TypographyH2 = ({ children, className, id }: TypographyProps) => (
+  <h2
+    id={id}
+    className={cn(
+      "scroll-m-20 border-b border-primary/5 pb-2 font-headline text-3xl font-semibold tracking-tight first:mt-0 text-primary",
+      className
+    )}
+  >
+    {children}
+  </h2>
+);
 
-/**
- * Headings: Digunakan untuk sub-judul dalam konten.
- * Menggunakan skala editorial yang konsisten.
- */
-export const Heading = ({ children, className, level = 2 }: TextProps & { level?: HeadingLevel }) => {
-  const Tag = `h${level}` as any;
-  const sizes: Record<HeadingLevel, string> = {
-    1: "text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.2]",
-    2: "text-2xl md:text-3xl lg:text-4xl tracking-tight leading-[1.25]",
-    3: "text-xl md:text-2xl tracking-tight leading-[1.3]",
-    4: "text-lg md:text-xl tracking-tight leading-[1.3]",
-    5: "text-base md:text-lg tracking-tight leading-[1.4]",
-    6: "text-sm md:text-base tracking-tight leading-[1.4]",
+export const TypographyH3 = ({ children, className, id }: TypographyProps) => (
+  <h3
+    id={id}
+    className={cn(
+      "scroll-m-20 font-headline text-2xl font-semibold tracking-tight text-primary",
+      className
+    )}
+  >
+    {children}
+  </h3>
+);
+
+export const TypographyH4 = ({ children, className, id }: TypographyProps) => (
+  <h4
+    id={id}
+    className={cn(
+      "scroll-m-20 font-headline text-xl font-semibold tracking-tight text-primary",
+      className
+    )}
+  >
+    {children}
+  </h4>
+);
+
+export const TypographyP = ({ children, className }: TypographyProps) => (
+  <p
+    className={cn(
+      "font-body text-[18px] leading-7 [&:not(:first-child)]:mt-6 text-foreground/85 max-w-[65ch]",
+      className
+    )}
+  >
+    {children}
+  </p>
+);
+
+export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
+  <blockquote
+    className={cn(
+      "mt-6 border-l-4 border-primary/20 pl-6 italic text-xl text-foreground/70 font-body",
+      className
+    )}
+  >
+    {children}
+  </blockquote>
+);
+
+export const TypographyList = ({ children, className }: TypographyProps) => (
+  <ul className={cn("my-6 ml-6 list-disc [&>li]:mt-2 font-body text-[18px]", className)}>
+    {children}
+  </ul>
+);
+
+export const TypographyInlineCode = ({ children, className }: TypographyProps) => (
+  <code
+    className={cn(
+      "relative rounded bg-primary/5 px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-primary",
+      className
+    )}
+  >
+    {children}
+  </code>
+);
+
+export const TypographyLead = ({ children, className }: TypographyProps) => (
+  <p className={cn("text-xl text-muted-foreground font-body leading-relaxed", className)}>
+    {children}
+  </p>
+);
+
+export const TypographyLarge = ({ children, className }: TypographyProps) => (
+  <div className={cn("text-lg font-semibold font-headline text-primary", className)}>
+    {children}
+  </div>
+);
+
+export const TypographySmall = ({ children, className }: TypographyProps) => (
+  <small className={cn("text-sm font-medium leading-none font-body", className)}>
+    {children}
+  </small>
+);
+
+export const TypographyMuted = ({ children, className }: TypographyProps) => (
+  <p className={cn("text-xs font-bold text-muted-foreground/60 uppercase tracking-[0.05em] font-body", className)}>
+    {children}
+  </p>
+);
+
+// Backward compatibility aliases for existing components
+export const Title = TypographyH1;
+export const Heading = ({ children, className, level = 2 }: TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) => {
+  const components = {
+    1: TypographyH1,
+    2: TypographyH2,
+    3: TypographyH3,
+    4: TypographyH4,
+    5: TypographyLarge,
+    6: TypographySmall,
   };
-  return (
-    <Tag className={cn("font-headline font-bold text-primary", sizes[level], className)}>
-      {children}
-    </Tag>
-  );
+  const Component = components[level] || TypographyH2;
+  return <Component className={className}>{children}</Component>;
 };
-
-/**
- * UI Body Text: Digunakan untuk elemen UI umum, navigasi, dan deskripsi pendek.
- * Ukuran: 16px (1rem)
- */
-export const BodyText = ({ children, className }: TextProps) => (
-  <p className={cn(
-    "text-base leading-relaxed text-foreground/70 font-body font-medium",
-    className
-  )}>
+export const BodyText = ({ children, className }: TypographyProps) => (
+  <p className={cn("text-base leading-relaxed text-foreground/70 font-body", className)}>
     {children}
   </p>
 );
-
-/**
- * Editorial Article Text: Digunakan khusus untuk paragraf berita yang panjang.
- * Ukuran: 18px (1.125rem)
- * Line Height: 1.7 untuk kenyamanan baca maksimal.
- * Width: Dibatasi maksimal 65 karakter per baris.
- */
-export const TypographyP = ({ children, className }: TextProps) => (
-  <p className={cn(
-    "text-[18px] leading-[1.75] text-foreground/85 font-normal",
-    "max-w-[65ch] [&:not(:first-child)]:mt-6",
-    className
-  )}>
-    {children}
-  </p>
-);
-
-/**
- * Meta/Muted Text: Digunakan untuk tanggal, kategori, atau informasi sekunder.
- * Ukuran: 12-14px
- * Letter Spacing: Sedikit renggang untuk kejelasan di ukuran kecil.
- */
-export const MutedText = ({ children, className }: TextProps) => (
-  <span className={cn(
-    "text-xs md:text-sm font-body font-bold text-muted-foreground/60 uppercase tracking-[0.02em]",
-    className
-  )}>
-    {children}
-  </span>
-);
+export const MutedText = TypographyMuted;

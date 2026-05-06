@@ -1,12 +1,18 @@
-
 "use client";
 
-import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/wrapped/Typography";
+import { 
+  TypographyH1, 
+  TypographyH2, 
+  TypographyH3, 
+  TypographyP, 
+  TypographyMuted, 
+  TypographyBlockquote,
+  TypographyList
+} from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/wrapped/Card";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Share2, ArrowLeft, Bookmark, TrendingUp, Heart, MessageSquare, Copy, RefreshCw } from "lucide-react";
@@ -55,7 +61,7 @@ const CommentItem = ({ comment, depth = 0, user, onLike, onReply, replyToId, set
         <Avatar size="sm"><AvatarFallback className="text-[10px] font-bold bg-primary/5 text-primary">{comment.authorName?.[0] || "A"}</AvatarFallback></Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1"><span className="text-sm font-bold text-primary">{comment.authorName}</span><ReleaseDate date={comment.createdAt} className="text-[9px] text-muted-foreground" /></div>
-          <BodyText className="text-sm text-foreground/80 mb-3 font-medium">{comment.content}</BodyText>
+          <TypographyP className="text-sm text-foreground/80 mb-3 font-medium !mt-0">{comment.content}</TypographyP>
           <div className="flex items-center gap-4">
             <button onClick={() => onLike(comment.id, likes)} className={cn("flex items-center gap-1.5 text-[10px] font-bold", isLiked ? "text-red-500" : "text-muted-foreground hover:text-primary")}><Heart className={cn("h-3.5 w-3.5", isLiked && "fill-current")} /> {likes.length || ""} Suka</button>
             <button onClick={() => setReplyToId(replyToId === comment.id ? null : comment.id)} className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground hover:text-primary"><MessageSquare className="h-3.5 w-3.5" /> Balas</button>
@@ -137,7 +143,7 @@ export default function NewsDetailPage() {
   };
 
   if (isLoading) return <div className="min-h-[400px] flex items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin opacity-20" /></div>;
-  if (!sanityPost) return <div className="text-center py-20"><Heading level={2}>Berita tidak ditemukan</Heading><Link href="/"><Button className="mt-6 uppercase tracking-widest">Kembali ke beranda</Button></Link></div>;
+  if (!sanityPost) return <div className="text-center py-20"><TypographyH2>Berita tidak ditemukan</TypographyH2><Link href="/"><Button className="mt-6 uppercase tracking-widest">Kembali ke beranda</Button></Link></div>;
 
   return (
     <div className="space-y-12">
@@ -146,8 +152,8 @@ export default function NewsDetailPage() {
         <div className="lg:col-span-8">
           <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mb-8 group uppercase tracking-widest"><ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed</Link>
           <header className="space-y-4 mb-10">
-            <MutedText>{sanityPost.categories?.[0] || "Berita"}</MutedText>
-            <Title className="text-3xl md:text-5xl">{sanityPost.title}</Title>
+            <TypographyMuted>{sanityPost.categories?.[0] || "Berita"}</TypographyMuted>
+            <TypographyH1 className="text-3xl md:text-5xl">{sanityPost.title}</TypographyH1>
             <div className="flex items-center justify-between pt-6 border-t border-primary/5">
               <div className="flex items-center gap-3">
                 <Avatar size="lg"><AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">{sanityPost.author?.[0] || "A"}</AvatarFallback></Avatar>
@@ -164,16 +170,19 @@ export default function NewsDetailPage() {
             <Image src={sanityPost.mainImage ? urlFor(sanityPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={sanityPost.title} fill className="object-cover" priority />
           </div>
 
-          <article className="max-w-[65ch] mb-16 prose-measure">
-            <div className="space-y-6">
+          <article className="max-w-[65ch] mb-16">
+            <div className="space-y-0">
               <PortableText 
                 value={sanityPost.body} 
                 components={{
                   block: {
                     normal: ({children}) => <TypographyP>{children}</TypographyP>,
-                    h2: ({children}) => <Heading level={2} className="mt-12 mb-6">{children}</Heading>,
-                    h3: ({children}) => <Heading level={3} className="mt-10 mb-4">{children}</Heading>,
-                    blockquote: ({children}) => <blockquote className="border-l-4 border-primary/20 pl-6 italic my-8 text-xl text-foreground/70">{children}</blockquote>
+                    h2: ({children}) => <TypographyH2 className="mt-12 mb-6">{children}</TypographyH2>,
+                    h3: ({children}) => <TypographyH3 className="mt-10 mb-4">{children}</TypographyH3>,
+                    blockquote: ({children}) => <TypographyBlockquote>{children}</TypographyBlockquote>
+                  },
+                  list: {
+                    bullet: ({children}) => <TypographyList>{children}</TypographyList>
                   }
                 }}
               />
@@ -181,25 +190,25 @@ export default function NewsDetailPage() {
           </article>
 
           <section id="comments" className="mb-24 pt-16 border-t border-primary/5">
-            <div className="flex items-center gap-3 mb-10"><Heading level={3} className="text-xl">Diskusi komunitas</Heading><Badge className="bg-primary/5 text-primary border-none shadow-none">{firestoreComments?.length || 0}</Badge></div>
+            <div className="flex items-center gap-3 mb-10"><TypographyH3 className="text-xl">Diskusi komunitas</TypographyH3><Badge className="bg-primary/5 text-primary border-none shadow-none">{firestoreComments?.length || 0}</Badge></div>
             {user ? (
               <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4"><Textarea placeholder="Tulis pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5 shadow-none" /><div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest">Kirim komentar</Button></div></div>
             ) : (
-              <Card className="p-10 text-center bg-white/40 border-dashed border-primary/20 mb-12"><MutedText className="block mb-6 uppercase tracking-widest text-[10px] font-bold">Masuk untuk bergabung dalam diskusi</MutedText><Link href="/auth"><Button className="px-10 h-11 font-bold text-[10px] uppercase tracking-widest">Masuk sekarang</Button></Link></Card>
+              <div className="p-10 text-center bg-white/40 border-dashed border-primary/20 mb-12 rounded-xl"><TypographyMuted className="block mb-6 uppercase tracking-widest text-[10px] font-bold">Masuk untuk bergabung dalam diskusi</TypographyMuted><Link href="/auth"><Button className="px-10 h-11 font-bold text-[10px] uppercase tracking-widest">Masuk sekarang</Button></Link></div>
             )}
             <div className="space-y-8">
-              {threadedComments.length > 0 ? threadedComments.map((comment) => (<CommentItem key={comment.id} comment={comment} user={user} onLike={(id: string, current: string[]) => { if (!user || !db || !params?.id) return; const liked = current.includes(user.uid); updateDocumentNonBlocking(doc(db, "posts", params.id as string, "comments", id), { likes: liked ? current.filter(u => u !== user.uid) : [...current, user.uid] }); }} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />)) : <div className="py-20 text-center border-2 border-dashed border-primary/5 rounded-xl"><MutedText className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Belum ada diskusi</MutedText></div>}
+              {threadedComments.length > 0 ? threadedComments.map((comment) => (<CommentItem key={comment.id} comment={comment} user={user} onLike={(id: string, current: string[]) => { if (!user || !db || !params?.id) return; const liked = current.includes(user.uid); updateDocumentNonBlocking(doc(db, "posts", params.id as string, "comments", id), { likes: liked ? current.filter(u => u !== user.uid) : [...current, user.uid] }); }} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />)) : <div className="py-20 text-center border-2 border-dashed border-primary/5 rounded-xl"><TypographyMuted className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Belum ada diskusi</TypographyMuted></div>}
             </div>
           </section>
         </div>
         <aside className="lg:col-span-4 space-y-12">
           <section>
-            <div className="flex items-center gap-2 mb-6 border-b border-primary/5 pb-3"><TrendingUp className="h-4 w-4 text-primary" /><Heading level={3} className="text-lg">Sedang populer</Heading></div>
+            <div className="flex items-center gap-2 mb-6 border-b border-primary/5 pb-3"><TrendingUp className="h-4 w-4 text-primary" /><TypographyH3 className="text-lg">Sedang populer</TypographyH3></div>
             <div className="space-y-6">
               {trendingPosts.map((trend: any) => (
                 <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
                   <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5"><Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" /></div>
-                  <div className="flex flex-col justify-center min-w-0"><MutedText className="text-[8px] mb-1">{trend.categories?.[0] || "Berita"}</MutedText><h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4></div>
+                  <div className="flex flex-col justify-center min-w-0"><TypographyMuted className="text-[8px] mb-1">{trend.categories?.[0] || "Berita"}</TypographyMuted><h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4></div>
                 </Link>
               ))}
             </div>
