@@ -83,12 +83,14 @@ const AnimatedEmptyState = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl border border-primary/5" align="center">
-            <DropdownMenuLabel className="px-3 py-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">Kategori tersedia</DropdownMenuLabel>
+            <DropdownMenuLabel className="px-3 py-2 text-[11px] text-muted-foreground/40 font-bold tracking-tight">
+              {formatCasing("Kategori tersedia", 'sentence')}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-primary/5 mx-1" />
             {otherCategories.map((cat) => (
               <DropdownMenuItem 
                 key={cat._id} 
-                className="rounded-lg cursor-pointer py-2 px-3 text-xs font-semibold hover:bg-primary/5 transition-all"
+                className="rounded-lg cursor-pointer py-2 px-3 text-xs font-medium text-muted-foreground/80 hover:bg-primary/5 hover:text-primary transition-all"
                 onClick={() => router.push(`/category/${cat.slug}`)}
               >
                 {formatCasing(cat.title, 'sentence')}
@@ -175,7 +177,7 @@ export default function CategoryPage() {
       {/* Title Section */}
       <header className="pt-0">
         <div className="max-w-4xl">
-          <TypographyLabel className="mb-1" casing="sentence">Arsip kategori</TypographyLabel>
+          <TypographyMuted className="mb-1" casing="sentence">Arsip kategori</TypographyMuted>
           <div className="flex items-baseline gap-4 mb-2">
             <Title className="text-2xl md:text-3xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
@@ -240,7 +242,11 @@ export default function CategoryPage() {
             </Carousel>
           ) : (
             <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10">
-              <AnimatedEmptyState message="Belum ada berita unggulan saat ini." />
+              <AnimatedEmptyState 
+                message="Belum ada berita unggulan saat ini." 
+                allCategories={allCategories}
+                currentSlug={slug}
+              />
             </div>
           )}
         </div>
@@ -269,7 +275,11 @@ export default function CategoryPage() {
               </RevealGroup>
             ) : (
               <div className="py-20">
-                <AnimatedEmptyState message="Belum ada berita terpopuler." />
+                <AnimatedEmptyState 
+                  message="Belum ada berita terpopuler." 
+                  allCategories={allCategories}
+                  currentSlug={slug}
+                />
               </div>
             )}
           </div>
