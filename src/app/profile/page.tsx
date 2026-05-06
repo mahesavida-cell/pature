@@ -198,7 +198,7 @@ export default function ProfilePage() {
 
           <section className="lg:col-span-8">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="bg-transparent border-b border-primary/5 rounded-none w-full justify-start h-auto p-0 mb-10 space-x-12">
+              <TabsList className="bg-transparent border-b border-primary/5 rounded-none w-full justify-start h-auto p-0 mb-6 space-x-12">
                 <TabsTrigger value="editor" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-[10px] font-bold tracking-widest transition-all">Editor akun</TabsTrigger>
                 <TabsTrigger value="archived" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-[10px] font-bold tracking-widest transition-all">Berita diarsipkan</TabsTrigger>
                 <TabsTrigger value="history" className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-4 text-[10px] font-bold tracking-widest transition-all">Riwayat bacaan</TabsTrigger>
