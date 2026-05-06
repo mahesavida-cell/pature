@@ -239,7 +239,7 @@ export const Navbar = () => {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-primary/5 bg-white">
               <SheetHeader className="p-6 border-b border-primary/5 text-left">
-                <SheetTitle className="text-sm font-headline font-bold uppercase tracking-[0.2em] text-primary/40">Menu Navigasi</SheetTitle>
+                <SheetTitle className="text-sm font-headline font-bold uppercase tracking-[0.2em] text-primary/40">{formatCasing("Menu navigasi", 'sentence')}</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col h-full">
                 <div className="p-6 border-b border-primary/5 bg-primary/5">
@@ -256,7 +256,7 @@ export const Navbar = () => {
                 <div className="flex-1 overflow-y-auto py-4 px-6">
                   <div className="space-y-6">
                     <div>
-                      <TypographyLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest mb-4">Kategori Utama</TypographyLabel>
+                      <TypographyLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest mb-4">{formatCasing("Kategori utama", 'sentence')}</TypographyLabel>
                       <div className="grid gap-2">
                         {dynamicCategories.map((cat) => (
                           <Link 
@@ -278,11 +278,11 @@ export const Navbar = () => {
                     <DropdownMenuSeparator className="bg-primary/5" />
                     
                     <div>
-                      <TypographyLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest mb-4">Informasi & Bantuan</TypographyLabel>
+                      <TypographyLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest mb-4">{formatCasing("Informasi dan bantuan", 'sentence')}</TypographyLabel>
                       <div className="grid gap-4">
-                        <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">Tentang PatureNews</Link>
-                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">Kontak Redaksi</Link>
-                        <Link href="/membership" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">Layanan Membership</Link>
+                        <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Tentang PatureNews", 'sentence')}</Link>
+                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Kontak redaksi", 'sentence')}</Link>
+                        <Link href="/membership" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Layanan membership", 'sentence')}</Link>
                       </div>
                     </div>
                   </div>
@@ -296,12 +296,12 @@ export const Navbar = () => {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-primary truncate">{user.displayName || user.email}</p>
-                        <button onClick={handleSignOut} className="text-[10px] font-bold text-destructive uppercase tracking-wider">Keluar Akun</button>
+                        <button onClick={handleSignOut} className="text-[10px] font-bold text-destructive uppercase tracking-wider">{formatCasing("Keluar akun", 'sentence')}</button>
                       </div>
                     </div>
                   ) : (
                     <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button className="w-full h-11 font-bold text-[10px] tracking-widest uppercase shadow-none">Daftar / Masuk</Button>
+                      <Button className="w-full h-11 font-bold text-[10px] tracking-widest uppercase shadow-none">{formatCasing("Daftar atau masuk", 'sentence')}</Button>
                     </Link>
                   )}
                 </div>
@@ -393,7 +393,7 @@ export const Navbar = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="max-h-[300px] overflow-y-auto p-2"
                   >
-                    <div className="px-3 py-2 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Saran berita</div>
+                    <div className="px-3 py-2 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">{formatCasing("Saran berita", 'sentence')}</div>
                     {suggestions.map((post) => (
                       <Link 
                         key={post._id} 
@@ -436,7 +436,7 @@ export const Navbar = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border border-primary/5" align="end">
-                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal font-headline">Pusat akun</DropdownMenuLabel>
+                  <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-normal font-headline">{formatCasing("Pusat akun", 'sentence')}</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
                     <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold font-body hover:bg-primary/5 transition-all tracking-tight">
@@ -466,7 +466,7 @@ export const Navbar = () => {
                   >
                     <Sparkles className="h-3 sm:h-3.5 w-3 sm:w-3.5" />
                   </motion.div>
-                  Subscribe
+                  {formatCasing("Subscribe", 'sentence')}
                 </Button>
               </Link>
             )}
@@ -474,35 +474,42 @@ export const Navbar = () => {
         </div>
       </div>
       <MarketWeatherBar />
-      <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
-          {mounted && (
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={currentNavContext ? currentNavContext._id : "default"} 
-                initial={{ opacity: 0, y: -5 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: 5 }} 
-                transition={{ duration: 0.3 }} 
-                className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10"
-              >
-                <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased font-headline">
-                  {subLabel}
-                </span>
-                {subCategoriesToDisplay.map((sub: string, idx: number) => (
-                  <Link 
-                    key={`${sub}-${idx}`} 
-                    href={currentNavContext ? `/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
-                    className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
-                    style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
-                  >
-                    <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
-                    <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
-                  </Link>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          )}
+      
+      {/* Interactive Sub-Header Slide Section */}
+      <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md relative overflow-hidden" onMouseLeave={() => setHoveredCategory(null)}>
+        <div className="max-w-[1200px] mx-auto relative">
+          <div className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-4 sm:px-6 lg:px-8 h-12">
+            {mounted && (
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={currentNavContext ? currentNavContext._id : "default"} 
+                  initial={{ opacity: 0, x: -10 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  exit={{ opacity: 0, x: 10 }} 
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} 
+                  className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-16"
+                >
+                  <span className="hidden sm:inline text-[9px] font-bold text-muted-foreground mr-4 opacity-40 tracking-normal antialiased font-headline">
+                    {subLabel}
+                  </span>
+                  {subCategoriesToDisplay.map((sub: string, idx: number) => (
+                    <Link 
+                      key={`${sub}-${idx}`} 
+                      href={currentNavContext ? `/category/${currentNavContext.slug}?topic=${encodeURIComponent(sub)}` : "#"} 
+                      className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
+                      style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
+                    >
+                      <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
+                      <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
+                    </Link>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+          
+          {/* Subtle Visual Indicator for Sliding (Mobile) */}
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10" />
         </div>
       </div>
     </nav>
