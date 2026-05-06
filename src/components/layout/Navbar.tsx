@@ -77,12 +77,12 @@ const MarketWeatherBar = () => {
     };
   }, []);
 
-  if (!mounted) return <div className="h-10 border-b border-primary/5 bg-background/30" />;
+  if (!mounted) return <div className="h-10 border-b border-primary/5 bg-background" />;
 
   return (
-    <div className="border-b border-primary/5 bg-background/30 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
-        <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4 overflow-visible">
+    <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-10 flex items-center justify-between">
+        <div className="flex items-center gap-4 w-48 sm:w-80 shrink-0 border-r border-primary/5 mr-4">
           <div className="flex items-center gap-1.5 shrink-0">
             <Clock className="h-3 w-3 text-primary/40" />
             <TypographySmall className="font-semibold text-primary">
@@ -101,7 +101,7 @@ const MarketWeatherBar = () => {
                 className="flex items-center gap-2"
               >
                 <span className="text-primary/40">{cities[currentCityIndex].icon}</span>
-                <TypographySmall className="font-semibold text-primary truncate">
+                <TypographySmall className="font-semibold text-primary truncate leading-normal">
                   {cities[currentCityIndex].name} • {cities[currentCityIndex].temp}
                 </TypographySmall>
               </motion.div>
@@ -133,8 +133,8 @@ const MarketWeatherBar = () => {
               </div>
             ))}
           </motion.div>
-          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background to-transparent z-10" />
         </div>
       </div>
     </div>
@@ -203,26 +203,26 @@ export const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background border-b border-primary/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 shrink-0">
             <Image 
               src="/pature_news.png" 
               alt="Logo PatureNews" 
-              width={140} 
-              height={40} 
-              className="h-7 w-auto sm:h-8 object-contain"
+              width={130} 
+              height={36} 
+              className="h-7 w-auto object-contain"
               priority
             />
           </Link>
           
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-8">
             {dynamicCategories?.map((cat) => (
               <button 
                 key={cat._id} 
                 onMouseEnter={() => setHoveredCategory(cat)}
                 className={cn(
-                  "relative text-[11px] font-semibold transition-all pb-2 group tracking-widest",
+                  "relative text-[11px] font-semibold transition-all py-5 tracking-widest",
                   hoveredCategory?._id === cat._id 
                     ? "text-primary" 
                     : "text-muted-foreground/60 hover:text-primary"
@@ -232,7 +232,7 @@ export const Navbar = () => {
                 {hoveredCategory?._id === cat._id && (
                   <motion.div
                     layoutId="activeCategoryUnderline"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
                     transition={{ type: "spring", stiffness: 350, damping: 25 }}
                   />
                 )}
@@ -257,7 +257,7 @@ export const Navbar = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent 
-              className="w-screen sm:w-[400px] p-0 border border-primary/5 bg-white/95 backdrop-blur-xl shadow-none rounded-xl mt-3 overflow-hidden" 
+              className="w-screen sm:w-[400px] p-0 border border-primary/5 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl mt-3 overflow-hidden" 
               align="end"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
@@ -269,7 +269,7 @@ export const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={formatCasing("Cari berita atau topik...", 'sentence')}
-                    className="pl-10 h-11 bg-white border-none shadow-none text-xs font-semibold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
+                    className="pl-10 h-10 bg-white border-none shadow-none text-xs font-semibold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                   {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
                 </div>
@@ -277,7 +277,7 @@ export const Navbar = () => {
               <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
                 {!searchQuery && (
                   <div className="px-4 py-2 space-y-4">
-                    <TypographyMuted className="tracking-widest block px-1 uppercase" casing="upper">Berita trending</TypographyMuted>
+                    <TypographyMuted className="tracking-widest block px-1 uppercase text-[10px] font-bold opacity-40">Berita trending</TypographyMuted>
                     <div className="grid gap-4">
                       {trending.map((post) => (
                         <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
@@ -285,41 +285,12 @@ export const Navbar = () => {
                             <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <TypographySmall className="text-primary/60 mb-0.5 font-semibold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
-                            <TypographySmall className="font-body font-medium leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
+                            <TypographySmall className="text-primary/60 mb-0.5 font-bold uppercase tracking-wider text-[9px]">{post.categories?.[0] || "Berita"}</TypographySmall>
+                            <TypographySmall className="font-body font-semibold leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
                           </div>
                         </Link>
                       ))}
                     </div>
-                  </div>
-                )}
-                {searchQuery && (
-                  <div className="px-4 py-2 space-y-4">
-                    <div className="flex items-center justify-between px-1">
-                      <TypographyMuted className="tracking-widest block uppercase" casing="upper">Hasil pencarian</TypographyMuted>
-                      {!isSearching && suggestions.length > 0 && (
-                        <Link href={`/search?q=${searchQuery}`} onClick={() => setIsSearchOpen(false)} className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1 tracking-tighter uppercase">Lihat semua <ArrowRight className="h-3 w-3" /></Link>
-                      )}
-                    </div>
-                    {isSearching ? (
-                      <div className="py-10 flex flex-col items-center justify-center gap-3 opacity-30"><RefreshCw className="h-6 w-6 animate-spin" /><TypographyMuted casing="upper">Mencari...</TypographyMuted></div>
-                    ) : suggestions.length > 0 ? (
-                      <div className="grid gap-4">
-                        {suggestions.map((post) => (
-                          <Link key={post._id} href={`/news/${post.slug}`} onClick={() => setIsSearchOpen(false)} className="flex gap-4 group/item items-center">
-                            <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0">
-                              <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`} alt={post.title} fill className="object-cover group-item:scale-110 transition-transform duration-500" />
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                              <TypographySmall className="text-primary/60 mb-0.5 font-semibold uppercase tracking-wider" casing="upper">{post.categories?.[0] || "Berita"}</TypographySmall>
-                              <TypographySmall className="font-body font-medium leading-tight group-item:text-primary transition-colors line-clamp-1 tracking-tight">{post.title}</TypographySmall>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="py-10 text-center space-y-2 opacity-30"><TypographySmall className="font-semibold">Tidak ditemukan hasil untuk "{searchQuery}"</TypographySmall><TypographySmall className="font-normal opacity-60">Coba gunakan kata kunci lain.</TypographySmall></div>
-                    )}
                   </div>
                 )}
               </div>
@@ -333,22 +304,22 @@ export const Navbar = () => {
                   <button className="outline-none rounded-full transition-all group p-0.5">
                     <Avatar size="sm" className="border border-primary/5 group-hover:border-primary/20 transition-all duration-300">
                       <AvatarImage src={user.photoURL || ""} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold tracking-tight uppercase">
+                      <AvatarFallback className="bg-primary text-white text-[10px] font-bold tracking-tight uppercase">
                         {(user.displayName || user.email || "U")[0]}
                       </AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-none mt-3 border border-primary/5" align="end">
+                <DropdownMenuContent className="w-64 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl mt-3 border border-primary/5" align="end">
                   <DropdownMenuLabel className="px-4 py-3 text-[10px] text-muted-foreground/60 font-bold tracking-widest uppercase">Pusat akun</DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
                   <Link href="/profile">
-                    <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-bold hover:bg-primary/5 transition-all tracking-tight">
+                    <DropdownMenuItem className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-xs font-semibold hover:bg-primary/5 transition-all tracking-tight">
                       <User className="h-4 w-4 text-muted-foreground/60" /> <span>{formatCasing("Halaman profil", 'sentence')}</span>
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator className="bg-primary/5 mx-2" />
-                  <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-bold hover:bg-destructive/5 transition-all tracking-tight">
+                  <DropdownMenuItem onClick={handleSignOut} className="rounded-lg cursor-pointer py-3 px-4 gap-4 text-destructive text-xs font-semibold hover:bg-destructive/5 transition-all tracking-tight">
                     <LogOut className="h-4 w-4" /> <span>{formatCasing("Keluar dari akun", 'sentence')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -364,14 +335,16 @@ export const Navbar = () => {
         </div>
       </div>
       <MarketWeatherBar />
-      <div className="border-b border-primary/5 bg-background/50 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
+      <div className="border-b border-primary/5 bg-white/40 backdrop-blur-md relative" onMouseLeave={() => setHoveredCategory(null)}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
           {mounted ? (
             <AnimatePresence mode="wait">
               <motion.div key={hoveredCategory ? hoveredCategory._id : "default"} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.3 }} className="flex items-center gap-6 sm:gap-10 whitespace-nowrap pr-10">
-                <TypographyMuted className="hidden sm:inline text-muted-foreground mr-4 opacity-40 uppercase" casing="upper">{hoveredCategory ? `Topik ${hoveredCategory.title}:` : "Topik populer:"}</TypographyMuted>
+                <TypographyMuted className="hidden sm:inline text-muted-foreground mr-4 opacity-40 uppercase text-[9px] font-bold tracking-widest">
+                  {hoveredCategory ? `Topik ${hoveredCategory.title}:` : "Topik populer:"}
+                </TypographyMuted>
                 {(hoveredCategory?.subCategories || DEFAULT_TOPICS).map((sub: string, idx: number) => (
-                  <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tighter">
+                  <Link key={`${sub}-${idx}`} href="#" className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground/70 hover:text-primary transition-all flex items-center gap-2.5 group font-body py-2 tracking-tight">
                     <span className="whitespace-nowrap">{formatCasing(sub, 'sentence')}</span>
                     <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-primary transition-all shrink-0" />
                   </Link>
@@ -381,7 +354,7 @@ export const Navbar = () => {
           ) : (
             <div className="h-full flex items-center gap-10 opacity-20">
               {DEFAULT_TOPICS.slice(0, 5).map((topic, i) => (
-                <div key={i} className="text-[11px] font-bold">{topic}</div>
+                <div key={i} className="text-[11px] font-semibold">{topic}</div>
               ))}
             </div>
           )}

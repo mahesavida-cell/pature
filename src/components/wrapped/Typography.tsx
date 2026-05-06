@@ -12,9 +12,8 @@ interface TypographyProps {
 }
 
 /**
- * PatureNews Typography Library (Refined Pro Version)
- * Optimized for pairing Space Grotesk (Headline) and Inter (Body).
- * Focuses on vertical rhythm, optical balance, and readability.
+ * PatureNews Typography Library (Professional Reference System)
+ * Optimized for hierarchy, rhythm, and clarity.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
@@ -33,7 +32,7 @@ export const TypographyH2 = ({ children, className, id, casing = 'sentence' }: T
   <h2
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-tight text-primary",
+      "scroll-m-20 font-body text-2xl font-semibold leading-[1.25] tracking-[-0.01em] text-primary mt-8 mb-3",
       className
     )}
   >
@@ -45,7 +44,7 @@ export const TypographyH3 = ({ children, className, id, casing = 'sentence' }: T
   <h3
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-xl font-medium leading-[1.35] tracking-tight text-primary",
+      "scroll-m-20 font-body text-xl font-semibold leading-[1.35] tracking-[-0.01em] text-primary mt-6 mb-2",
       className
     )}
   >
@@ -57,7 +56,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
   <h4
     id={id}
     className={cn(
-      "scroll-m-20 font-body text-lg font-medium leading-[1.35] tracking-tight text-primary",
+      "scroll-m-20 font-body text-lg font-semibold leading-[1.4] tracking-[-0.01em] text-primary mt-4 mb-2",
       className
     )}
   >
@@ -68,7 +67,7 @@ export const TypographyH4 = ({ children, className, id, casing = 'sentence' }: T
 export const TypographyP = ({ children, className }: TypographyProps) => (
   <p
     className={cn(
-      "font-body text-[18px] font-normal leading-[1.75] tracking-normal text-foreground/85 max-w-[65ch] mb-5",
+      "font-body text-[18px] font-normal leading-[1.75] tracking-[0.01em] text-foreground/90 max-w-[65ch] mb-5",
       className
     )}
   >
@@ -79,7 +78,7 @@ export const TypographyP = ({ children, className }: TypographyProps) => (
 export const TypographyBlockquote = ({ children, className }: TypographyProps) => (
   <blockquote
     className={cn(
-      "mt-6 border-l-4 border-primary/20 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-tight mb-6",
+      "mt-6 border-l-2 border-primary/20 pl-6 italic text-xl font-light text-foreground/70 font-body tracking-normal mb-6",
       className
     )}
   >
@@ -96,7 +95,7 @@ export const TypographyList = ({ children, className }: TypographyProps) => (
 export const TypographyInlineCode = ({ children, className }: TypographyProps) => (
   <code
     className={cn(
-      "relative rounded bg-primary/5 px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-primary tracking-tighter",
+      "relative rounded bg-secondary px-[0.3rem] py-[0.2rem] font-mono text-sm font-normal text-primary tracking-tight",
       className
     )}
   >
@@ -111,13 +110,13 @@ export const TypographyLead = ({ children, className }: TypographyProps) => (
 );
 
 export const TypographyLarge = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <div className={cn("text-lg font-medium font-body text-primary tracking-[-0.01em] leading-normal", className)}>
+  <div className={cn("text-lg font-semibold font-body text-primary tracking-[-0.01em] leading-normal", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </div>
 );
 
 export const TypographySmall = ({ children, className, casing = 'sentence' }: TypographyProps) => (
-  <small className={cn("text-sm font-normal leading-normal font-body tracking-tight", className)}>
+  <small className={cn("text-sm font-normal leading-normal font-body tracking-normal", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </small>
 );
@@ -128,9 +127,8 @@ export const TypographyMuted = ({ children, className, casing = 'sentence' }: Ty
   </p>
 );
 
-// Backward compatibility aliases
+// Semantic Alises
 export const Title = TypographyH1;
-
 export const Heading = ({ children, className, level = 2, casing = 'sentence' }: TypographyProps & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) => {
   const components = {
     1: TypographyH1,
@@ -145,7 +143,7 @@ export const Heading = ({ children, className, level = 2, casing = 'sentence' }:
 };
 
 export const BodyText = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-base font-normal leading-relaxed text-foreground/70 font-body tracking-normal", className)}>
+  <p className={cn("text-base font-normal leading-relaxed text-foreground/80 font-body tracking-normal", className)}>
     {children}
   </p>
 );

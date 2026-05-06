@@ -1,4 +1,3 @@
-
 'use client';
 
 import { cn } from "@/lib/utils";
@@ -10,46 +9,44 @@ interface LayoutProps {
 }
 
 /**
- * PatureNews Layout Primitives
- * Library internal untuk standarisasi layout dan spacing.
+ * PatureNews Layout Primitives (Design System Compliant)
+ * Standardized spacing based on the 4px baseline.
  */
 
-// Container: Memastikan penyelarasan horizontal yang konsisten di seluruh app.
 export const Container = ({ children, className }: LayoutProps) => (
-  <div className={cn("mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full", className)}>
+  <div className={cn("mx-auto max-w-[1200px] px-6 lg:px-8 w-full", className)}>
     {children}
   </div>
 );
 
-// Section: Standarisasi jarak vertikal antar blok konten.
 export const Section = ({ children, className }: LayoutProps) => (
-  <section className={cn("py-12 md:py-16 lg:py-20", className)}>
+  <section className={cn("py-12 md:py-16 lg:py-24", className)}>
     {children}
   </section>
 );
 
-// Stack: Untuk vertical spacing yang konsisten antar elemen.
-export const Stack = ({ children, className }: LayoutProps & { space?: 'sm' | 'md' | 'lg' }) => {
+export const Stack = ({ children, className, space = 'md' }: LayoutProps & { space?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   const spaces = {
-    sm: "space-y-4",
-    md: "space-y-8",
-    lg: "space-y-12",
+    xs: "space-y-1", // 4px
+    sm: "space-y-4", // 16px
+    md: "space-y-6", // 24px
+    lg: "space-y-10", // 40px
+    xl: "space-y-16", // 64px
   };
   return (
-    <div className={cn(spaces[className as keyof typeof spaces] || "space-y-6", className)}>
+    <div className={cn(spaces[space], className)}>
       {children}
     </div>
   );
 };
 
-// PageHeader: Header khusus untuk halaman statis atau arsip.
 export const PageHeader = ({ title, description, className }: { title: string, description?: string, className?: string }) => (
   <div className={cn("mb-12 md:mb-16 space-y-4 max-w-3xl", className)}>
-    <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tight text-primary leading-tight">
+    <h1 className="font-headline text-4xl md:text-5xl font-semibold tracking-tight text-primary leading-[1.15]">
       {title}
     </h1>
     {description && (
-      <p className="text-xl text-muted-foreground font-body leading-relaxed">
+      <p className="text-xl text-muted-foreground font-body leading-relaxed tracking-tight">
         {description}
       </p>
     )}
