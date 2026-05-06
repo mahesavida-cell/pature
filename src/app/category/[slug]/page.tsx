@@ -48,7 +48,6 @@ const AnimatedEmptyState = ({
   allCategories?: any[];
   currentSlug?: string;
 }) => {
-  const router = useRouter();
   const otherCategories = allCategories.filter(cat => cat.slug !== currentSlug);
 
   return (
@@ -69,39 +68,45 @@ const AnimatedEmptyState = ({
           variant="outline" 
           size="sm" 
           className="h-10 px-6 rounded-lg text-[13px] font-medium border-primary/5 bg-white/40 shadow-none hover:bg-primary hover:text-white transition-all gap-2"
-          onClick={() => router.push('/')}
+          asChild
         >
-          <Home className="h-3.5 w-3.5" />
-          {formatCasing("Kembali ke beranda", 'sentence')}
+          <Link href="/">
+            <Home className="h-3.5 w-3.5" />
+            {formatCasing("Kembali ke beranda", 'sentence')}
+          </Link>
         </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="h-10 px-6 rounded-lg text-[13px] font-medium border-primary/5 bg-white/40 shadow-none hover:bg-primary hover:text-white transition-all gap-2"
-            >
-              {formatCasing("Pilih kategori lain", 'sentence')}
-              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl border border-primary/5" align="center">
-            <DropdownMenuLabel className="px-3 py-2 text-[11px] text-muted-foreground/40 font-bold tracking-tight">
-              {formatCasing("Kategori tersedia", 'sentence')}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-primary/5 mx-1" />
-            {otherCategories.map((cat) => (
-              <DropdownMenuItem 
-                key={cat._id} 
-                className="rounded-lg cursor-pointer py-2 px-3 text-xs font-medium text-muted-foreground/80 hover:bg-primary/5 hover:text-primary transition-all"
-                onClick={() => router.push(`/category/${cat.slug}`)}
+        {otherCategories.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-10 px-6 rounded-lg text-[13px] font-medium border-primary/5 bg-white/40 shadow-none hover:bg-primary hover:text-white transition-all gap-2"
               >
-                {formatCasing(cat.title, 'sentence')}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                {formatCasing("Pilih kategori lain", 'sentence')}
+                <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl border border-primary/5" align="center">
+              <DropdownMenuLabel className="px-3 py-2 text-[11px] text-muted-foreground/40 font-bold tracking-tight">
+                {formatCasing("Kategori tersedia", 'sentence')}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-primary/5 mx-1" />
+              {otherCategories.map((cat) => (
+                <DropdownMenuItem 
+                  key={cat._id} 
+                  className="rounded-lg cursor-pointer py-2 px-3 text-xs font-medium text-muted-foreground/80 hover:bg-primary/5 hover:text-primary transition-all"
+                  asChild
+                >
+                  <Link href={`/category/${cat.slug}`}>
+                    {formatCasing(cat.title, 'sentence')}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );
@@ -110,7 +115,6 @@ const AnimatedEmptyState = ({
 export default function CategoryPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const slug = params?.slug as string;
   const activeTopic = searchParams.get("topic");
   
@@ -378,7 +382,11 @@ export default function CategoryPage() {
               ))
             ) : (
               <div className="col-span-full">
-                <AnimatedEmptyState message="Tidak ada berita yang sesuai dengan kriteria sortir Anda." />
+                <AnimatedEmptyState 
+                  message="Tidak ada berita yang sesuai dengan kriteria sortir Anda." 
+                  allCategories={allCategories}
+                  currentSlug={slug}
+                />
               </div>
             )}
           </AnimatePresence>
@@ -448,7 +456,11 @@ export default function CategoryPage() {
             </Carousel>
           ) : (
             <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10">
-              <AnimatedEmptyState message="Belum ada berita unggulan saat ini." />
+              <AnimatedEmptyState 
+                message="Belum ada berita unggulan saat ini." 
+                allCategories={allCategories}
+                currentSlug={slug}
+              />
             </div>
           )}
         </div>
@@ -477,7 +489,11 @@ export default function CategoryPage() {
               </RevealGroup>
             ) : (
               <div className="py-20">
-                <AnimatedEmptyState message="Belum ada berita terpopuler." />
+                <AnimatedEmptyState 
+                  message="Belum ada berita terpopuler." 
+                  allCategories={allCategories}
+                  currentSlug={slug}
+                />
               </div>
             )}
           </div>
