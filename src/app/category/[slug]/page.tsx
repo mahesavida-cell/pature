@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -23,6 +24,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -66,8 +68,8 @@ export default function CategoryPage() {
     fetchData();
   }, [slug, topic]);
 
-  const heroPosts = useMemo(() => posts.slice(0, 5), [posts]);
-  const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]); 
+  // Sync Hero and Trending using the same data slice
+  const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
   const archivedPosts = useMemo(() => posts.slice(5), [posts]);
 
   if (isLoading) {
@@ -93,8 +95,8 @@ export default function CategoryPage() {
   }
 
   return (
-    <Container className="space-y-12">
-      {/* Title Section - Extremely tight spacing */}
+    <Container className="space-y-6">
+      {/* Title Section - Extremely tight spacing to header */}
       <header className="pt-2">
         <div className="max-w-4xl">
           <MutedText className="text-[10px] font-bold opacity-40 tracking-widest block mb-1" casing="sentence">Arsip kategori</MutedText>
@@ -114,16 +116,20 @@ export default function CategoryPage() {
 
       {/* Hero & Trending Section - Compact grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-0">
-        {/* Left: Hero Carousel */}
+        {/* Left: Hero Carousel (Synchronized with Trending) */}
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
             <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40 mt-0" casing="sentence">Unggulan</Heading>
           </div>
-          {heroPosts.length > 0 ? (
-            <Carousel opts={{ loop: true }} className="w-full relative group">
+          {trendingPosts.length > 0 ? (
+            <Carousel 
+              opts={{ loop: true }} 
+              plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]} 
+              className="w-full relative group"
+            >
               <CarouselContent>
-                {heroPosts.map((post) => (
-                  <CarouselItem key={post._id}>
+                {trendingPosts.map((post) => (
+                  <CarouselItem key={`hero-${post._id}`}>
                     <Link href={`/news/${post.slug}`} className="block group/hero">
                       <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 bg-muted">
                         <Image 
@@ -132,7 +138,7 @@ export default function CategoryPage() {
                           fill
                           className="object-cover transition-transform duration-1000 ease-out group-hero:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80" />
                         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                           <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-3">
                             {formatCasing(post.categories?.[0] || category.title, 'sentence')}
@@ -151,19 +157,19 @@ export default function CategoryPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="absolute right-4 bottom-4 flex gap-2">
+              <div className="absolute right-4 bottom-4 flex gap-2 z-10">
                 <CarouselPrevious className="relative translate-y-0 left-0 h-8 w-8 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
                 <CarouselNext className="relative translate-y-0 right-0 h-8 w-8 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
               </div>
             </Carousel>
           ) : (
             <div className="aspect-[16/9] bg-primary/5 rounded-xl border border-dashed border-primary/10 flex items-center justify-center">
-              <MutedText className="text-xs font-bold opacity-30">Belum ada berita utama</MutedText>
+              <MutedText className="text-xs font-bold opacity-30">Belum ada berita unggulan</MutedText>
             </div>
           )}
         </div>
 
-        {/* Right: Trending List */}
+        {/* Right: Trending List (Synchronized with Hero) */}
         <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
             <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40 mt-0" casing="sentence">Terpopuler</Heading>
@@ -182,7 +188,7 @@ export default function CategoryPage() {
                 </Link>
               </RevealItem>
             )) : (
-              <MutedText className="text-xs italic opacity-40">Belum ada berita trending.</MutedText>
+              <MutedText className="text-xs italic opacity-40">Belum ada berita populer.</MutedText>
             )}
           </RevealGroup>
           
