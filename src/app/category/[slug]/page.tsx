@@ -2,17 +2,26 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { client } from "@/sanity/lib/client";
-import { POSTS_BY_CATEGORY_QUERY, CATEGORY_DETAIL_QUERY } from "@/sanity/lib/queries";
+import { POSTS_BY_CATEGORY_QUERY, CATEGORY_DETAIL_QUERY, CATEGORIES_QUERY } from "@/sanity/lib/queries";
 import { Container } from "@/components/wrapped/Layout";
 import { Title, Heading, BodyText, MutedText, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, RefreshCw, Inbox } from "lucide-react";
+import { Clock, ArrowRight, RefreshCw, Inbox, ChevronDown, Home } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import { formatCasing } from "@/lib/casing";
@@ -26,18 +35,71 @@ import {
 import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
 import Autoplay from "embla-carousel-autoplay";
 
-const AnimatedEmptyState = ({ message }: { message: string }) => (
-  <div className="flex flex-col items-center justify-center py-12 gap-4 w-full h-full">
-    <motion.div
-      animate={{ y: [0, -8, 0] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      className="opacity-20"
-    >
-      <Inbox className="h-10 w-10 text-primary" />
-    </motion.div>
-    <TypographyMuted className="text-xs">{message}</TypographyMuted>
-  </div>
-);
+const AnimatedEmptyState = ({ 
+  message, 
+  allCategories = [], 
+  currentSlug 
+}: { 
+  message: string;
+  allCategories?: any[];
+  currentSlug?: string;
+}) => {
+  const router = useRouter();
+  const otherCategories = allCategories.filter(cat => cat.slug !== currentSlug);
+
+  return (
+    <div className="flex flex-col items-center justify-center py-16 gap-6 w-full h-full">
+      <motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        className="opacity-20"
+      >
+        <Inbox className="h-12 w-12 text-primary" />
+      </motion.div>
+      <div className="text-center space-y-2">
+        <TypographyMuted className="text-sm">{message}</TypographyMuted>
+      </div>
+      
+      <div className="flex flex-col sm:flex-row items-center gap-3 pt-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="h-10 px-6 rounded-lg text-[13px] font-medium border-primary/5 bg-white/40 shadow-none hover:bg-primary hover:text-white transition-all gap-2"
+          onClick={() => router.push('/')}
+        >
+          <Home className="h-3.5 w-3.5" />
+          {formatCasing("Kembali ke beranda", 'sentence')}
+        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-10 px-6 rounded-lg text-[13px] font-medium border-primary/5 bg-white/40 shadow-none hover:bg-primary hover:text-white transition-all gap-2"
+            >
+              {formatCasing("Pilih kategori lain", 'sentence')}
+              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 rounded-xl p-2 bg-white/95 backdrop-blur-xl shadow-2xl border border-primary/5" align="center">
+            <DropdownMenuLabel className="px-3 py-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">Kategori tersedia</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-primary/5 mx-1" />
+            {otherCategories.map((cat) => (
+              <DropdownMenuItem 
+                key={cat._id} 
+                className="rounded-lg cursor-pointer py-2 px-3 text-xs font-semibold hover:bg-primary/5 transition-all"
+                onClick={() => router.push(`/category/${cat.slug}`)}
+              >
+                {formatCasing(cat.title, 'sentence')}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+};
 
 export default function CategoryPage() {
   const params = useParams();
@@ -46,6 +108,7 @@ export default function CategoryPage() {
   const topic = searchParams.get("topic");
   
   const [category, setCategory] = useState<any>(null);
+  const [allCategories, setAllCategories] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,12 +118,14 @@ export default function CategoryPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [catData, postsData] = await Promise.all([
+        const [catData, postsData, allCats] = await Promise.all([
           client.fetch(CATEGORY_DETAIL_QUERY, { slug }),
-          client.fetch(POSTS_BY_CATEGORY_QUERY, { slug })
+          client.fetch(POSTS_BY_CATEGORY_QUERY, { slug }),
+          client.fetch(CATEGORIES_QUERY)
         ]);
         
         setCategory(catData);
+        setAllCategories(allCats || []);
         
         if (topic) {
           const filtered = (postsData || []).filter((post: any) => 
@@ -81,14 +146,13 @@ export default function CategoryPage() {
     fetchData();
   }, [slug, topic]);
 
-  // Sync Hero and Trending using the same data slice
   const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
   const archivedPosts = useMemo(() => posts.slice(5), [posts]);
 
   if (isLoading) {
     return (
       <Container className="py-20 text-center flex flex-col items-center gap-4">
-        <RefreshCw className="h-8 w-8 animate-spin opacity-20" />
+        <RefreshCw className="h-8 w-8 animate-spin opacity-20 text-primary" />
         <TypographyMuted className="text-xs">Memuat arsip berita...</TypographyMuted>
       </Container>
     );
@@ -96,13 +160,12 @@ export default function CategoryPage() {
 
   if (!category) {
     return (
-      <Container className="py-32 text-center">
-        <Title>Kategori tidak ditemukan</Title>
-        <Link href="/">
-          <button className="mt-8 text-sm font-medium underline underline-offset-4 hover:text-primary/60 transition-all">
-            Kembali ke beranda
-          </button>
-        </Link>
+      <Container className="py-32 flex flex-col items-center justify-center text-center">
+        <AnimatedEmptyState 
+          message="Maaf, kategori yang Anda cari tidak dapat ditemukan." 
+          allCategories={allCategories}
+          currentSlug={slug}
+        />
       </Container>
     );
   }
@@ -205,7 +268,9 @@ export default function CategoryPage() {
                 ))}
               </RevealGroup>
             ) : (
-              <AnimatedEmptyState message="Belum ada berita terpopuler." />
+              <div className="py-20">
+                <AnimatedEmptyState message="Belum ada berita terpopuler." />
+              </div>
             )}
           </div>
           
@@ -265,8 +330,12 @@ export default function CategoryPage() {
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
-            <AnimatedEmptyState message="Eksplorasi berita terbaru lainnya di halaman utama." />
+          <div className="py-20 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
+            <AnimatedEmptyState 
+              message="Eksplorasi berita terbaru lainnya di halaman utama." 
+              allCategories={allCategories}
+              currentSlug={slug}
+            />
           </div>
         )}
       </div>
