@@ -147,7 +147,7 @@ export default function CategoryPage() {
     fetchData();
   }, [slug]);
 
-  // Derived data
+  // Derived data for Hero/Trending
   const trendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
   
   const availableYears = useMemo(() => {
@@ -175,7 +175,7 @@ export default function CategoryPage() {
 
     // Filter by alphabet if chosen
     if (sortBy === 'alphabet' && selectedLetter) {
-      result = result.filter(p => p.title.startsWith(selectedLetter));
+      result = result.filter(p => p.title.toLowerCase().startsWith(selectedLetter.toLowerCase()));
     }
 
     // Sort
@@ -189,7 +189,7 @@ export default function CategoryPage() {
         return sortOrder === 'desc' ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title);
       }
       if (sortBy === 'popularity') {
-        // Mock popularity for now
+        // Mock popularity based on text length for now as we don't have views count
         return sortOrder === 'desc' ? b.title.length - a.title.length : a.title.length - b.title.length;
       }
       return 0;
@@ -237,26 +237,26 @@ export default function CategoryPage() {
     );
   }
 
-  // Topic View
+  // Topic View (Detailed Explorer)
   if (activeTopic) {
     return (
-      <Container className="space-y-8 pt-6">
+      <Container className="space-y-6 pt-6">
         <header className="space-y-2">
           <Link href={`/category/${slug}`} className="text-[10px] font-bold text-primary/40 hover:text-primary transition-all flex items-center gap-2 uppercase tracking-tight">
             <Home className="h-3 w-3" /> Kembali ke {category.title}
           </Link>
-          <Title className="text-3xl">{formatCasing(activeTopic, 'sentence')}</Title>
+          <Title className="text-2xl md:text-3xl">{formatCasing(activeTopic, 'sentence')}</Title>
           <TypographyMuted casing="sentence">Eksplorasi mendalam untuk topik {activeTopic.toLowerCase()}.</TypographyMuted>
         </header>
 
-        {/* Sorting Tools */}
-        <div className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-white/40 border border-primary/5 backdrop-blur-sm">
+        {/* Sorting Tools - Professional Auth Style */}
+        <div className="flex flex-wrap items-center gap-6 p-5 rounded-xl bg-white/40 border border-primary/5 backdrop-blur-sm">
           <div className="flex flex-col gap-2">
             <TypographyLabel className="m-0" casing="sentence">Urutkan berdasarkan</TypographyLabel>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-white border-primary/10 gap-2 text-[12px] font-medium shadow-none">
+                  <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg bg-white border-primary/10 gap-2 text-[12px] font-semibold shadow-none">
                     {sortBy === 'time' && <Clock className="h-3.5 w-3.5" />}
                     {sortBy === 'year' && <Calendar className="h-3.5 w-3.5" />}
                     {sortBy === 'alphabet' && <Type className="h-3.5 w-3.5" />}
@@ -266,16 +266,16 @@ export default function CategoryPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48 p-2 rounded-xl bg-white/95 backdrop-blur-xl shadow-2xl border-primary/5">
-                  <DropdownMenuItem onClick={() => setSortBy('time')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                  <DropdownMenuItem onClick={() => setSortBy('time')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium">
                     <Clock className="h-3.5 w-3.5" /> Waktu upload
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSortBy('year')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                  <DropdownMenuItem onClick={() => setSortBy('year')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium">
                     <Calendar className="h-3.5 w-3.5" /> Tahun
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSortBy('alphabet')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                  <DropdownMenuItem onClick={() => setSortBy('alphabet')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium">
                     <Type className="h-3.5 w-3.5" /> A-Z
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSortBy('popularity')} className="rounded-lg gap-2 text-xs py-2 px-3">
+                  <DropdownMenuItem onClick={() => setSortBy('popularity')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium">
                     <TrendingUp className="h-3.5 w-3.5" /> Popularitas
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -284,13 +284,13 @@ export default function CategoryPage() {
               {sortBy === 'year' && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-none">
+                    <Button size="sm" className="h-10 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-md">
                       {selectedYear || "Pilih tahun"} <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-32 p-2 rounded-xl bg-white shadow-2xl border-primary/5">
                     {availableYears.map(year => (
-                      <DropdownMenuItem key={year} onClick={() => setSelectedYear(year)} className="rounded-lg text-xs">
+                      <DropdownMenuItem key={year} onClick={() => setSelectedYear(year)} className="rounded-lg text-xs font-medium py-2">
                         {year}
                       </DropdownMenuItem>
                     ))}
@@ -301,13 +301,16 @@ export default function CategoryPage() {
               {sortBy === 'alphabet' && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-none">
+                    <Button size="sm" className="h-10 px-4 rounded-lg bg-primary text-white border-none gap-2 text-[12px] font-bold shadow-md">
                       {selectedLetter || "Huruf"} <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-48 grid grid-cols-4 p-2 gap-1 rounded-xl bg-white shadow-2xl border-primary/5">
+                  <DropdownMenuContent className="w-56 grid grid-cols-6 p-2 gap-1 rounded-xl bg-white shadow-2xl border-primary/5">
                     {availableLetters.map(letter => (
-                      <DropdownMenuItem key={letter} onClick={() => setSelectedLetter(letter)} className="rounded-lg justify-center text-xs h-8">
+                      <DropdownMenuItem key={letter} onClick={() => setSelectedLetter(letter)} className={cn(
+                        "rounded-lg justify-center text-xs font-bold h-8 transition-all",
+                        selectedLetter === letter ? "bg-primary text-white" : "hover:bg-primary/5"
+                      )}>
                         {letter}
                       </DropdownMenuItem>
                     ))}
@@ -318,7 +321,7 @@ export default function CategoryPage() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-9 w-9 rounded-lg bg-primary/5 text-primary"
+                className="h-10 w-10 rounded-lg bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all shadow-none"
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
               >
                 {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
@@ -327,7 +330,7 @@ export default function CategoryPage() {
           </div>
         </div>
 
-        {/* Results */}
+        {/* Detailed Results Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
           <AnimatePresence mode="popLayout">
             {filteredAndSortedPosts.length > 0 ? (
@@ -350,11 +353,11 @@ export default function CategoryPage() {
                         />
                       </div>
                     </Link>
-                    <CardContent className="p-5 flex-1 flex flex-col">
+                    <CardContent className="p-6 flex-1 flex flex-col">
                       <div className="mb-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Clock className="h-3 w-3 text-muted-foreground/50" />
-                          <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                        <div className="flex items-center gap-2 mb-3">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                          <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                         </div>
                         <Link href={`/news/${post.slug}`}>
                           <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
@@ -364,7 +367,7 @@ export default function CategoryPage() {
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
                         <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
-                        <ArrowRight className="h-3 w-3 text-primary" />
+                        <ArrowRight className="h-3.5 w-3.5 text-primary" />
                       </div>
                     </CardContent>
                   </Card>
@@ -381,23 +384,24 @@ export default function CategoryPage() {
     );
   }
 
-  // Category View
+  // Main Category View
   return (
-    <Container className="space-y-6 pt-2">
-      <header className="pt-2">
+    <Container className="space-y-6 pt-4">
+      <header>
         <div className="max-w-4xl">
           <TypographyMuted className="mb-1" casing="sentence">Arsip kategori</TypographyMuted>
-          <Title className="text-2xl md:text-3xl leading-none mb-2">{formatCasing(category.title, 'sentence')}</Title>
+          <Title className="text-2xl md:text-3xl leading-none mb-3">{formatCasing(category.title, 'sentence')}</Title>
           <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl" casing="sentence">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
           </TypographyMuted>
         </div>
       </header>
 
+      {/* Hero & Trending Split Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-2">
-        {/* Left: Hero Carousel */}
+        {/* Left: Auto-sliding Hero Carousel */}
         <div className="lg:col-span-8 space-y-4">
-          <TypographyLabel className="m-0 mt-0" casing="sentence">Unggulan</TypographyLabel>
+          <TypographyLabel className="m-0" casing="sentence">Unggulan</TypographyLabel>
           {trendingPosts.length > 0 ? (
             <Carousel 
               opts={{ loop: true }} 
@@ -415,18 +419,18 @@ export default function CategoryPage() {
                           fill
                           className="object-cover transition-transform duration-1000 ease-out group-hero:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                          <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-3">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                          <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-4 px-3 py-1">
                             {formatCasing(post.categories?.[0] || category.title, 'sentence')}
                           </Badge>
-                          <h2 className="text-xl md:text-2xl font-headline font-semibold leading-tight mb-2">
+                          <h2 className="text-xl md:text-2xl font-headline font-semibold leading-tight mb-3">
                             {post.title}
                           </h2>
-                          <div className="flex items-center gap-4 text-[10px] font-bold text-white/60">
+                          <div className="flex items-center gap-5 text-[10px] font-bold text-white/60">
                             <ReleaseDate date={post.publishedAt} className="tracking-widest" />
                             <span>•</span>
-                            <span className="tracking-widest">{post.author || "Redaksi"}</span>
+                            <span className="tracking-widest uppercase">{post.author || "Redaksi"}</span>
                           </div>
                         </div>
                       </div>
@@ -434,9 +438,9 @@ export default function CategoryPage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="absolute right-4 bottom-4 flex gap-2 z-10">
-                <CarouselPrevious className="relative translate-y-0 left-0 h-8 w-8 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
-                <CarouselNext className="relative translate-y-0 right-0 h-8 w-8 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
+              <div className="absolute right-6 bottom-6 flex gap-2 z-10">
+                <CarouselPrevious className="relative translate-y-0 left-0 h-9 w-9 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
+                <CarouselNext className="relative translate-y-0 right-0 h-9 w-9 border-white/20 bg-white/10 backdrop-blur-md text-white hover:bg-white hover:text-primary transition-all shadow-none" />
               </div>
             </Carousel>
           ) : (
@@ -446,21 +450,23 @@ export default function CategoryPage() {
           )}
         </div>
 
-        {/* Right: Trending List */}
+        {/* Right: Category Trending List (Synced with Hero) */}
         <div className="lg:col-span-4 space-y-4">
-          <TypographyLabel className="m-0 mt-0" casing="sentence">Terpopuler</TypographyLabel>
+          <TypographyLabel className="m-0" casing="sentence">Terpopuler</TypographyLabel>
           <div className="pt-1">
             {trendingPosts.length > 0 ? (
-              <RevealGroup className="space-y-5">
+              <RevealGroup className="space-y-6">
                 {trendingPosts.map((post, idx) => (
                   <RevealItem key={`trending-${post._id}`}>
-                    <Link href={`/news/${post.slug}`} className="group flex gap-4 items-start">
-                      <span className="text-2xl md:text-3xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
-                      <div className="space-y-1 flex-1">
+                    <Link href={`/news/${post.slug}`} className="group flex gap-5 items-start">
+                      <span className="text-3xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
+                      <div className="space-y-1.5 flex-1 min-w-0">
                         <h4 className="font-body font-medium text-[13px] leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
                           {post.title}
                         </h4>
-                        <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold block opacity-40 tracking-widest" />
+                        <div className="flex items-center gap-3">
+                          <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold block opacity-40 tracking-widest uppercase" />
+                        </div>
                       </div>
                     </Link>
                   </RevealItem>
@@ -475,18 +481,19 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {/* Dynamic Sub-category Sliders */}
-      <div className="pt-8 space-y-12">
+      {/* Dynamic Sub-category Explorer Sliders */}
+      <div className="pt-10 space-y-16">
         {groupedByTopic.length > 0 ? (
           groupedByTopic.map((group: any, groupIdx: number) => (
-            <section key={`topic-group-${groupIdx}`} className="space-y-4">
-              <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-                <TypographyLabel className="m-0 mt-0" casing="sentence">Topik {group.name}</TypographyLabel>
+            <section key={`topic-group-${groupIdx}`} className="space-y-6">
+              <div className="flex items-center justify-between border-b border-primary/5 pb-4">
+                <TypographyLabel className="m-0" casing="sentence">Topik {group.name}</TypographyLabel>
                 <Link 
                   href={`/category/${slug}?topic=${encodeURIComponent(group.name)}`} 
-                  className="text-[11px] font-bold text-primary/40 hover:text-primary transition-all tracking-tight uppercase"
+                  className="group flex items-center gap-2 text-[11px] font-bold text-primary/40 hover:text-primary transition-all tracking-tight uppercase"
                 >
                   Lihat Semua
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
               
@@ -499,7 +506,7 @@ export default function CategoryPage() {
                     <CarouselItem key={`topic-post-${post._id}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                       <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                         <Link href={`/news/${post.slug}`}>
-                          <div className="relative h-48 w-full overflow-hidden bg-muted">
+                          <div className="relative h-52 w-full overflow-hidden bg-muted">
                             <Image 
                               src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
                               alt={post.title}
@@ -508,11 +515,11 @@ export default function CategoryPage() {
                             />
                           </div>
                         </Link>
-                        <CardContent className="p-5 flex-1 flex flex-col">
+                        <CardContent className="p-6 flex-1 flex flex-col">
                           <div className="mb-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Clock className="h-3 w-3 text-muted-foreground/50" />
-                              <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                            <div className="flex items-center gap-2 mb-3">
+                              <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                              <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                             </div>
                             <Link href={`/news/${post.slug}`}>
                               <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover/card:text-primary transition-colors line-clamp-2">
@@ -529,14 +536,14 @@ export default function CategoryPage() {
                   ))}
                 </CarouselContent>
                 <div className="hidden lg:block">
-                  <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
-                  <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 border-primary/5 bg-white/40 shadow-none" />
+                  <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 shadow-none" />
+                  <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 border-primary/5 bg-white/40 shadow-none" />
                 </div>
               </Carousel>
             </section>
           ))
         ) : (
-          <div className="py-20 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
+          <div className="py-24 text-center bg-primary/5 rounded-2xl border border-dashed border-primary/10">
             <AnimatedEmptyState 
               message="Eksplorasi berita terbaru lainnya di halaman utama." 
               allCategories={allCategories}
@@ -546,10 +553,10 @@ export default function CategoryPage() {
         )}
       </div>
 
-      {/* Remaining Archives Grid */}
-      <div className="pt-8 pb-20">
-        <TypographyLabel className="mb-6" casing="sentence">Arsip berita lainnya</TypographyLabel>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Global Archive Grid */}
+      <div className="pt-12 pb-24">
+        <TypographyLabel className="mb-8" casing="sentence">Arsip berita lainnya</TypographyLabel>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {posts.slice(5).map((post, idx) => (
             <motion.div
               key={post._id}
@@ -559,7 +566,7 @@ export default function CategoryPage() {
             >
               <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
                 <Link href={`/news/${post.slug}`}>
-                  <div className="relative h-48 w-full overflow-hidden bg-muted">
+                  <div className="relative h-52 w-full overflow-hidden bg-muted">
                     <Image 
                       src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} 
                       alt={post.title}
@@ -568,11 +575,11 @@ export default function CategoryPage() {
                     />
                   </div>
                 </Link>
-                <CardContent className="p-5 flex-1 flex flex-col">
+                <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Clock className="h-3 w-3 text-muted-foreground/50" />
-                      <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold text-muted-foreground tracking-tight" />
+                    <div className="flex items-center gap-2 mb-3">
+                      <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                      <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                     </div>
                     <Link href={`/news/${post.slug}`}>
                       <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
@@ -582,9 +589,7 @@ export default function CategoryPage() {
                   </div>
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
                     <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author || "Redaksi"}</span>
-                    <Link href={`/news/${post.slug}`}>
-                      <ArrowRight className="h-3 w-3 text-primary hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <ArrowRight className="h-4 w-4 text-primary hover:translate-x-1 transition-transform" />
                   </div>
                 </CardContent>
               </Card>
@@ -595,3 +600,4 @@ export default function CategoryPage() {
     </Container>
   );
 }
+
