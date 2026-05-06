@@ -96,31 +96,31 @@ export default function CategoryPage() {
 
   return (
     <Container>
-      {/* Title Section - Extremely tight spacing to header */}
-      <Section className="pt-2 pb-8">
-        <div className="max-w-4xl space-y-2">
+      {/* Title Section - Tight spacing to header */}
+      <Section className="pt-0 pb-6 md:pb-8">
+        <div className="max-w-4xl space-y-1">
           <MutedText className="text-[10px] font-bold opacity-40 tracking-widest" casing="sentence">Arsip kategori</MutedText>
           <div className="flex items-baseline gap-4">
-            <Title className="text-3xl md:text-4xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
+            <Title className="text-2xl md:text-3xl lg:text-4xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
               <Badge variant="secondary" className="bg-primary/5 text-primary border-none text-[10px] px-3 py-1 font-bold">
                 Topik: {topic}
               </Badge>
             )}
           </div>
-          <BodyText className="text-lg opacity-60 leading-relaxed max-w-2xl !mt-2">
+          <BodyText className="text-base md:text-lg opacity-60 leading-relaxed max-w-2xl !mt-1">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
           </BodyText>
         </div>
       </Section>
 
-      {/* Hero & Trending Section - Reduced margin top */}
-      <Section className="py-0 mb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+      {/* Hero & Trending Section - Reduced vertical spacing */}
+      <Section className="pt-0 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
           {/* Left: Hero Carousel */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="flex items-center justify-between border-b border-primary/5 pb-3">
-              <Heading level={4} className="m-0 text-xs font-bold tracking-wider opacity-40" casing="sentence">Unggulan</Heading>
+            <div className="flex items-center justify-between border-b border-primary/5 pb-2">
+              <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40" casing="sentence">Unggulan</Heading>
             </div>
             {heroPosts.length > 0 ? (
               <Carousel opts={{ loop: true }} className="w-full relative group">
@@ -136,11 +136,11 @@ export default function CategoryPage() {
                             className="object-cover transition-transform duration-1000 ease-out group-hero:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-                          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                            <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-4">
+                          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+                            <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-3 md:mb-4">
                               {formatCasing(post.categories?.[0] || category.title, 'sentence')}
                             </Badge>
-                            <h2 className="text-2xl md:text-3xl font-headline font-semibold leading-tight mb-4 group-hero:text-white/90 transition-colors">
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-headline font-semibold leading-tight mb-3 md:mb-4 group-hero:text-white/90 transition-colors">
                               {post.title}
                             </h2>
                             <div className="flex items-center gap-4 text-[10px] font-bold text-white/60">
@@ -168,14 +168,14 @@ export default function CategoryPage() {
 
           {/* Right: Trending List */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center justify-between border-b border-primary/5 pb-3">
-              <Heading level={4} className="m-0 text-xs font-bold tracking-wider opacity-40" casing="sentence">Terpopuler</Heading>
+            <div className="flex items-center justify-between border-b border-primary/5 pb-2">
+              <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40" casing="sentence">Terpopuler</Heading>
             </div>
-            <RevealGroup className="space-y-6 pt-2">
+            <RevealGroup className="space-y-6 pt-1">
               {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
                 <RevealItem key={`trending-${post._id}`}>
                   <Link href={`/news/${post.slug}`} className="group flex gap-5 items-start">
-                    <span className="text-4xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
+                    <span className="text-3xl md:text-4xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors tabular-nums shrink-0 leading-none">0{idx + 1}</span>
                     <div className="space-y-1 flex-1">
                       <h4 className="font-body font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
                         {post.title}
@@ -189,7 +189,7 @@ export default function CategoryPage() {
               )}
             </RevealGroup>
             
-            <Link href="/latest" className="group mt-6 flex items-center justify-center p-5 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[11px] font-bold text-primary/60 hover:text-primary tracking-widest">
+            <Link href="/latest" className="group mt-6 flex items-center justify-center p-4 border border-dashed border-primary/10 rounded-xl hover:bg-primary/5 transition-all text-[11px] font-bold text-primary/60 hover:text-primary tracking-widest">
               <span>Arsip berita terbaru</span>
               <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
