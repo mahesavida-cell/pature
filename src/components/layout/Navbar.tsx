@@ -1,7 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, LogOut, X, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain } from "lucide-react";
+import { Search, Menu, User, LogOut, X, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,9 +20,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { client } from "@/sanity/lib/client";
-import { CATEGORIES_QUERY } from "@/sanity/lib/queries";
+import { CATEGORIES_QUERY, SEARCH_SUGGESTIONS_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
+import { urlFor } from "@/sanity/lib/image";
 
 const DEFAULT_TOPICS = ["Berita terkini", "Pilihan redaksi", "Trending hari ini", "Analisis mendalam"];
 
@@ -130,38 +137,55 @@ const MarketWeatherBar = () => {
 export const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [hoveredCategory, setHoveredCategory] = useState<any>(null);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [trending, setTrending] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Load categories and initial trending
   useEffect(() => {
-    client.fetch(CATEGORIES_QUERY)
-      .then((data) => {
-        setDynamicCategories(data || []);
-      })
-      .catch(() => {
-        // Fallback or silent error for categories
-      });
+    Promise.all([
+      client.fetch(CATEGORIES_QUERY),
+      client.fetch(TRENDING_POSTS_QUERY)
+    ]).then(([cats, trends]) => {
+      setDynamicCategories(cats || []);
+      setTrending(trends || []);
+    });
   }, []);
+
+  // Debounce logic
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch suggestions
+  useEffect(() => {
+    if (debouncedQuery.trim().length > 0) {
+      setIsSearching(true);
+      client.fetch(SEARCH_SUGGESTIONS_QUERY, { searchTerm: `*${debouncedQuery}*` })
+        .then((data) => {
+          setSuggestions(data || []);
+          setIsSearching(false);
+        })
+        .catch(() => setIsSearching(false));
+    } else {
+      setSuggestions([]);
+    }
+  }, [debouncedQuery]);
 
   const handleSignOut = async () => {
     await signOut(auth);
     router.push("/");
-  };
-
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
-    if (!isSearchOpen) {
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    } else {
-      setSearchQuery("");
-    }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -172,17 +196,6 @@ export const Navbar = () => {
       setSearchQuery("");
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false);
-        setSearchQuery("");
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <nav className="sticky top-0 z-50 w-full transition-all duration-300 bg-background shadow-sm">
@@ -225,35 +238,124 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="relative flex items-center" ref={searchContainerRef}>
-            <AnimatePresence>
-              {isSearchOpen && (
-                <motion.form
-                  onSubmit={handleSearchSubmit}
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: typeof window !== 'undefined' && window.innerWidth < 640 ? 160 : 260, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  className="mr-2 sm:mr-3 overflow-hidden"
-                >
-                  <Input
+          <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-9 w-9 sm:h-11 sm:w-11 rounded-full transition-all"
+                onClick={() => {
+                  setIsSearchOpen(true);
+                  setTimeout(() => searchInputRef.current?.focus(), 100);
+                }}
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent 
+              className="w-screen sm:w-[400px] p-0 border-primary/5 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl mt-3 overflow-hidden" 
+              align="end"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
+              <form onSubmit={handleSearchSubmit} className="p-4 border-b border-primary/5 bg-primary/5">
+                <div className="relative flex items-center">
+                  <Search className="absolute left-3 h-4 w-4 text-primary/40" />
+                  <Input 
                     ref={searchInputRef}
-                    placeholder="Cari..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-9 sm:h-10 text-xs font-bold bg-primary/5 border-none rounded-lg focus-visible:ring-1 focus-visible:ring-primary/10 transition-all"
+                    placeholder="Cari berita atau topik..." 
+                    className="pl-10 h-11 bg-white border-none shadow-sm text-xs font-bold rounded-lg focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
-                </motion.form>
-              )}
-            </AnimatePresence>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-muted-foreground hover:text-primary hover:bg-primary/5 h-9 w-9 sm:h-11 sm:w-11 rounded-full transition-all"
-              onClick={toggleSearch}
-            >
-              {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
-            </Button>
-          </div>
+                  {isSearching && <RefreshCw className="absolute right-3 h-3 w-3 animate-spin text-primary/40" />}
+                </div>
+              </form>
+              
+              <div className="max-h-[400px] overflow-y-auto no-scrollbar py-2">
+                {!searchQuery && (
+                  <div className="px-4 py-2 space-y-4">
+                    <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block px-1">Berita trending</span>
+                    <div className="grid gap-4">
+                      {trending.map((post) => (
+                        <Link 
+                          key={post._id} 
+                          href={`/news/${post.slug}`}
+                          onClick={() => setIsSearchOpen(false)}
+                          className="flex gap-4 group/item items-center"
+                        >
+                          <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-sm">
+                            <Image 
+                              src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
+                              alt={post.title}
+                              fill
+                              className="object-cover group-hover/item:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
+                            <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{post.title}</h4>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {searchQuery && (
+                  <div className="px-4 py-2 space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                      <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest block">Hasil pencarian</span>
+                      {!isSearching && suggestions.length > 0 && (
+                        <Link 
+                          href={`/search?q=${searchQuery}`} 
+                          onClick={() => setIsSearchOpen(false)}
+                          className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1"
+                        >
+                          Lihat semua <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      )}
+                    </div>
+
+                    {isSearching ? (
+                      <div className="py-10 flex flex-col items-center justify-center gap-3 opacity-30">
+                        <RefreshCw className="h-6 w-6 animate-spin" />
+                        <span className="text-[10px] font-bold">Mencari...</span>
+                      </div>
+                    ) : suggestions.length > 0 ? (
+                      <div className="grid gap-4">
+                        {suggestions.map((post) => (
+                          <Link 
+                            key={post._id} 
+                            href={`/news/${post.slug}`}
+                            onClick={() => setIsSearchOpen(false)}
+                            className="flex gap-4 group/item items-center"
+                          >
+                            <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted shrink-0 shadow-sm">
+                              <Image 
+                                src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/100/100`}
+                                alt={post.title}
+                                fill
+                                className="object-cover group-hover/item:scale-110 transition-transform duration-500"
+                              />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[9px] font-bold text-primary/60 mb-0.5">{post.categories?.[0] || "Berita"}</span>
+                              <h4 className="text-[11px] font-headline font-bold leading-tight group-hover/item:text-primary transition-colors line-clamp-1">{post.title}</h4>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-10 text-center space-y-2 opacity-30">
+                        <p className="text-[11px] font-bold">Tidak ditemukan hasil untuk "{searchQuery}"</p>
+                        <p className="text-[9px]">Coba gunakan kata kunci lain.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
 
           <div className="flex items-center sm:border-l sm:pl-5 border-primary/5 sm:ml-2">
             {user ? (
@@ -300,7 +402,6 @@ export const Navbar = () => {
         onMouseLeave={() => setHoveredCategory(null)}
       >
         <div 
-          ref={scrollRef}
           className="max-w-7xl mx-auto px-4 md:px-6 h-12 flex items-center overflow-x-auto no-scrollbar scroll-smooth"
         >
           <AnimatePresence mode="wait">

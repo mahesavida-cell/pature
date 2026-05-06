@@ -63,3 +63,15 @@ export const CATEGORIES_QUERY = defineQuery(`*[_type == "category"] | order(titl
   description,
   subCategories
 }`);
+
+/**
+ * Query pencarian instan untuk instant feedback di Navbar.
+ */
+export const SEARCH_SUGGESTIONS_QUERY = defineQuery(`*[_type == "post" && (title match $searchTerm || excerpt match $searchTerm || categories[]->title match $searchTerm)] | order(publishedAt desc) [0...5] {
+  _id,
+  title,
+  "slug": slug.current,
+  mainImage,
+  publishedAt,
+  "categories": categories[]->title
+}`);
