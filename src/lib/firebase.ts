@@ -1,17 +1,21 @@
+'use client';
 
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+/**
+ * @deprecated This file is a legacy configuration. 
+ * Please import Firebase hooks and instances from '@/firebase' instead.
+ * This proxy ensures that any existing references use the singleton initialized 
+ * in the main Firebase module to avoid "already initialized" errors.
+ */
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "dummy-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "infoflow-placeholder",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+import { initializeFirebase } from '@/firebase';
+
+const getSafeServices = () => {
+  if (typeof window === 'undefined') return { firestore: null, auth: null };
+  const services = initializeFirebase();
+  return services;
 };
 
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+const services = getSafeServices();
+
+export const db = services.firestore;
+export const auth = services.auth;

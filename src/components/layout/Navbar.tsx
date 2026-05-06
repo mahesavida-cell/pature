@@ -195,8 +195,10 @@ export const Navbar = () => {
   [dynamicCategories, activeSlug]);
 
   const handleSignOut = async () => {
-    await signOut(auth);
-    router.push("/");
+    if (auth) {
+      await signOut(auth);
+      router.push("/");
+    }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
