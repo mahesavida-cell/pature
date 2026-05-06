@@ -138,6 +138,7 @@ export default function AuthPage() {
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)} 
+                tabIndex={-1}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1 transition-colors"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -182,7 +183,7 @@ export default function AuthPage() {
             <Button 
               variant="outline" 
               onClick={handleGoogleSignIn}
-              className="w-full bg-[#f4f4f4] text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/5 gap-3 h-12"
+              className="w-full bg-white text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/[0.02] gap-3 h-12"
             >
               <GoogleIcon />
               {formatCasing("Masuk dengan Google", 'sentence')}
