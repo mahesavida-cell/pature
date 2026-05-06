@@ -1,136 +1,261 @@
 "use client";
 
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { useEffect, useState, useMemo } from "react";
+import { client } from "@/sanity/lib/client";
+import { POSTS_QUERY } from "@/sanity/lib/queries";
+import { Container } from "@/components/wrapped/Layout";
+import { Title, TypographyMuted, TypographyLabel } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Clock, RefreshCw } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, limit } from "firebase/firestore";
-import { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Clock, 
+  ArrowRight, 
+  RefreshCw, 
+  ChevronDown, 
+  Calendar, 
+  Type, 
+  TrendingUp, 
+  ArrowUp, 
+  ArrowDown, 
+  Inbox
+} from "lucide-react";
+import { urlFor } from "@/sanity/lib/image";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
+import { formatCasing } from "@/lib/casing";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
+import Autoplay from "embla-carousel-autoplay";
+
+const AnimatedEmptyState = ({ message }: { message: string }) => (
+  <div className="flex flex-col items-center justify-center py-20 gap-6 w-full">
+    <motion.div
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      className="opacity-20"
+    >
+      <Inbox className="h-12 w-12 text-primary" />
+    </motion.div>
+    <TypographyMuted className="text-sm">{message}</TypographyMuted>
+  </div>
+);
 
 export default function LatestNewsPage() {
-  const db = useFirestore();
-  const [hasMounted, setHasMounted] = useState(false);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<'time' | 'year' | 'popularity' | 'alphabet'>('time');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedYear, setSelectedYear] = useState<string>("");
 
   useEffect(() => {
-    setHasMounted(true);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await client.fetch(POSTS_QUERY);
+        setPosts(data || []);
+      } catch (error) {
+        console.error("Failed to fetch latest posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const latestQuery = useMemoFirebase(() => {
-    if (!db) return null;
-    return query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(20));
-  }, [db]);
+  const heroTrendingPosts = useMemo(() => posts.slice(0, 5), [posts]);
   
-  const { data: firestorePosts, isLoading } = useCollection(latestQuery);
-
-  const groupedPosts = useMemo(() => {
-    if (!firestorePosts) return [];
+  const groupedByCategory = useMemo(() => {
     const groups: Record<string, any[]> = {};
-    
-    firestorePosts.forEach(post => {
-      // Menggunakan format UTC yang stabil untuk pengelompokan di server/klien
-      let dateString = "Lainnya";
-      try {
-        const date = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
-        if (!isNaN(date.getTime())) {
-          dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
-        }
-      } catch (e) {
-        // Fallback jika tanggal tidak valid
-      }
-      
-      if (!groups[dateString]) groups[dateString] = [];
-      groups[dateString].push(post);
+    posts.forEach(post => {
+      const cat = post.categories?.[0] || "Lainnya";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(post);
     });
-    return Object.entries(groups).map(([date, posts]) => ({ date, posts }));
-  }, [firestorePosts]);
+    return Object.entries(groups).map(([name, items]) => ({ name, posts: items }));
+  }, [posts]);
 
-  const formatDateLabel = (isoDate: string) => {
-    if (isoDate === "Lainnya") return isoDate;
-    try {
-      const date = new Date(isoDate);
-      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-    } catch (e) {
-      return isoDate;
+  const filteredAndSortedPosts = useMemo(() => {
+    let result = [...posts];
+    if (sortBy === 'year' && selectedYear) {
+      result = result.filter(p => new Date(p.publishedAt).getFullYear().toString() === selectedYear);
     }
-  };
+    result.sort((a, b) => {
+      if (sortBy === 'time') {
+        const dateA = new Date(a.publishedAt).getTime();
+        const dateB = new Date(b.publishedAt).getTime();
+        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      }
+      if (sortBy === 'popularity') return sortOrder === 'desc' ? b.title.length - a.title.length : a.title.length - b.title.length;
+      return 0;
+    });
+    return result;
+  }, [posts, sortBy, sortOrder, selectedYear]);
 
-  if (!hasMounted) {
+  if (isLoading) {
     return (
-      <div className="space-y-16">
-        <div className="space-y-4">
-          <Title>Berita terbaru</Title>
-          <BodyText className="max-w-2xl">Menyiapkan aliran informasi terkini...</BodyText>
-        </div>
-        <div className="py-20 flex justify-center">
-          <RefreshCw className="h-8 w-8 animate-spin opacity-10" />
-        </div>
-      </div>
+      <Container className="py-20 text-center flex flex-col items-center gap-4">
+        <RefreshCw className="h-8 w-8 animate-spin opacity-20 text-primary" />
+        <TypographyMuted className="text-xs" casing="sentence">Menghubungkan ke pusat informasi...</TypographyMuted>
+      </Container>
     );
   }
 
   return (
-    <div className="space-y-16">
-      <div className="space-y-4">
-        <Title>Berita terbaru</Title>
-        <BodyText className="max-w-2xl">Aliran informasi terkini yang dikurasi secara mandiri dari berbagai kategori untuk memastikan anda tetap terhubung dengan perkembangan dunia.</BodyText>
-      </div>
+    <Container className="space-y-6 pt-4">
+      <header className="max-w-4xl">
+        <TypographyMuted className="mb-1" casing="sentence">Arsip terbaru</TypographyMuted>
+        <Title className="text-2xl md:text-3xl leading-none mb-3">{formatCasing("Berita terbaru", 'sentence')}</Title>
+        <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl" casing="sentence">
+          Aliran informasi terkini yang dikurasi secara mandiri dari berbagai kategori untuk memastikan anda tetap terhubung.
+        </TypographyMuted>
+      </header>
 
-      {isLoading ? (
-        <div className="space-y-12">
-          {[1, 2].map(i => <div key={i} className="h-64 bg-primary/5 animate-pulse rounded-xl" />)}
-        </div>
-      ) : (
-        <div className="space-y-20">
-          {groupedPosts.map((group, idx) => (
-            <motion.section key={group.date} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="space-y-8">
-              <div className="flex items-center gap-4">
-                <div>
-                  <Heading level={3} className="text-xl">Arsip harian</Heading>
-                  <MutedText className="text-[10px] font-bold opacity-40 tracking-wider uppercase">
-                    {formatDateLabel(group.date)}
-                  </MutedText>
-                </div>
-                <Separator className="flex-1 opacity-10" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {group.posts.map((post) => (
-                  <motion.div key={post.id} whileHover={{ y: -4 }}>
-                    <Card className="h-full flex flex-col group transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
-                      <Link href={`/news/${post.id}`}>
-                        <div className="relative h-56 w-full overflow-hidden bg-muted">
-                          <Image src={post.image || `https://picsum.photos/seed/${post.id}/600/400`} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                          <div className="absolute top-4 left-4">
-                            <Badge className="bg-white/95 backdrop-blur-md text-primary hover:bg-white text-[9px] font-bold border-none shadow-none px-3 py-1 tracking-wide uppercase">{post.category}</Badge>
-                          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-2">
+        <div className="lg:col-span-8 space-y-4">
+          <TypographyLabel className="m-0" casing="sentence">Baru saja diterbitkan</TypographyLabel>
+          <Carousel opts={{ loop: true }} plugins={[Autoplay({ delay: 5000 })]} className="w-full relative group">
+            <CarouselContent>
+              {heroTrendingPosts.map((post) => (
+                <CarouselItem key={`hero-${post._id}`}>
+                  <Link href={`/news/${post.slug}`} className="block group/hero">
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 bg-muted">
+                      <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/1200/675`} alt={post.title} fill className="object-cover transition-transform duration-1000 group-hero:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                      <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <Badge className="bg-white/95 text-primary border-none shadow-none text-[9px] font-bold mb-4 px-3 py-1">{post.categories?.[0] || "Terbaru"}</Badge>
+                        <h2 className="text-xl md:text-2xl font-headline font-semibold leading-tight mb-3">{post.title}</h2>
+                        <div className="flex items-center gap-5 text-[10px] font-bold text-white/60">
+                          <ReleaseDate date={post.publishedAt} className="tracking-widest" />
+                          <span>•</span>
+                          <span className="tracking-widest uppercase">{post.author}</span>
                         </div>
-                      </Link>
-                      <CardContent className="p-7 flex-1 flex flex-col">
-                        <div className="mb-6">
-                          <div className="flex items-center gap-2 mb-3">
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                            <ReleaseDate date={post.createdAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
-                          </div>
-                          <Link href={`/news/${post.id}`}><h4 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">{post.title}</h4></Link>
-                          <BodyText className="text-sm line-clamp-2 opacity-60">{post.excerpt}</BodyText>
-                        </div>
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
-                          <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.authorName || post.author}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                      </div>
+                    </div>
+                  </Link>
+                </CarouselItem>
+              ))}
+            </Carousel>
+          </div>
+          <div className="lg:col-span-4 space-y-4">
+            <TypographyLabel className="m-0" casing="sentence">Paling banyak dibaca</TypographyLabel>
+            <div className="pt-1">
+              <RevealGroup className="space-y-6">
+                {heroTrendingPosts.map((post, idx) => (
+                  <RevealItem key={`trending-${post._id}`}>
+                    <Link href={`/news/${post.slug}`} className="group flex gap-5 items-start">
+                      <span className="text-3xl font-headline font-semibold text-primary/10 group-hover:text-primary/20 transition-colors shrink-0">0{idx + 1}</span>
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <h4 className="font-body font-medium text-[13px] leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight">{post.title}</h4>
+                        <ReleaseDate date={post.publishedAt} className="text-[9px] font-bold block opacity-40 tracking-widest uppercase" />
+                      </div>
+                    </Link>
+                  </RevealItem>
                 ))}
+              </RevealGroup>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-10 space-y-16">
+          {groupedByCategory.map((group, idx) => (
+            <section key={`group-${idx}`} className="space-y-6">
+              <div className="flex items-center justify-between border-b border-primary/5 pb-4">
+                <TypographyLabel className="m-0" casing="sentence">Kategori {group.name}</TypographyLabel>
               </div>
-            </motion.section>
+              <Carousel opts={{ align: "start" }} className="w-full relative group">
+                <CarouselContent className="-ml-4">
+                  {group.posts.map((post: any) => (
+                    <CarouselItem key={`post-${post._id}`} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                      <Card className="h-full flex flex-col group/card transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                        <Link href={`/news/${post.slug}`}>
+                          <div className="relative h-52 w-full overflow-hidden bg-muted">
+                            <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover/card:scale-105" />
+                          </div>
+                        </Link>
+                        <CardContent className="p-6 flex-1 flex flex-col">
+                          <div className="mb-4">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                              <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
+                            </div>
+                            <Link href={`/news/${post.slug}`}>
+                              <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover/card:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                            </Link>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-primary/5">
+                            <span className="text-[10px] font-bold text-primary/60 tracking-tight">{post.author}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </section>
           ))}
         </div>
-      )}
-    </div>
+
+        <div className="pt-12 pb-24 space-y-10">
+          <div className="flex items-center justify-between p-5 rounded-xl bg-white/40 border border-primary/5">
+            <TypographyLabel className="m-0" casing="sentence">Semua berita</TypographyLabel>
+            <div className="flex items-center gap-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg bg-white border-primary/10 gap-2 text-[12px] font-semibold shadow-none">
+                    Urutkan
+                    <ChevronDown className="h-3 w-3 opacity-40" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 p-2 rounded-xl bg-white/95 backdrop-blur-xl shadow-2xl border-primary/5">
+                  <DropdownMenuItem onClick={() => setSortBy('time')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium cursor-pointer">Terbaru</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSortBy('popularity')} className="rounded-lg gap-3 text-xs py-2.5 px-3 font-medium cursor-pointer">Populer</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-lg bg-primary/5 text-primary shadow-none" onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
+                {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {filteredAndSortedPosts.map((post, idx) => (
+              <motion.div key={post._id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+                <Card className="h-full flex flex-col group hover:-translate-y-1 transition-all duration-500 rounded-xl overflow-hidden border-primary/5 bg-white/40 shadow-none">
+                  <Link href={`/news/${post.slug}`}>
+                    <div className="relative h-52 w-full overflow-hidden bg-muted">
+                      <Image src={post.mainImage ? urlFor(post.mainImage).url() : `https://picsum.photos/seed/${post._id}/600/400`} alt={post.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                    </div>
+                  </Link>
+                  <CardContent className="p-6 flex-1 flex flex-col">
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
+                      </div>
+                      <Link href={`/news/${post.slug}`}>
+                        <h3 className="font-body font-medium text-base leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+    </Container>
   );
 }
