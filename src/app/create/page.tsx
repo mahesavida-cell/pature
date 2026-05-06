@@ -1,7 +1,5 @@
-
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
 import { Heading, BodyText } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +67,6 @@ export default function CreatePost() {
 
   return (
     <div className="bg-background min-h-screen">
-      <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
           <div>
