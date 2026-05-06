@@ -91,7 +91,7 @@ export default function ProfilePage() {
           <TypographyP className="text-sm">Silakan masuk untuk mengakses profil Anda.</TypographyP>
         </div>
         <Link href="/auth">
-          <Button className="px-12 h-11 font-bold text-[10px] tracking-widest shadow-none">Masuk sekarang</Button>
+          <Button className="px-12">Masuk sekarang</Button>
         </Link>
       </div>
     );
@@ -130,7 +130,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive font-bold text-[10px] tracking-widest">
+            <Button variant="ghost" onClick={handleSignOut} className="w-full text-destructive hover:bg-destructive/5 hover:text-destructive">
               <LogOut className="h-4 w-4 mr-2" /> Keluar dari akun
             </Button>
           </CardContent>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      <Button onClick={handleUpdateProfile} className="w-full h-12 rounded-lg font-bold text-[10px] tracking-widest shadow-md uppercase" disabled={isUpdating}>
+                      <Button onClick={handleUpdateProfile} className="w-full h-12" disabled={isUpdating}>
                         {isUpdating ? "Menyimpan..." : "Simpan perubahan profil"}
                       </Button>
                     </CardContent>

@@ -70,8 +70,8 @@ export default function AuthPage() {
       <div className="flex flex-col p-8 sm:p-10 justify-center bg-white">
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/5 p-1 rounded-lg shadow-none">
-            <TabsTrigger value="login" className="text-[10px] font-bold py-2 tracking-widest">Masuk</TabsTrigger>
-            <TabsTrigger value="register" className="text-[10px] font-bold py-2 tracking-widest">Daftar</TabsTrigger>
+            <TabsTrigger value="login" className="py-2">Masuk</TabsTrigger>
+            <TabsTrigger value="register" className="py-2">Daftar</TabsTrigger>
           </TabsList>
           <TabsContent value="login" className="space-y-4 outline-none">
             <div className="space-y-2">
@@ -85,7 +85,7 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-11 font-bold text-[10px] tracking-widest rounded-lg shadow-md" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
+            <Button className="w-full h-11" onClick={() => handleAuth('login')} disabled={isLoading}>{isLoading ? "Memproses..." : "Masuk ke akun"}</Button>
           </TabsContent>
           <TabsContent value="register" className="space-y-4 outline-none">
             <div className="space-y-2">
@@ -99,11 +99,11 @@ export default function AuthPage() {
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
-            <Button className="w-full h-11 font-bold text-[10px] tracking-widest rounded-lg shadow-md" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
+            <Button className="w-full h-11" onClick={() => handleAuth('register')} disabled={isLoading}>{isLoading ? "Memproses..." : "Daftar sekarang"}</Button>
           </TabsContent>
         </Tabs>
-        <div className="flex items-center my-6 gap-3"><div className="h-[1px] flex-1 bg-primary/5" /><span className="text-[9px] font-bold text-muted-foreground/30 tracking-widest">Atau</span><div className="h-[1px] flex-1 bg-primary/5" /></div>
-        <Button variant="outline" className="w-full h-11 font-bold text-[10px] border border-primary/10 bg-white hover:bg-primary/5 rounded-lg shadow-none tracking-widest" onClick={handleGoogleSignIn}>Google</Button>
+        <div className="flex items-center my-6 gap-3"><div className="h-[1px] flex-1 bg-primary/5" /><span className="text-[11px] font-medium text-muted-foreground/30">Atau</span><div className="h-[1px] flex-1 bg-primary/5" /></div>
+        <Button variant="outline" className="w-full h-11" onClick={handleGoogleSignIn}>Google</Button>
       </div>
     </div>
   );

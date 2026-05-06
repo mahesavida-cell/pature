@@ -73,10 +73,10 @@ export default function CreatePost() {
             <BodyText>Bagikan wawasan Anda dengan komunitas PatureNews.</BodyText>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10 uppercase">
+            <Button variant="outline" size="sm" className="gap-2 h-10">
               <Eye className="h-4 w-4" /> Pratinjau
             </Button>
-            <Button size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10 uppercase shadow-md" onClick={handlePublish} disabled={isLoading}>
+            <Button size="sm" className="gap-2 h-10 shadow-md" onClick={handlePublish} disabled={isLoading}>
               <Globe className="h-4 w-4" /> {isLoading ? "Memproses..." : "Terbitkan"}
             </Button>
           </div>
@@ -103,7 +103,7 @@ export default function CreatePost() {
                 <div className="space-y-2">
                   <TypographyLabel>Kategori</TypographyLabel>
                   <Select onValueChange={setCategory}>
-                    <SelectTrigger id="category" className="bg-white border-none h-10 rounded-[6px] shadow-[0_0_0_1px_rgba(0,0,0,0.08)]">
+                    <SelectTrigger id="category">
                       <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
@@ -136,7 +136,7 @@ export default function CreatePost() {
                   </div>
                   <div className="space-y-1">
                     <BodyText className="text-sm font-bold">Klik untuk unggah atau seret dan lepas</BodyText>
-                    <BodyText className="text-[10px] opacity-40 font-bold tracking-wider uppercase">PNG, JPG atau WebP (Maks. 10MB)</BodyText>
+                    <BodyText className="text-[10px] opacity-40 font-bold tracking-wider">PNG, JPG atau WebP (Maks. 10MB)</BodyText>
                   </div>
                 </div>
               </div>
@@ -164,10 +164,10 @@ export default function CreatePost() {
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button variant="ghost" className="gap-2 font-bold text-[10px] tracking-widest px-8 uppercase">
+            <Button variant="ghost" className="gap-2 px-8">
               <Save className="h-4 w-4" /> Simpan draf
             </Button>
-            <Button className="px-12 font-bold text-[10px] tracking-widest h-12 shadow-lg uppercase" onClick={handlePublish} disabled={isLoading}>
+            <Button className="px-12 h-12 shadow-lg" onClick={handlePublish} disabled={isLoading}>
               {isLoading ? "Memproses..." : "Terbitkan sekarang"}
             </Button>
           </div>
