@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -6,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { POSTS_BY_CATEGORY_QUERY, CATEGORY_DETAIL_QUERY } from "@/sanity/lib/queries";
 import { Container } from "@/components/wrapped/Layout";
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText, TypographyMuted } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -76,7 +75,7 @@ export default function CategoryPage() {
     return (
       <Container className="py-20 text-center flex flex-col items-center gap-4">
         <RefreshCw className="h-8 w-8 animate-spin opacity-20" />
-        <BodyText className="text-xs opacity-40">Memuat arsip berita...</BodyText>
+        <MutedText className="text-xs opacity-40">Memuat arsip berita...</MutedText>
       </Container>
     );
   }
@@ -99,7 +98,7 @@ export default function CategoryPage() {
       {/* Title Section - Extremely tight spacing to header */}
       <header className="pt-2">
         <div className="max-w-4xl">
-          <MutedText className="text-[10px] font-bold opacity-40 tracking-widest block mb-1" casing="sentence">Arsip kategori</MutedText>
+          <MutedText className="text-[13px] text-[#4D4D4D] font-medium mb-1 block" casing="sentence">Arsip kategori</MutedText>
           <div className="flex items-baseline gap-4 mb-2">
             <Title className="text-2xl md:text-3xl leading-none">{formatCasing(category.title, 'sentence')}</Title>
             {topic && (
@@ -108,9 +107,9 @@ export default function CategoryPage() {
               </Badge>
             )}
           </div>
-          <BodyText className="text-sm md:text-base opacity-60 leading-relaxed max-w-2xl">
+          <TypographyMuted className="text-sm md:text-base leading-relaxed max-w-2xl">
             {category.description || `Eksplorasi mendalam seputar ${category.title.toLowerCase()} dan perkembangan terbarunya.`}
-          </BodyText>
+          </TypographyMuted>
         </div>
       </header>
 
@@ -119,7 +118,7 @@ export default function CategoryPage() {
         {/* Left: Hero Carousel (Synchronized with Trending) */}
         <div className="lg:col-span-8 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40 mt-0" casing="sentence">Unggulan</Heading>
+            <Heading level={4} className="m-0 text-[13px] text-[#4D4D4D] font-medium font-body mt-0" casing="sentence">Unggulan</Heading>
           </div>
           {trendingPosts.length > 0 ? (
             <Carousel 
@@ -172,7 +171,7 @@ export default function CategoryPage() {
         {/* Right: Trending List (Synchronized with Hero) */}
         <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center justify-between border-b border-primary/5 pb-2">
-            <Heading level={4} className="m-0 text-[11px] font-bold tracking-wider opacity-40 mt-0" casing="sentence">Terpopuler</Heading>
+            <Heading level={4} className="m-0 text-[13px] text-[#4D4D4D] font-medium font-body mt-0" casing="sentence">Terpopuler</Heading>
           </div>
           <RevealGroup className="space-y-5 pt-1">
             {trendingPosts.length > 0 ? trendingPosts.map((post, idx) => (
