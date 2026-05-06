@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -15,7 +15,6 @@ import {
   ArrowLeft, 
   Bookmark, 
   TrendingUp, 
-  Send, 
   Heart, 
   MessageSquare, 
   Copy, 
@@ -49,18 +48,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const formatRelativeTime = (dateInput: any) => {
-  if (!dateInput) return "baru saja";
-  const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (diffInSeconds < 60) return "baru saja";
-  const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} menit yang lalu`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam yang lalu`;
-  const days = Math.floor(hours / 24);
-  return `${days} hari yang lalu`;
+/**
+ * Format waktu yang aman untuk hidrasi (menghindari mismatch server/klien).
+ */
+const useFormattedTime = (dateInput: any) => {
+  const [formatted, setFormatted] = useState("baru saja");
+
+  useEffect(() => {
+    if (!dateInput) return;
+    const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) setFormatted("baru saja");
+    else if (diffInSeconds < 3600) setFormatted(`${Math.floor(diffInSeconds / 60)} menit lalu`);
+    else if (diffInSeconds < 86400) setFormatted(`${Math.floor(diffInSeconds / 3600)} jam lalu`);
+    else setFormatted(`${Math.floor(diffInSeconds / 86400)} hari lalu`);
+  }, [dateInput]);
+
+  return formatted;
 };
 
 const ShareButton = ({ post }: { post: any }) => {
@@ -124,6 +130,7 @@ const CommentItem = ({
 }: any) => {
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
+  const timeStr = useFormattedTime(comment.createdAt);
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-6 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
@@ -134,7 +141,7 @@ const CommentItem = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-bold text-primary">{comment.authorName}</span>
-            <span className="text-[9px] text-muted-foreground">{formatRelativeTime(comment.createdAt)}</span>
+            <span className="text-[9px] text-muted-foreground">{timeStr}</span>
           </div>
           <BodyText className="text-sm text-foreground/80 mb-3 font-medium">{comment.content}</BodyText>
           <div className="flex items-center gap-4">
@@ -183,7 +190,7 @@ export default function NewsDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!params.id) return;
+      if (!params?.id) return;
       try {
         const [postData, trendingData] = await Promise.all([
           client.fetch(POST_DETAIL_QUERY, { slug: params.id }),
@@ -198,10 +205,10 @@ export default function NewsDetailPage() {
       }
     };
     fetchData();
-  }, [params.id]);
+  }, [params?.id]);
 
   useEffect(() => {
-    if (user && db && params.id && sanityPost) {
+    if (user && db && params?.id && sanityPost) {
       const historyRef = doc(db, "users", user.uid, "history", params.id as string);
       setDocumentNonBlocking(historyRef, {
         postId: params.id,
@@ -210,13 +217,13 @@ export default function NewsDetailPage() {
         viewedAt: new Date().toISOString()
       }, { merge: true });
     }
-  }, [user, db, params.id, sanityPost]);
+  }, [user, db, params?.id, sanityPost]);
 
-  const bookmarkRef = useMemoFirebase(() => (user && db && params.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, [db, user, params.id]);
+  const bookmarkRef = useMemoFirebase(() => (user && db && params?.id) ? doc(db, "users", user.uid, "bookmarks", params.id as string) : null, [db, user, params?.id]);
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
-  const commentsQuery = useMemoFirebase(() => (db && params.id) ? query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc")) : null, [db, params.id]);
+  const commentsQuery = useMemoFirebase(() => (db && params?.id) ? query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc")) : null, [db, params?.id]);
   const { data: firestoreComments } = useCollection(commentsQuery);
 
   const threadedComments = useMemo(() => {
@@ -240,7 +247,7 @@ export default function NewsDetailPage() {
       toast({ title: "Dihapus", description: "Berita dihapus dari arsip." });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
-        postId: params.id,
+        postId: params?.id,
         title: sanityPost.title,
         category: sanityPost.categories?.[0] || "Berita",
         savedAt: new Date().toISOString()
@@ -250,7 +257,7 @@ export default function NewsDetailPage() {
   };
 
   const handlePostComment = (parentId: string | null = null) => {
-    if (!user || !db) { router.push('/auth'); return; }
+    if (!user || !db || !params?.id) { router.push('/auth'); return; }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
     addDocumentNonBlocking(collection(db, "posts", params.id as string, "comments"), {
@@ -330,7 +337,7 @@ export default function NewsDetailPage() {
               <div className="space-y-8">
                 {threadedComments.length > 0 ? threadedComments.map((comment) => (
                   <CommentItem key={comment.id} comment={comment} user={user} postAuthorId={sanityPost.authorId || ""} onLike={(id: string, current: string[]) => {
-                    if (!user || !db) return;
+                    if (!user || !db || !params?.id) return;
                     const isLiked = current.includes(user.uid);
                     updateDocumentNonBlocking(doc(db, "posts", params.id as string, "comments", id), { likes: isLiked ? current.filter(uid => uid !== user.uid) : [...current, user.uid] });
                   }} onReply={handlePostComment} replyToId={replyToId} setReplyToId={setReplyToId} replyText={replyText} setReplyText={setReplyText} />

@@ -6,7 +6,7 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 /**
- * Robust Firebase initialization for Client and SSR/Build environments.
+ * Inisialisasi Firebase yang tangguh untuk lingkungan Klien, SSR, dan Build.
  */
 export function initializeFirebase() {
   const config = {
@@ -16,22 +16,21 @@ export function initializeFirebase() {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || firebaseConfig.appId,
   };
 
+  // Cek apakah konfigurasi minimal tersedia
+  const isConfigValid = config.apiKey && config.projectId && config.apiKey !== 'dummy-key';
+
   let app: FirebaseApp;
   
-  if (typeof window === 'undefined') {
-    // Server-side or Build-time initialization
+  try {
     if (!getApps().length) {
-      app = initializeApp(config);
+      // Jika konfigurasi tidak valid saat build, gunakan dummy agar tidak crash
+      app = initializeApp(isConfigValid ? config : firebaseConfig);
     } else {
       app = getApp();
     }
-  } else {
-    // Client-side initialization
-    if (!getApps().length) {
-      app = initializeApp(config);
-    } else {
-      app = getApp();
-    }
+  } catch (e) {
+    // Fallback terakhir untuk mencegah build failure
+    app = initializeApp(firebaseConfig);
   }
 
   const auth = getAuth(app);
