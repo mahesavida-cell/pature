@@ -49,6 +49,9 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { formatCasing } from "@/lib/casing";
 import { PromotionBanner } from "@/components/wrapped/PromotionBanner";
 
+// Memaksa Vercel untuk selalu merender halaman ini secara dinamis untuk stabilitas rute
+export const dynamic = 'force-dynamic';
+
 const BookmarkButton = ({ post, variant = "card" }: { post: any, variant?: "hero" | "card" }) => {
   const { user } = useUser();
   const db = useFirestore();

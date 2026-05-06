@@ -1,3 +1,4 @@
+
 "use client";
 
 import { 
@@ -31,6 +32,9 @@ import { client } from "@/sanity/lib/client";
 import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { fetchEditorialContent, createSyncMetadata } from "@/lib/data-bridge";
+
+// Memaksa Vercel untuk selalu merender halaman dinamis ini untuk menghindari error 404 pada Edge
+export const dynamic = 'force-dynamic';
 
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
@@ -144,15 +148,18 @@ export default function NewsDetailPage() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
+  // Parameter rute Next.js (id) akan digunakan sebagai slug untuk Sanity
+  const currentSlug = params?.id as string;
+
   useEffect(() => {
     const initPage = async () => {
-      if (!params?.id) return;
+      if (!currentSlug) return;
       setIsLoading(true);
       setFetchError(false);
       
       try {
         const [editorial, trending] = await Promise.all([
-          fetchEditorialContent(params.id as string),
+          fetchEditorialContent(currentSlug),
           client.fetch(TRENDING_POSTS_QUERY)
         ]);
 
@@ -169,33 +176,33 @@ export default function NewsDetailPage() {
       }
     };
     initPage();
-  }, [params?.id]);
+  }, [currentSlug]);
 
   useEffect(() => {
-    if (user && db && params?.id && sanityPost) {
+    if (user && db && currentSlug && sanityPost) {
       const metadata = createSyncMetadata(sanityPost);
       if (!metadata) return;
 
-      const historyRef = doc(db, "userProfiles", user.uid, "history", params.id as string);
+      const historyRef = doc(db, "userProfiles", user.uid, "history", currentSlug);
       setDocumentNonBlocking(historyRef, { 
-        postId: params.id, 
+        postId: currentSlug, 
         title: metadata.title, 
         category: metadata.category, 
         viewedAt: new Date().toISOString() 
       }, { merge: true });
     }
-  }, [user, db, params?.id, sanityPost]);
+  }, [user, db, currentSlug, sanityPost]);
 
   const bookmarkRef = useMemoFirebase(() => 
-    (user && db && params?.id) ? doc(db, "userProfiles", user.uid, "bookmarks", params.id as string) : null, 
-  [db, user, params?.id]);
+    (user && db && currentSlug) ? doc(db, "userProfiles", user.uid, "bookmarks", currentSlug) : null, 
+  [db, user, currentSlug]);
 
   const { data: bookmarkData } = useDoc(bookmarkRef);
   const isSaved = !!bookmarkData;
 
   const commentsQuery = useMemoFirebase(() => 
-    (db && params?.id) ? query(collection(db, "posts", params.id as string, "comments"), orderBy("createdAt", "asc")) : null, 
-  [db, params?.id]);
+    (db && currentSlug) ? query(collection(db, "posts", currentSlug, "comments"), orderBy("createdAt", "asc")) : null, 
+  [db, currentSlug]);
 
   const { data: firestoreComments } = useCollection(commentsQuery);
 
@@ -224,7 +231,7 @@ export default function NewsDetailPage() {
       toast({ title: "Dihapus", description: "Berita dihapus dari arsip." });
     } else {
       setDocumentNonBlocking(bookmarkRef, {
-        postId: params?.id,
+        postId: currentSlug,
         title: metadata.title,
         category: metadata.category,
         savedAt: new Date().toISOString()
@@ -234,16 +241,16 @@ export default function NewsDetailPage() {
   };
 
   const handlePostComment = (parentId: string | null = null) => {
-    if (!user || !db || !params?.id) { router.push('/auth'); return; }
+    if (!user || !db || !currentSlug) { router.push('/auth'); return; }
     const text = parentId ? replyText : commentText;
     if (!text.trim()) return;
 
-    addDocumentNonBlocking(collection(db, "posts", params.id as string, "comments"), {
+    addDocumentNonBlocking(collection(db, "posts", currentSlug, "comments"), {
       content: text,
       authorId: user.uid,
       authorName: user.displayName || user.email?.split('@')[0] || "Pengguna PatureNews",
       createdAt: serverTimestamp(),
-      postId: params.id,
+      postId: currentSlug,
       parentId,
       likes: []
     });
@@ -366,9 +373,9 @@ export default function NewsDetailPage() {
                   comment={comment} 
                   user={user} 
                   onLike={(id: string, current: string[]) => { 
-                    if (!user || !db || !params?.id) return; 
+                    if (!user || !db || !currentSlug) return; 
                     const liked = current.includes(user.uid); 
-                    updateDocumentNonBlocking(doc(db, "posts", params.id as string, "comments", id), { 
+                    updateDocumentNonBlocking(doc(db, "posts", currentSlug, "comments", id), { 
                       likes: liked ? current.filter(u => u !== user.uid) : [...current, user.uid] 
                     }); 
                   }} 

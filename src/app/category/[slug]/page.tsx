@@ -36,6 +36,9 @@ import { RevealGroup, RevealItem } from "@/components/wrapped/Motion";
 import Autoplay from "embla-carousel-autoplay";
 import { cn } from "@/lib/utils";
 
+// Memaksa rendering dinamis untuk stabilitas routing Vercel
+export const dynamic = 'force-dynamic';
+
 const AnimatedEmptyState = ({ 
   message, 
   allCategories = [], 
@@ -600,4 +603,3 @@ export default function CategoryPage() {
     </Container>
   );
 }
-
