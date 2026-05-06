@@ -96,7 +96,6 @@ export default function CreatePost() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Masukkan judul yang menarik..." 
-                  className="text-xl h-14 font-headline border-primary/10 bg-transparent focus-visible:ring-1 rounded-lg"
                 />
               </div>
 
@@ -104,7 +103,7 @@ export default function CreatePost() {
                 <div className="space-y-2">
                   <TypographyLabel>Kategori</TypographyLabel>
                   <Select onValueChange={setCategory}>
-                    <SelectTrigger id="category" className="bg-transparent border-primary/10 h-11 rounded-lg font-bold text-[11px]">
+                    <SelectTrigger id="category" className="bg-white border-none h-10 rounded-[6px] shadow-[0_0_0_1px_rgba(0,0,0,0.08)]">
                       <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
@@ -125,7 +124,6 @@ export default function CreatePost() {
                     value={readTime}
                     onChange={(e) => setReadTime(e.target.value)}
                     placeholder="5" 
-                    className="bg-transparent border-primary/10 h-11 rounded-lg font-bold text-[11px]" 
                   />
                 </div>
               </div>
@@ -150,7 +148,6 @@ export default function CreatePost() {
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   placeholder="Ringkas pesan inti dari postingan Anda..." 
-                  className="resize-none min-h-[100px] bg-transparent border-primary/10 rounded-lg text-sm font-medium"
                 />
               </div>
 
@@ -161,7 +158,6 @@ export default function CreatePost() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Tulis cerita Anda di sini..." 
-                  className="min-h-[400px] bg-transparent border-primary/10 rounded-lg text-sm leading-relaxed font-medium"
                 />
               </div>
             </CardContent>

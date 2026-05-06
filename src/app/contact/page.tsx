@@ -89,7 +89,6 @@ export default function ContactPage() {
                       <Input 
                         id="name" 
                         placeholder="Nama Anda" 
-                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                         required 
                       />
                     </div>
@@ -99,7 +98,6 @@ export default function ContactPage() {
                         id="email" 
                         type="email" 
                         placeholder="email@contoh.com" 
-                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                         required 
                       />
                     </div>
@@ -109,7 +107,6 @@ export default function ContactPage() {
                     <Input 
                       id="subject" 
                       placeholder="Bagaimana kami bisa membantu?" 
-                      className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                       required 
                     />
                   </div>
@@ -118,7 +115,6 @@ export default function ContactPage() {
                     <Textarea 
                       id="message" 
                       placeholder="Tuliskan pesan Anda secara detail..." 
-                      className="min-h-[160px] rounded-md bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs resize-none"
                       required 
                     />
                   </div>

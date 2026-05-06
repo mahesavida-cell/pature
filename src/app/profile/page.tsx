@@ -168,7 +168,6 @@ export default function ProfilePage() {
                           <Input 
                             value={displayName} 
                             onChange={(e) => setDisplayName(e.target.value)} 
-                            className="h-12 text-base font-semibold border-primary/10 bg-white/50 tracking-tight shadow-none" 
                             placeholder="Nama Anda..."
                           />
                         </div>
@@ -178,7 +177,6 @@ export default function ProfilePage() {
                             value={bio} 
                             onChange={(e) => setBio(e.target.value)} 
                             placeholder="Tulis sesuatu tentang Anda..." 
-                            className="min-h-[120px] text-base font-semibold border-primary/10 bg-white/50 leading-relaxed tracking-tight shadow-none" 
                           />
                         </div>
                       </div>

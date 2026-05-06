@@ -76,12 +76,12 @@ export default function AuthPage() {
           <TabsContent value="login" className="space-y-4 outline-none">
             <div className="space-y-2">
               <TypographyLabel>Alamat email</TypographyLabel>
-              <Input id="email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-10 border-none bg-primary/5 font-semibold text-xs rounded-lg shadow-none" />
+              <Input id="email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
               <TypographyLabel>Kata sandi</TypographyLabel>
               <div className="relative">
-                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Masukkan kata sandi" value={password} onChange={(e) => setPassword(e.target.value)} className="h-10 border-none bg-primary/5 font-semibold text-xs rounded-lg shadow-none" />
+                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Masukkan kata sandi" value={password} onChange={(e) => setPassword(e.target.value)} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
@@ -90,12 +90,12 @@ export default function AuthPage() {
           <TabsContent value="register" className="space-y-4 outline-none">
             <div className="space-y-2">
               <TypographyLabel>Alamat email</TypographyLabel>
-              <Input id="reg-email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-10 border-none bg-primary/5 font-semibold text-xs rounded-lg shadow-none" />
+              <Input id="reg-email" type="email" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
               <TypographyLabel>Kata sandi baru</TypographyLabel>
               <div className="relative">
-                <Input id="reg-password" type={showPassword ? "text" : "password"} placeholder="Buat kata sandi aman" value={password} onChange={(e) => setPassword(e.target.value)} className="h-10 border-none bg-primary/5 font-semibold text-xs rounded-lg shadow-none" />
+                <Input id="reg-password" type={showPassword ? "text" : "password"} placeholder="Buat kata sandi aman" value={password} onChange={(e) => setPassword(e.target.value)} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary p-1">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
               </div>
             </div>
