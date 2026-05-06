@@ -42,32 +42,12 @@ import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { POST_DETAIL_QUERY, TRENDING_POSTS_QUERY } from "@/sanity/lib/queries";
+import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-/**
- * Format waktu yang aman untuk hidrasi (menghindari mismatch server/klien).
- */
-const useFormattedTime = (dateInput: any) => {
-  const [formatted, setFormatted] = useState("baru saja");
-
-  useEffect(() => {
-    if (!dateInput) return;
-    const date = dateInput.toDate ? dateInput.toDate() : new Date(dateInput);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) setFormatted("baru saja");
-    else if (diffInSeconds < 3600) setFormatted(`${Math.floor(diffInSeconds / 60)} menit lalu`);
-    else if (diffInSeconds < 86400) setFormatted(`${Math.floor(diffInSeconds / 3600)} jam lalu`);
-    else setFormatted(`${Math.floor(diffInSeconds / 86400)} hari lalu`);
-  }, [dateInput]);
-
-  return formatted;
-};
 
 const ShareButton = ({ post }: { post: any }) => {
   const { toast } = useToast();
@@ -130,7 +110,6 @@ const CommentItem = ({
 }: any) => {
   const likes = Array.isArray(comment.likes) ? comment.likes : [];
   const isLiked = user && likes.includes(user.uid);
-  const timeStr = useFormattedTime(comment.createdAt);
 
   return (
     <div className={cn("space-y-4", depth > 0 && "ml-6 md:ml-10 border-l-2 border-primary/5 pl-4 md:pl-6")}>
@@ -141,7 +120,7 @@ const CommentItem = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-bold text-primary">{comment.authorName}</span>
-            <span className="text-[9px] text-muted-foreground">{timeStr}</span>
+            <ReleaseDate date={comment.createdAt} className="text-[9px] text-muted-foreground" />
           </div>
           <BodyText className="text-sm text-foreground/80 mb-3 font-medium">{comment.content}</BodyText>
           <div className="flex items-center gap-4">
@@ -296,7 +275,7 @@ export default function NewsDetailPage() {
                   </Avatar>
                   <div>
                     <span className="block font-bold text-xs text-primary">{sanityPost.author}</span>
-                    <MutedText className="text-[10px] opacity-60 uppercase">{sanityPost.readTime || "5 mnt baca"}</MutedText>
+                    <ReleaseDate date={sanityPost.publishedAt} className="text-[10px] opacity-60 uppercase" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

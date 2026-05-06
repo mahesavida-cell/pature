@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Clock } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, query, where, limit } from "firebase/firestore";
+import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 
 export default function EditorsChoicePage() {
   const db = useFirestore();
@@ -68,7 +69,7 @@ export default function EditorsChoicePage() {
                       <div className="mb-6">
                         <div className="flex items-center gap-2 mb-3">
                           <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                          <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
+                          <ReleaseDate date={post.createdAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                         </div>
                         <Link href={`/news/${post.id}`}>
                           <h3 className="text-lg font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">

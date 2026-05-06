@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { POSTS_QUERY } from "@/sanity/lib/queries";
+import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -166,7 +167,7 @@ const NewsCarousel = ({ posts, sectionTitle, viewAllLink, isLoading }: { posts: 
                       <div className="mb-6">
                         <div className="flex items-center gap-2 mb-3">
                           <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-                          <span className="text-[10px] font-bold text-muted-foreground tracking-tight">{post.readTime || "5 mnt"}</span>
+                          <ReleaseDate date={post.publishedAt} className="text-[10px] font-bold text-muted-foreground tracking-tight" />
                         </div>
                         <Link href={`/news/${post.slug}`}>
                           <h3 className="text-lg font-headline font-bold mb-3 group-hover/card:text-primary transition-colors leading-tight">
@@ -296,7 +297,7 @@ export default function Home() {
                 </Link>
                 <div className="flex items-center gap-6 pt-4 border-t border-primary/5">
                   <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground tracking-tight">
-                    <Clock className="h-3.5 w-3.5" /> {heroPost.readTime || "5 mnt"} • {heroPost.author || "Redaksi PatureNews"}
+                    <Clock className="h-3.5 w-3.5" /> <ReleaseDate date={heroPost.publishedAt} /> • {heroPost.author || "Redaksi PatureNews"}
                   </div>
                   <div className="flex items-center gap-3 ml-auto">
                     <BookmarkButton post={heroPost} variant="hero" />
@@ -330,7 +331,7 @@ export default function Home() {
                           <h4 className="text-sm font-headline font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
                             {story.title}
                           </h4>
-                          <MutedText className="text-[9px] font-bold block">{story.readTime || "5 mnt"} baca</MutedText>
+                          <ReleaseDate date={story.publishedAt} className="text-[9px] font-bold block" />
                         </div>
                       </Link>
                     </motion.div>

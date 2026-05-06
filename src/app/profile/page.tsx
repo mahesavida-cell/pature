@@ -19,21 +19,7 @@ import { User, Bookmark, History, Settings, ChevronRight, LayoutDashboard, Spark
 import { useToast } from "@/hooks/use-toast";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
-const formatRelativeTime = (dateInput: any) => {
-  if (!dateInput) return "baru saja";
-  const date = new Date(dateInput);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 60) return "baru saja";
-  const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes} menit lalu`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam lalu`;
-  const days = Math.floor(hours / 24);
-  return `${days} hari lalu`;
-};
+import { ReleaseDate } from "@/components/wrapped/ReleaseDate";
 
 export default function ProfilePage() {
   const { user } = useUser();
@@ -267,7 +253,7 @@ export default function ProfilePage() {
                                   <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold opacity-30 uppercase tracking-wider">{item.category}</span>
                                     <Separator orientation="vertical" className="h-3 opacity-20" />
-                                    <span className="text-[10px] font-bold opacity-30 italic">{mounted ? formatRelativeTime(item.viewedAt) : "---"}</span>
+                                    <ReleaseDate date={item.viewedAt} className="text-[10px] font-bold opacity-30 italic" />
                                   </div>
                                 </div>
                               </div>
