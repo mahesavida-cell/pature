@@ -12,6 +12,15 @@ import { Eye, EyeOff, CheckCircle2, ShieldCheck, Newspaper } from "lucide-react"
 import Image from "next/image";
 import { formatCasing } from "@/lib/casing";
 
+const GoogleIcon = () => (
+  <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c1.61-1.31 2.54-3.23 2.54-5.32z" fill="#4285F4"/>
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+  </svg>
+);
+
 export default function AuthPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -97,18 +106,18 @@ export default function AuthPage() {
       <div className="flex flex-col lg:col-span-7 p-8 sm:p-12 justify-center bg-white">
         <div className="mb-10">
           <h1 className="text-2xl font-body font-semibold text-primary mb-2" style={{ fontSynthesis: 'none' }}>
-            {mode === 'login' ? 'Selamat datang kembali' : 'Buat akun baru'}
+            {mode === 'login' ? formatCasing('Selamat datang kembali', 'sentence') : formatCasing('Buat akun baru', 'sentence')}
           </h1>
           <TypographyMuted>
             {mode === 'login' 
-              ? 'Masuk untuk mengakses arsip dan riwayat bacaan Anda.' 
-              : 'Daftarkan email Anda untuk mulai berkontribusi.'}
+              ? formatCasing('Masuk untuk mengakses arsip dan riwayat bacaan Anda.', 'sentence') 
+              : formatCasing('Daftarkan email Anda untuk mulai berkontribusi.', 'sentence')}
           </TypographyMuted>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <TypographyLabel>Alamat email</TypographyLabel>
+            <TypographyLabel>{formatCasing("Alamat email", 'sentence')}</TypographyLabel>
             <Input 
               type="email" 
               placeholder="nama@contoh.com" 
@@ -118,11 +127,11 @@ export default function AuthPage() {
           </div>
 
           <div className="space-y-2">
-            <TypographyLabel>Kata sandi</TypographyLabel>
+            <TypographyLabel>{formatCasing("Kata sandi", 'sentence')}</TypographyLabel>
             <div className="relative">
               <Input 
                 type={showPassword ? "text" : "password"} 
-                placeholder={mode === 'login' ? "Masukkan kata sandi" : "Buat kata sandi aman"} 
+                placeholder={mode === 'login' ? formatCasing("Masukkan kata sandi", 'sentence') : formatCasing("Buat kata sandi aman", 'sentence')} 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
               />
@@ -149,7 +158,7 @@ export default function AuthPage() {
                 className="text-[12px] leading-tight text-muted-foreground font-body cursor-pointer select-none"
                 style={{ fontSynthesis: 'none' }}
               >
-                Saya menyetujui <span className="underline underline-offset-2">Ketentuan Layanan</span> dan <span className="underline underline-offset-2">Kebijakan Privasi</span> PatureNews.
+                {formatCasing("Saya menyetujui", 'sentence')} <span className="underline underline-offset-2">{formatCasing("Ketentuan Layanan", 'sentence')}</span> {formatCasing("dan", 'sentence')} <span className="underline underline-offset-2">{formatCasing("Kebijakan Privasi", 'sentence')}</span> PatureNews.
               </label>
             </div>
           )}
@@ -160,12 +169,12 @@ export default function AuthPage() {
             onClick={handleAuth} 
             disabled={isLoading}
           >
-            {isLoading ? "Memproses..." : mode === 'login' ? "Masuk ke akun" : "Daftar sekarang"}
+            {isLoading ? formatCasing("Memproses...", 'sentence') : mode === 'login' ? formatCasing("Masuk ke akun", 'sentence') : formatCasing("Daftar sekarang", 'sentence')}
           </Button>
 
-          <div className="flex items-center my-8 gap-3">
+          <div className="flex items-center my-6 gap-3">
             <div className="h-[1px] flex-1 bg-primary/5" />
-            <span className="text-[10px] font-bold text-muted-foreground/30 tracking-widest">ATAU</span>
+            <span className="text-[10px] font-bold text-muted-foreground/30 tracking-widest uppercase">{formatCasing("Atau", 'upper')}</span>
             <div className="h-[1px] flex-1 bg-primary/5" />
           </div>
           
@@ -173,19 +182,20 @@ export default function AuthPage() {
             <Button 
               variant="outline" 
               onClick={handleGoogleSignIn}
-              className="w-full bg-[#f4f4f4] text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/5"
+              className="w-full bg-[#f4f4f4] text-[#171717] rounded-lg border-none text-base font-medium shadow-[0_0_0_1px_rgb(235,235,235)] transition-all hover:bg-black/5 gap-3 h-12"
             >
-              Masuk dengan Google
+              <GoogleIcon />
+              {formatCasing("Masuk dengan Google", 'sentence')}
             </Button>
 
             <div className="text-center">
-              <p className="text-sm text-muted-foreground font-body" style={{ fontSynthesis: 'none' }}>
-                {mode === 'login' ? 'Belum punya akun? ' : 'Sudah punya akun? '}
+              <p className="text-[14px] text-muted-foreground font-body" style={{ fontSynthesis: 'none' }}>
+                {mode === 'login' ? formatCasing('Belum punya akun? ', 'sentence') : formatCasing('Sudah punya akun? ', 'sentence')}
                 <button 
                   onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
                   className="text-primary font-medium underline underline-offset-4 hover:opacity-80 transition-opacity"
                 >
-                  {mode === 'login' ? 'Daftar' : 'Masuk'}
+                  {mode === 'login' ? formatCasing('Daftar', 'sentence') : formatCasing('Masuk', 'sentence')}
                 </button>
               </p>
             </div>
