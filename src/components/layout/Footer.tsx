@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -23,14 +24,14 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white/40 border-t mt-20 pt-20 pb-16">
+    <footer className="bg-white/40 border-t mt-12 sm:mt-20 pt-16 sm:pt-20 pb-12 sm:pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 sm:gap-16 lg:gap-24 mb-16 sm:mb-20">
           <div className="lg:col-span-5 space-y-4">
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
-              <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-9 w-auto object-contain" />
+              <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-8 sm:h-9 w-auto object-contain" />
             </Link>
-            <BodyText className="text-sm max-w-md mt-2 leading-relaxed tracking-normal">
+            <BodyText className="text-sm max-w-md mt-2 leading-relaxed tracking-normal opacity-70">
               PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
             </BodyText>
             <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
@@ -44,24 +45,26 @@ export const Footer = () => {
               ))}
             </div>
           </div>
-          <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted>Kategori</TypographyMuted>
-            <ul className="space-y-2">
-              {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
-                <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item, 'sentence')}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted>Dukungan</TypographyMuted>
-            <ul className="space-y-2">
-              {supportLinks.map((item) => (
-                <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item.name, 'sentence')}</Link></li>
-              ))}
-            </ul>
+          <div className="grid grid-cols-2 lg:grid-cols-4 lg:col-span-4 gap-8">
+            <div className="space-y-6">
+              <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Kategori</TypographyMuted>
+              <ul className="space-y-2">
+                {["Teknologi", "Desain", "Bisnis", "Budaya", "Sains"].map((item) => (
+                  <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight">{formatCasing(item, 'sentence')}</Link></li>
+                ))}
+              </ul>
+            </div>
+            <div className="space-y-6">
+              <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Dukungan</TypographyMuted>
+              <ul className="space-y-2">
+                {supportLinks.map((item) => (
+                  <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tight">{formatCasing(item.name, 'sentence')}</Link></li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="lg:col-span-3 space-y-6">
-            <TypographyMuted>Hubungi kami</TypographyMuted>
+            <TypographyMuted className="text-[10px] font-bold uppercase tracking-widest">Hubungi kami</TypographyMuted>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
@@ -76,9 +79,9 @@ export const Footer = () => {
         <Separator className="opacity-5 mx-auto" />
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <span className="text-[10px] font-bold text-muted-foreground/40 tracking-normal">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
-          <div className="flex items-center gap-10">
-            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-normal">Aksesibilitas</Link>
-            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-normal">Peta situs</Link>
+          <div className="flex items-center gap-6 sm:gap-10">
+            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>
+            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Peta situs</Link>
           </div>
         </div>
       </div>
