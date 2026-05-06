@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, Sparkles, ArrowRight, Menu } from "lucide-react";
+import { Search, User, LogOut, TrendingUp, TrendingDown, Clock, Sun, Cloud, CloudRain, RefreshCw, Sparkles, ArrowRight, Menu, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -284,7 +284,10 @@ export const Navbar = () => {
                       <div className="grid gap-4">
                         <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Tentang PatureNews", 'sentence')}</Link>
                         <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Kontak redaksi", 'sentence')}</Link>
-                        <Link href="/membership" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary">{formatCasing("Layanan membership", 'sentence')}</Link>
+                        <Link href="/membership" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-medium text-muted-foreground/60 hover:text-primary flex items-center gap-2">
+                          <Crown className="h-3.5 w-3.5 text-amber-500 fill-amber-500/20" />
+                          {formatCasing("Layanan membership", 'sentence')}
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -515,6 +518,7 @@ export const Navbar = () => {
                         className="text-[12px] sm:text-[13px] font-normal text-[#171717]/70 hover:text-[#171717] leading-normal transition-all flex items-center gap-2.5 group font-body py-2 tracking-normal antialiased" 
                         style={{ fontSynthesis: 'none', textRendering: 'optimizeLegibility' }}
                       >
+                        {topic.name === "Membership" && <Crown className="h-3 w-3 text-amber-500 fill-amber-500/20" />}
                         <span className="whitespace-nowrap">{formatCasing(topic.name, 'sentence')}</span>
                         <span className="h-1 w-1 rounded-full bg-primary/10 group-hover:bg-[#171717] transition-all shrink-0" />
                       </Link>
@@ -525,7 +529,6 @@ export const Navbar = () => {
             )}
           </div>
           
-          {/* Subtle Visual Indicator for Sliding (Mobile) */}
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10" />
         </div>
       </div>
