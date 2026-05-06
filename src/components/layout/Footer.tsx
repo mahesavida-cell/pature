@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { TypographyH4, TypographyMuted, BodyText } from "@/components/wrapped/Typography";
+import { TypographyMuted, BodyText } from "@/components/wrapped/Typography";
 import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatCasing } from "@/lib/casing";
@@ -30,7 +30,7 @@ export const Footer = () => {
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
               <Image src="/pature_news.png" alt="PatureNews Logo" width={160} height={45} className="h-9 w-auto object-contain" />
             </Link>
-            <BodyText className="text-sm max-w-md mt-2">
+            <BodyText className="text-sm max-w-md mt-2 leading-relaxed tracking-normal">
               PatureNews adalah platform media modern yang berfokus pada penyampaian informasi berkualitas dengan desain minimalis. Kami memprioritaskan kejernihan berita di atas segalanya untuk komunitas informasi global.
             </BodyText>
             <div className="flex items-center gap-6 text-muted-foreground/40 pt-4">
@@ -45,7 +45,7 @@ export const Footer = () => {
             </div>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted>KATEGORI</TypographyMuted>
+            <TypographyMuted casing="upper">Kategori</TypographyMuted>
             <ul className="space-y-2">
               {["Teknologi", "Desain digital", "Bisnis global", "Budaya modern", "Sains terkini"].map((item) => (
                 <li key={item}><Link href="#" className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item, 'sentence')}</Link></li>
@@ -53,7 +53,7 @@ export const Footer = () => {
             </ul>
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <TypographyMuted>DUKUNGAN</TypographyMuted>
+            <TypographyMuted casing="upper">Dukungan</TypographyMuted>
             <ul className="space-y-2">
               {supportLinks.map((item) => (
                 <li key={item.name}><Link href={item.href} className="text-[11px] font-bold text-muted-foreground/70 hover:text-primary transition-all tracking-tighter">{formatCasing(item.name, 'sentence')}</Link></li>
@@ -61,24 +61,24 @@ export const Footer = () => {
             </ul>
           </div>
           <div className="lg:col-span-3 space-y-6">
-            <TypographyMuted>HUBUNGI KAMI</TypographyMuted>
+            <TypographyMuted casing="upper">Hubungi kami</TypographyMuted>
             <div className="space-y-5">
               <div className="flex items-center gap-3 group">
                 <div className="h-9 w-9 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                   <Mail className="h-4 w-4" />
                 </div>
-                <span className="text-[11px] font-bold text-muted-foreground/80">redaksi@paturenews.com</span>
+                <span className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">redaksi@paturenews.com</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
+              <p className="text-[11px] leading-relaxed text-muted-foreground/40 font-medium italic tracking-wide">Punya saran atau pertanyaan? Tim redaksi kami siap mendengar aspirasi Anda.</p>
             </div>
           </div>
         </div>
         <Separator className="opacity-5 mx-auto" />
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          <span className="text-[10px] font-bold text-muted-foreground/40">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
+          <span className="text-[10px] font-bold text-muted-foreground/40 tracking-wider">© 2024 PatureNews Media Group. Seluruh hak cipta dilindungi.</span>
           <div className="flex items-center gap-10">
-            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Aksesibilitas</Link>
-            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all">Peta situs</Link>
+            <Link href="/terms" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-widest uppercase">Aksesibilitas</Link>
+            <Link href="#" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary transition-all tracking-widest uppercase">Peta situs</Link>
           </div>
         </div>
       </div>
