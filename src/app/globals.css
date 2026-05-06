@@ -6,17 +6,17 @@
 @layer base {
   :root {
     --background: 0 0% 97%; /* #F7F7F7 */
-    --foreground: 205 19% 26%; /* #36454F approximation */
+    --foreground: 205 19% 26%; /* #36454F */
     --card: 0 0% 100%;
     --card-foreground: 205 19% 26%;
     --popover: 0 0% 100%;
     --popover-foreground: 205 19% 26%;
-    --primary: 205 19% 26%; /* #36454F */
+    --primary: 205 19% 26%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 93%;
     --secondary-foreground: 205 19% 26%;
     --muted: 0 0% 90%;
-    --muted-foreground: 0 0% 53%; /* #888888 */
+    --muted-foreground: 0 0% 53%;
     --accent: 205 19% 26%; 
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
@@ -24,7 +24,7 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 205 19% 26%;
-    --radius: 0.5rem; /* Standar profesional 8px */
+    --radius: 0.5rem;
   }
 }
 
@@ -34,9 +34,11 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
+    line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline tracking-tight;
+    @apply font-headline font-bold tracking-tight text-primary;
+    line-height: 1.25;
   }
 }
 
@@ -47,5 +49,9 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  /* Optimal readable width for text */
+  .prose-measure {
+    max-width: 65ch;
   }
 }

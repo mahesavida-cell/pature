@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Title, Heading, BodyText, MutedText } from "@/components/wrapped/Typography";
+import { Title, Heading, BodyText, MutedText, TypographyP } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -36,7 +36,7 @@ const ShareButton = ({ post }: { post: any }) => {
   return (
     <Popover>
       <PopoverTrigger asChild><Button variant="outline" size="icon" className="rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none"><Share2 className="h-4 w-4" /></Button></PopoverTrigger>
-      <PopoverContent align="end" className="w-56 p-2 rounded-lg bg-white/90 backdrop-blur-xl border border-primary/5 shadow-none">
+      <PopoverContent align="end" className="w-56 p-2 rounded-lg bg-white/95 backdrop-blur-xl border border-primary/5 shadow-none">
         <div className="grid gap-1">
           <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(post.title + " " + url)}`)} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-bold transition-colors"><MessageSquare className="h-4 w-4 text-green-600" /> WhatsApp</button>
           <button onClick={copyToClipboard} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-primary/5 text-xs font-bold transition-colors"><Copy className="h-4 w-4 text-muted-foreground" /> Salin tautan</button>
@@ -146,17 +146,42 @@ export default function NewsDetailPage() {
         <div className="lg:col-span-8">
           <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold text-muted-foreground hover:text-primary mb-8 group uppercase tracking-widest"><ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Kembali ke feed</Link>
           <header className="space-y-4 mb-10">
-            <Badge variant="secondary" className="px-3 py-0.5 rounded-sm text-[10px] font-bold bg-primary/5 text-primary border-none shadow-none uppercase">{sanityPost.categories?.[0] || "Berita"}</Badge>
+            <MutedText>{sanityPost.categories?.[0] || "Berita"}</MutedText>
             <Title className="text-3xl md:text-5xl">{sanityPost.title}</Title>
             <div className="flex items-center justify-between pt-6 border-t border-primary/5">
-              <div className="flex items-center gap-3"><Avatar size="lg"><AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">{sanityPost.author?.[0] || "A"}</AvatarFallback></Avatar><div><span className="block font-bold text-xs text-primary">{sanityPost.author}</span><ReleaseDate date={sanityPost.publishedAt} className="text-[10px] opacity-60 uppercase" /></div></div>
+              <div className="flex items-center gap-3">
+                <Avatar size="lg"><AvatarFallback className="bg-primary/5 text-primary text-xs font-bold uppercase">{sanityPost.author?.[0] || "A"}</AvatarFallback></Avatar>
+                <div>
+                  <span className="block font-bold text-xs text-primary">{sanityPost.author}</span>
+                  <ReleaseDate date={sanityPost.publishedAt} className="text-[10px] font-bold opacity-60 uppercase tracking-wider" />
+                </div>
+              </div>
               <div className="flex items-center gap-2"><ShareButton post={sanityPost} /><Button variant="outline" size="icon" className={cn("rounded-full h-9 w-9 border-primary/10 bg-white/40 shadow-none", isSaved && "bg-primary text-white border-primary")} onClick={handleToggleBookmark}><Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} /></Button></div>
             </div>
           </header>
-          <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 mb-12"><Image src={sanityPost.mainImage ? urlFor(sanityPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={sanityPost.title} fill className="object-cover" priority /></div>
-          <article className="prose prose-neutral max-w-none mb-16 font-body text-lg leading-relaxed text-foreground/80"><PortableText value={sanityPost.body} /></article>
+          
+          <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-primary/5 mb-12">
+            <Image src={sanityPost.mainImage ? urlFor(sanityPost.mainImage).url() : PlaceHolderImages[0].imageUrl} alt={sanityPost.title} fill className="object-cover" priority />
+          </div>
+
+          <article className="max-w-[65ch] mb-16 prose-measure">
+            <div className="space-y-6">
+              <PortableText 
+                value={sanityPost.body} 
+                components={{
+                  block: {
+                    normal: ({children}) => <TypographyP>{children}</TypographyP>,
+                    h2: ({children}) => <Heading level={2} className="mt-12 mb-6">{children}</Heading>,
+                    h3: ({children}) => <Heading level={3} className="mt-10 mb-4">{children}</Heading>,
+                    blockquote: ({children}) => <blockquote className="border-l-4 border-primary/20 pl-6 italic my-8 text-xl text-foreground/70">{children}</blockquote>
+                  }
+                }}
+              />
+            </div>
+          </article>
+
           <section id="comments" className="mb-24 pt-16 border-t border-primary/5">
-            <div className="flex items-center gap-3 mb-10"><Heading level={2} className="text-xl">Diskusi komunitas</Heading><Badge className="bg-primary/5 text-primary border-none shadow-none">{firestoreComments?.length || 0}</Badge></div>
+            <div className="flex items-center gap-3 mb-10"><Heading level={3} className="text-xl">Diskusi komunitas</Heading><Badge className="bg-primary/5 text-primary border-none shadow-none">{firestoreComments?.length || 0}</Badge></div>
             {user ? (
               <div className="p-6 rounded-xl bg-white/40 border border-primary/10 mb-12 space-y-4"><Textarea placeholder="Tulis pendapat Anda..." value={commentText} onChange={(e) => setCommentText(e.target.value.slice(0, 500))} className="bg-transparent min-h-[100px] border-primary/5 shadow-none" /><div className="flex justify-end"><Button onClick={() => handlePostComment(null)} disabled={!commentText.trim()} className="h-10 px-8 font-bold text-[11px] uppercase tracking-widest">Kirim komentar</Button></div></div>
             ) : (
@@ -174,7 +199,7 @@ export default function NewsDetailPage() {
               {trendingPosts.map((trend: any) => (
                 <Link key={trend._id} href={`/news/${trend.slug}`} className="flex gap-4 group">
                   <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-primary/5"><Image src={trend.mainImage ? urlFor(trend.mainImage).url() : `https://picsum.photos/seed/${trend._id}/200/200`} alt={trend.title} fill className="object-cover group-hover:scale-105 transition-transform" /></div>
-                  <div className="flex flex-col justify-center min-w-0"><span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{trend.categories?.[0] || "Berita"}</span><h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4></div>
+                  <div className="flex flex-col justify-center min-w-0"><MutedText className="text-[8px] mb-1">{trend.categories?.[0] || "Berita"}</MutedText><h4 className="font-headline font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{trend.title}</h4></div>
                 </Link>
               ))}
             </div>
