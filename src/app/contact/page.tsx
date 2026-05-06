@@ -2,12 +2,11 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Heading, BodyText, Title, MutedText } from "@/components/wrapped/Typography";
+import { Heading, BodyText, Title, MutedText, TypographyLabel } from "@/components/wrapped/Typography";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +33,6 @@ export default function ContactPage() {
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 pt-40 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Info Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -70,62 +68,61 @@ export default function ContactPage() {
             <Card className="bg-primary/5 border-none shadow-none">
               <CardContent className="p-6 flex items-center gap-4">
                 <MessageSquare className="h-5 w-5 text-primary" />
-                <p className="text-[11px] font-medium leading-relaxed opacity-70">
+                <p className="text-[11px] font-bold leading-relaxed opacity-70 tracking-tight">
                   Waktu respon rata-rata tim dukungan kami adalah kurang dari 24 jam pada hari kerja.
                 </p>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* Form Side */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-7"
           >
-            <Card className="border-primary/10 bg-white/60 backdrop-blur-xl">
+            <Card className="border-primary/10 bg-white/60 backdrop-blur-xl shadow-xl">
               <CardContent className="p-10">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-[9px] font-bold opacity-50 tracking-wider">Nama lengkap</Label>
+                      <TypographyLabel>Nama lengkap</TypographyLabel>
                       <Input 
                         id="name" 
                         placeholder="Nama Anda" 
-                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                         required 
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[9px] font-bold opacity-50 tracking-wider">Alamat email</Label>
+                      <TypographyLabel>Alamat email</TypographyLabel>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="email@contoh.com" 
-                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                        className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                         required 
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-[9px] font-bold opacity-50 tracking-wider">Subjek</Label>
+                    <TypographyLabel>Subjek</TypographyLabel>
                     <Input 
                       id="subject" 
                       placeholder="Bagaimana kami bisa membantu?" 
-                      className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs"
+                      className="rounded-md h-11 bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs"
                       required 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-[9px] font-bold opacity-50 tracking-wider">Pesan</Label>
+                    <TypographyLabel>Pesan</TypographyLabel>
                     <Textarea 
                       id="message" 
                       placeholder="Tuliskan pesan Anda secara detail..." 
-                      className="min-h-[160px] rounded-md bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium text-xs resize-none"
+                      className="min-h-[160px] rounded-md bg-transparent border-primary/10 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-semibold text-xs resize-none"
                       required 
                     />
                   </div>
-                  <Button type="submit" className="w-full h-12 font-bold text-[11px] tracking-widest shadow-md">
+                  <Button type="submit" className="w-full h-12 font-bold text-[10px] tracking-widest shadow-md uppercase">
                     Kirim pesan sekarang
                   </Button>
                 </form>

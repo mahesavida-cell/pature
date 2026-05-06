@@ -1,10 +1,9 @@
 "use client";
 
-import { Heading, BodyText } from "@/components/wrapped/Typography";
+import { Heading, BodyText, TypographyLabel } from "@/components/wrapped/Typography";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/wrapped/Card";
 import { Save, Globe, Eye, Image as ImageIcon } from "lucide-react";
@@ -74,11 +73,11 @@ export default function CreatePost() {
             <BodyText>Bagikan wawasan Anda dengan komunitas PatureNews.</BodyText>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10">
+            <Button variant="outline" size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10 uppercase">
               <Eye className="h-4 w-4" /> Pratinjau
             </Button>
-            <Button size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10" onClick={handlePublish} disabled={isLoading}>
-              <Globe className="h-4 w-4" /> {isLoading ? "Sedang memproses..." : "Terbitkan"}
+            <Button size="sm" className="gap-2 font-bold text-[10px] tracking-widest rounded-lg h-10 uppercase shadow-md" onClick={handlePublish} disabled={isLoading}>
+              <Globe className="h-4 w-4" /> {isLoading ? "Memproses..." : "Terbitkan"}
             </Button>
           </div>
         </div>
@@ -91,7 +90,7 @@ export default function CreatePost() {
           <Card className="border-2 border-primary/10 bg-white/40 backdrop-blur-md">
             <CardContent className="p-8 space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="post-title" className="text-[10px] font-bold opacity-50 tracking-wider">Judul artikel</Label>
+                <TypographyLabel>Judul artikel</TypographyLabel>
                 <Input 
                   id="post-title" 
                   value={title}
@@ -103,7 +102,7 @@ export default function CreatePost() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="category" className="text-[10px] font-bold opacity-50 tracking-wider">Kategori</Label>
+                  <TypographyLabel>Kategori</TypographyLabel>
                   <Select onValueChange={setCategory}>
                     <SelectTrigger id="category" className="bg-transparent border-primary/10 h-11 rounded-lg font-bold text-[11px]">
                       <SelectValue placeholder="Pilih kategori" />
@@ -119,7 +118,7 @@ export default function CreatePost() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="read-time" className="text-[10px] font-bold opacity-50 tracking-wider">Estimasi waktu baca (menit)</Label>
+                  <TypographyLabel>Estimasi waktu baca (menit)</TypographyLabel>
                   <Input 
                     id="read-time" 
                     type="number" 
@@ -132,48 +131,48 @@ export default function CreatePost() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-bold opacity-50 tracking-wider">Gambar utama</Label>
+                <TypographyLabel>Gambar utama</TypographyLabel>
                 <div className="border-2 border-dashed border-primary/10 rounded-lg p-12 text-center space-y-4 hover:bg-primary/5 transition-all cursor-pointer group">
                   <div className="mx-auto w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <ImageIcon className="h-6 w-6 text-primary/40" />
                   </div>
                   <div className="space-y-1">
                     <BodyText className="text-sm font-bold">Klik untuk unggah atau seret dan lepas</BodyText>
-                    <BodyText className="text-[10px] opacity-40">PNG, JPG atau WebP (Maks. 10MB)</BodyText>
+                    <BodyText className="text-[10px] opacity-40 font-bold tracking-wider uppercase">PNG, JPG atau WebP (Maks. 10MB)</BodyText>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="excerpt" className="text-[10px] font-bold opacity-50 tracking-wider">Ringkasan singkat</Label>
+                <TypographyLabel>Ringkasan singkat</TypographyLabel>
                 <Textarea 
                   id="excerpt" 
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   placeholder="Ringkas pesan inti dari postingan Anda..." 
-                  className="resize-none min-h-[100px] bg-transparent border-primary/10 rounded-lg text-sm"
+                  className="resize-none min-h-[100px] bg-transparent border-primary/10 rounded-lg text-sm font-medium"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content" className="text-[10px] font-bold opacity-50 tracking-wider">Konten utama</Label>
+                <TypographyLabel>Konten utama</TypographyLabel>
                 <Textarea 
                   id="content" 
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Tulis cerita Anda di sini..." 
-                  className="min-h-[400px] bg-transparent border-primary/10 rounded-lg text-sm leading-relaxed"
+                  className="min-h-[400px] bg-transparent border-primary/10 rounded-lg text-sm leading-relaxed font-medium"
                 />
               </div>
             </CardContent>
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button variant="ghost" className="gap-2 font-bold text-[10px] tracking-widest px-8">
+            <Button variant="ghost" className="gap-2 font-bold text-[10px] tracking-widest px-8 uppercase">
               <Save className="h-4 w-4" /> Simpan draf
             </Button>
-            <Button className="px-12 font-bold text-[10px] tracking-widest h-12 shadow-lg" onClick={handlePublish} disabled={isLoading}>
-              {isLoading ? "Sedang memproses..." : "Terbitkan sekarang"}
+            <Button className="px-12 font-bold text-[10px] tracking-widest h-12 shadow-lg uppercase" onClick={handlePublish} disabled={isLoading}>
+              {isLoading ? "Memproses..." : "Terbitkan sekarang"}
             </Button>
           </div>
         </motion.div>

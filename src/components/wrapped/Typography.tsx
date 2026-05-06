@@ -14,7 +14,6 @@ interface TypographyProps {
 /**
  * PatureNews Typography Library (Professional Reference System)
  * Optimized for hierarchy, rhythm, and clarity.
- * Focus: Elimination of excessive uppercase, unified weights.
  */
 
 export const TypographyH1 = ({ children, className, id, casing = 'sentence' }: TypographyProps) => (
@@ -130,6 +129,21 @@ export const TypographyMuted = ({ children, className, casing = 'sentence' }: Ty
   <p className={cn("text-sm font-normal text-muted-foreground tracking-normal font-body leading-relaxed", className)}>
     {typeof children === 'string' ? formatCasing(children, casing) : children}
   </p>
+);
+
+/**
+ * TypographyLabel (Module Template)
+ * Reference: label-module__CX73KW__label
+ */
+export const TypographyLabel = ({ children, className, casing = 'sentence' }: TypographyProps) => (
+  <label
+    className={cn(
+      "block text-[10px] font-bold tracking-wider opacity-50 mb-2 px-1 text-primary cursor-pointer",
+      className
+    )}
+  >
+    {typeof children === 'string' ? formatCasing(children, casing) : children}
+  </label>
 );
 
 // Semantic Alises
